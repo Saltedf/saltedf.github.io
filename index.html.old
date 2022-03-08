@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Salted的个人站点</title>
+</head>
+
+<body>
+    <h1>hello github!</h1>
+    <p><a href="./C++迭代器.html">定义C++迭代器</a></p>
+
+</body>
+
+</html>
