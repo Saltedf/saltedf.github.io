@@ -66,14 +66,14 @@ std::cout << "hello" ;
 *** TODO sometask
     SCHEDULED: <2022-03-08 Tue 15:00> DEADLINE: <2022-03-10 Thu>
     
-** =agenda= 来查看任务时间表 
+** ~agenda~ 来查看任务时间表 
 M-x org-agenda -> a
 
 f/b 来进行上下翻页
 
 n/p 上一行/下一行
 
-** 将org导出为html
+** ~C-c C-e h~ 将org导出为html
 
 =M-x org-html-export-to-html=
 
