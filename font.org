@@ -1,0 +1,49 @@
+更纱黑体（Sarasa Gothic）全字体包数量惊人。由于对字体术语研究不多，看来看去还是一头雾水不知道下载哪一个。
+搜来搜去，看了个半懂，现在罗列如下：
+
+* 字体包名中的附加术语：
+unhinted－无微调字体
+ttf－TrueType字体文件格式
+ttc－TrueType字体集文件格式（更纱黑体按照字重进行分类，合并了相近ttf字体文件）
+
+* ttc和ttf压缩包中的字体名称：
+** 首先看第一个连字符后的名称
+gothic－引号为全宽
+ui－引号为窄的
+mono－破折号为全宽
+term－破折号为半宽
+fixed－不连字、且破折号为半宽
+** 然后看第二个连字符后的名称
+cl－古典汉字字形
+sc－简体汉字字形
+tc－繁体汉字字形
+j－日文汉字字形
+k－韩文汉字字形
+hc－香港汉字字形
+** 附加术语
+slab－超厚笔划字形
+** 然后看第三个连字符后的名称
+regular－常规字体
+
+italic－斜体字体
+
+extralight－超细字体
+
+light－细体字体
+
+semibold－半粗字体
+
+bold－粗体字体
+
+extralightitalic－超细斜体
+
+lightitalic－细斜字体
+
+semibolditalic－半粗斜体
+
+bolditalic－粗斜字体
+
+
+对于普通的简体中文pclinux操作系统来说，只需要下载普通字体包中的ui和mono两个风格的全字重字体就行了，共计20个ttf文件。其中ui可替换思源黑体替换sans字族用作系统界面字体，mono可替换mono字族用作编程字体。
+
+

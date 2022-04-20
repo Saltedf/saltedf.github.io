@@ -1,0 +1,221 @@
+#+TITLE: linux命令杂记
+#+OPTIONS: toc:t num:t
+
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./myorg.css"/>
+
+#+begin_src 
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
+#+end_src
+
+
+* 配置apt软件源
+
+
+#+begin_src bash
+sudo vim /etc/apt/source.list
+
+sudo apt-get update
+#+end_src
+
+
+
+
+
+* 重启ssh服务
+
+
+
+#+begin_src bash
+sudo service ssh restart
+#+end_src
+
+
+
+
+
+
+* 查看ssh服务是否启动
+
+#+begin_src bash
+sudo lsof -i :22 
+#+end_src
+
+
+
+
+
+* 递归改变文件owner 
+
+#+begin_src bash
+chown -R sun:sun ./dir
+#+end_src
+
+
+
+
+* 汇编文件(.s)的结构
+
+#+begin_src 
+.text: 代码段
+.data: 常量 字符串 初始化的全局变量
+.bss: 不占用实际空间, 仅仅标记那些局部变量和未初始化的全局变量.
+#+end_src
+
+
+因为已知初值的且生命周期长的变量才有提前为它们分配空间的必要,因此data段才占用空间. bss段中记录的是局部变量/未初始化的全局变量, 没必要一开始就为这些量准备好空间, 只要在程序实际运行时为其准备空间即可. 
+
+
+
+
+
+
+
+* makefile
+
+** 定义变量
+
+
+#+begin_src makefile
+CC := gcc # 定义常量, 后续不能用+=
+OBJS = hello.o world.o # 定义变量, 后续可以用+=增加
+ObJS += fuck.o  
+#+end_src
+
+
+
+
+
+** 伪目标 .PHONY
+
+通常是指那些不生成文件的. 只负责执行某些命令的.
+
+
+#+begin_src makefile
+.PHONY: clean  # 这个之后的target都是伪目标
+
+clean: 
+	-${RM} *.o ${target}
+	echo "finish"
+
+#+end_src
+
+
+
+
+
+
+** 为整个项目添加宏定义
+
+#+begin_src makefile
+
+DEFS = -D_DEBUG -D_POSIX_SOURCE
+
+FLAGS = -g ${DEFS}
+
+#+end_src
+
+
+
+
+
+
+** 为目标链接上库
+
+
+
+#+begin_src makefile
+LIBS = -lpthread -lqt
+
+#+end_src
+
+
+
+
+
+
+** 通配符
+
+#+begin_src bash 
+ * 所有
+ % :任意一个文件
+ ? :
+#+end_src
+
+
+
+
+#+begin_src bash
+$@ 目标
+$^ 全部的依赖文件
+$< 首个依赖项 
+#+end_src
+
+
+
+
+
+#+begin_src makefile
+${target} : ${OBJS}
+	${CC} ${FLAGS} -o $@ $^ ${LIBS}
+
+
+%.o : %.c
+	${CC} -o $@  $^ 
+#+end_src
+
+
+
+
+
+
+
+** 函数调用
+
+
+
+#+begin_src makefile
+$(my_func arg1,arg2,arg3)
+#+end_src
+
+
+
+*** 当前目录下某一类型的所有文件形成的列表
+
+#+begin_src makefile
+SRC = $(wildcard *.c)  ==> hello.c world.c fuck.c  
+#+end_src
+
+
+
+
+
+*** 将列表中的所有匹配项替换为指定形式
+
+#+begin_src makefile
+OBJS = $(patsubset %.c,%.o,${SRC} ) 
+
+# 将 SRC = hello.c fuck.c 替换成 hello.o fuck.o 
+#+end_src
+
+
+
+
+
+
+
+
+* GDB
+
+gef
+
+
+
+
+
+以某函数定义为中心,显示源代码
+
+#+begin_src bash
+l / list <函数> 
+#+end_src
+
+默认显示10行

@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-03-11 Fri 21:13 -->
+<!-- 2022-04-20 Wed 16:05 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>&lrm;</title>
+<title>linux命令杂记</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Salted-PC" />
 <style type="text/css">
@@ -193,6 +193,7 @@
   .org-svg { width: 90%; }
   /*]]>*/-->
 </style>
+<link rel="stylesheet" type="text/css" href="./myorg.css"/>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -242,25 +243,317 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
+<h1 class="title">linux命令杂记</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgb9ed32f">1. myorg</a></li>
+<li><a href="#orge1673a8">1. 配置apt软件源</a></li>
+<li><a href="#orge195e59">2. 重启ssh服务</a></li>
+<li><a href="#orge21c51f">3. 查看ssh服务是否启动</a></li>
+<li><a href="#orgab29122">4. 递归改变文件owner</a></li>
+<li><a href="#org375a9d1">5. 汇编文件(.s)的结构</a></li>
+<li><a href="#org574c910">6. makefile</a>
+<ul>
+<li><a href="#org9311bed">6.1. 定义变量</a></li>
+<li><a href="#orgc0e5e36">6.2. 伪目标 .PHONY</a></li>
+<li><a href="#orgb0a536e">6.3. 为整个项目添加宏定义</a></li>
+<li><a href="#org3e6cf07">6.4. 为目标链接上库</a></li>
+<li><a href="#org469e381">6.5. 通配符</a></li>
+<li><a href="#orgbad26e4">6.6. 函数调用</a>
+<ul>
+<li><a href="#orgad9ccf1">6.6.1. 当前目录下某一类型的所有文件形成的列表</a></li>
+<li><a href="#org8ef9202">6.6.2. 将列表中的所有匹配项替换为指定形式</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org00c7ccb">7. GDB</a></li>
 </ul>
 </div>
 </div>
+<pre class="example">
+#+HTML_HEAD: &lt;link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/&gt;
+</pre>
+
+
+<div id="outline-container-orge1673a8" class="outline-2">
+<h2 id="orge1673a8"><span class="section-number-2">1</span> 配置apt软件源</h2>
+<div class="outline-text-2" id="text-1">
+<div class="org-src-container">
+<pre class="src src-bash">sudo vim /etc/apt/source.list
+
+sudo apt-get update
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-orge195e59" class="outline-2">
+<h2 id="orge195e59"><span class="section-number-2">2</span> 重启ssh服务</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-bash">sudo service ssh restart
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-orge21c51f" class="outline-2">
+<h2 id="orge21c51f"><span class="section-number-2">3</span> 查看ssh服务是否启动</h2>
+<div class="outline-text-2" id="text-3">
+<div class="org-src-container">
+<pre class="src src-bash">sudo lsof -i :22 
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-orgab29122" class="outline-2">
+<h2 id="orgab29122"><span class="section-number-2">4</span> 递归改变文件owner</h2>
+<div class="outline-text-2" id="text-4">
+<div class="org-src-container">
+<pre class="src src-bash">chown -R sun:sun ./dir
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org375a9d1" class="outline-2">
+<h2 id="org375a9d1"><span class="section-number-2">5</span> 汇编文件(.s)的结构</h2>
+<div class="outline-text-2" id="text-5">
+<pre class="example">
+.text: 代码段
+.data: 常量 字符串 初始化的全局变量
+.bss: 不占用实际空间, 仅仅标记那些局部变量和未初始化的全局变量.
+</pre>
+
+
 <p>
-Salted <a id="orgb8362e5"></a>
+因为已知初值的且生命周期长的变量才有提前为它们分配空间的必要,因此data段才占用空间. bss段中记录的是局部变量/未初始化的全局变量, 没必要一开始就为这些量准备好空间, 只要在程序实际运行时为其准备空间即可. 
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+<div id="outline-container-org574c910" class="outline-2">
+<h2 id="org574c910"><span class="section-number-2">6</span> makefile</h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org9311bed" class="outline-3">
+<h3 id="org9311bed"><span class="section-number-3">6.1</span> 定义变量</h3>
+<div class="outline-text-3" id="text-6-1">
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #DFDFDF;">CC</span> := gcc <span style="color: #62686E;"># </span><span style="color: #62686E;">&#23450;&#20041;&#24120;&#37327;, &#21518;&#32493;&#19981;&#33021;&#29992;+=</span>
+<span style="color: #DFDFDF;">OBJS</span> = hello.o world.o <span style="color: #62686E;"># </span><span style="color: #62686E;">&#23450;&#20041;&#21464;&#37327;, &#21518;&#32493;&#21487;&#20197;&#29992;+=&#22686;&#21152;</span>
+<span style="color: #DFDFDF;">ObJS</span> += fuck.o  
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-orgc0e5e36" class="outline-3">
+<h3 id="orgc0e5e36"><span class="section-number-3">6.2</span> 伪目标 .PHONY</h3>
+<div class="outline-text-3" id="text-6-2">
+<p>
+通常是指那些不生成文件的. 只负责执行某些命令的.
 </p>
 
-<div id="outline-container-orgb9ed32f" class="outline-2">
-<h2 id="orgb9ed32f"><span class="section-number-2">1</span> <a href="./my.html">myorg</a></h2>
+
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #51afef;">.PHONY</span>: clean  <span style="color: #62686E;"># </span><span style="color: #62686E;">&#36825;&#20010;&#20043;&#21518;&#30340;target&#37117;&#26159;&#20266;&#30446;&#26631;</span>
+
+<span style="color: #51afef;">clean</span>: 
+        <span style="color: #FCCE7B;">-</span>${<span style="color: #DFDFDF;">RM</span>} *.o ${<span style="color: #DFDFDF;">target</span>}
+        echo <span style="color: #7bc275;">"finish"</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-orgb0a536e" class="outline-3">
+<h3 id="orgb0a536e"><span class="section-number-3">6.3</span> 为整个项目添加宏定义</h3>
+<div class="outline-text-3" id="text-6-3">
+<div class="org-src-container">
+<pre class="src src-makefile">
+<span style="color: #DFDFDF;">DEFS</span> = -D_DEBUG -D_POSIX_SOURCE
+
+<span style="color: #DFDFDF;">FLAGS</span> = -g ${<span style="color: #DFDFDF;">DEFS</span>}
+
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-org3e6cf07" class="outline-3">
+<h3 id="org3e6cf07"><span class="section-number-3">6.4</span> 为目标链接上库</h3>
+<div class="outline-text-3" id="text-6-4">
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #DFDFDF;">LIBS</span> = -lpthread -lqt
+
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-org469e381" class="outline-3">
+<h3 id="org469e381"><span class="section-number-3">6.5</span> 通配符</h3>
+<div class="outline-text-3" id="text-6-5">
+<div class="org-src-container">
+<pre class="src src-bash">* &#25152;&#26377;
+% :&#20219;&#24847;&#19968;&#20010;&#25991;&#20214;
+? :
+</pre>
+</div>
+
+
+
+
+<div class="org-src-container">
+<pre class="src src-bash">$<span style="color: #DFDFDF;">@</span> &#30446;&#26631;
+$^ &#20840;&#37096;&#30340;&#20381;&#36182;&#25991;&#20214;
+$&lt; &#39318;&#20010;&#20381;&#36182;&#39033; 
+</pre>
+</div>
+
+
+
+
+
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #51afef;">${target}</span> : ${<span style="color: #DFDFDF;">OBJS</span>}
+        ${<span style="color: #DFDFDF;">CC</span>} ${<span style="color: #DFDFDF;">FLAGS</span>} -o <span style="color: #51afef;">$</span><span style="color: #a991f1;">@</span> $<span style="color: #a991f1;">^</span> ${<span style="color: #DFDFDF;">LIBS</span>}
+
+
+<span style="color: #51afef;">%.o</span> : %.c
+        ${<span style="color: #DFDFDF;">CC</span>} -o <span style="color: #51afef;">$</span><span style="color: #a991f1;">@</span>  $<span style="color: #a991f1;">^</span> 
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+<div id="outline-container-orgbad26e4" class="outline-3">
+<h3 id="orgbad26e4"><span class="section-number-3">6.6</span> 函数调用</h3>
+<div class="outline-text-3" id="text-6-6">
+<div class="org-src-container">
+<pre class="src src-makefile">$(my_func arg1,arg2,arg3)
+</pre>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgad9ccf1" class="outline-4">
+<h4 id="orgad9ccf1"><span class="section-number-4">6.6.1</span> 当前目录下某一类型的所有文件形成的列表</h4>
+<div class="outline-text-4" id="text-6-6-1">
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #DFDFDF;">SRC</span> = $(<span style="color: #DFDFDF;">wildcard</span> *.c)  ==&gt; hello.c world.c fuck.c  
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-org8ef9202" class="outline-4">
+<h4 id="org8ef9202"><span class="section-number-4">6.6.2</span> 将列表中的所有匹配项替换为指定形式</h4>
+<div class="outline-text-4" id="text-6-6-2">
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #DFDFDF;">OBJS</span> = $(<span style="color: #DFDFDF;">patsubset</span> %.c,%.o,${<span style="color: #DFDFDF;">SRC</span>} ) 
+
+<span style="color: #62686E;"># </span><span style="color: #62686E;">&#23558; SRC = hello.c fuck.c &#26367;&#25442;&#25104; hello.o fuck.o </span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+<div id="outline-container-org00c7ccb" class="outline-2">
+<h2 id="org00c7ccb"><span class="section-number-2">7</span> GDB</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+gef
+</p>
+
+
+
+
+
+<p>
+以某函数定义为中心,显示源代码
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">l / list &lt;&#20989;&#25968;&gt; 
+</pre>
+</div>
+
+<p>
+默认显示10行
+</p>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Salted-PC</p>
-<p class="date">Created: 2022-03-11 Fri 21:13</p>
+<p class="date">Created: 2022-04-20 Wed 16:05</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

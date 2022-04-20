@@ -1,0 +1,632 @@
+
+
+
+#+TITEL elisp
+
+M-x org-indent-mode
+
+** 基本约定
+*** "the lisp reader/printer"
+指代从lisp对象的文本表示转换为实际lisp对象的程序reader
+反之为printer
+
+*** nil的语义
+**** bool值false
+**** 名为nil的符号，其值为nil
+**** 空列表 ()
+
+*** 真值的表示
+任何非nil的值都能表示true。但为了语义上的清析，多用“t” 来表示true
+这是一个名字为t，值为t的变量。
+
+*** nil和t都是常量
+对它们的更改会导致setting-constant错误的产生。
+
+*** 判断是否为bool类型
+(booleanp var)
+
+(booleanp nil)
+
+
+** require / provide 
+
+*** 在文件末尾导出模块 
+(provide 'module-name)
+
+*** 导入模块
+(require 'module-name)
+
+*** emacs的导入模块的寻找路径(load-path)
+在变量 load-path 中记录
+(/home/sun/.emacs.d/company-english-helper /home/sun/.emacs.d/insert-translated-name  。。。)
+
+*** 添加新的模块到load-path
+(add-to-list 'load-path (expand-file-name "目录路径"))
+
+[[add-to-list]]
+[[push]]
+[[expand-file-name]]
+
+
+
+
+** current buffer
+*** 简介
+current buffer表示能被elisp代码操作的文本区域, 任何一个时刻只能同时存在一个current buffer.
+
+通常current buffer 就是选中窗口所显示的buffer,但它也可以被修改.
+elisp程序可能为了对某buffer进行操作,而将它指定为当前buffer.不过仅仅修改current buffer并不会使得屏幕上显示的内容发生变化
+
+*** current-buffer
+
+(current-buffer) --> return current buffer
+
+*** set-buffer
+
+(set-buffer buffer对象/buffer名:字符串) --> 当前buffer
+
+*** 命令运行结束后，emacs会自动调用set-buffer来复位current buffer
+目的是为了将current-buffer重新设置为选中窗口所显示的那个buffer
+避免了操作对象混乱的情况。
+
+因此不能使用set-buffer从显示上切换current buffer（switch-to-buffer)
+
+并且不能依赖这个特性来恢复当前缓冲区，因为修改了current buffer的程序不一定总是以编辑器的命令循环的方式被调用
+它同样可以被其它程序调用，因此要注意current buffer的变化，不能依赖此特性。
+
+*** append-to-buffer
+
+将current buffer中指定范围的文本追加到指定buffer中
+
+~(append-to-buffer Buffer对象/Buffer名[string] start-point end-point)~
+
+**** 例子 
+#+begin_src emacs-lisp
+;; 将当前buffer中从开头到光标处的文本追加到指定buffer中
+(append-to-buffer "*scratch*" (point-min) (point))
+#+end_src
+
+**** 位置的指定
+***** (point) 在current buffer中的光标位置
+***** (point-min) 
+ current buffer 中最小的位置，通常为1
+
+
+***** (point-max)
+ current buffer 中最大的位置，通常为1+buffer中字符数
+
+***** (buffer-end flag)
+ 返回point-min，若 flag <= 0
+ 返回point-max，若 flag > 0
+
+***** (buffer-size [buffer对象] )
+ 返回（当前）buffer对象中的字符总数。可选参数不支持输入buffer名
+
+*** 例子
+这个函数说明了这点，首先随意打开一个除了scratch之外的buffer，
+并确保*scratch*这个buffer存在。
+然后调用test-buffer函数，可以观察到下面几点
+
+(defun test-buffer()
+    (interactive)
+  (set-buffer "*scratch*")
+  (insert "operate this buffer ")
+  )
+
+
+1. 显示上没有切换到其它buffer
+2. 当前窗口的buffer并没有被插入文本
+3. 查看*scratch*发现有新的文本被插入
+4. M-: (current-buffer) 后发现，current-buffer并不是代码中设置的
+
+
+
+
+** interactive 
+*** 简介
+被interactive标记的函数可以通过emacs命令的方式被调用。
+且interactive有可选参数，用于对传入函数的参数进行控制。
+每个参数的处理方式对应一个字母，若有多个参数则要用 \n 将多个控制字符分隔开，如："n\ns"
+#+begin_src emacs-lisp
+;; 在STR后连接N个hello，并将结果插入到光标处
+(defun test-arg(n str)
+  (interactive "n\ns")
+  (setq i 0)
+  (setq inserted str)
+  (while (< i n)
+    (setq  inserted  (concat inserted " hello"))
+    (setq i (+ 1 i))
+    )
+  (insert inserted)
+  )
+#+end_src 
+
+*** 以光标位置为参数 "d"
+ #+begin_src emacs-lisp
+;; 将当前buffer从开头到光标处的内容追加到指定buffer中
+ (defun test-arg-p(point)
+   (interactive "d")
+   (append-to-buffer "*scratch*" (point-min) point)
+ )
+ #+end_src 
+
+*** 前缀参数 "P/p"
+比如常用的：
+~M Num M-x 命令~
+或
+~C-u Num M-x 命令~
+
+M或C-u后面紧跟的数字就是前缀参数 prefix-argument
+在函数定义中对应于第一个可选optional参数
+用C-u调用命令时,若不给出数字作为前缀参数的情况下,默认会以 '(4 . nil) == (4)作为前缀参数
+
+interactive函数中的模式字符：P、p可以控制它
+P 则将保留参数的原始形式，没输入就是nil
+p 则将参数强制转换为数字形式，会将未输入对应nil转换为1（丢失掉了空语义）
+
+直接用M-x调用(interactive "p/P") 标记的函数时,若函数带有可选参数,则会默认
+
+
+
+
+
+
+
+
+
+
+
+
+** 文件/目录相关
+*** 当前目录 default-directory 
+这是一个类似环境变量的东西
+
+*** 查找包含指定文件的父目录 locate-dominating-file
+
+(locate-dominating-file  "start-dir" "target-filename" ) --> 父目录
+
+*** 打开文件 find-file 
+*** 判断某文件是否存在 file-exists-p
+*** 获取目录的名字 directory-file-name
+
+/home/sun/   --->   /home/sun
+(少了路径最后的斜线)
+
+*** 获取文件路径的目录部分 file-name-directory
+
+/home/sun/test.md  ---> /home/sun/ 
+(返回的目录路径 末尾最后有斜线)
+*** 将路径转换为绝对路径 <<expand-file-name>>
+(expand-file-name "path")  将路径一律转换为绝对路径
+
+
+** 字符串相关
+*** 字符串比较 string=
+(string= A B)
+*** 按照指定格式产生字符串format
+(format "格式字符串" 可变参数(各种lisp对象) )
+类似于C中的 sprintf/snprintf 
+
+*** extract substring from a string : substring
+(substring start-index  end-index) 左闭右开
+*** 用分割符切分字符串为list split-string 
+
+(split-string "[\n\r]+") -->  字符串的list
+(以换行符作切割)
+*** 获取某shell命令的返回结果字符串 shell-command-to-string
+(shell-command-to-string "ls") --> 命令的结果
+
+*** 进行字符串匹配 string-match
+
+(string-match "某个模式串的正则+用括号标记要提取的部分"  str  [start-index] )
+返回模式串在str中的开始index
+
+"hello1234world" ===="\\([0-9]+\\)[a-z]+"==========>  5 (能找到子串和正则匹配) 
+*** 返回string-match匹配上的模式串以及其中被()标记的部分 match-string
+(match-string 0 str) --> 整个匹配上的模式串
+(match-string 1 str) --> 模式串中第一个被()标记的部分
+(match-string 2 str) --> 模式串中第二个被()标记的部分
+*** 替换掉字符串中的某部分 replace-regexp-in-string 
+(replace-regexp-in-string "被替换部分的正则"  "用来替换的str"  string) 
+
+
+
+
+
+** list相关
+
+(cons  ...)
+(consp var)
+(list ...)
+(car list/cons)
+(cdr list/cons)
+
+*** 判断是否为lisp类型变量 listp
+determine if the type of a variable is List 
+(listp var) 
+
+*** 将新元素加入到list <<add-to-list>>
+(add-to-list 'list-name  (new-element) )
+ 只要list中没有此元素，则将它添加到list中 
+
+*** 将新元素添加到list队首 push <<push>> 
+(push element list)
+
+相当于 (set list (cons element list)) 
+
+
+*** 对list作用上一函数,返回被映射的新list : mapcar
+(mapcar func list ) --> new-list
+
+*** 遍历list中的每个元素,并使用元素做一些事情(相当于对list使用for) : dolist
+(dolist (element  list)
+    (;; 对element进行操作)
+)
+
+
+
+
+*** 在K-V对的list中找指定key的pair assq
+(assq key pair-list) 
+因为是用eq对地址进行比较，因此一般用在以symbol为key的情况下。
+
+*** 
+
+
+    
+** 数据类型
+*** 简介
+lisp对象：被lisp程序使用和操纵的程序
+type/data type : lisp对象组成的集合
+
+一个对象至少属于一个类型，并且类型之间是可以相交的；因此，可以说一个对象是否属于某特定的类型，但不能问它的类型是什么
+
+~primitive类型~ ：内置于emacs，并用来构造其它类型
+
+每个lisp对象属于有且唯一的primitive类型。
+
+如：integer, float, cons, symbol, string, vector, hash-table, subr, byte-code function, record, buffer
+
+每个primitive类型都有一个对应的类型检查函数，如：(string-p var)
+
+lisp是 ~self-typing~ 的，即每个primitive类型的lisp对象本身包含了类型信息，避免了类似在C语言中无法区分数字和指针。
+
+每个lisp变量可以是任何类型的，不需要事先为变量声明类型。并且它能记住存放的值、类型...
+ 
+*** 对象的输出表示 && 读取语法
+
+对象的输出表示就是函数prin1的输出格式，每种data type有唯一的输出
+对象的读取语法是函数read能接受的输入格式，它不一定是唯一的。
+大多数对象的输出表示就是其read syntax，但某些类型的对象是没有读取语法的，这种对象的输出表示为
+ ~#<类型 对象名>~
+例如buffer对象的输出：#<buffer elisp.org>
+
+在其他语言中，一个表达式仅有文本表示的形式；但在lisp中，一个表达式首先是lisp对象的形式，其次才是被称为读取语法的文本形式。 
+
+每当你交互地求值一个表达式时，lisp解释器首先读取表达式的文本表示，并构造对应的lisp对象，最后对该lisp对象进行求值。即：
+ 文本 ---reading---> lisp对象 ---evaluate---> 值（结果） 
+
+
+**** TODO 特殊的读取语法
+
+| 记号  | 含义               |
+|-------+--------------------|
+| #<..> | 该对象无读取语法   |
+| ##    | 无名对象的内部表示 |
+| #'    | function的缩写     |
+| #:AB  | 名为AB的符号       |
+|       |                    |
+
+*** 注释
+单行注释： 以分号; 开始
+针对二进制数据的注释：#@count 。跳过下面count个字符
+
+*** 和编程相关的类型 
+elisp中的类型可以粗略地分成两类：和lisp编程相关的，和[[editing-types][编辑]]相关的
+
+**** 整数类型
+具体来说存在两类整数：
+fixnums 定长整数：取值范围取决于机器
+bignums 任意精度的大整数
+
+***** 相等性测试
+通用操作： ~eql~ 和 ~=~ 
+fixnums还可以使用 ~eq~进行比较
+
+(message "%s" (eql 2333 2333))
+
+***** 类型判断
+可以手工地用fixnums的取值范围进行比较。
+most-negative-fixnum 和 most-postitive-fixnum 
+
+也可以利用现成的谓词：
+fixnump 
+bignump
+
+***** 整数的读取语法、输出表示
+十进制数字的序列，符号是可选的
+输出表示是不会出现 前面的“+”和最后的“.”
+
+**** 浮点数类型
+
+emacs中使用C的double类型来存储浮点数，其内部表示为2^N
+其输出表示要么包含小数点或指数，要么两者都有。
+
+例如1200的输出表示有:
+1200.0
++12e2
+12.0e2
+...
+
+**** 字符表示
+在emacs中，一个字符本质上只是一个数字而已。换句话讲，字符实际上表示为它们的字符编码。
+***** 基础字符语法
+读取语法： 问号+字符
+例：字符A的读取语法：?A
+
+非字母的读取语法要更特殊一些，需要加上\进行转义
+| 字符 | 读取语法 |
+|------+----------|
+| (    | ?\(      |
+| \    | ?\\      |
+
+
+***** CTRL字符的语法
+例如控制字符：C-i 的读取语法为
+?\C-i 或 ?\^i
+
+DEL： ?\^? 或 ?\C-?
+***** META字符的语法
+
+例如，M-A字符的写法： ?\M-A  或 ?\M-\101
+C-M-a 的read syntax为：?\M-\C-b 或 ?\M-\C-\001
+
+***** 其它字符修饰位
+
+| shift | \S- |
+| alt   | \A- |
+| hyper | \H- |
+| super | \s- |
+
+
+| space | \s  |
+
+
+
+
+
+
+
+
+**** 符号类型
+elisp中的符号是带名字的对象。通常情况下，符号的名字是唯一的，不存在两个符号有相同的名字。
+一个符号可以是一个变量、一个函数名，或者指代一个属性列表。在给定的上下文中，一个符号只能有一个用法。
+
+符号名称以 ~:~ 开头的是 ~keyword~ 符号。这些符号自动地变为常量，通常被用在比较一些特定的选项和未知的符号。
+
+命名规则：elisp中的符号名几乎可以是任何字符构成的，字母，数字，标点符号+-*/_~!@$%^&=:<>{} 
+当有字符产生了歧义，都可以通过用“\”对字符进行转义，来代表这个字符本身。
+因此“\t”可以成为符号名，它仅仅表示名字为t的符号。甚至一串数字也能作为符号名，只要对每个数字用反斜线进行转义即可。eg "\2\3\3"也是符号名。
+
+符号名的输出表示的特殊规则：
+~##~ 无名的内部符号
+~#:foo~ 名为foo的内部符号
+
+**** 顺序/序列类型 sequence 
+
+***** 概述
+表示有序集合，有两种顺序类型：list 和 数组
+
+list能存放任何类型的元素，其长度可以通过增加、减少元素来改变
+array是定长的序列，它还可以细分为：字符串、vector、char-table、bool-vector 。
+vector可以存放任意类型的元素，而字符串只能是字符元素的定长序列，bool-vector中的元素只能是t/nil
+char-table和vector相似，但它是通过该字符来索引的。
+字符串中的字符和buffer中的字符一样，有文本属性。但vector中的字符就不支持文本属性
+
+list和array有很多相同之处，如：都有长度L，有效索引从0到L-1。
+一些函数被称为 ~序列函数~ ，能接受任意类型的sequence作为参数。 ~(length  )~ 是典型的序列函数
+
+读取语法：
+若读入了某序列类型的对象的读取语法两次，则会导致创建两个内容相同的序列。这条规则的例外是空list：无论读取了几次空列表的read syntax，空表()总是代表相同的对象nil
+
+
+***** cons cell和list类型
+
+cons cell是由两个slot组成的对象，每个slot能存放任意类型的对象。
+称CAR为cons cell中的首个元素，CDR为第二个元素。
+
+list是由一系列cons cell组合而成的，每个cons-cell的CDR slot要么存放了下一个cons-cell，要么存放了空list对象nil。
+因为大多数cons-cell被用作list的一部分，我们将任何由cons-cell组合而成（哪怕不是这种组合方式）的结构称为 ~list结构~ 
+
+由于cons-cell在lisp中是十分重要的概念，我们给那些不含cons-cell的对象一个单独的名字： ~原子atoms~
+
+
+list的 ~read syntax和输出表示~ 是一样的：
+(A 23) 
+(A nil)
+()
+nil
+( (1 2) )
+
+在读取list的read-syntax后，括号内的每个元素都被创建了相应的cons-cell：其car为该元素本身，cdr指向下一个cons-cell，最后一个cons-cell的CDR为nil
+
+例子： (A () ) ==  (A nil) 的图示
+
+#+begin_src
+    --- ---      --- ---
+   |   |   |--> |   |   |--> nil
+    --- ---      --- ---
+     |            |
+     |            |
+      --> A        --> nil
+#+end_src
+
+
+****** 点对记号
+这是表示cons-cell的car和cdr的隐式记号，(a . b) 
+在“点对”记号下：list (1 2 3) 写作
+（1 . (2 . (3 . nil))) 
+
+****** ~alist~ 关联列表
+是一个元素都是cons-cell的列表。
+( (k1 . v1) (k2 . v2) (k3 . v3) )
+这种列表的元素的car叫做key，cdr叫做associate value（关联值）
+
+关联列表经常被用作stack，因为在其开头添加和删除元素比较容易。
+
+
+***** array数组类型
+****** array概述
+数组类型是顺序类型的子集，并且包含了string、vector、bool-vector、char-table类型。
+
+数组类型的对象是由任意数量的、连续存储的slot组成的，每个slot用于存放/引用其它lisp对象。
+访问任意array元素所花费的时间几乎是相同的，而访问list的元素所花时间和其所在位置成正比。
+数组的最大长度是最大的fixnum，这取决于机器架构和内存大小。
+
+每种array类型都有其特殊的read-syntax。
+
+****** 字符串类型
+
+******* read-syntax 
+string 的read-syntax是由双引号包围的字符序列。
+使用\ 来转义如 " \ 这样的特殊字符。-->  \"  \\
+在字面表示中使用反引号+<enter> 可以在显示上将长字符串分成多行，但实际上却并没有将其分割。
+eg：
+#+begin_src  emacs-lisp
+"hello \
+world"
+即：
+"hello world"
+#+end_src
+
+******* TODO string中的非ASCII字符
+
+******* TODO string中的非打印字符
+
+******* string中的文本属性
+带有文本属性的字符串的read syntax和输出表示为
+#("字符串" 0 3 (face bold) 3 4 nil 4 7 (face italic))
+即字符串+属性列表，每个属性是一个三元组，前两个数字是属性的作用范围，最后一个是属性。
+
+
+****** vector类型
+vector是任何类型元素构成的一维数组，访问vector的元素花费常数级别的时间，输出表示和read syntax都是相同的：
+整vector是由中括号包围起来的。
+[1 "two" 233] 
+
+
+****** char-table类型
+其输出表示、read syntax和vector类似，只是它是以#^开始的。
+
+have a parent to inherit from, 
+a default value, 
+and a small number of extra slots to use for special purposes. 
+
+specify a single value for a whole character set.
+
+****** bool-vector类型
+
+其输出表示类似于string，除了它是以"#&"开始的。
+
+一个字符表示8位，前面的位数说明了该bool-vector实际上包含了该字符对应的低N位
+
+| #&N位"^@" | 八个0中的低N位, 字符^@表示八个0        |
+| #&N位"^O" | 八个1中的低N位，字符^O表示八个1        |
+| #&3"\337" | 八进制数，bool-vector取这9位中的低三位 |
+
+(make-bool-vector 4 nil)
+#&4" "
+
+(equal #&3"\337" #&"\007")  ---> true 
+因为低3位是相同的
+
+**** hash-table类型
+hash-table是一种查询速度更快的alist，可以通过key迅速查到对应的值。
+
+以#s开始，括号中的前半部分是hash-table的一些属性，最后是hashtable的键值对
+#s(hash-table size 30 data (key1 val1 key2 300))
+
+**** 函数类型
+lisp中的函数不仅是可执行的代码，也是lisp对象。未经编译的lisp函数是lambda表达式（以lambda开头的list）
+
+在很多语言中，不可能存在没有名字的函数，但在lisp中，一个lambda表达式可以像一个函数被调用。
+为了强调这点，也将lambda称为匿名函数。
+
+大多数的函数调用是通过函数名的，但可以在运行时也能构造函数对象，并用原生函数funcall和apply来调用它。
+
+**** 宏macro类型
+lisp中的宏是用户定义的用来扩展lisp语言本身的结构，它作为对象的表现更像函数，但有着不同的参数传递语义。
+从形式上来看宏是一个以macro开始的列表，其CDR是lisp函数对象（包含lambda）
+lisp宏对象通常用内置的 ~defmacro~ 来定义，但也可以用以macro开头的列表来定义
+
+**** 原生函数类型
+原生primitive函数是可以用lisp的方式调用的C实现的函数，它也被叫做 ~subrc~ 或 ~内建函数~ 
+当原生函数被调用时，默认会先对其参数进行求值，除非使用特殊的方式来调用原生函数。
+对调用者来说，无所谓函数是否是原生的。只有在lisp中重新定义原生函数时才要进行区分，因为C代码中仍会调用原始的C函数，而不会调用重新定义的lisp版本函数。因此尽量不要重定义原生函数。
+
+- 返回符号对应的函数对象（function cell）
+(symbol-function '符号名)
+
+- 判断是否是原生函数
+(subrp '函数对象function-cell)
+
+**** 字节码函数类型
+
+字节码函数对象是通过 字节编译(byte-compiling) Lisp代码产生的.
+在内部字节码函数对象十分类似vector. 然而在函数调用中, 求值器会对这种类型进行特殊处理.
+**** record类型                                        
+record在形式上类似vector, 但其首个元素是用来存放类型名的. 可以用type-of获取
+record经常用于自定义新类型.
+
+**** type-desciptors 类型描述符
+类型描述符是一个存放着类型信息的record, 首个位置必须是类型名. 函数type-of依赖这个特性返回record对象的类型. 
+
+cl-structure-class
+
+**** autoload类型
+autoload对象是一个以"autoload"开头的list. 它是某些函数定义的占位符, 记录了有助于找到函数定义的信息 (文件名等)  只有当用到该函数时,才会寻找定义并导入, 然后将占位符换成真正的定义. 
+
+**** finalizer类型 
+一个finalizer类型的对象负责清理某些不再需要的对象. finalizer对象中包含一个lisp函数对象 ,当一个finalizer对象在一轮垃圾回收后 变为不可达时, emacs会调用finalizer中的函数对象. 在finalizer对象是否为不可达时, 不会将其它finalizer对象对当前finalizer对象的引用计入在内.
+
+*** 和编辑有关的类型 <<editing-types>>
+**** buffer类型
+**** 标记类型 (buffer中的位置)
+**** 窗口类型
+**** 框架类型 
+窗口类型是其子类型?
+**** 终端类型
+用于显示框架对象的终端设备
+**** 窗口配置类型
+记录如何划分一个框架
+**** 框架配置类型
+记录了所有frame的状态
+**** 进程类型
+**** 线程类型
+**** mutex类型(排他锁)
+**** 条件变量类型
+**** 流类型
+用于接收和发送字符
+**** keymap类型
+描述了击键及其触发的函数的对应关系
+**** overlay类型
+覆盖是如何表示的
+**** 字体类型
+控制显示文本的字体
+
+*** 环形对象的read-syntax
+
+*** 类型谓词
+
+*** 相等性判断
+
+
+
+
+** 显示
+*** 自动换行
+默认的行为是截断显示过长的行，将truncate-lines设为nil即可
+(setq truncate-lines nil)
+
+
+

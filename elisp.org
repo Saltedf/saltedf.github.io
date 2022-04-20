@@ -1,0 +1,1366 @@
+#+TITEL elisp
+
+
+M-x org-indent-mode
+
+** 基本约定
+*** "the lisp reader/printer"
+指代从lisp对象的文本表示转换为实际lisp对象的程序reader
+反之为printer
+
+*** nil的语义
+**** bool值false
+**** 名为nil的符号，其值为nil
+**** 空列表 ()
+
+*** 真值的表示
+任何非nil的值都能表示true。但为了语义上的清析，多用“t” 来表示true
+这是一个名字为t，值为t的变量。
+
+*** nil和t都是常量
+对它们的更改会导致setting-constant错误的产生。
+
+*** 判断是否为bool类型
+(booleanp var)
+
+(booleanp nil)
+
+
+** require / provide 
+
+*** 在文件末尾导出模块 
+(provide 'module-name)
+
+*** 导入模块
+(require 'module-name)
+
+*** emacs的导入模块的寻找路径(load-path)
+在变量 load-path 中记录
+(/home/sun/.emacs.d/company-english-helper /home/sun/.emacs.d/insert-translated-name  。。。)
+
+*** 添加新的模块到load-path
+(add-to-list 'load-path (expand-file-name "目录路径"))
+
+[[add-to-list]]
+[[push]]
+[[expand-file-name]]
+
+*** 将当前目录下的每个目录的路径加入到loadpath中
+(normal-top-level-add-subdirs-to-load-path)
+
+Recursively add all subdirectories of ‘default-directory’ to ‘load-path’.
+
+eg: 
+default-directory == "./src/"
+则将 ./src/cpp/ ./src/mynote/ 等目录路径加入load-path中
+
+
+
+** interactive 
+*** 简介
+被interactive标记的函数可以通过emacs命令的方式被调用。
+且interactive有可选参数，用于对传入函数的参数进行控制。
+每个参数的处理方式对应一个字母，若有多个参数则要用 \n 将多个控制字符分隔开，如："n\ns"
+#+begin_src emacs-lisp
+;; 在STR后连接N个hello，并将结果插入到光标处
+(defun test-arg(n str)
+  (interactive "n\ns")
+  (setq i 0)
+  (setq inserted str)
+  (while (< i n)
+    (setq  inserted  (concat inserted " hello"))
+    (setq i (+ 1 i))
+    )
+  (insert inserted)
+  )
+#+end_src 
+
+*** 以光标位置为参数 "d"
+ #+begin_src emacs-lisp
+;; 将当前buffer从开头到光标处的内容追加到指定buffer中
+ (defun test-arg-p(point)
+   (interactive "d")
+   (append-to-buffer "*scratch*" (point-min) point)
+ )
+ #+end_src 
+
+*** 前缀参数 "P/p"
+比如常用的：
+~M Num M-x 命令~
+或
+~C-u Num M-x 命令~
+
+M或C-u后面紧跟的数字就是前缀参数 prefix-argument
+在函数定义中对应于第一个可选optional参数
+用C-u调用命令时,若不给出数字作为前缀参数的情况下,默认会以 '(4 . nil) == (4)作为前缀参数
+
+interactive函数中的模式字符：P、p可以控制它
+P 则将保留参数的原始形式，没输入就是nil
+p 则将参数强制转换为数字形式，会将未输入对应nil转换为1（丢失掉了空语义）
+
+直接用M-x调用(interactive "p/P") 标记的函数时,若函数带有可选参数,则会默认
+
+
+
+
+
+
+
+
+
+
+
+
+** 文件/目录相关
+*** 当前目录 default-directory 
+这是一个类似环境变量的东西
+
+*** 查找包含指定文件的父目录 locate-dominating-file
+
+(locate-dominating-file  "start-dir" "target-filename" ) --> 父目录
+
+*** 打开文件 find-file 
+*** 判断某文件是否存在 file-exists-p
+*** 获取目录的名字 directory-file-name
+
+/home/sun/   --->   /home/sun
+(少了路径最后的斜线)
+
+*** 获取文件路径的目录部分 file-name-directory
+
+/home/sun/test.md  ---> /home/sun/ 
+(返回的目录路径 末尾最后有斜线)
+*** 将路径转换为绝对路径 <<expand-file-name>>
+(expand-file-name "path")  将路径一律转换为绝对路径
+
+*** 返回目录形式的文件路径(加个斜线在最后) file-name-as-directory 
+(file-name-as-directory "./src") --> "./src/"
+
+
+** list相关
+
+*** note
+
+    (cons  ...)
+    (consp var)
+    (list ...)
+    (car list/cons)
+    (cdr list/cons)
+
+**** 判断是否为lisp类型变量 listp
+     determine if the type of a variable is List 
+     (listp var) 
+
+**** 将新元素加入到list头部 <<add-to-list>>
+     (add-to-list 'list-name  (new-element) )
+     只要list中没有此元素，则将它添加到list中 并返回结果list
+
+
+**** 将新元素添加到list队首 push <<push>> 
+     (push element list)
+
+     相当于 (set list (cons element list)) 
+
+
+**** 对list作用上一函数,返回被映射的新list : mapcar
+     (mapcar func list ) --> new-list
+     
+**** 遍历list中的每个元素,并使用元素做一些事情(相当于对list使用for) : dolist
+     (dolist (element  list)
+     (;; 对element进行操作)
+     )
+
+
+
+
+**** 在K-V对的list中找指定key的pair assq
+     (assq key pair-list) 
+     因为是用eq对地址进行比较，因此一般用在以symbol为key的情况下。
+
+**** 将每个元素映射后的结果用分隔符连接为字符串 mapconcat 
+     (mapconcat func list 分隔符) 
+
+
+*** list和cons cell
+list在lisp中不是基本数据类型, 它是由cons-cell构成的. cons-cell是一个有序对.
+list是一系列cons cell链接而成的,每个cons cell都引用下一个cons cell. list中的每个元素都对应于一个cons-cell
+每个cons-cell的car都存放着list中的一个元素, 其cdr用于链接list中的其它cons-cell. 
+约定上, list中的最后一个cons-cell的cdr是nil. 我们称这样以nil结尾的结构为 ~正规list~ . 在lisp中nil即表示符号也表示空列表.
+为了方便nil被视为 (nil . nil)
+
+若一个list的最后一个cons-cell的cdr不是nil, 则将这种list 称为 ~dotted-list. 因为其输出表示时用点对记号表示的.
+还有一种可能性就是某些cons-cell的cdr指向list中前面的cons-cell, 称这种list为环形list
+
+*** 和list相关的谓词 
+
+**** 判断是否为cons-cell? consp
+
+**** 判断是否为原子类型 atom
+atom == !consp
+
+**** 判断是否为list listp
+
+nlistp == ! lisp
+
+**** 判断对象是否为空 null
+
+**** 判断是否为正规list(proper-list) proper-list-p 
+
+*** 访问list中的元素 
+
+**** 访问cons-cell中的car部分 car/car-safe
+car-safe会判断对象是否为cons-cell类型, 如不是则会返回空
+**** 访问cons-cell中的cdr部分 cdr/cdr-safe
+
+**** 移除list中首个元素,并返回它 pop
+
+(pop '(1 3 4)) ==> 1 
+
+**** 返回list中指定索引处元素 nth
+(nth 0 '(1 2 3)) --> 1 
+
+**** 返回list中第N个CDR nthcdr
+(nthcdr 0 '(1 3 4)) --> '(1 3 4)
+(nthcdr 1 '(1 3 4)) --> '(3 4)
+(nthcdr 2 '(1 3 4)) --> '(4)
+(nthcdr 3 '(1 3 4)) --> nil
+
+**** 返回list中最后一个cons-cell last
+(last '(1 2 3)) --> (1)
+(last '(2)) --> (2) 
+其返回结果的CAR是list的最后一个元素
+
+**** 去掉list中后N个元素(并返回剩下元素的拷贝)  butlast
+
+(butlast '(1 2 3)) --> (1 2)
+(butlast '(1 2 3) 1 ) --> (1 2)
+(butlast '(1 2 3) 2 ) --> (1) 
+
+**** 去掉list中后N个元素(修改原来的list,无拷贝) nbutlast 
+
+**** 安全的计算list长度 safe-length    
+不用担心环形list导致的无限循环
+
+**** 两次CAR操作 caar
+(caar list)
+**** 两次CDR操作 cddr
+**** CAR+CDR操作 cadr
+**** CDR+CAR操作 cdar
+
+*** 创建list/cons-cell
+
+
+**** 创建cons-cell/ 在list头部添加元素  cons 
+(cons 1 '(2)) --> (1 2) == (1 . (2 . nil))
+
+(cons 1 '() ) --> (1) == (1 . nil)
+
+(cons 1 2) --> (1 . 2) 
+**** 创建N个指定元素的list make-list
+(make-list N elem)
+
+**** 将一系列对象连成list append 
+append 一系列序列类型的对象 (最后一个必为list!) 
+(append '(1 3) '(2 4) ) --> (1 3 2 4)
+
+该函数会复制除了最后一个参数之外的所有参数, 再和最后一个参数组合成list
+这衍生出了 ~复制list~ 的方法
+(append 要复制的list  nil ) --> list副本
+
+**** 递归复制cons-cell  copy-tree 
+
+(copy-tree tree/cons-cell类型  [是否复制vector])
+通过递归复制将产生一个新的cons-cell. 
+
+参数可以是非cons-cell类型的, 但这样不会导致复制, 而是简单地返回该参数对应的对象.
+除非参数是个vector类型的对象, 且将第三个参数设为t
+
+例子
+#+begin_src emacs-lisp
+(setq vec [2 3 4])
+(message "%s" (eq vec (copy-tree vec))) ;;--> t 说明是同一对象,vector并没有发生复制
+(message "%s" (eq vec (copy-tree vec t)) ) --> nil 即不是同一对象,发生了对vector的复制
+#+end_src 
+
+
+**** 将树tree转为list flatten-tree 
+     
+
+
+**** 产生指定范围内的等差数列list : number-sequence
+(number-sequence 开始 结束 公差 ) 
+
+例子
+(number-sequence 2 10)  --> (2 3 4 5 6 7 8 9 10) 
+
+(number-sequence 10 2 -1) --> (10 9 8 7 6 5 4 3 2) 
+
+
+*** 修改list类型变量
+
+**** 添加元素到list变量头部  push
+(push 新元素  list变量) == (set list变量 (cons list变量 新元素))
+
+
+**** 只要不重复就添加到list头部 add-to-list
+(add-to-list list对象  元素 )
+
+(add-to-list '(2 3 4) 3) ==> (2 3 4)
+
+
+**** TODO ??? add-to-ordered-list ??? 
+
+(add-to-ordered-list list变量  元素 [位置] ) 
+
+#+begin_src emacs-lisp
+(let* ((foo '(b d e) ))
+(add-to-ordered-list 'foo 'a )
+(message "%s"  foo) ;; --> a b d e 
+)
+
+(let* ((foo '(b d e) ))
+  (add-to-ordered-list 'foo 'a 3)
+  (message "%s"  foo) ;; --> d a b e 
+)
+#+end_src 
+
+
+*** 修改已经存在的list结构
+可以用setcar和setcdr来修改cons-cell的car和cdr部分, 这两个操作是破坏性的(原地修改?), 因为他们修改了已经存在的list
+破坏性的操作应当只用在mutable的list上: 即使用cons/list等操作形成的list.
+由引用(quoting ')创建的list是不应该用下面这操作进行修改的.
+
+**** setcar
+(setcar mutable-list 新的car) --> 新的car
+
+(setcar (cons 1 3) 2) --> 2
+ 
+若使用setcar的cons-cell是某些list中的一部分, 则这些list也会受影响
+#+begin_src emacs-lisp
+(setq  x (list 'a 'b 'c))
+(setq  y (list 'z (cdr x)))
+
+(setcar (cdr x ) 'foo)
+
+(message "%s" x) -->  ('a 'foo 'c) 
+(message "%s" y) --> ('z 'foo 'c)
+
+
+
+x:
+ --------------       --------------       --------------
+| car   | cdr  |     | car   | cdr  |     | car   | cdr  |
+|   a   |   o------->|   b   |   o------->|   c   |  nil |
+|       |      |  -->|       |      |     |       |      |
+ --------------  |    --------------       --------------
+                 |
+y:               |
+ --------------  |
+| car   | cdr  | |
+|   z   |   o----
+|       |      |
+ --------------
+#+end_src
+
+
+**** setcdr
+将cons-cell的cdr指向新的cons-cell对象
+
+(setq x (list 1 2 3))
+(setcdr x '(5)) --> (5)
+
+可以利用它删除list中间的元素
+eg:
+(setq y (list 2 3 4))
+(setcdr y (cdr (cdr y)) )
+ ==> y = ( 2 4)
+
+也可利用它在list中插入元素
+
+(setq z (list 3 4 5)
+(setcdr z (cons 1 (cdr z)))
+z --> (3 1 4 5)
+
+**** rearrangement 
+
+
+
+** 数据类型
+*** 简介
+lisp对象：被lisp程序使用和操纵的程序
+type/data type : lisp对象组成的集合
+
+一个对象至少属于一个类型，并且类型之间是可以相交的；因此，可以说一个对象是否属于某特定的类型，但不能问它的类型是什么
+
+~primitive类型~ ：内置于emacs，并用来构造其它类型
+
+每个lisp对象属于有且唯一的primitive类型。
+
+如：integer, float, cons, symbol, string, vector, hash-table, subr, byte-code function, record, buffer
+
+每个primitive类型都有一个对应的类型检查函数，如：(string-p var)
+
+lisp是 ~self-typing~ 的，即每个primitive类型的lisp对象本身包含了类型信息，避免了类似在C语言中无法区分数字和指针。
+
+每个lisp变量可以是任何类型的，不需要事先为变量声明类型。并且它能记住存放的值、类型...
+ 
+*** 对象的输出表示 && 读取语法
+
+对象的输出表示就是函数prin1的输出格式，每种data type有唯一的输出
+对象的读取语法是函数read能接受的输入格式，它不一定是唯一的。
+大多数对象的输出表示就是其read syntax，但某些类型的对象是没有读取语法的，这种对象的输出表示为
+ ~#<类型 对象名>~
+例如buffer对象的输出：#<buffer elisp.org>
+
+在其他语言中，一个表达式仅有文本表示的形式；但在lisp中，一个表达式首先是lisp对象的形式，其次才是被称为读取语法的文本形式。 
+
+每当你交互地求值一个表达式时，lisp解释器首先读取表达式的文本表示，并构造对应的lisp对象，最后对该lisp对象进行求值。即：
+ 文本 ---reading---> lisp对象 ---evaluate---> 值（结果） 
+
+
+**** TODO 特殊的读取语法
+
+| 记号  | 含义               |
+|-------+--------------------|
+| #<..> | 该对象无读取语法   |
+| ##    | 无名对象的内部表示 |
+| #'    | function的缩写     |
+| #:AB  | 名为AB的符号       |
+|       |                    |
+
+*** 注释
+单行注释： 以分号; 开始
+针对二进制数据的注释：#@count 。跳过下面count个字符
+
+*** 和编程相关的类型 
+elisp中的类型可以粗略地分成两类：和lisp编程相关的，和[[editing-types][编辑]]相关的
+
+**** 整数类型
+具体来说存在两类整数：
+fixnums 定长整数：取值范围取决于机器
+bignums 任意精度的大整数
+
+***** 相等性测试
+通用操作： ~eql~ 和 ~=~ 
+fixnums还可以使用 ~eq~进行比较
+
+(message "%s" (eql 2333 2333))
+
+***** 类型判断
+可以手工地用fixnums的取值范围进行比较。
+most-negative-fixnum 和 most-postitive-fixnum 
+
+也可以利用现成的谓词：
+fixnump 
+bignump
+
+***** 整数的读取语法、输出表示
+十进制数字的序列，符号是可选的
+输出表示是不会出现 前面的“+”和最后的“.”
+
+**** 浮点数类型
+
+emacs中使用C的double类型来存储浮点数，其内部表示为2^N
+其输出表示要么包含小数点或指数，要么两者都有。
+
+例如1200的输出表示有:
+1200.0
++12e2
+12.0e2
+...
+
+**** 字符表示
+在emacs中，一个字符本质上只是一个数字而已。换句话讲，字符实际上表示为它们的字符编码。
+***** 基础字符语法
+读取语法： 问号+字符
+例：字符A的读取语法：?A
+
+非字母的读取语法要更特殊一些，需要加上\进行转义
+| 字符 | 读取语法 |
+|------+----------|
+| (    | ?\(      |
+| \    | ?\\      |
+
+
+***** CTRL字符的语法
+例如控制字符：C-i 的读取语法为
+?\C-i 或 ?\^i
+
+DEL： ?\^? 或 ?\C-?
+***** META字符的语法
+
+例如，M-A字符的写法： ?\M-A  或 ?\M-\101
+C-M-a 的read syntax为：?\M-\C-b 或 ?\M-\C-\001
+
+***** 其它字符修饰位
+
+| shift | \S- |
+| alt   | \A- |
+| hyper | \H- |
+| super | \s- |
+
+
+| space | \s  |
+
+
+
+
+
+
+
+
+**** 符号类型
+elisp中的符号是带名字的对象。通常情况下，符号的名字是唯一的，不存在两个符号有相同的名字。
+一个符号可以是一个变量、一个函数名，或者指代一个属性列表。在给定的上下文中，一个符号只能有一个用法。
+
+符号名称以 ~:~ 开头的是 ~keyword~ 符号。这些符号自动地变为常量，通常被用在比较一些特定的选项和未知的符号。
+
+命名规则：elisp中的符号名几乎可以是任何字符构成的，字母，数字，标点符号+-*/_~!@$%^&=:<>{} 
+当有字符产生了歧义，都可以通过用“\”对字符进行转义，来代表这个字符本身。
+因此“\t”可以成为符号名，它仅仅表示名字为t的符号。甚至一串数字也能作为符号名，只要对每个数字用反斜线进行转义即可。eg "\2\3\3"也是符号名。
+
+符号名的输出表示的特殊规则：
+~##~ 无名的内部符号
+~#:foo~ 名为foo的内部符号
+
+**** 顺序/序列类型 sequence 
+
+***** 概述
+表示有序集合，有两种顺序类型：list 和 数组
+
+list能存放任何类型的元素，其长度可以通过增加、减少元素来改变
+array是定长的序列，它还可以细分为：字符串、vector、char-table、bool-vector 。
+vector可以存放任意类型的元素，而字符串只能是字符元素的定长序列，bool-vector中的元素只能是t/nil
+char-table和vector相似，但它是通过该字符来索引的。
+字符串中的字符和buffer中的字符一样，有文本属性。但vector中的字符就不支持文本属性
+
+list和array有很多相同之处，如：都有长度L，有效索引从0到L-1。
+一些函数被称为 ~序列函数~ ，能接受任意类型的sequence作为参数。 ~(length X)~ 是典型的序列函数
+
+读取语法：
+若读入了某序列类型的对象的读取语法两次，则会导致创建两个内容相同的序列。这条规则的例外是空list：无论读取了几次空列表的read syntax，空表()总是代表相同的对象nil
+
+
+***** cons cell和list类型
+
+cons cell是由两个slot组成的对象，每个slot能存放任意类型的对象。
+称CAR为cons cell中的首个元素，CDR为第二个元素。
+
+list是由一系列cons cell组合而成的，每个cons-cell的CDR slot要么存放了下一个cons-cell，要么存放了空list对象nil。
+因为大多数cons-cell被用作list的一部分，我们将任何由cons-cell组合而成（哪怕不是这种组合方式）的结构称为 ~list结构~ 
+
+由于cons-cell在lisp中是十分重要的概念，我们给那些不含cons-cell的对象一个单独的名字： ~原子atoms~
+
+
+list的 ~read syntax和输出表示~ 是一样的：
+(A 23) 
+(A nil)
+()
+nil
+( (1 2) )
+
+在读取list的read-syntax后，括号内的每个元素都被创建了相应的cons-cell：其car为该元素本身，cdr指向下一个cons-cell，最后一个cons-cell的CDR为nil
+
+例子： (A () ) ==  (A nil) 的图示
+
+#+begin_src
+    --- ---      --- ---
+   |   |   |--> |   |   |--> nil
+    --- ---      --- ---
+     |            |
+     |            |
+      --> A        --> nil
+#+end_src
+
+
+****** 点对记号
+这是表示cons-cell的car和cdr的隐式记号，(a . b) 
+在“点对”记号下：list (1 2 3) 写作
+（1 . (2 . (3 . nil))) 
+
+****** ~alist~ 关联列表
+是一个元素都是cons-cell的列表。
+( (k1 . v1) (k2 . v2) (k3 . v3) )
+这种列表的元素的car叫做key，cdr叫做associate value（关联值）
+
+关联列表经常被用作stack，因为在其开头添加和删除元素比较容易。
+
+
+***** array数组类型
+****** array概述
+数组类型是顺序类型的子集，并且包含了string、vector、bool-vector、char-table类型。
+
+数组类型的对象是由任意数量的、连续存储的slot组成的，每个slot用于存放/引用其它lisp对象。
+访问任意array元素所花费的时间几乎是相同的，而访问list的元素所花时间和其所在位置成正比。
+数组的最大长度是最大的fixnum，这取决于机器架构和内存大小。
+
+每种array类型都有其特殊的read-syntax。
+
+****** 字符串类型
+
+******* read-syntax 
+string 的read-syntax是由双引号包围的字符序列。
+使用\ 来转义如 " \ 这样的特殊字符。-->  \"  \\
+在字面表示中使用反引号+<enter> 可以在显示上将长字符串分成多行，但实际上却并没有将其分割。
+eg：
+#+begin_src  emacs-lisp
+"hello \
+world"
+即：
+"hello world"
+#+end_src
+
+******* TODO string中的非ASCII字符
+
+******* TODO string中的非打印字符
+
+******* string中的文本属性
+带有文本属性的字符串的read syntax和输出表示为
+#("字符串" 0 3 (face bold) 3 4 nil 4 7 (face italic))
+即字符串+属性列表，每个属性是一个三元组，前两个数字是属性的作用范围，最后一个是属性。
+
+
+****** vector类型
+vector是任何类型元素构成的一维数组，访问vector的元素花费常数级别的时间，输出表示和read syntax都是相同的：
+整vector是由中括号包围起来的。
+[1 "two" 233] 
+
+
+****** char-table类型
+其输出表示、read syntax和vector类似，只是它是以#^开始的。
+
+have a parent to inherit from, 
+a default value, 
+and a small number of extra slots to use for special purposes. 
+
+specify a single value for a whole character set.
+
+****** bool-vector类型
+
+其输出表示类似于string，除了它是以"#&"开始的。
+
+一个字符表示8位，前面的位数说明了该bool-vector实际上包含了该字符对应的低N位
+
+| #&N位"^@" | 八个0中的低N位, 字符^@表示八个0        |
+| #&N位"^O" | 八个1中的低N位，字符^O表示八个1        |
+| #&3"\337" | 八进制数，bool-vector取这9位中的低三位 |
+
+(make-bool-vector 4 nil)
+#&4""
+
+(equal #&3"\337" #&"\007")  ---> true 
+因为低3位是相同的
+
+**** hash-table类型
+hash-table是一种查询速度更快的alist，可以通过key迅速查到对应的值。
+
+以#s开始，括号中的前半部分是hash-table的一些属性，最后是hashtable的键值对
+#s(hash-table size 30 data (key1 val1 key2 300))
+
+**** 函数类型
+lisp中的函数不仅是可执行的代码，也是lisp对象。未经编译的lisp函数是lambda表达式（以lambda开头的list）
+
+在很多语言中，不可能存在没有名字的函数，但在lisp中，一个lambda表达式可以像一个函数被调用。
+为了强调这点，也将lambda称为匿名函数。
+
+大多数的函数调用是通过函数名的，但可以在运行时也能构造函数对象，并用原生函数funcall和apply来调用它。
+
+**** 宏macro类型
+lisp中的宏是用户定义的用来扩展lisp语言本身的结构，它作为对象的表现更像函数，但有着不同的参数传递语义。
+从形式上来看宏是一个以macro开始的列表，其CDR是lisp函数对象（包含lambda）
+lisp宏对象通常用内置的 ~defmacro~ 来定义，但也可以用以macro开头的列表来定义
+
+**** 原生函数类型
+原生primitive函数是可以用lisp的方式调用的C实现的函数，它也被叫做 ~subrc~ 或 ~内建函数~ 
+当原生函数被调用时，默认会先对其参数进行求值，除非使用特殊的方式来调用原生函数。
+对调用者来说，无所谓函数是否是原生的。只有在lisp中重新定义原生函数时才要进行区分，因为C代码中仍会调用原始的C函数，而不会调用重新定义的lisp版本函数。因此尽量不要重定义原生函数。
+
+- 返回符号对应的函数对象（function cell）
+(symbol-function '符号名)
+
+- 判断是否是原生函数
+(subrp '函数对象function-cell)
+
+**** 字节码函数类型
+
+字节码函数对象是通过 字节编译(byte-compiling) Lisp代码产生的.
+在内部字节码函数对象十分类似vector. 然而在函数调用中, 求值器会对这种类型进行特殊处理.
+**** record类型                                        
+record在形式上类似vector, 但其首个元素是用来存放类型名的. 可以用type-of获取
+record经常用于自定义新类型.
+
+**** type-desciptors 类型描述符
+类型描述符是一个存放着类型信息的record, 首个位置必须是类型名. 函数type-of依赖这个特性返回record对象的类型. 
+
+cl-structure-class
+
+**** autoload类型
+autoload对象是一个以"autoload"开头的list. 它是某些函数定义的占位符, 记录了有助于找到函数定义的信息 (文件名等)  只有当用到该函数时,才会寻找定义并导入, 然后将占位符换成真正的定义. 
+
+**** finalizer类型 
+一个finalizer类型的对象负责清理某些不再需要的对象. finalizer对象中包含一个lisp函数对象 ,当一个finalizer对象在一轮垃圾回收后 变为不可达时, emacs会调用finalizer中的函数对象. 在finalizer对象是否为不可达时, 不会将其它finalizer对象对当前finalizer对象的引用计入在内.
+
+*** 和编辑有关的类型 <<editing-types>>
+**** buffer类型
+buffer是一个存放着能被编辑的文本的对象. 大多数buffer存放的内容是位于磁盘上的文件,因此这些buffer是可修改的. 但另一些buffer却不是. 大多数的buffer是对用户可见的,因此会被显示在屏幕上.但一个buffer不需要在每个窗口中都显示,每个buffer有被称为 ~point~ 的指定位置. 大多数编辑命令作用于 ~current buffer~ 中的point(光标)附近. 在任何一个时刻只能存在一个current buffer .
+buffer对象中的内容十分类似字符串,但buffer不像string那样被使用. 例如可以高效地插入文字到buffer中,但对字符串进行插入则涉及到字符串的拼接, 并且还要返回一个新的字符串对象.
+
+一些数据结构是和每个buffer都相关的:
+- 局部语法表
+- 局部keymap
+- buffer内的变量list
+- 覆盖 overlay
+- buffer内文字的文本属性 
+
+局部的keymap和变量list是独立于全局的变量定义和键位绑定的,他们只是用来控制程序在不同buffer中的行为.
+
+buffer可以是间接的, 这意味着一个buffer可以和另一个buffer共享文本,但可以用不同的方式显示它.
+
+**** 标记类型 (buffer中的位置)
+marker类型对象描述了在特定buffer中的位置, 每个marker有两个部分: 其一是buffer,其二是位置
+
+**** 窗口类型
+是用来显示一个buffer的终端屏幕的一部分. 每个窗口都有一个关联的buffer, 其内容显示在window上, 反之对每个给出的buffer来说, 它要么不出现在任何window中,要么出现在一个或多个window中.
+
+尽管多个窗口可以同时存在, 但在任何一个时刻,只能有一个window是 ~select window~ ,它是emacs准备好执行命令时,光标所在的window. 通常select window显示的是current buffer, 但也有例外的情况.
+
+在屏幕上window被分组到frame. 每个窗口属于唯一一个框架frame.
+
+window同样没有read syntax, 其输出表示中包含了窗口序号, 窗口序号唯一地标识了窗口.
+
+**** 框架类型 
+窗口类型是其子类型?
+frame是包含了一个或多个window对象的屏幕区域. 常常也用术语"frame"指代屏幕区域. 
+**** 终端类型
+用于显示框架对象的终端设备
+**** 窗口配置类型
+记录了窗口在frame中的布局信息, 因此可以用这些信息来恢复窗口的排列方式.
+**** 框架配置类型
+记录了所有frame的状态
+通常是一个list, 其CAR为frame-configuration, 其CDR为一个alist, 每个元素记录了一个frame的各种信息
+**** 进程类型
+**** 线程类型
+**** mutex类型(排他锁)
+**** 条件变量类型
+
+**** 流类型
+用于接收和发送字符.
+很多类型都可以完成这样的功能,当通常输入流从键盘/buffer/文件 中获取字符, 输出流发送字符到buffer中或echo area
+
+对象nil在这里还能表示一个流,它表示的是标准输入/输出; 类似地,对象t 表示使用minibuffer的输入流, 或者通过echo area的输出流
+
+**** keymap类型
+描述了击键及其触发的函数的对应关系
+**** overlay类型
+覆盖是如何表示的
+**** 字体类型
+控制显示文本的字体
+
+*** TODO 环形对象的read-syntax
+
+*** TODO 类型谓词
+
+*** 相等性判断
+
+**** eq 
+eq 判断符号 在符号是同一个是才返回t
+eq 判断非数值 只有是同一对象才是true, 内容相同也为nil
+eq 判断数值 若值/类型不同,则返回nil;若两个定点数的值相同则为t; 若两个值相同的非定点数比较则结果不定.
+
+**** equal 
+若两个被比较的对象有相同的组成,则为t ; 并且若它们用eq比较的结果为t, 则它们用equal结果也为t
+
+**** equal-including-properties 
+它几乎和equal的行为相同,除了在比较字符串时,它同时会比较文本属性,只要当属性也相同时才为t 
+
+
+
+
+
+
+
+** 显示
+*** 自动换行
+默认的行为是截断显示过长的行，将truncate-lines设为nil即可
+(setq truncate-lines nil)
+
+
+
+
+** 数字
+elisp支持两种数值类型: 整数 浮点数.
+整数的运算是精准的.浮点数运算有舍入误差.
+
+本章中很多函数的参数是marker类型的,而不仅仅是数字.因此对这些函数的形参的描述是number-or-marker, 当参数为marker (buffer,position)类型时,其中的位置参数是被实际使用的, buffer会被忽略掉.
+
+*** 整数基础
+
+**** 整数的表示
+lisp reader将如下形式作为整数读入:
+~[正负号] 非空的十进制数字序列 [小数点]~ 
+十进制之外的基数可以通过"#"加上基数字符来指定:
+| #b | 二进制          | #b101100 |
+| #o | 八进制          | #o54     |
+| #x | 十六进制        | #x2c     |
+| #N | N进制, 2<=N<=36 | #24r1k   |
+
+
+**** 字符编码的范围
+0 ~ (max-char)
+
+
+**** 整数的分类
+- fixnum 范围被机器架构限制
+- bignum 范围被内存大小等限制
+更安全通用的比较整数的方法是用 ~eql~ 和 ~=~ 
+
+bignum整数永远不等于fixnum整数, 因为只要在fixnum范围之内的整数一定会被表示为fixnum
+
+**** 变量
+most-positive-fixnum 
+fixnum的最大值
+most-negative-fixnum
+fixnum的最小值
+
+integer-width
+用于限制整数范围,任何整数的二进制表示最大不能超过integer-width位.
+换句话说,任何整数的绝对值 < 2^ integer-width 
+超出该范围会导致范围错误
+
+*** 浮点数基础
+
+浮点数的范围和C中的double类型相同.
+read-syntax:
+1500.0
+15e2
+...
+
+
+-0.0和0在 ~=~ 的比较下是相同的.
+
+支持正负无穷的表示: NaN
+-X.XXe+NaN 
+两个NaN类型的数值被视作相等,当且仅当其符号和有效数字X.XX都相同
+
+在有符号0/NaN数值参与比较时,非数值函数(eql equal ... ) 的行为是很混乱的.
+(equal 0.0 -0.0) --> nil
+(= 0.0 -0.0) -> t 
+
+**** 函数
+
+***** 是否为合法的数字 isnan
+(isnan num) 当参数为NaN/nil时返回t
+
+***** 返回浮点数的指数表示 frexp
+(frexp x) --> (s . e) 
+x = s*2^e
+s为浮点数 0.5 <= s <= 1.0
+e为整数
+
+特殊:
+(frexp 0.0) --> (0.0 . 0)
+(frexp 0.0e+NaN) --> (0.0e+NaN . 0) 
+(frexp -1.0e+INF) --> (-1.0e+INF . 0) 
+ 
+***** 从浮点数的指数表示中计算出浮点数的值 idexp
+(idexp s e) --> s*2^e 
+
+
+***** 返回log_2(x)的结果 logb 
+(logb 8) --> 3
+(logb 10) --> 3
+(logb 0) --> -1.0e+INF
+
+*** 数字的类型谓词
+**** 是否为bignum? bignump
+bignum要用=/eql进行比较
+**** 是否为fixnum? fixnump
+fixnum不仅能用=/eql进行比较,还能用eq进行比较
+**** 是否为浮点数? floatp
+
+**** 是否为整数? integerp 
+**** 是否为数字? numberp
+**** 是否为自然数(非负整数)? natnump / wholenump
+**** 是否为零? zerop 
+等价于 (= x 0) 
+
+*** 数字的比较运算
+
+比较两个数字在数值上的相等性,通常要用 ~=~ . 而不是 eq eql equal 
+用=比较浮点数和bignum有可能出现会相等,因为它只是做数值比较(二进制比较?)
+eq是用来比较二者是否为同一对象.(地址相同?)
+eql/equal则无法比较两个数字的值究竟是否相等,因为只要类型/内容不同就返回nil
+(eql/equal 1.0 1) --> nil 
+
+
+在elisp中,若两个fixnum的数值相等,则它们必然是同一对象,此时用=或eq的结果相同.
+有时用eq比较fixnum和一个未知的值是很方便的,因为eq在那个未知值不是数字类型时不会报错
+换言之eq允许任何类型的两个对象进行比较. 
+反之, = 会在参数不是数字/marker时报错.不过最好还是尽量用=, 因为它更安全.
+eql/equal 只能用于数字间比较, 它会比对 数值和类型.=只对数值本身进行比较
+因此 (eql 1 1.0) --> nil 
+
+还有一个关于浮点数比较的问题, 因为浮点数的算术是不准确的, 因此直接比较浮点数的相等性是不太好的. 通常更好的做法是判断它们是否近似相等:
+#+begin_src emacs-lisp
+(defvar fuzz-factor 1.0e-6)
+(defun approx-equal (x y)
+(or (= x y)
+    (<  (/  (abs (- x y) )
+             (max (abs x) (abs y) )) 
+        fuzz-factor)))
+#+end_src
+
+
+**** 函数 
+
+既能用在数字上,又能用在marker上:
+
+= 数值相等
+/= 数值不等
+max min abs 
+<
+<=
+>
+>=
+-------------------------------
+eql 只能比较数字, 不能用在marker上
+ 
+*** 数值转换
+**** 整数转浮点数 float
+(float num) 
+
+**** 浮点数舍入为整数 <<rounding>>
+***** 截断浮点数为整数 truncate
+ (truncate num [除数=1] ) -->  (num / 除数) 结果的整数部分 
+ (truncate -1.2) --> -1
+ (truncate -3.4 3) --> -1 
+
+***** 将浮点数向下取整 floor
+ (floor num [除数=1] ) --> 将(num / 除数) 的结果向下取整
+ (floor 1.3) --> 1
+ (floor -3.4) --> -4 
+ (floor 5.99 3) --> 1
+
+***** 将浮点数向上取整 ceiling 
+ (ceiling num [除数=1] ) --> 将(num / 除数) 的结果向上取整
+ (ceiling 1.3) --> 2
+ (ceiling -3.4) --> -3
+ (ceiling 5.99 3) --> 2
+
+***** 将浮点数转换为最近的整数 round 
+ (round num [除数=1] ) --> 取(num/除数)的结果最近的整数
+ (round 1.3) --> 1
+ (round 2.6) --> 3
+ (round -1.4) --> -1
+ (round 5.99 3) --> 2
+
+*** 算术运算
+**** 加一 1+ 
+**** 减一 1-
+**** 整数求余 % 
+所求出的abs商必须满足和abs除数之积<=abs 被除数 , 在这种约束下将余数作为结果.
+只允许两个整数之间进行运算.
+(% 9 -4) --> 1
+(% -9 4) --> -1 
+
+**** mod
+允许浮点数作为参数
+结果的正负和 除数一致
+(mod 9 -4) --> -3
+(mod -9 4) --> -1
+*** 返回浮点类型的舍入运算
+也是将浮点数舍入为整数.但区别是结果是整数的浮点形式(eg 4.0) [[rounding]]
+
+(ftruncate 3.8) --> 3.0
+(ffloor 4.5) --> 4.0
+(fceiling 4.5) --> 5.0
+(fround 3.8) --> 4.0
+*** 位运算
+
+**** 算术移位 ash
+(ash num 位数) 
+算术右移在最高位上补相应的符号位
+**** 逻辑移位 lsh
+(lsh num 位数) 
+逻辑右移在最高位上补0 
+
+
+**** 逻辑 与 或 非 异或
+logand
+logior
+lognot
+logxor
+**** logcount 
+正整数 --> 返回二进制表示中1的个数
+负整数 --> 返回补码表示中0的个数 
+
+*** 标准的数学函数
+sqrt 
+log x a --> log_a(x)
+expt x y --> x^y
+exp n   --> e^n
+float-e
+float-pi
+sin
+cos
+tan
+acos
+asin
+atan
+
+*** 随机数
+
+(random [limit]) --> 整数 
+
+limit为空, 返回任意一个fixnum, [most-negative-fixnum , most-positive-fixnum]
+当limit==fixnums ,返回一个介于[0,fixnums]的随机数
+当limit== t ,emacs重启时选择一个新的随机种子. 
+若limit为字符串,则会根据该串选择一个新的随机数种子. 
+
+
+** 字符串和字符
+
+*** TODO 简介
+字符在elisp中被表示为数字.
+字符串是字符的定长序列.和C不同, elisp中的字符串不是以某种特殊字符结尾的
+因为字符串是数组array类型的一种, 因此任由能用在数组上的函数都能用于字符串.
+可以用 ~aref~ 来访问字符串中的某个字符.
+
+在elisp中有两种非ASCII字符的表示方式: 单字节和多字节. 大多数情况下无须关心二者的差别.
+
+按键序列 TODO
+
+string-match --> match-string / replace-match
+
+字符串和buffer一样有文本属性。所有文本拷贝同时也会拷贝这些文本属性。
+
+不要将length用于计算字符串在显示上的宽度，而是要用string-width
+
+
+*** 和字符串相关的谓词
+
+**** 判断对象是否为string？stringp
+     stringp
+
+     
+**** 是否为string或空nil？string-or-null-p
+
+     
+**** 是否为字符或string类型？char-or-string-p
+
+     
+*** 产生新字符串的操作
+
+**** 用N个字符创建字符串 make-string
+     (make-string N 字符 [是否为多字节串] )
+     (make-string N ?c) --> “N个c”
+
+     只要传入字符为ACSII字符，那么产生的就是单字节串。有时可能需要产生的是多字节串，比如要和其它多字节串连接。
+     只要将最后一个参数设为t即可
+    
+**** 用指定字符拼成串 string 
+
+     (string ?a ?b) --> "ab"
+
+**** 返回子串 substring
+     (substring 字符串 开始索引 结束索引)
+     其范围是左闭右开的。
+     若索引为负数，则最后一个字符的索引为-1.
+     若索引为nil，则它表示的是开头或结尾
+     
+     (substring "hello" 0 2) --> "he"
+     (substring "hello" -5 -3) --> "he"
+
+
+     substring 也能用在vector上：
+     (substring [1 23 a (b) 3] 0 3)
+
+     (substring "XX") 相当于对该串内容和属性作拷贝
+     
+**** 返回字串并去掉其文本属性 substring-no-properties
+(substring-no-properties 串 start end)
+
+(substring-no-properties 串) 相当于去掉原串的属性
+     
+**** 连接字符串 concat
+     concat能接受所有序列类型的对象，包含ASCII码的list、vector将被视作字符序列。
+
+     (concat "abc" "-def") --> "abc-def"
+     (concat "abc" (list 120 121) [122] ) --> "abcxyz"
+
+     concat的返回值不一定总是会创建一个新的string，可能会返回一个已经存在的串。
+     若想对返回值进行修改（原址更改），最好先用 ~copy-sequence~ 将返回值拷贝一份再作更改
+**** 用分割符切分字符串为list split-string 
+
+     (split-string 字符串 [分隔符] [是否省略空串] [去除前后的特定字符的正则] )
+     
+     eg: (split-string  字符串  "[\n\r]+") -->  字符串的list
+     (以换行符作切割)
+     
+     (split-string "food" "o" ) --> "f" "" "d"
+     (split-string "food" "o" t) --> "f" "d"
+     (split-string "__food___" "o" t "_+") --> "f" "d"
+
+***** 变量:切分字符串的默认分隔符 split-string-default-separators
+
+
+
+*** 修改字符串
+    可以用如下操作修改mutable字符串
+    
+**** 修改指定索引上的字符 aset
+     
+     (aset 字符串 index 新char)
+
+     例子:
+     (let* ( (str "hello") )
+         (aset str 0 ?f)
+         (message str)
+	 ) -->"fello"
+
+**** 将字符串从指定位置开始改为新串 store-substring
+     (store-substring 字符串 index 字符/字符串)
+     将字符串从index开始替换为指定串，前提是不能超出原字符串的长度
+
+     (store-substring "hello" 1 "???" ) --> "h???o"
+
+**** 将一个字符串的内容清0 clear-string 
+     
+     (let* (( str "hello"))
+     (clear-string str )
+     (message str))  -->       
+
+     
+
+
+*** 比较字符串
+**** 字符串比较 string=/string-equal
+     只比较二者的字符序列是否相同。不对文本属性进行比较。
+     
+     (string= A B)
+     (string-equal 字符串a 字符串b)
+
+     (string> A B) (string-greaterp A B)
+     (string< A B) (string-lessp A B)
+     
+     (string-distance str1 str2)
+     str1变为str2所需要更改的字符数
+     "a" --> "b" = 1
+     "a" --> "ab" = 1
+     "ab" --> "bc" = 2
+     
+**** 是否为某串的前/后缀? string-prefix-p  / string-suffix-p 
+(string-prefix-p 前缀 字符串 [是否忽略大小写])    
+(string-suffix-p 后缀 字符串 [是否忽略大小写])    
+
+**** 取两字符串的一部分进行比较 compare-strings
+(compare-strings 字符串a 开始 结束 
+                 字符串b 开始 结束
+		 [是否忽略大小写] )
+
+(message "%s"   (compare-strings "hello" 0 nil "aaahelloworld" 3 8) ) ==> t 
+
+**** 比较key为string的alist,并返回对应cons  assoc-string
+(assoc-string 字符串key alist  [是否忽略大小写])
+alist要是key为string类型的, 会调用compare-strings进行比较.
+特别地,可以将alist换为由string/符号组成的list, 
+
+例:
+#+begin_src emacs-lisp
+
+(message "%s" (assoc-string "abc" '(("ab" . 233) ("fb" . 33) ("abc" . 44))  )) --> ("abc" . 44)
+
+(message "%s" (assoc-string "abc" '("ab" "baxc" "abc")  )) 
+
+(let* ((xyz 100)
+(abc 300)
+(edf 400)
+)
+ (assoc-string "abc" '(list xyz abc edf)  )  "abc" 
+)
+
+#+end_src 
+
+
+
+*** 字符串/字符的转换
+
+**** 数字转为字符串 number-to-string 
+
+**** 字符串转为数字 string-to-string
+
+**** 字符 <==> 字符串 char-to-string / string-to-char
+
+
+
+
+*** 格式化字符串 
+主要是formart
+
+%s 无双引号和转义\的lisp对象输出表示
+%S 有双引号和转义字符\的输出表示
+%o 将数字输出为八进制数字的字符串
+%d 十进制
+%x/%X 十六进制
+%c 字符类型 ?a
+
+%f 带小数点的浮点数表示
+%e 浮点数的指数形式
+(message (format "%e" 23.6666666))
+
+(message (format "%f" 23.6666666))
+
+%% 表示一个百分号本身.
+
+
+*** TODO 自定义格式化 
+
+*** TODO 大小写转换
+downcase
+upcase
+
+
+*** TODO case-table
+
+*** note 
+
+**** 按照指定格式产生字符串format
+     (format "格式字符串" 可变参数(各种lisp对象) )
+     类似于C中的 sprintf/snprintf 
+
+**** 获取某shell命令的返回结果字符串 shell-command-to-string
+     (shell-command-to-string "ls") --> 命令的结果
+
+**** 进行字符串匹配 string-match
+
+     (string-match "某个模式串的正则+用括号标记要提取的部分"  str  [start-index] )
+     返回模式串在str中的开始index
+
+     "hello1234world" ===="\\([0-9]+\\)[a-z]+"==========>  5 (能找到子串和正则匹配) 
+**** 返回string-match匹配上的模式串以及其中被()标记的部分 match-string
+     (match-string 0 str) --> 整个匹配上的模式串
+     (match-string 1 str) --> 模式串中第一个被()标记的部分
+     (match-string 2 str) --> 模式串中第二个被()标记的部分
+**** 替换掉字符串中的某部分 replace-regexp-in-string 
+     (replace-regexp-in-string "被替换部分的正则"  "用来替换的str"  string) 
+
+
+
+
+
+
+
+
+     
+
+** 文本属性
+文本属性是buffer/string中字符的属性. 
+
+
+** buffer 
+   
+   buffer-list
+   所有buffer的list
+
+   buffer-file-name 
+   在current-buffer对应于某个打开的文件时,返回其文件路径,否则返回空
+
+   buffer-modified-p
+   判断当前buffer是否修改过
+
+   buffer-name
+   返回当前buffer的名字
+
+   basic-save-buffer
+   保存当前buffer
+
+   (with-temp-message "消息" body)
+   执行body(不显示其输出?),并在minibuffer上显示指定消息
+
+   设为当前buffer 
+   (set-buffer buffer) 
+ 
+
+
+*** current buffer
+**** 简介
+ current buffer表示能被elisp代码操作的文本区域, 任何一个时刻只能同时存在一个current buffer.
+
+ 通常current buffer 就是选中窗口所显示的buffer,但它也可以被修改.
+ elisp程序可能为了对某buffer进行操作,而将它指定为当前buffer.不过仅仅修改current buffer并不会使得屏幕上显示的内容发生变化
+
+**** current-buffer
+
+ (current-buffer) --> return current buffer
+
+**** set-buffer
+
+ (set-buffer buffer对象/buffer名:字符串) --> 当前buffer
+
+**** 保存current-buffer
+save-excursion 
+保存当前buffer和其point, 然后执行body,最后恢复buffer到current-buffer,并恢复points
+
+**** M-x启动的命令运行结束后，emacs会自动调用set-buffer来复位current buffer
+ 目的是为了将current-buffer重新设置为选中窗口所显示的那个buffer
+ 避免了操作对象混乱的情况。
+
+ 因此不能使用set-buffer从显示上切换current buffer（switch-to-buffer)
+
+ 并且不能依赖这个特性来恢复当前缓冲区，因为修改了current buffer的程序不一定总是以编辑器的命令循环的方式被调用
+ 它同样可以被其它程序调用，因此要注意current buffer的变化，不能依赖此特性。
+
+**** append-to-buffer
+
+ 将current buffer中指定范围的文本追加到指定buffer中
+
+ ~(append-to-buffer Buffer对象/Buffer名[string] start-point end-point)~
+
+***** 例子 
+ #+begin_src emacs-lisp
+ ;; 将当前buffer中从开头到光标处的文本追加到指定buffer中
+ (append-to-buffer "*scratch*" (point-min) (point))
+ #+end_src
+
+***** 位置的指定
+****** (point) 在current buffer中的光标位置
+****** (point-min) 
+  current buffer 中最小的位置，通常为1
+
+
+****** (point-max)
+  current buffer 中最大的位置，通常为1+buffer中字符数
+
+****** (buffer-end flag)
+  返回point-min，若 flag <= 0
+  返回point-max，若 flag > 0
+
+****** (buffer-size [buffer对象] )
+  返回（当前）buffer对象中的字符总数。可选参数不支持输入buffer名
+
+**** 例子
+ 这个函数说明了这点，首先随意打开一个除了scratch之外的buffer，
+ 并确保*scratch*这个buffer存在。
+ 然后调用test-buffer函数，可以观察到下面几点
+
+ (defun test-buffer()
+     (interactive)
+   (set-buffer "*scratch*")
+   (insert "operate this buffer ")
+   )
+
+
+ 1. 显示上没有切换到其它buffer
+ 2. 当前窗口的buffer并没有被插入文本
+ 3. 查看*scratch*发现有新的文本被插入
+ 4. M-: (current-buffer) 后发现，current-buffer并不是代码中设置的
+
+    
+
+** 操作系统接口
+
+*** 空闲定时器
+在emacs空闲指定秒数时运行计时器.
+
+
+     

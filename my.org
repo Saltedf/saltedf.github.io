@@ -1,4 +1,13 @@
+#+TITLE: My Notes
+<<top>>
+
 gtd = get things done
+
+* emacs备忘
+
+** kill buffer: C-x k
+** 
+
 
 * org 入门
 
@@ -38,23 +47,22 @@ M-x org-show-todo-tree
   - [ ] 发大发
   - [ ] newtsk
 
-** =C-c [= 将文件加入agenda列表中
+** ~C-c [~ 将文件加入agenda列表中
+** ~C-c ]~ 将当前文件从agenda列表中移除
+*** Mx org-agenda 
 
-Mx org-agenda 
 
-*** t:查看所有todo事项
+**** t:查看所有todo事项
 
 **** 在todo事项中用t来切换状态
 **** 用q退出todo事项列表
-
-
+ 
 ** 代码块
 #+begin_src C++
 int main(){
 std::cout << "hello" ;
 }
 #+end_src
-
 
 ** C-c d/s 为任务设定开始和截止日期 
 +3d 5pm
@@ -77,6 +85,55 @@ n/p 上一行/下一行
 
 =M-x org-html-export-to-html=
 
+
+* VSCode 
+
+** C-S-p
+
+*** open file
+*** close edit :关闭当前文件
+*** shortcuts 
+*** new untitled file 创建新文件
+*** new window 
+*** open Folder :打开文件夹 
+*** open recent 
+*** add folder to workspace 
+将其它位置的文件夹加入到当前工作区
+
+
+*** save workspace as 
+
+*** prefer setting (ui/json) 设置
+
+** 选中范围内查找替换 
+C-f/h  M-l 
+
+** 
+
+
+
+* Elisp
+
+** eval-expression M-: 对表达式进行求值 
+
+** eval-buffer 
+
+(concat) Connection string
+
+** variable
+
+(setq a 3)
+(setq b "abc")
+(+ 3 34) 
+
+* hello <<hello>>
+  
+
+
+
+
+[[top][top]]
+[[file:./index.org::end]]
 
 
 
