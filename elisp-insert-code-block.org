@@ -28,7 +28,7 @@
 (thing-at-point '选择范围 )
 这个选择范围有: 
 
-#+begin_src 
+#+begin_src emacs-lisp
 'word : 一个单词, "emacs-lisp"不是一个单词
 'symbol : 一个符号, 比如 emacs-lisp
 'line : 一行

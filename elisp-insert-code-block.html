@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-20 Wed 20:26 -->
+<!-- 2022-04-20 Wed 22:42 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>在org模式下快速插入代码块</title>
@@ -248,7 +248,7 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org5d789ea">参考</a></li>
+<li><a href="#orgf47385a">参考</a></li>
 </ul>
 </div>
 </div>
@@ -285,12 +285,13 @@ for the JavaScript code in this tag.
 这个选择范围有: 
 </p>
 
-<pre class="example">
-'word : 一个单词, "emacs-lisp"不是一个单词
-'symbol : 一个符号, 比如 emacs-lisp
-'line : 一行
-更多的范围可以查询 c-h f
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">'word : &#19968;&#20010;&#21333;&#35789;, <span style="color: #99bb66;">"emacs-lisp"</span>&#19981;&#26159;&#19968;&#20010;&#21333;&#35789;
+'symbol : &#19968;&#20010;&#31526;&#21495;, &#27604;&#22914; emacs-lisp
+'line : &#19968;&#34892;
+&#26356;&#22810;&#30340;&#33539;&#22260;&#21487;&#20197;&#26597;&#35810; c-h f
 </pre>
+</div>
 
 <p>
 成功读取代码块的类型后，还需要将其删掉并添加代码块。删掉某个范围的文本可以使用 <code>(delete-region start end)</code> , 因此我们需要知道刚才拿到的文本的开始和结束位置, 这需要函数(bounds-of-thing-at-point '范围)
@@ -360,9 +361,9 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-org5d789ea" class="outline-2">
-<h2 id="org5d789ea">参考</h2>
-<div class="outline-text-2" id="text-org5d789ea">
+<div id="outline-container-orgf47385a" class="outline-2">
+<h2 id="orgf47385a">参考</h2>
+<div class="outline-text-2" id="text-orgf47385a">
 <p>
 <a href="https://segmentfault.com/a/1190000039313306">https://segmentfault.com/a/1190000039313306</a>
 </p>
@@ -379,7 +380,7 @@ for the JavaScript code in this tag.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Salted-PC</p>
-<p class="date">Created: 2022-04-20 Wed 20:26</p>
+<p class="date">Created: 2022-04-20 Wed 22:42</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
