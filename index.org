@@ -3,4 +3,7 @@
 
 * [[./elisp-insert-code-block.html][快速插入代码块]]
 
+* [[./emacs-coding.html][Emacs org文件编码问题]]
+* [[./linux-note.html][linux命令杂记]]
+
 

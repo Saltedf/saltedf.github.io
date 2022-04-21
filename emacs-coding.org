@@ -16,7 +16,7 @@ emacs 打开包含中文的文本文件后中文显示为8进制
 
 
 
-参考
+* 参考
 https://emacs.stackexchange.com/questions/21467/getting-no-conversion-nil-encoding-each-time-when-opening-a-file-which-should
 
 https://lists.gnu.org/archive/html/emacs-devel/2018-11/msg00071.html 
