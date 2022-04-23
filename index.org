@@ -6,4 +6,7 @@
 * [[./emacs-coding.html][Emacs org文件编码问题]]
 * [[./linux-note.html][linux命令杂记]]
 
+* [[./cpp-primer.html][C++ primer杂记]] 
+
+
 
