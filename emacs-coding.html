@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-21 Thu 10:08 -->
+<!-- 2022-04-24 Sun 19:26 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>&lrm;</title>
+<title>Emacs文本文件显示异常( 中文utf-8编码 )</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Salted-PC" />
 <style type="text/css">
@@ -242,28 +242,21 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#orga5fbc10">1. 参考</a></li>
-</ul>
-</div>
-</div>
-<p>
-#+TITEL Emacs文本文件显示异常( 中文utf-8编码 )
-</p>
-
+<h1 class="title">Emacs文本文件显示异常( 中文utf-8编码 )</h1>
 <p>
 emacs 打开包含中文的文本文件后中文显示为8进制
 但在vim等编辑器中却显示正常
 </p>
 
 <p>
-用下面的命令可以将读取编码硬换成utf-8, 但指标不治本, 下次打开显示依然异常.
-<code>M-x revert-buffer-with-coding-system</code>
-<code>utf-8-unix</code>
+用下面的命令可以将读取编码硬换成 <code>utf-8</code> , 但指标不治本, 下次打开显示依然异常.
 </p>
+
+<pre class="example">
+M-x revert-buffer-with-coding-system
+
+utf-8-unix
+</pre>
 
 <p>
 网上有人遇到类似的问题, 据说是因为文件中包含了空字节,导致文件被识别成了二进制文件. 而emacs的默认行为是 “进行空字节检测” ,这就导致了文本文件被识别成了二进制的数据文件.( file命令显示为data类型, 而不是XX编码的文本文件 )
@@ -273,16 +266,18 @@ emacs 打开包含中文的文本文件后中文显示为8进制
 解决思路有二:
 </p>
 
-<p>
-要么关闭emacs的"空字节检测" : <code>(setq inhibit-null-byte-detection t )</code>
-要么去除文本文件中的空字节: <code>sed -i s/"\x0"// FILE.TXT</code> 
-</p>
+<ul class="org-ul">
+<li>要么关闭emacs的"空字节检测" : <code>(setq inhibit-null-byte-detection t )</code></li>
+
+<li>要么去除文本文件中的空字节: <code>sed -i s/"\x0"// FILE.TXT</code></li>
+</ul>
 
 
 
-<div id="outline-container-orga5fbc10" class="outline-2">
-<h2 id="orga5fbc10"><span class="section-number-2">1</span> 参考</h2>
-<div class="outline-text-2" id="text-1">
+
+<div id="outline-container-orgbb53c55" class="outline-2">
+<h2 id="orgbb53c55">参考</h2>
+<div class="outline-text-2" id="text-orgbb53c55">
 <p>
 <a href="https://emacs.stackexchange.com/questions/21467/getting-no-conversion-nil-encoding-each-time-when-opening-a-file-which-should">https://emacs.stackexchange.com/questions/21467/getting-no-conversion-nil-encoding-each-time-when-opening-a-file-which-should</a>
 </p>
@@ -295,7 +290,7 @@ emacs 打开包含中文的文本文件后中文显示为8进制
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Salted-PC</p>
-<p class="date">Created: 2022-04-21 Thu 10:08</p>
+<p class="date">Created: 2022-04-24 Sun 19:26</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

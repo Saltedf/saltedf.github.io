@@ -1,0 +1,149 @@
+#+TITLE: CMake学习
+#+OPTIONS: toc:t num:t
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./myorg.css"/>
+
+
+
+* 基本的cmake命令
+
+** 配置阶段:生成makefile
+
+~cmake -B build -D CMAKE_CXX_COMPILER=clang++~
+
+#+begin_src 
+-B 指定cmake的输出路径,并会自动创建build目录
+-DCMAKE_CXX_COMPILER=xxx 指定cmake所用的C++编译器
+-DCMAKE_BUILD_TYPE=Release/Dehug 
+
+-G Ninja/"Unix Makefiles" 指定构建系统
+#+end_src
+
+** 实际构建阶段:执行makefile 
+自动识别构建工具,并在build目录中进行构建(make -j4)
+
+~cmake --build build -j4~
+
+
+
+* 为目标添加源码文件
+
+#+begin_src  cmake
+add_executable(myexe)
+set(myexe_sources main.cc file1.cc file2.cc )
+target_sources(myexe ${myexe_sources} )
+#+end_src
+
+
+* 生成库
+#+begin_src 
+add_library(mylib STATIC  source1.cc source2.cc)
+add_library(mylib SHARED source1.cc source2.cc)
+#+end_src
+
+反汇编显示带有plt字样的函数表示插桩函数, 其真正的实现不在当前文件中, 而是在动态库中(共享库)
+
+* 为某个可执行文件链接上库
+
+#+begin_src 
+target_link_libraries(myexe PUBLIC mylib)
+#+end_src
+
+* extern "C" {}
+在C++代码中将某段代码解释为C语言的, 从而避免使用重载机制
+
+#+begin_src cpp
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// 期望被理解为C语言的代码
+
+#ifdef __cplusplus
+}
+#endif
+#+end_src
+
+
+
+
+
+
+* pragma once / ifndef define endif 
+
+
+* 为某个目标指定头文件搜索目录
+
+#+begin_src 
+target_include_directories(mylib PUBLIC ..XX)
+#+end_src
+
+
+PUBLIC/PRIVATE的作用是是否将这个属性(这里是头文件搜索路径)也传递给使用此库/目标的其它目标
+
+对可执行文件这样的目标来说, PUBLIC的标识没太多意义.
+
+
+* 为某个目标添加宏定义
+
+#+begin_src 
+target_add_definitions(myexe PUBLIC MY_MACRO=XX )
+#+end_src
+
+* 为某目标添加编译选项
+
+#+begin_src 
+target_compile_options(myexe PUBLIC -fopenmp
+#+end_src
+
+
+* 全局添加宏定义
+
+#+begin_src 
+add_definitions()
+#+end_src
+
+
+* 每个CMakeLists的第二行: project()
+
+#+begin_src cmake
+project(MyProject VERSION 1.0.0
+                  DESCRIPITOIN "this is my project"
+		  LANGUAGES CXX )
+
+#+end_src
+首个参数是项目的名称. 语言默认是 ~C CXX~ , 即c和C++
+
+
+
+
+* 局部变量
+
+** 定义变量
+#+begin_src 
+set(MY_VAR "value" )
+#+end_src
+
+** 访问一个变量:
+#+begin_src 
+${MY_VAR}
+#+end_src
+
+cmake中有作用域的概念, 这意味着一个定义在函数范围内/子目录的一个文件范围内的变量在范围外是无法访问的.
+
+
+
+** 可以用 ~set()~ 定义一个list
+
+#+begin_src 
+set(MY_LIST "first" "second" ) # 元素用空格分割
+set(MY_LIST "first;second" ) # 这种方式也是等价的, 用分号.
+#+end_src
+
+用 ~${}~ 去使用变量时其实是以替换的方式来"展开"变量名.因此在使用表示路径的变量时要额外在外面加一层引号:
+
+~"${MY_PATH}"~
+不要用 ~${MY_PATH}~ , 否则一旦有含空格的路径时就会被当成list进行处理, 而不是当成一个整体.
+因此使用路径变量时一定要加上双引号.
+
+
+

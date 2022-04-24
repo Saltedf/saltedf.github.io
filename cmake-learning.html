@@ -3,10 +3,10 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-24 Sun 19:13 -->
+<!-- 2022-04-24 Sun 19:10 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>目录</title>
+<title>CMake学习</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Salted-PC" />
 <style type="text/css">
@@ -193,6 +193,7 @@
   .org-svg { width: 90%; }
   /*]]>*/-->
 </style>
+<link rel="stylesheet" type="text/css" href="./myorg.css"/>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -242,30 +243,261 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="content">
-<h1 class="title">目录</h1>
-
-<div id="outline-container-org9b3af8c" class="outline-2">
-<h2 id="org9b3af8c"><a href="./elisp-insert-code-block.html">快速插入代码块</a></h2>
+<h1 class="title">CMake学习</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org160fc72">1. 基本的cmake命令</a>
+<ul>
+<li><a href="#org35cb62a">1.1. 配置阶段:生成makefile</a></li>
+<li><a href="#org31dac01">1.2. 实际构建阶段:执行makefile</a></li>
+</ul>
+</li>
+<li><a href="#orge1e8df6">2. 为目标添加源码文件</a></li>
+<li><a href="#org0898c2a">3. 生成库</a></li>
+<li><a href="#orgde3a185">4. 为某个可执行文件链接上库</a></li>
+<li><a href="#orgcdbb757">5. extern "C" {}</a></li>
+<li><a href="#org10379d1">6. pragma once / ifndef define endif</a></li>
+<li><a href="#orgb5a7ad4">7. 为某个目标指定头文件搜索目录</a></li>
+<li><a href="#org723a3fe">8. 为某个目标添加宏定义</a></li>
+<li><a href="#org356e8a6">9. 为某目标添加编译选项</a></li>
+<li><a href="#org9e76d04">10. 全局添加宏定义</a></li>
+<li><a href="#org2ed0025">11. 每个CMakeLists的第二行: project()</a></li>
+<li><a href="#orgc1004c1">12. 局部变量</a>
+<ul>
+<li><a href="#org9a191d6">12.1. 定义变量</a></li>
+<li><a href="#orgbe071ed">12.2. 访问一个变量:</a></li>
+<li><a href="#org0f5d7f4">12.3. 可以用 <code>set()</code> 定义一个list</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 
-<div id="outline-container-org3b0fe6c" class="outline-2">
-<h2 id="org3b0fe6c"><a href="./emacs-coding.html">Emacs org文件编码问题</a></h2>
+
+
+<div id="outline-container-org160fc72" class="outline-2">
+<h2 id="org160fc72"><span class="section-number-2">1</span> 基本的cmake命令</h2>
+<div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org331e468" class="outline-2">
-<h2 id="org331e468"><a href="./linux-note.html">linux命令杂记</a></h2>
+<div id="outline-container-org35cb62a" class="outline-3">
+<h3 id="org35cb62a"><span class="section-number-3">1.1</span> 配置阶段:生成makefile</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+<code>cmake -B build -D CMAKE_CXX_COMPILER=clang++</code>
+</p>
+
+<pre class="example">
+-B 指定cmake的输出路径,并会自动创建build目录
+-DCMAKE_CXX_COMPILER=xxx 指定cmake所用的C++编译器
+-DCMAKE_BUILD_TYPE=Release/Dehug 
+
+-G Ninja/"Unix Makefiles" 指定构建系统
+</pre>
+</div>
 </div>
 
-<div id="outline-container-org691cbd3" class="outline-2">
-<h2 id="org691cbd3"><a href="./cpp-primer.html">C++ primer杂记</a></h2>
+<div id="outline-container-org31dac01" class="outline-3">
+<h3 id="org31dac01"><span class="section-number-3">1.2</span> 实际构建阶段:执行makefile</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+自动识别构建工具,并在build目录中进行构建(make -j4)
+<code>cmake --build build -j4</code>
+</p>
+</div>
+</div>
 </div>
 
-<div id="outline-container-orgca7efd5" class="outline-2">
-<h2 id="orgca7efd5"><a href="./cmake-learning.html">CMake学习</a></h2>
+
+
+<div id="outline-container-orge1e8df6" class="outline-2">
+<h2 id="orge1e8df6"><span class="section-number-2">2</span> 为目标添加源码文件</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-cmake">add_executable(myexe)
+set(myexe_sources main.cc file1.cc file2.cc )
+target_sources(myexe ${myexe_sources} )
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0898c2a" class="outline-2">
+<h2 id="org0898c2a"><span class="section-number-2">3</span> 生成库</h2>
+<div class="outline-text-2" id="text-3">
+<pre class="example">
+add_library(mylib STATIC  source1.cc source2.cc)
+add_library(mylib SHARED source1.cc source2.cc)
+</pre>
+
+<p>
+反汇编显示带有plt字样的函数表示插桩函数, 其真正的实现不在当前文件中, 而是在动态库中(共享库)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgde3a185" class="outline-2">
+<h2 id="orgde3a185"><span class="section-number-2">4</span> 为某个可执行文件链接上库</h2>
+<div class="outline-text-2" id="text-4">
+<pre class="example">
+target_link_libraries(myexe PUBLIC mylib)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgcdbb757" class="outline-2">
+<h2 id="orgcdbb757"><span class="section-number-2">5</span> extern "C" {}</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+在C++代码中将某段代码解释为C语言的, 从而避免使用重载机制
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #c678dd; font-weight: bold;">#ifdef</span> __cplusplus
+<span style="color: #51afef;">extern</span> <span style="color: #99bb66;">"C"</span> {
+<span style="color: #c678dd; font-weight: bold;">#endif</span>
+
+<span style="color: #666666;">// </span><span style="color: #666666;">&#26399;&#26395;&#34987;&#29702;&#35299;&#20026;C&#35821;&#35328;&#30340;&#20195;&#30721;</span>
+
+<span style="color: #c678dd; font-weight: bold;">#ifdef</span> __cplusplus
+}
+<span style="color: #c678dd; font-weight: bold;">#endif</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-org10379d1" class="outline-2">
+<h2 id="org10379d1"><span class="section-number-2">6</span> pragma once / ifndef define endif</h2>
+</div>
+
+
+<div id="outline-container-orgb5a7ad4" class="outline-2">
+<h2 id="orgb5a7ad4"><span class="section-number-2">7</span> 为某个目标指定头文件搜索目录</h2>
+<div class="outline-text-2" id="text-7">
+<pre class="example">
+target_include_directories(mylib PUBLIC ..XX)
+</pre>
+
+
+<p>
+PUBLIC/PRIVATE的作用是是否将这个属性(这里是头文件搜索路径)也传递给使用此库/目标的其它目标
+</p>
+
+<p>
+对可执行文件这样的目标来说, PUBLIC的标识没太多意义.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org723a3fe" class="outline-2">
+<h2 id="org723a3fe"><span class="section-number-2">8</span> 为某个目标添加宏定义</h2>
+<div class="outline-text-2" id="text-8">
+<pre class="example">
+target_add_definitions(myexe PUBLIC MY_MACRO=XX )
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org356e8a6" class="outline-2">
+<h2 id="org356e8a6"><span class="section-number-2">9</span> 为某目标添加编译选项</h2>
+<div class="outline-text-2" id="text-9">
+<pre class="example">
+target_compile_options(myexe PUBLIC -fopenmp
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org9e76d04" class="outline-2">
+<h2 id="org9e76d04"><span class="section-number-2">10</span> 全局添加宏定义</h2>
+<div class="outline-text-2" id="text-10">
+<pre class="example">
+add_definitions()
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org2ed0025" class="outline-2">
+<h2 id="org2ed0025"><span class="section-number-2">11</span> 每个CMakeLists的第二行: project()</h2>
+<div class="outline-text-2" id="text-11">
+<div class="org-src-container">
+<pre class="src src-cmake">project(MyProject VERSION 1.0.0
+		  DESCRIPITOIN "this is my project"
+		  LANGUAGES CXX )
+
+</pre>
+</div>
+<p>
+首个参数是项目的名称. 语言默认是 <code>C CXX</code> , 即c和C++
+</p>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orgc1004c1" class="outline-2">
+<h2 id="orgc1004c1"><span class="section-number-2">12</span> 局部变量</h2>
+<div class="outline-text-2" id="text-12">
+</div>
+<div id="outline-container-org9a191d6" class="outline-3">
+<h3 id="org9a191d6"><span class="section-number-3">12.1</span> 定义变量</h3>
+<div class="outline-text-3" id="text-12-1">
+<pre class="example">
+set(MY_VAR "value" )
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgbe071ed" class="outline-3">
+<h3 id="orgbe071ed"><span class="section-number-3">12.2</span> 访问一个变量:</h3>
+<div class="outline-text-3" id="text-12-2">
+<pre class="example">
+${MY_VAR}
+</pre>
+
+<p>
+cmake中有作用域的概念, 这意味着一个定义在函数范围内/子目录的一个文件范围内的变量在范围外是无法访问的.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org0f5d7f4" class="outline-3">
+<h3 id="org0f5d7f4"><span class="section-number-3">12.3</span> 可以用 <code>set()</code> 定义一个list</h3>
+<div class="outline-text-3" id="text-12-3">
+<pre class="example">
+set(MY_LIST "first" "second" ) # 元素用空格分割
+set(MY_LIST "first;second" ) # 这种方式也是等价的, 用分号.
+</pre>
+
+<p>
+用 <code>${}</code> 去使用变量时其实是以替换的方式来"展开"变量名.因此在使用表示路径的变量时要额外在外面加一层引号:
+</p>
+
+<p>
+<code>"${MY_PATH}"</code>
+不要用 <code>${MY_PATH}</code> , 否则一旦有含空格的路径时就会被当成list进行处理, 而不是当成一个整体.
+因此使用路径变量时一定要加上双引号.
+</p>
+</div>
+</div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Salted-PC</p>
-<p class="date">Created: 2022-04-24 Sun 19:13</p>
+<p class="date">Created: 2022-04-24 Sun 19:10</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

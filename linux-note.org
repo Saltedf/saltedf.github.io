@@ -7,6 +7,11 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
 #+end_src
 
+* bash脚本
+
+** ~set -e~ 遇到错误就停止
+bash脚本默认行为是忽略错误,继续运行.
+在脚本开头设置set -e就会使得: 只要有命令返回值!=0整个脚本的运行就会终止
 
 * pstree 查看进程树
 
@@ -39,8 +44,60 @@ strace -f -s 65535 -i -t -T -e trace=write,sendto,send  -p <PID>
 #+end_src
 
 
+统计各个系统调用总耗时:
+
+#+begin_src bash
+strace -c <程序>
+
+strace -c -p <PID>
+#+end_src
+
+结果显示了各个系统调用所花费总时间以及所占百分比, 调用次数, 以及出错次数. 出错越多一般代码质量越差.
+#+begin_src bash
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 49.27    0.009506           7      1281           clock_gettime
+ 18.75    0.003617           9       390           rt_sigprocmask
+  9.05    0.001747           9       175           ioctl
+  8.12    0.001567          17        92           write
+  5.40    0.001042          23        45           pselect6
+  2.48    0.000478          28        17           fcntl
+  2.38    0.000459          13        35           rt_sigreturn
+  1.37    0.000265           6        38           read
+  1.37    0.000264           7        35           timerfd_settime
+  1.29    0.000249          27         9           poll
+  0.37    0.000071          35         2           kill
+  0.16    0.000030          15         2           getpid
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           openat
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.019295                  2125           total
+
+#+end_src
+
 
 代码分析组合拳: strace看关键调用. ==> 用calltree找出关键系统调用的调用关系. ==>用IDE细看这条调用链 
+
+
+* objdump -D 显示可执行文件/库文件的反汇编
+
+objdump -D XXX | less 
+不加less会显示太多!
+
+
+* ldd 显示链接信息
+
+#+begin_src sh
+$ ldd ./build/udpclient 
+
+	linux-vdso.so.1 (0x00007ffcb2d85000)
+	libstdc++.so.6 => /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f4c64e2a000)
+	libgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f4c64e0f000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f4c64c1d000)
+	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f4c64ace000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007f4c65024000)
+#+end_src
 
 
 * 配置apt软件源
@@ -487,5 +544,12 @@ target record-full
 
 reverse-next
 reverse-XXX
+
+
+
+* [[./cmake-learning.org][CMake]] 
+
+
+
 
 
