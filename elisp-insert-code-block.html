@@ -3,14 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-04-20 Wed 22:42 -->
+<!-- 2022-05-04 三 13:47 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>在org模式下快速插入代码块</title>
-<meta name="generator" content="Org mode" />
-<meta name="author" content="Salted-PC" />
-<style type="text/css">
- <!--/*--><![CDATA[/*><!--*/
+<meta name="generator" content="Org Mode" />
+<style>
+  #content { max-width: 60em; margin: auto; }
   .title  { text-align: center;
              margin-bottom: .2em; }
   .subtitle { text-align: center;
@@ -31,8 +30,9 @@
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
   pre {
-    border: 1px solid #ccc;
-    box-shadow: 3px 3px 3px #eee;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    background-color: #f2f2f2;
     padding: 8pt;
     font-family: monospace;
     overflow: auto;
@@ -40,22 +40,22 @@
   }
   pre.src {
     position: relative;
-    overflow: visible;
-    padding-top: 1.2em;
+    overflow: auto;
   }
   pre.src:before {
     display: none;
     position: absolute;
-    background-color: white;
-    top: -10px;
-    right: 10px;
+    top: -8px;
+    right: 12px;
     padding: 3px;
-    border: 1px solid black;
+    color: #555;
+    background-color: #f2f2f299;
   }
-  pre.src:hover:before { display: inline;}
+  pre.src:hover:before { display: inline; margin-top: 14px;}
   /* Languages per Org manual */
   pre.src-asymptote:before { content: 'Asymptote'; }
   pre.src-awk:before { content: 'Awk'; }
+  pre.src-authinfo::before { content: 'Authinfo'; }
   pre.src-C:before { content: 'C'; }
   /* pre.src-C++ doesn't work in CSS */
   pre.src-clojure:before { content: 'Clojure'; }
@@ -191,64 +191,17 @@
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
   .org-svg { width: 90%; }
-  /*]]>*/-->
 </style>
 <link rel="stylesheet" type="text/css" href="./myorg.css"/>
-<script type="text/javascript">
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2020 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-<!--/*--><![CDATA[/*><!--*/
- function CodeHighlightOn(elem, id)
- {
-   var target = document.getElementById(id);
-   if(null != target) {
-     elem.cacheClassElem = elem.className;
-     elem.cacheClassTarget = target.className;
-     target.className = "code-highlighted";
-     elem.className   = "code-highlighted";
-   }
- }
- function CodeHighlightOff(elem, id)
- {
-   var target = document.getElementById(id);
-   if(elem.cacheClassElem)
-     elem.className = elem.cacheClassElem;
-   if(elem.cacheClassTarget)
-     target.className = elem.cacheClassTarget;
- }
-/*]]>*///-->
-</script>
 </head>
 <body>
-<div id="content">
+<div id="content" class="content">
 <h1 class="title">在org模式下快速插入代码块</h1>
-<div id="table-of-contents">
+<div id="table-of-contents" role="doc-toc">
 <h2>Table of Contents</h2>
-<div id="text-table-of-contents">
+<div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgf47385a">参考</a></li>
+<li><a href="#org410d57f">参考</a></li>
 </ul>
 </div>
 </div>
@@ -258,9 +211,6 @@ for the JavaScript code in this tag.
 
 <p>
 <code>#+begin_src xx</code>
-</p>
-
-<p>
 <code>#+end_src</code>
 </p>
 
@@ -268,10 +218,10 @@ for the JavaScript code in this tag.
 为了快速插入代码块, 我们要写两个函数:
 </p>
 <ol class="org-ol">
-<li>insert-empty-code-block : 插入指定语言的代码块.
+<li><code>insert-empty-code-block</code> : 插入指定语言的代码块.
 先输入代码类型,例如cpp, 然后 <code>M-x insert-empty-code-block</code>, 这样就能生成指定类型的代码块.</li>
 
-<li>insert-code-block: 将选中文本用代码块包裹起来
+<li><code>insert-code-block</code> : 将选中文本用代码块包裹起来
 先选中某段文本,然后 <code>M-x insert-code-block</code>, 然后输入可选参数: 代码类型. (eg: cpp)</li>
 </ol>
 
@@ -286,7 +236,7 @@ for the JavaScript code in this tag.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-emacs-lisp">'word : &#19968;&#20010;&#21333;&#35789;, <span style="color: #99bb66;">"emacs-lisp"</span>&#19981;&#26159;&#19968;&#20010;&#21333;&#35789;
+<pre class="src src-emacs-lisp">'word : &#19968;&#20010;&#21333;&#35789;, <span style="color: #7bc275;">"emacs-lisp"</span>&#19981;&#26159;&#19968;&#20010;&#21333;&#35789;
 'symbol : &#19968;&#20010;&#31526;&#21495;, &#27604;&#22914; emacs-lisp
 'line : &#19968;&#34892;
 &#26356;&#22810;&#30340;&#33539;&#22260;&#21487;&#20197;&#26597;&#35810; c-h f
@@ -306,8 +256,8 @@ for the JavaScript code in this tag.
 </p>
 
 <p>
-(region-beginning )
-(region-end )
+<code>(region-beginning )</code>
+<code>(region-end )</code>
 </p>
 
 <p>
@@ -319,51 +269,64 @@ for the JavaScript code in this tag.
 </p>
 
 
-
-
 <div class="org-src-container">
-<pre class="src src-emacs-lisp"><span style="color: #666666;">;;;;;;;;;;;;;</span><span style="color: #666666;">Org&#27169;&#24335;&#19979;&#23558;&#36873;&#20013;&#25991;&#26412;&#25918;&#20837;&#20195;&#30721;&#22359;;;;;;;;;;;;;;</span>
-(<span style="color: #51afef;">defun</span> <span style="color: #46D9FF;">insert-code-block</span>(<span style="color: #ECBE7B;">&amp;optional</span> type)
-  (<span style="color: #51afef;">interactive</span> <span style="color: #99bb66;">"sEnter code type:"</span>)
-  (<span style="color: #51afef;">let*</span> ((type-str (concat <span style="color: #99bb66;">" "</span> type))
+<pre class="src src-emacs-lisp"><span style="color: #62686E;">;;;;;;;;;;;;;</span><span style="color: #62686E;">Org&#27169;&#24335;&#19979;&#23558;&#36873;&#20013;&#25991;&#26412;&#25918;&#20837;&#20195;&#30721;&#22359;;;;;;;;;;;;;;</span>
+(<span style="color: #51afef;">setq</span> previous-type <span style="color: #7bc275;">""</span>)
+
+(<span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">insert-and-update-type-str</span> (type-str)
+   (<span style="color: #51afef;">if</span>  (string-equal <span style="color: #7bc275;">" "</span> type-str)
+        (insert  previous-type)
+
+         (insert type-str)
+         (<span style="color: #51afef;">setq</span> previous-type type-str))
+   )
+
+(<span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">insert-code-block</span>(<span style="color: #FCCE7B;">&amp;optional</span> type)
+  (<span style="color: #51afef;">interactive</span>   <span style="color: #7bc275;">"sEnter code type: "</span>  )
+  (<span style="color: #51afef;">let*</span> ((type-str (concat <span style="color: #7bc275;">" "</span> type))
          (s (region-beginning))
          (e (region-end))
          (code-block (buffer-substring-no-properties s e)))
     (delete-region s e)
-    (insert <span style="color: #99bb66;">"#+begin_src"</span>)
-    (insert type-str)
-    (insert <span style="color: #99bb66;">"\n"</span>)
+    (insert <span style="color: #7bc275;">"#+begin_src"</span>)
+    (insert-and-update-type-str type-str)          
+    (insert <span style="color: #7bc275;">"\n"</span>)
     (insert code-block)
-    (insert <span style="color: #99bb66;">"\n#+end_src\n"</span>)
+    (insert <span style="color: #7bc275;">"\n#+end_src\n"</span>)
     )
   )
 
-<span style="color: #666666;">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+<span style="color: #62686E;">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
 
-(<span style="color: #51afef;">defun</span> <span style="color: #46D9FF;">insert-empty-code-block</span>()
+(<span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">insert-empty-code-block</span>()
   (<span style="color: #51afef;">interactive</span>)
-  (<span style="color: #51afef;">let*</span> ((type-str (concat <span style="color: #99bb66;">" "</span> (thing-at-point 'word)))
-         (bounds (bounds-of-thing-at-point 'word))
+  (<span style="color: #51afef;">let*</span> ((type-str (concat <span style="color: #7bc275;">" "</span> (thing-at-point 'symbol)))
+         (bounds (bounds-of-thing-at-point 'symbol))
          (s (car bounds))
          (e (cdr bounds))
         )
 
-    (delete-region s e)
-    (insert <span style="color: #99bb66;">"#+begin_src"</span>)
-    (insert type-str)
-    (insert <span style="color: #99bb66;">"\n"</span>)
-    (insert <span style="color: #99bb66;">"\n#+end_src\n"</span>)
+    (<span style="color: #51afef;">if</span> (not (eq s e ))
+        (delete-region s e)
+      )
+
+    (insert <span style="color: #7bc275;">"#+begin_src"</span>)
+    (insert-and-update-type-str type-str)
+    (insert <span style="color: #7bc275;">"\n"</span>)
+    (insert <span style="color: #7bc275;">"\n#+end_src\n"</span>)
     )
   )
-<span style="color: #666666;">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+
+ (global-set-key (kbd <span style="color: #7bc275;">"&lt;f1&gt;"</span> ) 'insert-empty-code-block) 
+<span style="color: #62686E;">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
 
 </pre>
 </div>
 
 
-<div id="outline-container-orgf47385a" class="outline-2">
-<h2 id="orgf47385a">参考</h2>
-<div class="outline-text-2" id="text-orgf47385a">
+<div id="outline-container-org410d57f" class="outline-2">
+<h2 id="org410d57f">参考</h2>
+<div class="outline-text-2" id="text-org410d57f">
 <p>
 <a href="https://segmentfault.com/a/1190000039313306">https://segmentfault.com/a/1190000039313306</a>
 </p>
@@ -379,9 +342,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: Salted-PC</p>
-<p class="date">Created: 2022-04-20 Wed 22:42</p>
-<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+<p class="date">Created: 2022-05-04 三 13:47</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

@@ -10,3 +10,4 @@
 
 * [[./cmake-learning.org][CMake学习]] 
 
+* [[./ocaml-book.org][OCaml杂记]]

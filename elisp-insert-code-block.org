@@ -10,14 +10,13 @@
 在org中插入一个代码块比起markdown要麻烦不少:
 
 ~#+begin_src xx~
-
 ~#+end_src~
 
 为了快速插入代码块, 我们要写两个函数:
-1. insert-empty-code-block : 插入指定语言的代码块.
+1. ~insert-empty-code-block~ : 插入指定语言的代码块.
    先输入代码类型,例如cpp, 然后 ~M-x insert-empty-code-block~, 这样就能生成指定类型的代码块.
 
-2. insert-code-block: 将选中文本用代码块包裹起来
+2. ~insert-code-block~ : 将选中文本用代码块包裹起来
    先选中某段文本,然后 ~M-x insert-code-block~, 然后输入可选参数: 代码类型. (eg: cpp)
 
 
@@ -43,51 +42,64 @@
 第二个函数的实现难处在于, 需要能操纵用户选中的文本, 并且在minibuffer中传入一个可选参数作为代码块的类型. 可选参数可以用 ~&optional args~ ,以及 ~(interactive "s-->:")~ 来接收. 剩下的问题就是如何操作用户选中的文本了.
 首先要先保存并删除选中的文本, 然后在前后加上代码块的开始和结束代码后再插入回去. 先来看如何保存选中文本, 要保存这些文本, 首先要知道其位置: 开始和结束, 可以用两个函数来获取选中区域的开始和结束位置:
 
-(region-beginning )
-(region-end )
+~(region-beginning )~
+~(region-end )~
 
 然后要从这个位置将文本保存到一个变量中, ~(buffer-substring-no-properties start end)~ 这个函数可以将buffer的一部分不保留属性地拷贝到变量中. 删除选中区域在有了开始和结束位置后就能用 ~(delete-region start end)~ 实现了.
 
 这里需要注意的是输入的可选参数需要转换一下才能作为字符串类型来使用.这里正好用 ~concat~ 连接了一个空格, 从而将它看做字符串.
 
 
-
-
 #+begin_src emacs-lisp
-;;;;;;;;;;;;;Org模式下将选中文本放入代码块;;;;;;;;;;;;;
-(defun insert-code-block(&optional type)
-  (interactive "sEnter code type:")
-  (let* ((type-str (concat " " type))
-	 (s (region-beginning))
-	 (e (region-end))
-	 (code-block (buffer-substring-no-properties s e)))
-    (delete-region s e)
-    (insert "#+begin_src")
-    (insert type-str)
-    (insert "\n")
-    (insert code-block)
-    (insert "\n#+end_src\n")
+  ;;;;;;;;;;;;;Org模式下将选中文本放入代码块;;;;;;;;;;;;;
+  (setq previous-type "")
+
+  (defun insert-and-update-type-str (type-str)
+     (if  (string-equal " " type-str)
+	  (insert  previous-type)
+
+	   (insert type-str)
+	   (setq previous-type type-str))
+     )
+
+  (defun insert-code-block(&optional type)
+    (interactive   "sEnter code type: "  )
+    (let* ((type-str (concat " " type))
+	   (s (region-beginning))
+	   (e (region-end))
+	   (code-block (buffer-substring-no-properties s e)))
+      (delete-region s e)
+      (insert "#+begin_src")
+      (insert-and-update-type-str type-str)          
+      (insert "\n")
+      (insert code-block)
+      (insert "\n#+end_src\n")
+      )
     )
-  )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun insert-empty-code-block()
-  (interactive)
-  (let* ((type-str (concat " " (thing-at-point 'word)))
-	 (bounds (bounds-of-thing-at-point 'word))
-	 (s (car bounds))
-	 (e (cdr bounds))
+  (defun insert-empty-code-block()
+    (interactive)
+    (let* ((type-str (concat " " (thing-at-point 'symbol)))
+	   (bounds (bounds-of-thing-at-point 'symbol))
+	   (s (car bounds))
+	   (e (cdr bounds))
+	  )
+
+      (if (not (eq s e ))
+	  (delete-region s e)
 	)
-		
-    (delete-region s e)
-    (insert "#+begin_src")
-    (insert type-str)
-    (insert "\n")
-    (insert "\n#+end_src\n")
+      
+      (insert "#+begin_src")
+      (insert-and-update-type-str type-str)
+      (insert "\n")
+      (insert "\n#+end_src\n")
+      )
     )
-  )
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+   (global-set-key (kbd "<f1>" ) 'insert-empty-code-block) 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 #+end_src
 

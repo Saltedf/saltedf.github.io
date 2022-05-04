@@ -50,7 +50,7 @@ html{
 body{
     background:#edf0f2;
     color:#404040;
-    font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+    font-family:"Sarasa Mono SC","Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
     font-weight:normal;
     margin:0;
     min-height:100%;
@@ -78,6 +78,7 @@ b,strong{
 
 blockquote{
     background-color: #F0F0F0;
+    /* background-color: #8c8c8c; */
     border-left:5px solid #CCCCCC;
     font-style:italic;
     line-height:24px;
@@ -259,7 +260,7 @@ dl dd{
     #content{
         background:#fcfcfc}
 }
-
+ 
 @media screen and (max-width: 768px){
     #copyright{
         width:85%;
@@ -278,11 +279,13 @@ dl dd{
         width:100%}
 }
 
-code{
-    background:#fff;
+/* 行内代码配色 */
+code{ 
+background:#fff;
     border:solid 1px #e1e4e5;
+    color:#E69055 ;
     /* color:#000;  for clickable code */
-    font-family:Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+    font-family: "Sarasa Mono SC",Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
     font-size:75%;
     max-width:100%;
     overflow-x:auto;
@@ -296,7 +299,8 @@ code{
     padding:24px;
     padding-top:48px;
     font-weight:500;
-    background:#fff;
+   background:#fff;
+    /* background:rgb(78, 74, 74); */
     position:relative}
 
 .codeblock-example:after{
@@ -319,16 +323,23 @@ code{
     background:#fff;
     margin:1px 0 24px 0}
 
+    /* 代码块配色：  */
 pre.src{
     /* color:#404040; */
     display:block;
-    font-family:Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+    font-family:"Sarasa Mono SC",Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
     font-size:12px;
     line-height:1.5;
     margin:1px 0px 24px 0px;
     overflow:auto;
     padding:12px;
     white-space:pre;
+    color:#DCDCDC;
+    background:#232627;
+    
+    /*备份配色！！*/
+    /* color:#DCDCDC;    
+    background:#232627; */
 }
 
 .example{

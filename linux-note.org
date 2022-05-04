@@ -7,7 +7,39 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
 #+end_src
 
-* bash脚本
+* du -h 以可读形式显示文件大小 
+
+#+begin_src sh
+$ du -h linux-note.org 
+
+12K	linux-note.org
+#+end_src
+
+** 查看目录下的大文件
+#+begin_src 
+du -sh .* * | grep G
+#+end_src
+
+
+
+* test命令
+
+#+begin_src sh
+test `命令` = 'str' 
+test `命令` = 'string' -a `命令` = 'string'
+test `命令` = "string" -o `命令` = 'string'
+#+end_src
+
+E.g
+#+begin_src sh
+  # 判断当前平台是否是linux
+  test `uname -s` = 'Linux'
+  echo $? # 返回零表示无错误发生 
+#+end_src
+
+
+
+* bash脚本的编写
 
 ** ~set -e~ 遇到错误就停止
 bash脚本默认行为是忽略错误,继续运行.
@@ -98,6 +130,36 @@ $ ldd ./build/udpclient
 	libm.so.6 => /lib/x86_64-linux-gnu/libm.so.6 (0x00007f4c64ace000)
 	/lib64/ld-linux-x86-64.so.2 (0x00007f4c65024000)
 #+end_src
+
+
+* wget 保存整个网站
+
+https://github.com/lujun9972/linux-document/blob/master/examples/10%20wget%20command%20examples.org
+
+#+begin_src 
+wget --mirror --convert-links --page-requisites ----no-parent -P /path/to/download https://example-domain.com
+#+end_src
+
+但这样可能会下载不全，原因可能有很多。这里遇到的问题是默认是不跨域名下载的。
+
+
+需要运行第二次，并附加上多个选项 
+
+#+begin_src 
+wget --mirror --convert-links -r -D "www.seas.upenn.edu,www.cis.upenn.edu"  -A.pdf -A.zip -A.shtml --tries=1 --timeout=8  --span-hosts  -l 5  --page-requisites --no-parent -P ./  https://www.seas.upenn.edu/\~cis341/17sp/  
+#+end_src
+
+
++ -A 指定那些没有被下载的文件类型 （需要观察网站特征获知）
+
++ --span-hosts 跨主机名下载。
+  
++ -D 指定域名/主机名 list，否则将遍历大量无用的域名（需要观察网站特征获知）
+
++ --tries=1 重试一次，因为有些域名无法访问，也不含要下载的文件。
+
++ --timeout=10 设定超时时间，防止等待太长时间。
+
 
 
 * 配置apt软件源
