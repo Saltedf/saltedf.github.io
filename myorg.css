@@ -7,7 +7,7 @@ h1,h2,h3,h4,h5,h6,legend{
 }
 
 h1{
-    font-size:175%;
+    font-size:250%;
 }
 
 .subtitle{
@@ -15,23 +15,23 @@ h1{
 }
 
 h2{
-    font-size:150%;
+    font-size:200%;
 }
 
 h3{
-    font-size:125%;
+    font-size:150%;
 }
 
 h4{
-    font-size:115%;
+    font-size:100%;
 }
 
 h5{
-    font-size:110%;
+    font-size:80%;
 }
 
 h6{
-    font-size:100%;
+    font-size:70%;
 }
 
 h4,h5,h6{
@@ -777,10 +777,10 @@ hr{
 /* } */
 
 #table-of-contents{
-    position:fixed;
+    position: fixed;
     top:0;
     left:0;
-    width:300px;
+    width:330px;
     overflow-x:hidden;
     overflow-y:scroll;
     height:100%;
@@ -795,6 +795,7 @@ hr{
 #table-of-contents h2{
     z-index:200;
     background-color:#2980B9;
+    /* text-align:center; */
     text-align:center;
     padding:0.809em;
     display:block;
@@ -878,7 +879,7 @@ footer{
 footer p{
     margin-bottom:12px}
 
-#copyright, #postamble{
+/*#copyright, #postamble{
     position:fixed;
     bottom:0;
     left:0;
@@ -905,7 +906,7 @@ footer p{
 
 #postamble .creator,#postamble .validation {
     display:none;
-}
+}*/
 
 #copyright a{
     color:#2980B9;

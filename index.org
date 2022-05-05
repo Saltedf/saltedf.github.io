@@ -1,13 +1,14 @@
 #+TITLE: 目录
-#+OPTIONS: num:nil toc:nil
+
+
+#+OPTIONS: toc:t  num:nil timestamp:nil 
+
+#+HTML_HEAD:  <link rel="stylesheet" type="text/css" href="./myorg.css"/>
 
 * [[./elisp-insert-code-block.html][快速插入代码块]]
-
 * [[./emacs-coding.html][Emacs org文件编码问题]]
 * [[./linux-note.html][linux命令杂记]]
-
 * [[./cpp-primer.html][C++ primer杂记]] 
-
-* [[./cmake-learning.org][CMake学习]] 
+* [[./cmake-learning.org][CMake学习]]
 
 * [[./ocaml-book.org][OCaml杂记]]

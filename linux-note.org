@@ -367,15 +367,16 @@ unset environment FOO
 
 ** 为可执行程序传参
 
-进入gdb shell后: 
-1. run arg1 arg2 ...
++ 进入gdb shell后: 
 
+~run arg1 arg2 ...~
 
-2. set args arg1 arg2 arg3 
+~set args arg1 arg2 arg3~
 
-启动gdb时通过命令行传参:
++ 启动gdb时通过命令行传参:
 
-3. gdb ./main --args ./main a1 a2 a3 ...
+~gdb ./main --args ./main a1 a2 a3 ...~
+
 这种方式需要额外再写一次可执行文件的路径.
 
 

@@ -1,7 +1,7 @@
 #+TITLE: OCaml 杂记
-#+OPTIONS: toc:t num:t
+#+OPTIONS: toc:t num:nil  timestamp:nil 
 
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./myorg.css"/> <link rel="stylesheet"  href="./main.css"/>
+#+HTML_HEAD:  <link rel="stylesheet" type="text/css" href="./myorg.css"/>
 
 
 
@@ -30,10 +30,14 @@ opam install -y utop odoc ounit2 qcheck bisect_ppx menhir ocaml-lsp-server ocaml
 ** Exit utop
 
 #+begin_src ocaml
-#quit;;~ 
+  #quit;; 
 #+end_src
- 
-~exit 0;;~
+
+#+begin_src ocaml
+exit 0;;
+#+end_src
+
+
 
 * 配置Emacs支持ocaml | Configure EMACS supports Ocaml
 
@@ -54,7 +58,7 @@ ocamlc -o test.byte test.ml
 
 ** main()函数？
 
-ocaml中没有专门的main函数，文件中最后一个函数定义将作为整个程序的入口。
+ocaml中没有专门的main函数，文件（指的是dune中name命令指定的那个）中最后一个函数定义将作为整个程序的入口。
 
 ** 构建系统Dune
 
@@ -97,12 +101,16 @@ ocaml中没有专门的main函数，文件中最后一个函数定义将作为�
 
 * ocaml的显著差别
 
-** 连接字符串: 用 ~^~
+
+** 递归函数要用 ~rec~ 标记
 
 #+begin_src ocaml
-"hello" ^ "world" 
+  let rec append lst1 lst2 =
+    match lst1 with
+    | [] -> lst2
+    | h :: t -> h :: (append t lst2 )
+  ;;
 #+end_src
-
 
 
 ** 严格区分整数和浮点数的运算：
@@ -111,6 +119,12 @@ int： ~0 + - * /  abs~
 
 float:  ~0. +. -. *. /. ~
 
+
+** 连接字符串: 用 ~^~
+
+#+begin_src ocaml
+"hello" ^ "world" 
+#+end_src
 
 
 * let 不是表达式
@@ -378,6 +392,130 @@ ocaml 中的list是第一类的，这意味着有专门的语法支持list.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+** 通过模式匹配 访问元素
+#+begin_src ocaml
+  match XX with
+  | pattern1 -> do something
+  | pattern2 -> do something
+  | _ ->  ...
+#+end_src
+
+所谓模式就是数据的形式（样子），比如list可以是空的，也可以是不空的。
+#+begin_src ocaml
+  match lst with
+  | [] -> 0
+  | head :: tail -> head 
+#+end_src
+空list的形状就是 ~[]~ ，非空的列表意味着至少有一个有效元素： ~e :: []~ 
+因此，其形状是 ~head::tail~ 。
+
+有两种特殊的模式： ~_~ 和 ~x~ (x是随便一个符号名）
+它们都能和任意的数据匹配上，不同之处在于匹配上的数据不会绑定到 ~_~ 上，但是会绑定到 ~x~ 上。
+也就是说，在 ~->~ 右侧能否引用匹配上的值。
+#+begin_src ocaml
+  let rec length lst =
+    match lst with
+    | [] -> 0
+    | h :: t -> 1 + length t
+  ;;
+#+end_src
+
+在这个函数中的模式匹配里，第二个模式的 ~h~ 是没有必要的，因为箭头后面根本就没有使用 ~h~,
+
+~List.hd/List.tl~ 分别能取出list的head和tail, 但是当他们作用于空列表 ~[]~ 时，会抛出异常。
+而使用模式匹配的方式访问head/tail的好处是会强制你处理list的所有形式。
+
+
+
+
+* OUnit2
+
+首先创建dune项目
+#+begin_src bash
+dune init project yourproject
+#+end_src
+
+在dune中链接ounit2:
+
+#+begin_src dune
+  (executable
+    (name test_xx)
+    (libraries ounit2))
+#+end_src
+
+
+创建测试文件  ~test_xx.ml~ 
+引入ounit2和被测试的模块
+#+begin_src ocaml
+  open Xx
+  open OUnit2
+
+#+end_src
+
+
+为某个函数/功能创建测试套件：
+#+begin_src ocaml
+  "测试套件名" >::: [  (* 测试项list *) ] 
+#+end_src
+
+编写测试用例：
+#+begin_src ocaml
+  "测试项目名" >:: (fun _ -> assert_xxx arg1 arg2 .. ) ;
+#+end_src
+
+运行一个测试套件：
+
+#+begin_src ocaml
+let _ = run_test_tt_main 测试套件 
+#+end_src
+
+
+
+完整例子：
+
+#+begin_src ocaml
+open OUnit2
+open Sum
+
+let tests = "test suite for sum" >::: [
+    "empty" >:: (fun _ -> assert_equal 0 (sum []) ) ;
+    "singleton" >:: (fun _ -> assert_equal 1 (sum [1]) ) ;
+    "two elements" >:: (fun _ -> assert_equal 3 (sum [1;2]));
+  ]
+
+let _ = run_test_tt_main tests 
+#+end_src
+
+
+** 打印测试用例出错时的值
+
+要给 ~assert_xxx~ 的 ~printer~ 参数传入一个输出字符串表达的函数，eg: ~string_of_int~ 
+#+begin_src ocaml
+
+  
+  let mytsts = "test suite for some module" >::: [
+      "case1" >:: (fun _ -> assert_equal 0 (sum []) ~printer:string_of_int ) ;
+      ]
+#+end_src
+
+
+会输出：
+#+begin_src 
+expected: 0 but got: 1
+#+end_src
+
+从这个打印结果能看出，assert的首个参数应该是期望的值。
 
 
 
