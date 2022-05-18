@@ -1,6 +1,6 @@
 #+TITLE:  在org模式下快速插入代码块
+#+include: mytheme.setup 
 
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./myorg.css"/>
 #+OPTIONS: num:nil
 
 
@@ -104,12 +104,12 @@
 #+end_src
 
 
-* 参考
++ 参考
+  
+ + https://segmentfault.com/a/1190000039313306
 
-https://segmentfault.com/a/1190000039313306
+ + https://www.jianshu.com/p/65b271c1dabf
 
-https://www.jianshu.com/p/65b271c1dabf
-
-http://xahlee.info/emacs/emacs/elisp_thing-at-point.html
+ + http://xahlee.info/emacs/emacs/elisp_thing-at-point.html
 
 

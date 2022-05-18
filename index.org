@@ -1,14 +1,13 @@
-#+TITLE: 目录
+#+TITLE: Salted's blog
+#+OPTIONS: toc:nil   num:nil timestamp:nil 
+#+include: ./mytheme.setup
 
+* 目录 
 
-#+OPTIONS: toc:t  num:nil timestamp:nil 
+** [[./elisp-insert-code-block.org][快速插入代码块]]
+** [[./emacs-coding.org][Emacs org文件编码问题]]
+** [[./linux-note.org][linux命令杂记]]
+** [[./cpp-primer.html][C++ primer杂记]] 
+** [[./cmake-learning.org][CMake学习]]
 
-#+HTML_HEAD:  <link rel="stylesheet" type="text/css" href="./myorg.css"/>
-
-* [[./elisp-insert-code-block.html][快速插入代码块]]
-* [[./emacs-coding.html][Emacs org文件编码问题]]
-* [[./linux-note.html][linux命令杂记]]
-* [[./cpp-primer.html][C++ primer杂记]] 
-* [[./cmake-learning.org][CMake学习]]
-
-* [[./ocaml-book.org][OCaml杂记]]
+** [[./ocaml-book/ocaml-book.org][OCaml杂记]]

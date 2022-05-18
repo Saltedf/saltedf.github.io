@@ -1,5 +1,6 @@
 #+TITEL elisp
 
+#+SETUPFILE: ./mytheme.setup
 
 M-x org-indent-mode
 

@@ -1,7 +1,7 @@
 #+TITLE: CMake学习
 #+OPTIONS: toc:t num:t
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./myorg.css"/>
 
+#+SETUPFILE: ./mytheme.setup
 
 
 * 基本的cmake命令

@@ -7,191 +7,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OCaml 杂记</title>
 <meta name="generator" content="Org Mode" />
-<style>
-  #content { max-width: 60em; margin: auto; }
-  .title  { text-align: center;
-             margin-bottom: .2em; }
-  .subtitle { text-align: center;
-              font-size: medium;
-              font-weight: bold;
-              margin-top:0; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { font-family: monospace; color: green; }
-  .priority { font-family: monospace; color: orange; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #e6e6e6;
-    border-radius: 3px;
-    background-color: #f2f2f2;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: auto;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    top: -8px;
-    right: 12px;
-    padding: 3px;
-    color: #555;
-    background-color: #f2f2f299;
-  }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
-  /* Languages per Org manual */
-  pre.src-asymptote:before { content: 'Asymptote'; }
-  pre.src-awk:before { content: 'Awk'; }
-  pre.src-authinfo::before { content: 'Authinfo'; }
-  pre.src-C:before { content: 'C'; }
-  /* pre.src-C++ doesn't work in CSS */
-  pre.src-clojure:before { content: 'Clojure'; }
-  pre.src-css:before { content: 'CSS'; }
-  pre.src-D:before { content: 'D'; }
-  pre.src-ditaa:before { content: 'ditaa'; }
-  pre.src-dot:before { content: 'Graphviz'; }
-  pre.src-calc:before { content: 'Emacs Calc'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-fortran:before { content: 'Fortran'; }
-  pre.src-gnuplot:before { content: 'gnuplot'; }
-  pre.src-haskell:before { content: 'Haskell'; }
-  pre.src-hledger:before { content: 'hledger'; }
-  pre.src-java:before { content: 'Java'; }
-  pre.src-js:before { content: 'Javascript'; }
-  pre.src-latex:before { content: 'LaTeX'; }
-  pre.src-ledger:before { content: 'Ledger'; }
-  pre.src-lisp:before { content: 'Lisp'; }
-  pre.src-lilypond:before { content: 'Lilypond'; }
-  pre.src-lua:before { content: 'Lua'; }
-  pre.src-matlab:before { content: 'MATLAB'; }
-  pre.src-mscgen:before { content: 'Mscgen'; }
-  pre.src-ocaml:before { content: 'Objective Caml'; }
-  pre.src-octave:before { content: 'Octave'; }
-  pre.src-org:before { content: 'Org mode'; }
-  pre.src-oz:before { content: 'OZ'; }
-  pre.src-plantuml:before { content: 'Plantuml'; }
-  pre.src-processing:before { content: 'Processing.js'; }
-  pre.src-python:before { content: 'Python'; }
-  pre.src-R:before { content: 'R'; }
-  pre.src-ruby:before { content: 'Ruby'; }
-  pre.src-sass:before { content: 'Sass'; }
-  pre.src-scheme:before { content: 'Scheme'; }
-  pre.src-screen:before { content: 'Gnu Screen'; }
-  pre.src-sed:before { content: 'Sed'; }
-  pre.src-sh:before { content: 'shell'; }
-  pre.src-sql:before { content: 'SQL'; }
-  pre.src-sqlite:before { content: 'SQLite'; }
-  /* additional languages in org.el's org-babel-load-languages alist */
-  pre.src-forth:before { content: 'Forth'; }
-  pre.src-io:before { content: 'IO'; }
-  pre.src-J:before { content: 'J'; }
-  pre.src-makefile:before { content: 'Makefile'; }
-  pre.src-maxima:before { content: 'Maxima'; }
-  pre.src-perl:before { content: 'Perl'; }
-  pre.src-picolisp:before { content: 'Pico Lisp'; }
-  pre.src-scala:before { content: 'Scala'; }
-  pre.src-shell:before { content: 'Shell Script'; }
-  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
-  /* additional language identifiers per "defun org-babel-execute"
-       in ob-*.el */
-  pre.src-cpp:before  { content: 'C++'; }
-  pre.src-abc:before  { content: 'ABC'; }
-  pre.src-coq:before  { content: 'Coq'; }
-  pre.src-groovy:before  { content: 'Groovy'; }
-  /* additional language identifiers from org-babel-shell-names in
-     ob-shell.el: ob-shell is the only babel language using a lambda to put
-     the execution function name together. */
-  pre.src-bash:before  { content: 'bash'; }
-  pre.src-csh:before  { content: 'csh'; }
-  pre.src-ash:before  { content: 'ash'; }
-  pre.src-dash:before  { content: 'dash'; }
-  pre.src-ksh:before  { content: 'ksh'; }
-  pre.src-mksh:before  { content: 'mksh'; }
-  pre.src-posh:before  { content: 'posh'; }
-  /* Additional Emacs modes also supported by the LaTeX listings package */
-  pre.src-ada:before { content: 'Ada'; }
-  pre.src-asm:before { content: 'Assembler'; }
-  pre.src-caml:before { content: 'Caml'; }
-  pre.src-delphi:before { content: 'Delphi'; }
-  pre.src-html:before { content: 'HTML'; }
-  pre.src-idl:before { content: 'IDL'; }
-  pre.src-mercury:before { content: 'Mercury'; }
-  pre.src-metapost:before { content: 'MetaPost'; }
-  pre.src-modula-2:before { content: 'Modula-2'; }
-  pre.src-pascal:before { content: 'Pascal'; }
-  pre.src-ps:before { content: 'PostScript'; }
-  pre.src-prolog:before { content: 'Prolog'; }
-  pre.src-simula:before { content: 'Simula'; }
-  pre.src-tcl:before { content: 'tcl'; }
-  pre.src-tex:before { content: 'TeX'; }
-  pre.src-plain-tex:before { content: 'Plain TeX'; }
-  pre.src-verilog:before { content: 'Verilog'; }
-  pre.src-vhdl:before { content: 'VHDL'; }
-  pre.src-xml:before { content: 'XML'; }
-  pre.src-nxml:before { content: 'XML'; }
-  /* add a generic configuration mode; LaTeX export needs an additional
-     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
-  pre.src-conf:before { content: 'Configuration File'; }
-
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.org-right  { text-align: center;  }
-  th.org-left   { text-align: center;   }
-  th.org-center { text-align: center; }
-  td.org-right  { text-align: right;  }
-  td.org-left   { text-align: left;   }
-  td.org-center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara { display: inline; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .equation-container {
-    display: table;
-    text-align: center;
-    width: 100%;
-  }
-  .equation {
-    vertical-align: middle;
-  }
-  .equation-label {
-    display: table-cell;
-    text-align: right;
-    vertical-align: middle;
-  }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
-</style>
-<link rel="stylesheet" type="text/css" href="./myorg.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
 </head>
 <body>
 <div id="content" class="content">
@@ -200,52 +26,148 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org6f22633">opam包管理器</a></li>
-<li><a href="#org26327f6">utop交互式解释器</a>
+<li><a href="#org94831c8">CS3110 练习题</a></li>
+<li><a href="#orge2deb0c">opam包管理器</a></li>
+<li><a href="#orga998f70">utop交互式解释器</a>
 <ul>
-<li><a href="#org771c979">Exit utop</a></li>
+<li><a href="#org828e155">Exit utop</a></li>
 </ul>
 </li>
-<li><a href="#org7285263">配置Emacs支持ocaml | Configure EMACS supports Ocaml</a></li>
-<li><a href="#orgf63bb25">编译ocamlc</a>
+<li><a href="#org01de1c0">配置Emacs支持ocaml | Configure EMACS supports Ocaml</a></li>
+<li><a href="#org8655fc8">编译ocamlc</a>
 <ul>
-<li><a href="#org6b0eb6f">main()函数？</a></li>
-<li><a href="#orgc13537d">构建系统Dune</a></li>
+<li><a href="#org567ef10">main()函数？</a></li>
+<li><a href="#orgb38ca88">构建系统Dune</a></li>
 </ul>
 </li>
-<li><a href="#orgcc5f4d2">ocaml的显著差别</a>
+<li><a href="#orgd0f244f">ocaml的显著差别</a>
 <ul>
-<li><a href="#org185b549">递归函数要用 <code>rec</code> 标记</a></li>
-<li><a href="#org0bd4d4f">严格区分整数和浮点数的运算：</a></li>
-<li><a href="#org8b434dd">连接字符串: 用 <code>^</code></a></li>
+<li><a href="#org0b87bc0">递归函数要用 <code>rec</code> 标记</a></li>
+<li><a href="#orgc195852">严格区分整数和浮点数的运算：</a></li>
+<li><a href="#orgdda8a21">连接字符串: 用 <code>^</code></a></li>
+<li><a href="#org5e128c3">带类型注释的函数定义</a></li>
 </ul>
 </li>
-<li><a href="#org789fbef">let 不是表达式</a></li>
-<li><a href="#org78f12b7">let &#x2026; in &#x2026;表达式</a></li>
-<li><a href="#org4de160d">运算符</a>
+<li><a href="#org4cf6d3e">let 不是表达式</a></li>
+<li><a href="#org38caf7f">let &#x2026; in &#x2026;表达式</a></li>
+<li><a href="#org7f636fb">运算符</a>
 <ul>
-<li><a href="#org65a964f">用括号定义标点符号</a></li>
-<li><a href="#org87aa725">运算符@@ 分隔开函数和参数</a></li>
-<li><a href="#org84a921e">运算符|&gt; 管道符</a></li>
-<li><a href="#org257e23b">文档</a></li>
-<li><a href="#orga412f5f">打印</a>
+<li><a href="#org7268d29">用括号定义标点符号</a></li>
+<li><a href="#org1a3c6e8">运算符@@ 分隔开函数和参数</a></li>
+<li><a href="#orgd927591">运算符|&gt; 管道符</a></li>
+<li><a href="#org26be14f">文档</a></li>
+<li><a href="#org9dea720">打印</a>
 <ul>
-<li><a href="#org5ba3890">格式化输出</a></li>
-<li><a href="#org5c4ce47">格式化字符串</a></li>
+<li><a href="#orgbb183af">格式化输出</a></li>
+<li><a href="#org5646ab7">格式化字符串</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgd5b11e8">list</a>
+<li><a href="#org16efd37">list</a>
 <ul>
-<li><a href="#org7b1fdeb">创建list</a></li>
-<li><a href="#orgd5dab6e">用 <code>@</code> 连接两个list</a></li>
-<li><a href="#org5f957ba">通过模式匹配 访问元素</a></li>
+<li><a href="#org3749700">创建list</a></li>
+<li><a href="#org8a21c91">用 <code>@</code> 连接两个list</a></li>
+<li><a href="#orgca2790a">通过模式匹配 访问元素</a></li>
+<li><a href="#org6d4e91a">list的不可变</a></li>
 </ul>
 </li>
-<li><a href="#org9e50ae3">OUnit2</a>
+<li><a href="#orgcb3166f">模式匹配</a>
 <ul>
-<li><a href="#org79c5c1a">打印测试用例出错时的值</a></li>
+<li><a href="#org028156f">模式匹配的求值规则（动态语义）</a></li>
+<li><a href="#orga809e1d">模式匹配静态语义</a>
+<ul>
+<li><a href="#orgc03f7df">类型推断/检查</a></li>
+<li><a href="#org40832c7">match的分支是否完整包含了所有情况</a></li>
+<li><a href="#orge8c573d">match中是否包含无用分支</a></li>
+</ul>
+</li>
+<li><a href="#org099bafd">一些关于list的模式</a></li>
+<li><a href="#org67c18ee">用于函数定义的简化模式匹配</a></li>
+<li><a href="#orgc030a89">更多模式</a>
+<ul>
+<li><a href="#orgd40829c">匹配上模式并满足when的条件</a></li>
+</ul>
+</li>
+<li><a href="#org283111d">let in 中的模式匹配</a></li>
+<li><a href="#org05293bd">元组的模式匹配</a></li>
+</ul>
+</li>
+<li><a href="#org171f983">尾递归</a></li>
+<li><a href="#orgaa5ed01">变体 | Variants</a>
+<ul>
+<li><a href="#org8a6b42a">额外携带数据的Variant也被叫做代数数据类型</a></li>
+<li><a href="#org0bb7fc9">对Variant使用模式匹配的要点</a></li>
+<li><a href="#org6125579">Variant的递归定义</a></li>
+<li><a href="#org18ada2a"><code>and</code> 关键字使类型定义可以是互相递归的</a></li>
+<li><a href="#org86e57e0">Variants的参数多态</a></li>
+<li><a href="#org8581b8a">多态Variant/匿名Variant</a></li>
+</ul>
+</li>
+<li><a href="#orgb5c6129">和match天生一对的Options= Some/None</a></li>
+<li><a href="#orge221958">列表推导 | List Comprehensions</a></li>
+<li><a href="#orgf7e1d0b">OUnit2</a>
+<ul>
+<li><a href="#org6c3f656">打印测试用例出错时的值</a></li>
+<li><a href="#org17bc10e">测试是否发出了异常</a></li>
+</ul>
+</li>
+<li><a href="#org179bcdb">Records &amp; Tuples</a>
+<ul>
+<li><a href="#orgb1c4c71">Record定义</a></li>
+<li><a href="#org2ded8f1">访问Record的字段</a>
+<ul>
+<li><a href="#orgbccc754">通过 <code>R.field</code></a></li>
+<li><a href="#org44a06a6">通过模式匹配</a></li>
+</ul>
+</li>
+<li><a href="#org3aa7eb0">从旧record中创建新record</a></li>
+<li><a href="#org49632f4">Tuple的定义</a></li>
+</ul>
+</li>
+<li><a href="#org6c715b4">类型别名</a></li>
+<li><a href="#orgd6201ad">异常</a>
+<ul>
+<li><a href="#org56fc19e">定义一个新的异常</a></li>
+<li><a href="#orge3d713f">抛出异常</a>
+<ul>
+<li><a href="#org4713f33">raise</a></li>
+<li><a href="#org294febe">failwith</a></li>
+</ul>
+</li>
+<li><a href="#orgc36b256">捕获并处理异常</a></li>
+</ul>
+</li>
+<li><a href="#orgcdb16ea">定义二叉树类型 Binary Tree</a>
+<ul>
+<li><a href="#org501ccfa">用Tuples表示 | representation with tuples</a>
+<ul>
+<li><a href="#org060cebf">定义</a></li>
+<li><a href="#orgb37726a">创建对象</a></li>
+<li><a href="#orgaa8077f">使用</a></li>
+</ul>
+</li>
+<li><a href="#org514db0e">用Records表示 | representation with records</a>
+<ul>
+<li><a href="#org64709bc">定义</a></li>
+<li><a href="#org5a10936">创建对象</a></li>
+<li><a href="#orga370bb9">使用方法，匹配tree对象</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org18de0c8">定义自然数类型 natural numbers</a>
+<ul>
+<li><a href="#orgd201ba3">定义 nat</a></li>
+<li><a href="#org28aac59">创建nat对象</a></li>
+<li><a href="#org5a34d0c">操作自然数</a>
+<ul>
+<li><a href="#org78e45c1">是否为0</a></li>
+<li><a href="#orgc26ffa8">前驱？</a></li>
+<li><a href="#orgaf90913">加法运算</a></li>
+<li><a href="#orgc7e35a0">int和nat的相互转换</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -254,9 +176,19 @@
 
 
 
-<div id="outline-container-org6f22633" class="outline-2">
-<h2 id="org6f22633">opam包管理器</h2>
-<div class="outline-text-2" id="text-org6f22633">
+
+<div id="outline-container-org94831c8" class="outline-2">
+<h2 id="org94831c8">CS3110 练习题</h2>
+<div class="outline-text-2" id="text-org94831c8">
+<ul class="org-ul">
+<li><a href="./ocaml-book/ch2/ex.html">Ch2</a></li>
+<li><a href="./ocaml-book/ch3/exercises.html">Ch3</a></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orge2deb0c" class="outline-2">
+<h2 id="orge2deb0c">opam包管理器</h2>
+<div class="outline-text-2" id="text-orge2deb0c">
 <p>
 <code>opam install XX</code>
 </p>
@@ -268,9 +200,9 @@
 </div>
 </div>
 
-<div id="outline-container-org26327f6" class="outline-2">
-<h2 id="org26327f6">utop交互式解释器</h2>
-<div class="outline-text-2" id="text-org26327f6">
+<div id="outline-container-orga998f70" class="outline-2">
+<h2 id="orga998f70">utop交互式解释器</h2>
+<div class="outline-text-2" id="text-orga998f70">
 <p>
 每次启动utop都会自动加载 <code>.ocamlinit</code> 文件，它会自动执行脚本，
 使得不用每次都手动加载库
@@ -285,9 +217,9 @@
 </div>
 </div>
 
-<div id="outline-container-org771c979" class="outline-3">
-<h3 id="org771c979">Exit utop</h3>
-<div class="outline-text-3" id="text-org771c979">
+<div id="outline-container-org828e155" class="outline-3">
+<h3 id="org828e155">Exit utop</h3>
+<div class="outline-text-3" id="text-org828e155">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f0e68c;">#</span>quit<span style="color: #ff4500;">;;</span> 
 </pre>
@@ -303,9 +235,9 @@
 
 
 
-<div id="outline-container-org7285263" class="outline-2">
-<h2 id="org7285263">配置Emacs支持ocaml | Configure EMACS supports Ocaml</h2>
-<div class="outline-text-2" id="text-org7285263">
+<div id="outline-container-org01de1c0" class="outline-2">
+<h2 id="org01de1c0">配置Emacs支持ocaml | Configure EMACS supports Ocaml</h2>
+<div class="outline-text-2" id="text-org01de1c0">
 <div class="org-src-container">
 <pre class="src src-ocaml">opam install tuareg ocp<span style="color: #f0e68c;">-</span>indent merlin
 opam install user<span style="color: #f0e68c;">-</span>setup
@@ -316,9 +248,9 @@ opam user<span style="color: #f0e68c;">-</span>setup install
 </div>
 
 
-<div id="outline-container-orgf63bb25" class="outline-2">
-<h2 id="orgf63bb25">编译ocamlc</h2>
-<div class="outline-text-2" id="text-orgf63bb25">
+<div id="outline-container-org8655fc8" class="outline-2">
+<h2 id="org8655fc8">编译ocamlc</h2>
+<div class="outline-text-2" id="text-org8655fc8">
 <div class="org-src-container">
 <pre class="src src-sh">ocamlc -o test.byte test.ml 
 </pre>
@@ -329,18 +261,18 @@ opam user<span style="color: #f0e68c;">-</span>setup install
 </div>
 
 
-<div id="outline-container-org6b0eb6f" class="outline-3">
-<h3 id="org6b0eb6f">main()函数？</h3>
-<div class="outline-text-3" id="text-org6b0eb6f">
+<div id="outline-container-org567ef10" class="outline-3">
+<h3 id="org567ef10">main()函数？</h3>
+<div class="outline-text-3" id="text-org567ef10">
 <p>
 ocaml中没有专门的main函数，文件（指的是dune中name命令指定的那个）中最后一个函数定义将作为整个程序的入口。
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgc13537d" class="outline-3">
-<h3 id="orgc13537d">构建系统Dune</h3>
-<div class="outline-text-3" id="text-orgc13537d">
+<div id="outline-container-orgb38ca88" class="outline-3">
+<h3 id="orgb38ca88">构建系统Dune</h3>
+<div class="outline-text-3" id="text-orgb38ca88">
 <ul class="org-ul">
 <li><p>
 用dune创建项目根目录 Create a project root directory with dune
@@ -398,15 +330,15 @@ Clean up the _build directory
 
 
 
-<div id="outline-container-orgcc5f4d2" class="outline-2">
-<h2 id="orgcc5f4d2">ocaml的显著差别</h2>
-<div class="outline-text-2" id="text-orgcc5f4d2">
+<div id="outline-container-orgd0f244f" class="outline-2">
+<h2 id="orgd0f244f">ocaml的显著差别</h2>
+<div class="outline-text-2" id="text-orgd0f244f">
 </div>
-<div id="outline-container-org185b549" class="outline-3">
-<h3 id="org185b549">递归函数要用 <code>rec</code> 标记</h3>
-<div class="outline-text-3" id="text-org185b549">
+<div id="outline-container-org0b87bc0" class="outline-3">
+<h3 id="org0b87bc0">递归函数要用 <code>rec</code> 标记</h3>
+<div class="outline-text-3" id="text-org0b87bc0">
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="font-weight: bold;">rec</span> <span style="color: #5cEfFF;">append</span><span style="color: #DFDFDF;"> lst1 lst2</span> <span style="color: #f0e68c;">=</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">append</span><span style="color: #DFDFDF;"> lst1 lst2</span> <span style="color: #f0e68c;">=</span>
   <span style="color: #51afef;">match</span> lst1 <span style="color: #51afef;">with</span>
   <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> lst2
   <span style="color: #f0e68c;">|</span> h <span style="color: #f0e68c;">::</span> t <span style="color: #f0e68c;">-&gt;</span> h <span style="color: #f0e68c;">::</span> <span style="color: #f0e68c;">(</span>append t lst2 <span style="color: #f0e68c;">)</span>
@@ -417,9 +349,9 @@ Clean up the _build directory
 </div>
 
 
-<div id="outline-container-org0bd4d4f" class="outline-3">
-<h3 id="org0bd4d4f">严格区分整数和浮点数的运算：</h3>
-<div class="outline-text-3" id="text-org0bd4d4f">
+<div id="outline-container-orgc195852" class="outline-3">
+<h3 id="orgc195852">严格区分整数和浮点数的运算：</h3>
+<div class="outline-text-3" id="text-orgc195852">
 <p>
 int： <code>0 + - * /  abs</code> 
 </p>
@@ -431,11 +363,23 @@ float:  ~0. +. -. *. /. ~
 </div>
 
 
-<div id="outline-container-org8b434dd" class="outline-3">
-<h3 id="org8b434dd">连接字符串: 用 <code>^</code></h3>
-<div class="outline-text-3" id="text-org8b434dd">
+<div id="outline-container-orgdda8a21" class="outline-3">
+<h3 id="orgdda8a21">连接字符串: 用 <code>^</code></h3>
+<div class="outline-text-3" id="text-orgdda8a21">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #7bc275;">"hello"</span> <span style="color: #f0e68c;">^</span> <span style="color: #7bc275;">"world"</span> 
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org5e128c3" class="outline-3">
+<h3 id="org5e128c3">带类型注释的函数定义</h3>
+<div class="outline-text-3" id="text-org5e128c3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">func</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">a</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">int</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">b</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> float</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">string</span><span style="color: #62686E;">(*</span><span style="color: #62686E;">&#36820;&#22238;&#20540;</span><span style="color: #62686E;">*)</span> <span style="color: #f0e68c;">=</span>
+ <span style="color: #f0e68c;">...</span>
 </pre>
 </div>
 </div>
@@ -443,13 +387,13 @@ float:  ~0. +. -. *. /. ~
 </div>
 
 
-<div id="outline-container-org789fbef" class="outline-2">
-<h2 id="org789fbef">let 不是表达式</h2>
-<div class="outline-text-2" id="text-org789fbef">
+<div id="outline-container-org4cf6d3e" class="outline-2">
+<h2 id="org4cf6d3e">let 不是表达式</h2>
+<div class="outline-text-2" id="text-org4cf6d3e">
 <div class="org-src-container">
 <pre class="src src-ocaml">
-utop <span style="color: #f0e68c;">#</span> <span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">=</span> 3<span style="color: #ff4500;">;;</span>
-<span style="font-weight: bold;">val</span> <span style="color: #5cEfFF;">x</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 3
+utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">=</span> 3<span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">x</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 3
 
 utop <span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x y</span> <span style="color: #f0e68c;">-&gt;</span> x <span style="color: #f0e68c;">*</span> y<span style="color: #f0e68c;">)</span><span style="color: #ff4500;">;;</span>
 <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
@@ -457,8 +401,8 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">(</spa
 utop <span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x y</span> <span style="color: #f0e68c;">-&gt;</span> x <span style="color: #f0e68c;">*</span> y<span style="color: #f0e68c;">)</span> 4 5<span style="color: #ff4500;">;;</span>
 <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 20
 
-utop <span style="color: #f0e68c;">#</span> <span style="font-weight: bold;">let</span> <span style="color: #5cEfFF;">multf</span><span style="color: #DFDFDF;"> x y</span> <span style="color: #f0e68c;">=</span> x <span style="color: #f0e68c;">*.</span> y<span style="color: #ff4500;">;;</span>
-<span style="font-weight: bold;">val</span> <span style="color: #5cEfFF;">multf</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">-&gt;</span> float <span style="color: #f0e68c;">-&gt;</span> float <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
+utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">multf</span><span style="color: #DFDFDF;"> x y</span> <span style="color: #f0e68c;">=</span> x <span style="color: #f0e68c;">*.</span> y<span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">multf</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">-&gt;</span> float <span style="color: #f0e68c;">-&gt;</span> float <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
 
 utop <span style="color: #f0e68c;">#</span> multf 1. 4.<span style="color: #ff4500;">;;</span>
 <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">=</span> 4.
@@ -467,9 +411,9 @@ utop <span style="color: #f0e68c;">#</span> multf 1. 4.<span style="color: #ff45
 </div>
 </div>
 
-<div id="outline-container-org78f12b7" class="outline-2">
-<h2 id="org78f12b7">let &#x2026; in &#x2026;表达式</h2>
-<div class="outline-text-2" id="text-org78f12b7">
+<div id="outline-container-org38caf7f" class="outline-2">
+<h2 id="org38caf7f">let &#x2026; in &#x2026;表达式</h2>
+<div class="outline-text-2" id="text-org38caf7f">
 <p>
 在utop环境下，所有的let定义都会被转化成层层嵌套的let..in..表达式。
 因此在表面上好像是支持了改变变量的值。
@@ -480,7 +424,7 @@ utop <span style="color: #f0e68c;">#</span> multf 1. 4.<span style="color: #ff45
 There must be parentheses here:
 </p>
 <div class="org-src-container">
-<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">a</span> <span style="color: #f0e68c;">=</span> 19 <span style="font-weight: bold;">in</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> x <span style="color: #f0e68c;">+</span> a<span style="color: #f0e68c;">)</span>  19<span style="color: #ff4500;">;;</span>
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">a</span> <span style="color: #f0e68c;">=</span> 19 <span style="color: #f5deb3; font-weight: bold;">in</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> x <span style="color: #f0e68c;">+</span> a<span style="color: #f0e68c;">)</span>  19<span style="color: #ff4500;">;;</span>
 <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 38
 </pre>
 </div>
@@ -491,14 +435,14 @@ There must be parentheses here:
 </p>
 
 <div class="org-src-container">
-<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="font-weight: bold;">let</span> <span style="color: #5cEfFF;">multargs</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">y</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span> <span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">z</span> <span style="color: #f0e68c;">-&gt;</span> x<span style="color: #f0e68c;">+</span>y<span style="color: #f0e68c;">+</span>z <span style="color: #f0e68c;">))</span> <span style="color: #ff4500;">;;</span>
-<span style="font-weight: bold;">val</span> <span style="color: #5cEfFF;">multargs</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">multargs</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">y</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span> <span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">z</span> <span style="color: #f0e68c;">-&gt;</span> x<span style="color: #f0e68c;">+</span>y<span style="color: #f0e68c;">+</span>z <span style="color: #f0e68c;">))</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">multargs</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
 
 utop <span style="color: #f0e68c;">#</span> multargs 1 2 3 <span style="color: #ff4500;">;;</span>
 <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 6
 
-utop <span style="color: #f0e68c;">#</span> <span style="font-weight: bold;">let</span> <span style="color: #5cEfFF;">same_as_multargs</span><span style="color: #DFDFDF;"> x y z</span> <span style="color: #f0e68c;">=</span> x<span style="color: #f0e68c;">+</span>y<span style="color: #f0e68c;">+</span>z <span style="color: #ff4500;">;;</span>
-<span style="font-weight: bold;">val</span> <span style="color: #5cEfFF;">same_as_multargs</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
+utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">same_as_multargs</span><span style="color: #DFDFDF;"> x y z</span> <span style="color: #f0e68c;">=</span> x<span style="color: #f0e68c;">+</span>y<span style="color: #f0e68c;">+</span>z <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">same_as_multargs</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
 
 utop <span style="color: #f0e68c;">#</span> same_as_multargs 1 2 3<span style="color: #ff4500;">;;</span>
 <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 6
@@ -511,12 +455,12 @@ utop <span style="color: #f0e68c;">#</span> same_as_multargs 1 2 3<span style="c
 范型：带撇的类型名 'a  'b 
 </p>
 <div class="org-src-container">
-<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="font-weight: bold;">let</span> <span style="color: #5cEfFF;">foo</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> int </span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> 'a</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">y </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> 'a</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #51afef;">then</span> x <span style="color: #51afef;">else</span> y <span style="color: #ff4500;">;;</span>
-<span style="font-weight: bold;">val</span> <span style="color: #5cEfFF;">foo</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">foo</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> int </span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> 'a</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">y </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> 'a</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #51afef;">then</span> x <span style="color: #51afef;">else</span> y <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">foo</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
 
 utop <span style="color: #f0e68c;">#</span> foo <span style="color: #f0e68c;">-</span>1 <span style="color: #7bc275;">"hello"</span> <span style="color: #7bc275;">"fuck"</span> <span style="color: #ff4500;">;;</span>
-<span style="color: #bbc2cf; background-color: #242730;">Error</span><span style="color: #f0e68c;">:</span> <span style="color: #bbc2cf; background-color: #242730;">This</span> expression has <span style="font-weight: bold;">type</span> <span style="color: #FCCE7B;">int</span> <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a
-but an expression was expected <span style="color: #51afef;">of</span> <span style="font-weight: bold;">type</span> <span style="color: #FCCE7B;">int</span>
+<span style="color: #bbc2cf; background-color: #242730;">Error</span><span style="color: #f0e68c;">:</span> <span style="color: #bbc2cf; background-color: #242730;">This</span> expression has <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">int</span> <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a
+but an expression was expected <span style="color: #51afef;">of</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">int</span>
 
 utop <span style="color: #f0e68c;">#</span> foo 3 <span style="color: #7bc275;">"hello"</span> <span style="color: #7bc275;">"fuck"</span> <span style="color: #ff4500;">;;</span>
 <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"hello"</span>
@@ -529,18 +473,18 @@ utop <span style="color: #f0e68c;">#</span> foo <span style="color: #f0e68c;">(-
 </div>
 
 
-<div id="outline-container-org4de160d" class="outline-2">
-<h2 id="org4de160d">运算符</h2>
-<div class="outline-text-2" id="text-org4de160d">
+<div id="outline-container-org7f636fb" class="outline-2">
+<h2 id="org7f636fb">运算符</h2>
+<div class="outline-text-2" id="text-org7f636fb">
 </div>
-<div id="outline-container-org65a964f" class="outline-3">
-<h3 id="org65a964f">用括号定义标点符号</h3>
+<div id="outline-container-org7268d29" class="outline-3">
+<h3 id="org7268d29">用括号定义标点符号</h3>
 </div>
 
 
-<div id="outline-container-org87aa725" class="outline-3">
-<h3 id="org87aa725">运算符@@ 分隔开函数和参数</h3>
-<div class="outline-text-3" id="text-org87aa725">
+<div id="outline-container-org1a3c6e8" class="outline-3">
+<h3 id="org1a3c6e8">运算符@@ 分隔开函数和参数</h3>
+<div class="outline-text-3" id="text-org1a3c6e8">
 <p>
 主要是为了避免空格分割导致参数的识别不正常：
 </p>
@@ -558,18 +502,18 @@ utop<span style="color: #f0e68c;">[</span>6<span style="color: #f0e68c;">]&gt;</
 </div>
 </div>
 
-<div id="outline-container-org84a921e" class="outline-3">
-<h3 id="org84a921e">运算符|&gt; 管道符</h3>
-<div class="outline-text-3" id="text-org84a921e">
+<div id="outline-container-orgd927591" class="outline-3">
+<h3 id="orgd927591">运算符|&gt; 管道符</h3>
+<div class="outline-text-3" id="text-orgd927591">
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="color: #f0e68c;">(|&gt;)</span> x f <span style="color: #f0e68c;">=</span> f x  <span style="color: #ff4500;">;;</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(|&gt;)</span> x f <span style="color: #f0e68c;">=</span> f x  <span style="color: #ff4500;">;;</span>
 </pre>
 </div>
 
 
 <div class="org-src-container">
-<pre class="src src-ocaml">  <span style="font-weight: bold;">let</span> <span style="color: #5cEfFF;">foo</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int</span> <span style="color: #f0e68c;">=</span> x<span style="color: #f0e68c;">*</span>x <span style="color: #f0e68c;">+</span>1<span style="color: #ff4500;">;;</span>
-  <span style="font-weight: bold;">val</span> <span style="color: #5cEfFF;">foo</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
+<pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">foo</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int</span> <span style="color: #f0e68c;">=</span> x<span style="color: #f0e68c;">*</span>x <span style="color: #f0e68c;">+</span>1<span style="color: #ff4500;">;;</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">foo</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
 
   utop<span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">]&gt;</span> foo 3<span style="color: #ff4500;">;;</span>
   <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 10
@@ -590,9 +534,9 @@ utop<span style="color: #f0e68c;">[</span>14<span style="color: #f0e68c;">]&gt;<
 
 
 
-<div id="outline-container-org257e23b" class="outline-3">
-<h3 id="org257e23b">文档</h3>
-<div class="outline-text-3" id="text-org257e23b">
+<div id="outline-container-org26be14f" class="outline-3">
+<h3 id="org26be14f">文档</h3>
+<div class="outline-text-3" id="text-org26be14f">
 <p>
 <code>(**  .. *)</code> 即是文档的格式。
 用方括号包围起来的将会被导出为等宽字体。
@@ -613,9 +557,9 @@ utop<span style="color: #f0e68c;">[</span>14<span style="color: #f0e68c;">]&gt;<
 </div>
 
 
-<div id="outline-container-orga412f5f" class="outline-3">
-<h3 id="orga412f5f">打印</h3>
-<div class="outline-text-3" id="text-orga412f5f">
+<div id="outline-container-org9dea720" class="outline-3">
+<h3 id="org9dea720">打印</h3>
+<div class="outline-text-3" id="text-org9dea720">
 <p>
 print<sub>xxx</sub> :返回类型为unit.
 </p>
@@ -632,7 +576,7 @@ print<sub>xxx</sub> :返回类型为unit.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> func args <span style="font-weight: bold;">in</span> <span style="color: #f0e68c;">...</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> func args <span style="color: #f5deb3; font-weight: bold;">in</span> <span style="color: #f0e68c;">...</span>
 </pre>
 </div>
 
@@ -641,15 +585,15 @@ print<sub>xxx</sub> :返回类型为unit.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="color: #f0e68c;">()</span> <span style="color: #f0e68c;">=</span> func args <span style="font-weight: bold;">in</span> <span style="color: #f0e68c;">...</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">()</span> <span style="color: #f0e68c;">=</span> func args <span style="color: #f5deb3; font-weight: bold;">in</span> <span style="color: #f0e68c;">...</span>
 </pre>
 </div>
 
 
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f0e68c;">#</span>
-<span style="font-weight: bold;">let</span> <span style="color: #f0e68c;">()</span>  <span style="color: #f0e68c;">=</span> print_endline <span style="color: #7bc275;">"fuck"</span> <span style="font-weight: bold;">in</span> 
-<span style="font-weight: bold;">let</span> <span style="color: #f0e68c;">()</span>  <span style="color: #f0e68c;">=</span> print_endline <span style="color: #7bc275;">"your"</span> <span style="font-weight: bold;">in</span> 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">()</span>  <span style="color: #f0e68c;">=</span> print_endline <span style="color: #7bc275;">"fuck"</span> <span style="color: #f5deb3; font-weight: bold;">in</span> 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">()</span>  <span style="color: #f0e68c;">=</span> print_endline <span style="color: #7bc275;">"your"</span> <span style="color: #f5deb3; font-weight: bold;">in</span> 
 print_endline <span style="color: #7bc275;">"mother"</span> <span style="color: #ff4500;">;;</span>
 </pre>
 </div>
@@ -700,7 +644,7 @@ print_endline <span style="color: #7bc275;">"mother"</span>  <span style="color:
 
 
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="color: #C57BDB;">ignore</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>  
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #C57BDB;">ignore</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>  
 </pre>
 </div>
 
@@ -709,9 +653,9 @@ print_endline <span style="color: #7bc275;">"mother"</span>  <span style="color:
 </p>
 </div>
 
-<div id="outline-container-org5ba3890" class="outline-4">
-<h4 id="org5ba3890">格式化输出</h4>
-<div class="outline-text-4" id="text-org5ba3890">
+<div id="outline-container-orgbb183af" class="outline-4">
+<h4 id="orgbb183af">格式化输出</h4>
+<div class="outline-text-4" id="text-orgbb183af">
 <div class="org-src-container">
 <pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #FCCE7B;">Printf.</span>printf <span style="color: #7bc275;">"%s %F\n %!"</span> <span style="color: #7bc275;">"hello"</span> 3.14 
 </pre>
@@ -724,7 +668,7 @@ print_endline <span style="color: #7bc275;">"mother"</span>  <span style="color:
 </div>
 
 <p>
-<code>%!</code> 用来刷写缓冲区，类似于std::endl
+<code>%!</code> 用来刷写缓冲区，类似于std::endl 
 </p>
 
 <p>
@@ -738,9 +682,9 @@ print_endline <span style="color: #7bc275;">"mother"</span>  <span style="color:
 </div>
 
 
-<div id="outline-container-org5c4ce47" class="outline-4">
-<h4 id="org5c4ce47">格式化字符串</h4>
-<div class="outline-text-4" id="text-org5c4ce47">
+<div id="outline-container-org5646ab7" class="outline-4">
+<h4 id="org5646ab7">格式化字符串</h4>
+<div class="outline-text-4" id="text-org5646ab7">
 <p>
 Printf.sprintf 会产生一个string
 </p>
@@ -755,9 +699,9 @@ Printf.sprintf 会产生一个string
 
 
 
-<div id="outline-container-orgd5b11e8" class="outline-2">
-<h2 id="orgd5b11e8">list</h2>
-<div class="outline-text-2" id="text-orgd5b11e8">
+<div id="outline-container-org16efd37" class="outline-2">
+<h2 id="org16efd37">list</h2>
+<div class="outline-text-2" id="text-org16efd37">
 <p>
 ocaml 中的list是同类型元素构成的单链表： <code>'a list</code> 。
 in OCaml, the list is first class status
@@ -769,9 +713,9 @@ ocaml 中的list是第一类的，这意味着有专门的语法支持list.
 </p>
 </div>
 
-<div id="outline-container-org7b1fdeb" class="outline-3">
-<h3 id="org7b1fdeb">创建list</h3>
-<div class="outline-text-3" id="text-org7b1fdeb">
+<div id="outline-container-org3749700" class="outline-3">
+<h3 id="org3749700">创建list</h3>
+<div class="outline-text-3" id="text-org3749700">
 <p>
 有两种方式： 
 </p>
@@ -807,12 +751,12 @@ ocaml 中的list是第一类的，这意味着有专门的语法支持list.
 </div>
 
 
-<div id="outline-container-orgd5dab6e" class="outline-3">
-<h3 id="orgd5dab6e">用 <code>@</code> 连接两个list</h3>
-<div class="outline-text-3" id="text-orgd5dab6e">
+<div id="outline-container-org8a21c91" class="outline-3">
+<h3 id="org8a21c91">用 <code>@</code> 连接两个list</h3>
+<div class="outline-text-3" id="text-org8a21c91">
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">a</span> <span style="color: #f0e68c;">=</span> 1 <span style="color: #f0e68c;">::</span> 3 <span style="color: #f0e68c;">::[]</span> <span style="color: #ff4500;">;;</span>
-<span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">b</span> <span style="color: #f0e68c;">=</span> 2 <span style="color: #f0e68c;">::</span> 4 <span style="color: #f0e68c;">::[]</span> <span style="color: #ff4500;">;;</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">a</span> <span style="color: #f0e68c;">=</span> 1 <span style="color: #f0e68c;">::</span> 3 <span style="color: #f0e68c;">::[]</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">b</span> <span style="color: #f0e68c;">=</span> 2 <span style="color: #f0e68c;">::</span> 4 <span style="color: #f0e68c;">::[]</span> <span style="color: #ff4500;">;;</span>
 
 a <span style="color: #f0e68c;">@</span> b <span style="color: #ff4500;">;;</span>
 
@@ -835,9 +779,9 @@ a <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2
 
 
 
-<div id="outline-container-org5f957ba" class="outline-3">
-<h3 id="org5f957ba">通过模式匹配 访问元素</h3>
-<div class="outline-text-3" id="text-org5f957ba">
+<div id="outline-container-orgca2790a" class="outline-3">
+<h3 id="orgca2790a">通过模式匹配 访问元素</h3>
+<div class="outline-text-3" id="text-orgca2790a">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #51afef;">match</span> <span style="color: #bbc2cf; background-color: #242730;">XX</span> <span style="color: #51afef;">with</span>
 <span style="color: #f0e68c;">|</span> pattern1 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #51afef;">do</span> something
@@ -861,12 +805,16 @@ a <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2
 </p>
 
 <p>
+在一个模式中不能有两个同名的符号：  <code>x::x</code> 
+</p>
+
+<p>
 有两种特殊的模式： <code>_</code> 和 <code>x</code> (x是随便一个符号名）
 它们都能和任意的数据匹配上，不同之处在于匹配上的数据不会绑定到 <code>_</code> 上，但是会绑定到 <code>x</code> 上。
 也就是说，在 <code>-&gt;</code> 右侧能否引用匹配上的值。
 </p>
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="font-weight: bold;">rec</span> <span style="color: #5cEfFF;">length</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">length</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
   <span style="color: #51afef;">match</span> lst <span style="color: #51afef;">with</span>
   <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> 0
   <span style="color: #f0e68c;">|</span> h <span style="color: #f0e68c;">::</span> t <span style="color: #f0e68c;">-&gt;</span> 1 <span style="color: #f0e68c;">+</span> length t
@@ -884,14 +832,652 @@ a <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2
 </p>
 </div>
 </div>
+
+
+
+
+
+
+<div id="outline-container-org6d4e91a" class="outline-3">
+<h3 id="org6d4e91a">list的不可变</h3>
+<div class="outline-text-3" id="text-org6d4e91a">
+<p>
+在ocaml中，所有变量都是immutable，也就是无法被原地修改的。对list来说，只有被改变的元素才会被拷贝，而未改变的部分是共享的，不会发生额外的拷贝。
+</p>
+
+<p>
+eg：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">incr_first</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">lst </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> int list</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int list</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">match</span> lst <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[]</span>
+  <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>h<span style="color: #f0e68c;">+</span>1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">::</span> t
+<span style="color: #ff4500;">;;</span>
+
+</pre>
+</div>
+</div>
+</div>
 </div>
 
 
 
 
-<div id="outline-container-org9e50ae3" class="outline-2">
-<h2 id="org9e50ae3">OUnit2</h2>
-<div class="outline-text-2" id="text-org9e50ae3">
+
+
+
+
+
+
+
+<div id="outline-container-orgcb3166f" class="outline-2">
+<h2 id="orgcb3166f">模式匹配</h2>
+<div class="outline-text-2" id="text-orgcb3166f">
+<p>
+<code>_</code> 是通配符，不会和值进行绑定。
+</p>
+
+<p>
+在模式匹配中主要做了两件事情：
+</p>
+
+<ul class="org-ul">
+<li>判断模式和给定的值是否匹配</li>
+<li>决定值的那些部分可以和模式中的变量名进行绑定
+我们用 <code>h -&gt; 1</code> 这样的写法表示变量绑定：变量h的值为1</li>
+</ul>
+
+<p>
+用这个记号来看模式：
+</p>
+
+<ul class="org-ul">
+<li>模式x能匹配上任何value：  <code>x-&gt;value</code></li>
+<li>模式 <code>_</code> 能和任何值匹配，但不进行绑定。</li>
+<li>模式 <code>[]</code> 匹配上空list ~[]~，它也没有绑定。</li>
+<li>模式 <code>[p1;...pn]</code> 能匹配上形如 <code>[v1;...vn]</code> 的值，并且有 <code>pi-&gt;vi</code> .</li>
+</ul>
+</div>
+
+<div id="outline-container-org028156f" class="outline-3">
+<h3 id="org028156f">模式匹配的求值规则（动态语义）</h3>
+<div class="outline-text-3" id="text-org028156f">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #51afef;">match</span> e <span style="color: #51afef;">with</span>
+<span style="color: #f0e68c;">|</span> p1 <span style="color: #f0e68c;">-&gt;</span> e1
+  <span style="color: #f0e68c;">...</span>
+<span style="color: #f0e68c;">|</span> pn <span style="color: #f0e68c;">-&gt;</span> en
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>将表达式 <code>e</code> 求值为 <code>v</code></li>
+<li>将v分别和 <code>p1</code> &#x2026; <code>pn</code> 进行匹配。</li>
+<li>若v无法和任何模式匹配上，则会抛出 <code>Match_failure</code> 异常。</li>
+<li>否则，在第一个和v成功匹配的模式 <code>pi</code> 处停下，并用绑定 <code>pi -&gt; v</code> 将  <code>ei</code> 中的 <code>pi</code> 替换掉，得到新的表达式 <code>e'</code></li>
+<li>对表达式 <code>e'</code> 求值为 <code>v'</code></li>
+<li>整个match表达式的值为 <code>v'</code></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orga809e1d" class="outline-3">
+<h3 id="orga809e1d">模式匹配静态语义</h3>
+<div class="outline-text-3" id="text-orga809e1d">
+</div>
+<div id="outline-container-orgc03f7df" class="outline-4">
+<h4 id="orgc03f7df">类型推断/检查</h4>
+<div class="outline-text-4" id="text-orgc03f7df">
+<p>
+若 <code>e : ta</code> ，且  <code>pi:ta</code> ,  <code>ei:tb</code> , 则有：
+ <code>match表达式 : tb</code> 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org40832c7" class="outline-4">
+<h4 id="org40832c7">match的分支是否完整包含了所有情况</h4>
+<div class="outline-text-4" id="text-org40832c7">
+<pre class="example">
+[partial-match]: this pattern-matching is not exhaustive.
+</pre>
+<p>
+这种警告会在分支未完全覆盖可能出现的所有模式时发出：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">head</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+   <span style="color: #51afef;">match</span> lst <span style="color: #51afef;">with</span>
+   <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>_ <span style="color: #f0e68c;">-&gt;</span> h
+<span style="color: #62686E;">(* </span><span style="color: #62686E;">| [] -&gt; faliwith  "empty list"</span><span style="color: #62686E;">  *)</span>
+ <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge8c573d" class="outline-4">
+<h4 id="orge8c573d">match中是否包含无用分支</h4>
+<div class="outline-text-4" id="text-orge8c573d">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">head</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+<span style="color: #51afef;">match</span> lst <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> h
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[</span>x<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">-&gt;</span> x
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> 0
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+因为模式h::t已经包括了模式[x]的情况，因此这时会发出警告：
+</p>
+<pre class="example">
+[redundant-case]: this match case is unused.
+</pre>
+
+<p>
+但稍微调整一下分支的顺序，就能使这个例子的警告消失：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">head</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+<span style="color: #51afef;">match</span> lst <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[</span>x<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">-&gt;</span> x
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> h
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> 0
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org099bafd" class="outline-3">
+<h3 id="org099bafd">一些关于list的模式</h3>
+<div class="outline-text-3" id="text-org099bafd">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #62686E;">(* </span><span style="color: #62686E;">&#33267;&#23569;&#21547;3&#20010;&#20803;&#32032;&#30340;list</span><span style="color: #62686E;"> *)</span>
+_<span style="color: #f0e68c;">::</span>_<span style="color: #f0e68c;">::</span>_<span style="color: #f0e68c;">::</span>_
+<span style="color: #62686E;">(* </span><span style="color: #62686E;">&#27491;&#22909;&#26377;&#20004;&#20010;&#20803;&#32032;&#30340;list</span><span style="color: #62686E;"> *)</span>
+_<span style="color: #f0e68c;">::</span>_<span style="color: #f0e68c;">::[]</span> 
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org67c18ee" class="outline-3">
+<h3 id="org67c18ee">用于函数定义的简化模式匹配</h3>
+<div class="outline-text-3" id="text-org67c18ee">
+<ul class="org-ul">
+<li>最后一个参数是要进行匹配的，需要省略不写.</li>
+<li>用 <code>function</code> 代替 <code>match xx with</code> .</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">sum</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span>
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> h <span style="color: #f0e68c;">+</span> sum t
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">sum</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">match</span> lst <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> 0
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> h <span style="color: #f0e68c;">+</span> sum t
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc030a89" class="outline-3">
+<h3 id="orgc030a89">更多模式</h3>
+<div class="outline-text-3" id="text-orgc030a89">
+</div>
+<div id="outline-container-orgd40829c" class="outline-4">
+<h4 id="orgd40829c">匹配上模式并满足when的条件</h4>
+<div class="outline-text-4" id="text-orgd40829c">
+<p>
+<code>p when e</code> : 当和模式p匹配且e的值为true
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">first_zero</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span> 
+<span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span> 
+<span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #51afef;">when</span> h <span style="color: #f0e68c;">=</span> 0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span> 
+<span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span> 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">number_or_letter</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span> 
+  <span style="color: #f0e68c;">|</span><span style="color: #7bc275;">'A'</span> <span style="color: #f0e68c;">..</span> <span style="color: #7bc275;">'Z'</span> <span style="color: #f0e68c;">|</span> <span style="color: #7bc275;">'a'</span> <span style="color: #f0e68c;">..</span> <span style="color: #7bc275;">'z'</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"letter"</span> 
+  <span style="color: #f0e68c;">|</span> <span style="color: #7bc275;">'0'</span> <span style="color: #f0e68c;">..</span> <span style="color: #7bc275;">'9'</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"number"</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"??"</span> 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+这里有两个模式，一个是关于字符范围的，另一个是表示 OR 的。
+</p>
+
+<p>
+<code>'A' .. 'Z'</code> 表示从A-Z的任意一个字符。
+<code>|</code> 表示或
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org283111d" class="outline-3">
+<h3 id="org283111d">let in 中的模式匹配</h3>
+<div class="outline-text-3" id="text-org283111d">
+<p>
+在语法中
+<code>let p=e in e1</code>
+p可以是模式，而不仅仅是一个标识符：
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">a</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">b</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>1<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">'c'</span> <span style="color: #f0e68c;">)</span> <span style="color: #f5deb3; font-weight: bold;">in</span>
+<span style="color: #FCCE7B;">Printf.</span>printf <span style="color: #7bc275;">"%i,%c %!"</span> a b
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org05293bd" class="outline-3">
+<h3 id="org05293bd">元组的模式匹配</h3>
+<div class="outline-text-3" id="text-org05293bd">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">thrid</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">_</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">_</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">_</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> x <span style="color: #ff4500;">;;</span>
+
+thrid 3<span style="color: #f0e68c;">,</span>4<span style="color: #f0e68c;">,</span><span style="color: #7bc275;">"hello"</span><span style="color: #f0e68c;">,</span> 5.0  <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org171f983" class="outline-2">
+<h2 id="org171f983">尾递归</h2>
+<div class="outline-text-2" id="text-org171f983">
+<p>
+在函数定义中，从递归调用返回后没有其他计算.
+</p>
+
+<p>
+eg: sum函数
+</p>
+
+<p>
+这不是尾递归，因为从sum返回后还需要一次加法运算
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">sum</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> 0
+  <span style="color: #51afef;">else</span> n <span style="color: #f0e68c;">+</span> sum <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span>  
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+通过给递归函数增加一个参数 <code>res</code> 来保存中间结果使得它成为尾递归 <code>tail recursion</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">sum_tr</span><span style="color: #DFDFDF;"> res n</span>  <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> res 
+  <span style="color: #51afef;">else</span> sum_tr <span style="color: #f0e68c;">(</span>res<span style="color: #f0e68c;">+</span>n<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> 
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sum</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
+  sum_tr 0 n
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+本质上，这个递归版本的sum函数只是将规模为N的问题转化成了 <code>一个</code> 规模为N-1的子问题，这种原问题和子问题之间的依赖关系只是一个链表结构，而不是一个树状结构。
+只有树状的关系才无法成为尾递归，而在sum函数这个例子中完全不需要在 <code>sum(n-1)</code> 调用结束后再进行额外的计算来得到 <code>sum n</code> 的结果，而是将这部分计算放到 <code>sum n-1</code> 中完成
+</p>
+
+
+
+<p>
+eg: 尾递归函数from产生从i ~ j 的列表 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">from</span><span style="color: #DFDFDF;"> i j lst</span>  <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> j <span style="color: #f0e68c;">&lt;</span> i <span style="color: #51afef;">then</span> lst 
+  <span style="color: #51afef;">else</span> from i <span style="color: #f0e68c;">(</span>j<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>j <span style="color: #f0e68c;">::</span> lst<span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">--</span> <span style="color: #f0e68c;">)</span> i j <span style="color: #f0e68c;">=</span>
+  from i j <span style="color: #f0e68c;">[]</span>
+<span style="color: #ff4500;">;;</span>
+
+
+<span style="color: #62686E;">(* </span><span style="color: #62686E;">Usage:</span><span style="color: #62686E;"> *)</span>
+1 <span style="color: #f0e68c;">--</span> 10 <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<pre class="example">
+- : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+</pre>
+
+<p>
+OCaml中有类似的函数
+</p>
+
+<pre class="example">
+List.init  length  func  ==&gt; [f 0;f 1;f 2;...;f (length-1) ] 
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">plus_one</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> x <span style="color: #f0e68c;">+</span> 1 <span style="color: #ff4500;">;;</span>
+
+<span style="color: #FCCE7B;">List.</span>init 10 plus_one <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgaa5ed01" class="outline-2">
+<h2 id="orgaa5ed01">变体 | Variants</h2>
+<div class="outline-text-2" id="text-orgaa5ed01">
+<p>
+变体就像是能在enum中使用class的一种东西。
+</p>
+
+<p>
+Variant不能以大写字母开头！其下面的构造器名以大写字母开头！
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">basic_color</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Red</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Green</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Blue</span>  <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">which_color</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Red</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"red"</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Green</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"green"</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Blue</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"blue"</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+这些以大写字母开头的单词是构造器/标签Tag
+这些构造器Red能创建就是basic<sub>color类型的值</sub>，并保留了这个值是Red的信息。
+构造器能携带值，通过定义时加上 <code>Tag of ValueType</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span>  <span style="color: #FCCE7B;">token</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Ident</span> <span style="color: #51afef;">of</span> string  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Num</span> <span style="color: #51afef;">of</span> int  <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">tk</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Ident</span> <span style="color: #7bc275;">"foo"</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">tk</span> <span style="color: #f0e68c;">:</span> token <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Ident</span> <span style="color: #7bc275;">"foo"</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #bbc2cf; background-color: #242730;">Num</span> 233 <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> token <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Num</span> 233
+</pre>
+</div>
+
+<p>
+仍能从变量tk中获得它是一个Id的信息。
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #51afef;">match</span> tk <span style="color: #51afef;">with</span> 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Ident</span> name <span style="color: #f0e68c;">-&gt;</span>  name 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Num</span> n <span style="color: #f0e68c;">-&gt;</span> string_of_int n 
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"foo"</span>
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org8a6b42a" class="outline-3">
+<h3 id="org8a6b42a">额外携带数据的Variant也被叫做代数数据类型</h3>
+<div class="outline-text-3" id="text-org8a6b42a">
+<p>
+因为它包含了类型的sum product运算：
+一个Varant值是多个构造器中的一种
+每个构造器能携带record/tuple类型。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0bb7fc9" class="outline-3">
+<h3 id="org0bb7fc9">对Variant使用模式匹配的要点</h3>
+<div class="outline-text-3" id="text-org0bb7fc9">
+<p>
+尽量避免使用 <code>_</code> ,否则当增加Variant的选项后，很可能忘记修改match的代码来增加对应的新分支，
+因为 <code>_</code> 通配符会匹配上这个新模式。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org6125579" class="outline-3">
+<h3 id="org6125579">Variant的递归定义</h3>
+<div class="outline-text-3" id="text-org6125579">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">tnode</span>   <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyNode</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span>  int   <span style="color: #f0e68c;">*</span> tnode <span style="color: #f0e68c;">*</span> tnode
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"> <span style="color: #bbc2cf; background-color: #242730;">Node</span>  <span style="color: #f0e68c;">(</span>233 <span style="color: #f0e68c;">,</span> <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span>123 <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">EmptyNode</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">EmptyNode</span> <span style="color: #f0e68c;">))</span> <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">EmptyNode</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> tnode <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span>233<span style="color: #f0e68c;">,</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span>123<span style="color: #f0e68c;">,</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyNode</span><span style="color: #f0e68c;">,</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyNode</span><span style="color: #f0e68c;">),</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyNode</span><span style="color: #f0e68c;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org18ada2a" class="outline-3">
+<h3 id="org18ada2a"><code>and</code> 关键字使类型定义可以是互相递归的</h3>
+<div class="outline-text-3" id="text-org18ada2a">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">node</span>  <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span> value <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">;</span> nextnode <span style="color: #f0e68c;">:</span> int mylist<span style="color: #f0e68c;">}</span>
+<span style="color: #f5deb3; font-weight: bold;">and</span>  <span style="color: #DFDFDF;">mylist</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nil</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span> int node
+<span style="color: #ff4500;">;;</span>
+<span style="color: #62686E;">(* </span><span style="color: #62686E;">&#21516;&#26102;&#23450;&#20041;&#20102;&#19968;&#20010; record &#21644;&#19968;&#20010; variant</span><span style="color: #62686E;">*)</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">{</span> value <span style="color: #f0e68c;">=</span> 123 <span style="color: #f0e68c;">;</span> nextnode <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">{</span>value <span style="color: #f0e68c;">=</span> 2333 <span style="color: #f0e68c;">;</span> nextnode <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nil</span> <span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">}</span> 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">tnode</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>value <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">;</span> left <span style="color: #f0e68c;">:</span> mytree <span style="color: #f0e68c;">;</span> right<span style="color: #f0e68c;">:</span> mytree<span style="color: #f0e68c;">}</span>
+<span style="color: #f5deb3; font-weight: bold;">and</span> <span style="color: #DFDFDF;">mytree</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">TNil</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">TNode</span> <span style="color: #51afef;">of</span> tnode
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org86e57e0" class="outline-3">
+<h3 id="org86e57e0">Variants的参数多态</h3>
+<div class="outline-text-3" id="text-org86e57e0">
+<p>
+带范型的Variants 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a node</span>  <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span> value <span style="color: #f0e68c;">:</span> 'a <span style="color: #f0e68c;">;</span> nextnode <span style="color: #f0e68c;">:</span> 'a mylist<span style="color: #f0e68c;">}</span>
+<span style="color: #f5deb3; font-weight: bold;">and</span> 'a mylist <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nil</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span> 'a node
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+当然，一个更清晰的版本是：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a mylist</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nil</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span> 'a <span style="color: #f0e68c;">*</span> 'a mylist  <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span> 233 <span style="color: #f0e68c;">,</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span>123<span style="color: #f0e68c;">,</span> <span style="color: #bbc2cf; background-color: #242730;">Nil</span><span style="color: #f0e68c;">))</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+<b>多个类型参数:</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">'a </span><span style="color: #f0e68c;">,</span><span style="color: #FCCE7B;"> 'b</span><span style="color: #f0e68c;">)</span><span style="color: #FCCE7B;"> mypair</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>first <span style="color: #f0e68c;">:</span>'a <span style="color: #f0e68c;">;</span>second <span style="color: #f0e68c;">:</span>'b<span style="color: #f0e68c;">}</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+list/options 就是参数化Variant :
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span>  'a list <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">::</span> <span style="color: #f0e68c;">)</span> <span style="color: #51afef;">of</span> 'a <span style="color: #f0e68c;">*</span> 'a list
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a options</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">None</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #51afef;">of</span> 'a
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org8581b8a" class="outline-3">
+<h3 id="org8581b8a">多态Variant/匿名Variant</h3>
+<div class="outline-text-3" id="text-org8581b8a">
+<p>
+当某些Variant只需要使用一次（eg 作为返回值），这时候给它一个全局定义是没必要的。
+这时需要匿名Variant：
+在构造器前面加上 <code>`</code> 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">mydiv</span><span style="color: #DFDFDF;"> a b</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> b <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> <span style="color: #bbc2cf; background-color: #242730;">`Inf</span>
+  <span style="color: #51afef;">else</span> <span style="color: #bbc2cf; background-color: #242730;">`Num</span> <span style="color: #f0e68c;">(</span>a<span style="color: #f0e68c;">/</span>b<span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">mydiv</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Inf</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`Num</span> <span style="color: #51afef;">of</span> int <span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">utop<span style="color: #f0e68c;">[</span>41<span style="color: #f0e68c;">]&gt;</span> mydiv 2 3 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">[&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Inf</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`Num</span> <span style="color: #51afef;">of</span> int <span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">`Num</span> 0
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">utop<span style="color: #f0e68c;">[</span>42<span style="color: #f0e68c;">]&gt;</span> mydiv 4 0 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">[&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Inf</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`Num</span> <span style="color: #51afef;">of</span> int <span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">`Inf</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb5c6129" class="outline-2">
+<h2 id="orgb5c6129">和match天生一对的Options= Some/None</h2>
+<div class="outline-text-2" id="text-orgb5c6129">
+<p>
+在不用空指针的情况下表达“返回结果可能为空。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">getstr</span><span style="color: #DFDFDF;">  s</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> s <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">""</span> <span style="color: #51afef;">then</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+  <span style="color: #51afef;">else</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> s
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">getstr <span style="color: #7bc275;">""</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string option <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+
+getstr <span style="color: #7bc275;">"hello"</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string option <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #7bc275;">"hello"</span>
+</pre>
+</div>
+<p>
+对需要处理值是Options的代码，需要用 <code>match</code> 进行匹配。
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">dealwiths</span><span style="color: #DFDFDF;"> s</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> s <span style="color: #51afef;">with</span> 
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">None</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"there is nothing"</span>
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> x <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"this is "</span> <span style="color: #f0e68c;">^</span> x 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">dealwiths <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #7bc275;">"a cat"</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"this is a cat"</span>
+
+dealwiths <span style="color: #f0e68c;">(</span>getstr <span style="color: #7bc275;">""</span><span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"there is nothing"</span>
+</pre>
+</div>
+
+<p>
+None 的类型是 <code>'a option</code> , Some expr的类型是 <code>t option</code> (expr:t)
+用None表示返回一个空 + 模式匹配强制要求处理Options所有可能的模式 = 强制要求检查返回值可能为空的场景。
+</p>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orge221958" class="outline-2">
+<h2 id="orge221958">列表推导 | List Comprehensions</h2>
+<div class="outline-text-2" id="text-orge221958">
+<p>
+一种产生list的语法糖。
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgf7e1d0b" class="outline-2">
+<h2 id="orgf7e1d0b">OUnit2</h2>
+<div class="outline-text-2" id="text-orgf7e1d0b">
 <p>
 首先创建dune项目
 </p>
@@ -917,8 +1503,8 @@ a <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2
 引入ounit2和被测试的模块
 </p>
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">open </span><span style="color: #FCCE7B;">Xx</span>
-<span style="font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Xx</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
 
 </pre>
 </div>
@@ -945,7 +1531,7 @@ a <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2
 </p>
 
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main &#27979;&#35797;&#22871;&#20214; 
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main &#27979;&#35797;&#22871;&#20214; 
 </pre>
 </div>
 
@@ -956,31 +1542,31 @@ a <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2
 </p>
 
 <div class="org-src-container">
-<pre class="src src-ocaml"><span style="font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
-<span style="font-weight: bold;">open </span><span style="color: #FCCE7B;">Sum</span>
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Sum</span>
 
-<span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">tests</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test suite for sum"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">tests</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test suite for sum"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
     <span style="color: #7bc275;">"empty"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 0 <span style="color: #f0e68c;">(</span>sum <span style="color: #f0e68c;">[])</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">;</span>
     <span style="color: #7bc275;">"singleton"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 1 <span style="color: #f0e68c;">(</span>sum <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">])</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">;</span>
     <span style="color: #7bc275;">"two elements"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 3 <span style="color: #f0e68c;">(</span>sum <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">]));</span>
   <span style="color: #f0e68c;">]</span>
 
-<span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main tests 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main tests 
 </pre>
 </div>
 </div>
 
 
-<div id="outline-container-org79c5c1a" class="outline-3">
-<h3 id="org79c5c1a">打印测试用例出错时的值</h3>
-<div class="outline-text-3" id="text-org79c5c1a">
+<div id="outline-container-org6c3f656" class="outline-3">
+<h3 id="org6c3f656">打印测试用例出错时的值</h3>
+<div class="outline-text-3" id="text-org6c3f656">
 <p>
 要给 <code>assert_xxx</code> 的 <code>printer</code> 参数传入一个输出字符串表达的函数，eg: <code>string_of_int</code> 
 </p>
 <div class="org-src-container">
 <pre class="src src-ocaml">
 
-<span style="font-weight: bold;">let</span> <span style="color: #DFDFDF;">mytsts</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test suite for some module"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">mytsts</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test suite for some module"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
     <span style="color: #7bc275;">"case1"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 0 <span style="color: #f0e68c;">(</span>sum <span style="color: #f0e68c;">[])</span> <span style="color: #a991f1;">~printer</span><span style="color: #f0e68c;">:</span>string_of_int <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">;</span>
     <span style="color: #f0e68c;">]</span>
 </pre>
@@ -999,10 +1585,649 @@ expected: 0 but got: 1
 </p>
 </div>
 </div>
+
+
+
+
+
+<div id="outline-container-org17bc10e" class="outline-3">
+<h3 id="org17bc10e">测试是否发出了异常</h3>
+<div class="outline-text-3" id="text-org17bc10e">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #7bc275;">"test case"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_raise <span style="color: #f0e68c;">(</span>&#24322;&#24120;&#23545;&#35937;<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">()</span> <span style="color: #f0e68c;">-&gt;</span> &#33021;&#21457;&#20986;&#24322;&#24120;&#30340;&#34920;&#36798;&#24335; <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span> 
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Stdlib</span>   
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">raise_expection</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">()</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span><span style="color: #C57BDB;">Failure</span> <span style="color: #7bc275;">"mytest"</span><span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">mytests</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test suite"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+    <span style="color: #7bc275;">"test-raise-exceptions"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_raises
+                                    <span style="color: #f0e68c;">(</span><span style="color: #C57BDB;">Failure</span> <span style="color: #7bc275;">"mytest"</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">()</span> <span style="color: #f0e68c;">-&gt;</span> raise_expection <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">))</span>
+  <span style="color: #f0e68c;">]</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main mytests <span style="color: #ff4500;">;;</span> 
+</pre>
 </div>
 </div>
-<div id="postamble" class="status">
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org179bcdb" class="outline-2">
+<h2 id="org179bcdb">Records &amp; Tuples</h2>
+<div class="outline-text-2" id="text-org179bcdb">
+<p>
+将几个数据放到一起的方式有两种：
+Records就像C中的结构体，主要特点是能按名字访问字段。
+Tuples不会给字段命名，而是通过位置来访问字段。
+二者都是定长的类型。
+</p>
+</div>
+
+<div id="outline-container-orgb1c4c71" class="outline-3">
+<h3 id="orgb1c4c71">Record定义</h3>
+<div class="outline-text-3" id="text-orgb1c4c71">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">ptype</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">TNormal</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">TFire</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">TWater</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">mon</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>name <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">;</span> hp <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">;</span> ptype <span style="color: #f0e68c;">:</span> ptype <span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">c</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>name <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"bird"</span> <span style="color: #f0e68c;">;</span>hp <span style="color: #f0e68c;">=</span> 40 <span style="color: #f0e68c;">;</span> ptype <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">TNormal</span> <span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #62686E;">(* </span><span style="color: #62686E;">&#23383;&#27573;&#30340;&#39034;&#24207;&#21487;&#20197;&#21644;&#23450;&#20041;&#19981;&#19968;&#33268;</span><span style="color: #62686E;"> *)</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2ded8f1" class="outline-3">
+<h3 id="org2ded8f1">访问Record的字段</h3>
+<div class="outline-text-3" id="text-org2ded8f1">
+</div>
+<div id="outline-container-orgbccc754" class="outline-4">
+<h4 id="orgbccc754">通过 <code>R.field</code></h4>
+<div class="outline-text-4" id="text-orgbccc754">
+<p>
+field只能是定义中提到的标识符，而不是表达式。
+</p>
+
+<p>
+若想要通过某些计算来动态获得字段名，应该使用 <code>map</code> 类型。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">c.name <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org44a06a6" class="outline-4">
+<h4 id="org44a06a6">通过模式匹配</h4>
+<div class="outline-text-4" id="text-org44a06a6">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #51afef;">match</span> c <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">{</span> name<span style="color: #f0e68c;">=</span>n<span style="color: #f0e68c;">;</span> hp<span style="color: #f0e68c;">=</span>h<span style="color: #f0e68c;">;</span> ptype<span style="color: #f0e68c;">=</span>t <span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> n
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3aa7eb0" class="outline-3">
+<h3 id="org3aa7eb0">从旧record中创建新record</h3>
+<div class="outline-text-3" id="text-org3aa7eb0">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">new_c</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span> c <span style="color: #51afef;">with</span> name <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"world"</span> <span style="color: #f0e68c;">;</span> hp <span style="color: #f0e68c;">=</span> 123 <span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+创建record拷贝，只是某些字段的值不同。
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+
+<div id="outline-container-org49632f4" class="outline-3">
+<h3 id="org49632f4">Tuple的定义</h3>
+<div class="outline-text-3" id="text-org49632f4">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">subject</span> <span style="color: #f0e68c;">=</span> string <span style="color: #f0e68c;">*</span> int <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+
+<p>
+用小括号和 <code>,</code> 来创建一个tuple变量。
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">t</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>23<span style="color: #f0e68c;">,</span>3.0<span style="color: #f0e68c;">,</span><span style="color: #7bc275;">"hello"</span><span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+
+<p>
+<code>int * float * string</code> 是t的类型：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">t</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">*</span> float <span style="color: #f0e68c;">*</span> string <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>23<span style="color: #f0e68c;">,</span> 3.<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"hello)"</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org6c715b4" class="outline-2">
+<h2 id="org6c715b4">类型别名</h2>
+<div class="outline-text-2" id="text-org6c715b4">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">point</span> <span style="color: #f0e68c;">=</span> float <span style="color: #f0e68c;">*</span> float <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">intlist</span> <span style="color: #f0e68c;">=</span> int list <span style="color: #ff4500;">;;</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-orgd6201ad" class="outline-2">
+<h2 id="orgd6201ad">异常</h2>
+<div class="outline-text-2" id="text-orgd6201ad">
+<p>
+OCaml中的异常是一个 <b>可拓展</b> 的Variant.
+</p>
+
+<p>
+有了异常的概念后，我们能完整地描述OCaml表达式的 <b>动态语义</b> ：
+</p>
+<ul class="org-ul">
+<li>被计算为一个值 evaluates to a value</li>
+<li>发出异常 raises an expection</li>
+<li>无限循环 an infinite loop</li>
+</ul>
+
+<p>
+（因此在match的分支中要充分考虑到前两类） 
+</p>
+</div>
+
+<div id="outline-container-org56fc19e" class="outline-3">
+<h3 id="org56fc19e">定义一个新的异常</h3>
+<div class="outline-text-3" id="text-org56fc19e">
+<p>
+不携带数据：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #51afef;">exception</span> <span style="color: #bbc2cf; background-color: #242730;">SomethingWrong</span>  <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+
+<p>
+携带数据的构造器
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #51afef;">exception</span> <span style="color: #bbc2cf; background-color: #242730;">MyException</span> <span style="color: #51afef;">of</span> int <span style="color: #f0e68c;">*</span> string <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #bbc2cf; background-color: #242730;">MyException</span> <span style="color: #f0e68c;">(</span>22<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"err"</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> exn <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">MyException</span><span style="color: #f0e68c;">(</span>22<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"err"</span><span style="color: #f0e68c;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orge3d713f" class="outline-3">
+<h3 id="orge3d713f">抛出异常</h3>
+<div class="outline-text-3" id="text-orge3d713f">
+<p>
+raise是引发异常的通用手段。
+failwith只能引发Failure这个类型的异常。
+</p>
+</div>
+
+<div id="outline-container-org4713f33" class="outline-4">
+<h4 id="org4713f33">raise</h4>
+<div class="outline-text-4" id="text-org4713f33">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span> <span style="color: #bbc2cf; background-color: #242730;">MyException</span> <span style="color: #f0e68c;">(</span>233<span style="color: #f0e68c;">,</span><span style="color: #7bc275;">"error"</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+注意raise的返回类型： <code>'a</code>
+这是一个范型，因为raise不会求值为某个值，而是抛出异常，因此它的作用是应付类型检查。
+在 if / match等结构中，都要求分支的类型相同。raise的返回类型为 <code>'a</code> 使得正常返回值的分支和发出异常的分支能够相容。
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"> <span style="color: #C57BDB;">raise</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> exn <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span><span style="color: #51afef;">fun</span><span style="color: #f0e68c;">&gt;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org294febe" class="outline-4">
+<h4 id="org294febe">failwith</h4>
+<div class="outline-text-4" id="text-org294febe">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"xxx"</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+等价于
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span><span style="color: #C57BDB;">Failure</span> <span style="color: #7bc275;">"xxx"</span><span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc36b256" class="outline-3">
+<h3 id="orgc36b256">捕获并处理异常</h3>
+<div class="outline-text-3" id="text-orgc36b256">
+<p>
+用try with捕获异常后的行为应该是提供一个和表达式类型相同的值 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #51afef;">try</span> &#34920;&#36798;&#24335; <span style="color: #f0e68c;">:</span> <span style="color: #bbc2cf; background-color: #242730;">T</span> <span style="color: #51afef;">with</span>
+<span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Exn1</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">e1</span> <span style="color: #f0e68c;">:</span> <span style="color: #bbc2cf; background-color: #242730;">T</span>
+<span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Exn2</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">e2</span> <span style="color: #f0e68c;">:</span> <span style="color: #bbc2cf; background-color: #242730;">T</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">raise_some_exn</span><span style="color: #DFDFDF;"> a b</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">match</span> a<span style="color: #f0e68c;">,</span>b <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> 0<span style="color: #f0e68c;">,</span>_ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">raise</span> <span style="color: #bbc2cf; background-color: #242730;">SomethingWrong</span> 
+  <span style="color: #f0e68c;">|</span> _<span style="color: #f0e68c;">,</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span> <span style="color: #bbc2cf; background-color: #242730;">MyException</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(-</span>1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"div by 0"</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span>
+  <span style="color: #f0e68c;">|</span> _<span style="color: #f0e68c;">,</span>_ <span style="color: #f0e68c;">-&gt;</span> a<span style="color: #f0e68c;">/</span>b
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+<code>try with</code> 的目的是让异常消失，并在异常发生时赋予表达式一个值 （类型要和表达式的相同）
+</p>
+
+<p>
+match则更加通用，分支的类型不必和被匹配的表达式的类型一致。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">catch_exception</span><span style="color: #DFDFDF;"> a b</span> <span style="color: #f0e68c;">=</span> 
+  <span style="color: #51afef;">try</span>
+    raise_some_exn a b
+  <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">SomethingWrong</span> <span style="color: #f0e68c;">-&gt;</span> 0 
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">MyException</span> <span style="color: #f0e68c;">(</span>i<span style="color: #f0e68c;">,</span>s<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> 4611686018427387903
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+用match也能实现异常的捕获+处理，但更加麻烦：必须要写 <code>exception</code> ！
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #51afef;">match</span> raise_some_exn 1 0 <span style="color: #51afef;">with</span> 
+  <span style="color: #f0e68c;">|</span> <span style="color: #51afef;">exception</span> <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">MyException</span> <span style="color: #f0e68c;">(</span> i<span style="color: #f0e68c;">,</span>s<span style="color: #f0e68c;">))</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>string_of_int i <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">^</span> s 
+  <span style="color: #f0e68c;">|</span> <span style="color: #51afef;">exception</span> <span style="color: #bbc2cf; background-color: #242730;">SomethingWrong</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"something wrong"</span>
+  <span style="color: #f0e68c;">|</span> x  <span style="color: #f0e68c;">-&gt;</span> string_of_int x 
+<span style="color: #ff4500;">;;</span>
+
+
+<span style="color: #51afef;">match</span>
+  <span style="color: #51afef;">try</span> raise_some_exn 1 0 <span style="color: #51afef;">with</span> <span style="color: #62686E;">(*</span><span style="color: #62686E;">&#26681;&#25454;&#21457;&#29983;&#30340;&#24322;&#24120;&#31181;&#31867;&#26469;&#20026;&#34920;&#36798;&#24335;&#36171;&#20197;&#29305;&#27530;&#20540;</span><span style="color: #62686E;"> *)</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">SomethingWrong</span> <span style="color: #f0e68c;">-&gt;</span> 0 
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">MyException</span> <span style="color: #f0e68c;">(</span>i<span style="color: #f0e68c;">,</span>s<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span>  4611686018427387903 
+<span style="color: #51afef;">with</span> <span style="color: #62686E;">(*</span><span style="color: #62686E;">&#26681;&#25454;&#36820;&#22238;&#20540;&#30340;&#24418;&#24335;&#26469;&#20915;&#23450;&#21518;&#32493;&#21160;&#20316;</span><span style="color: #62686E;"> *)</span>
+<span style="color: #f0e68c;">|</span> 0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"something wrong"</span>
+<span style="color: #f0e68c;">|</span>  4611686018427387903   <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"div 0"</span>
+<span style="color: #f0e68c;">|</span> x <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"result = "</span> <span style="color: #f0e68c;">^</span> string_of_int x
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgcdb16ea" class="outline-2">
+<h2 id="orgcdb16ea">定义二叉树类型 Binary Tree</h2>
+<div class="outline-text-2" id="text-orgcdb16ea">
+<p>
+Leaf表示空节点，即不存放值，仅作为占位使用。
+</p>
+
+<p>
+Node表示非空节点，是否为叶节点要看它是否有子节点。 
+</p>
+
+<p>
+叶节点： <code>Node(value,Leaf,Leaf)</code>
+非叶节点：左右子节点至少有一个不是 <code>Leaf</code> 
+</p>
+</div>
+
+<div id="outline-container-org501ccfa" class="outline-3">
+<h3 id="org501ccfa">用Tuples表示 | representation with tuples</h3>
+<div class="outline-text-3" id="text-org501ccfa">
+</div>
+<div id="outline-container-org060cebf" class="outline-4">
+<h4 id="org060cebf">定义</h4>
+<div class="outline-text-4" id="text-org060cebf">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'tp tree</span> <span style="color: #f0e68c;">=</span> 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span> 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span> 'tp <span style="color: #f0e68c;">*</span> 'tp tree <span style="color: #f0e68c;">*</span> 'tp tree
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb37726a" class="outline-4">
+<h4 id="orgb37726a">创建对象</h4>
+<div class="outline-text-4" id="text-orgb37726a">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">a_tree</span> <span style="color: #f0e68c;">=</span>  <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>2<span style="color: #f0e68c;">,</span>
+  <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>1<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">),</span>
+  <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>3<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span>
+<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaa8077f" class="outline-4">
+<h4 id="orgaa8077f">使用</h4>
+<div class="outline-text-4" id="text-orgaa8077f">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">size_of_tree</span><span style="color: #DFDFDF;"> t</span> <span style="color: #f0e68c;">=</span> 
+<span style="color: #51afef;">match</span> t <span style="color: #51afef;">with</span> 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> 0
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>_<span style="color: #f0e68c;">,</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> 1 <span style="color: #f0e68c;">+</span> size_of_tree l <span style="color: #f0e68c;">+</span> size_of_tree r
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-org514db0e" class="outline-3">
+<h3 id="org514db0e">用Records表示 | representation with records</h3>
+<div class="outline-text-3" id="text-org514db0e">
+</div>
+<div id="outline-container-org64709bc" class="outline-4">
+<h4 id="org64709bc">定义</h4>
+<div class="outline-text-4" id="text-org64709bc">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a tree</span> <span style="color: #f0e68c;">=</span> 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span>
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span> <span style="color: #f0e68c;">{</span> v <span style="color: #f0e68c;">:</span> 'a <span style="color: #f0e68c;">;</span> 
+           l <span style="color: #f0e68c;">:</span> 'a tree <span style="color: #f0e68c;">;</span> 
+           r <span style="color: #f0e68c;">:</span> 'a tree <span style="color: #f0e68c;">}</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org5a10936" class="outline-4">
+<h4 id="org5a10936">创建对象</h4>
+<div class="outline-text-4" id="text-org5a10936">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">a_tree</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">{</span>v<span style="color: #f0e68c;">=</span>2<span style="color: #f0e68c;">;</span>
+                   l<span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">{</span>v<span style="color: #f0e68c;">=</span>1<span style="color: #f0e68c;">;</span>l<span style="color: #f0e68c;">=</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">;</span>r<span style="color: #f0e68c;">=</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">};</span>
+                   r<span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">{</span>v<span style="color: #f0e68c;">=</span>3<span style="color: #f0e68c;">;</span>l<span style="color: #f0e68c;">=</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">;</span>r<span style="color: #f0e68c;">=</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">}</span>
+                  <span style="color: #f0e68c;">}</span> 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga370bb9" class="outline-4">
+<h4 id="orga370bb9">使用方法，匹配tree对象</h4>
+<div class="outline-text-4" id="text-orga370bb9">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span>  <span style="color: #5cEfFF;">size_of_tree</span><span style="color: #DFDFDF;"> tr</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> tr <span style="color: #51afef;">with</span> 
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span>  0
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">{</span>v<span style="color: #f0e68c;">=</span>_<span style="color: #f0e68c;">;</span>l<span style="color: #f0e68c;">=</span>a<span style="color: #f0e68c;">;</span>r<span style="color: #f0e68c;">=</span>b<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> 1<span style="color: #f0e68c;">+</span> size_of_tree a <span style="color: #f0e68c;">+</span> size_of_tree b 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+（不要用 <code>val</code>  做变量名！）
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">is_member</span><span style="color: #DFDFDF;"> va t</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> t <span style="color: #51afef;">with</span> 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span> 
+<span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">{</span>v<span style="color: #f0e68c;">=</span>v<span style="color: #f0e68c;">;</span>l<span style="color: #f0e68c;">=</span>l<span style="color: #f0e68c;">;</span>r<span style="color: #f0e68c;">=</span>r<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> v<span style="color: #f0e68c;">=</span>va <span style="color: #f0e68c;">||</span> is_member va l <span style="color: #f0e68c;">||</span> is_member va r 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+先序遍历 preorder traversal
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">preorder</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">t </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">'a tree</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span>  <span style="color: #FCCE7B;">'a list</span> <span style="color: #f0e68c;">=</span> 
+  <span style="color: #51afef;">match</span> t <span style="color: #51afef;">with</span> 
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[]</span>
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">{</span>v<span style="color: #f0e68c;">=</span>v<span style="color: #f0e68c;">;</span>l<span style="color: #f0e68c;">=</span>l<span style="color: #f0e68c;">;</span>r<span style="color: #f0e68c;">=</span>r<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[</span>v<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">@</span> preorder l <span style="color: #f0e68c;">@</span> preorder r 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+因append操作 <code>@</code> 开销太大（线性时间），因此改用 <code>::</code> 来将每个节点的值加入list
+</p>
+
+<p>
+因此用一个输入参数res来记录上一次迭代过程的返回值
+</p>
+
+
+
+<pre class="example">
+Node{v=1;l=Leaf;r=Leaf}   ==&gt; [1]
+
+[2;1;3] == 2::[1;3]   =&gt; 2::(1::[3])
+
+[mid;l;r] =&gt; mid :: [l;r]   =&gt; mid::( l::( [r] ) )
+</pre>
+
+
+<p>
+先被应用 <code>preorder()</code> 的节点 先将值加入 <code>res</code> 队首 因此位置最终更靠后。 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">preorder</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">res </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">'a list</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;">  </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">t </span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">'a tree</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">'a list</span> <span style="color: #f0e68c;">=</span> 
+  <span style="color: #51afef;">match</span> t <span style="color: #51afef;">with</span> 
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> res  <span style="color: #62686E;">(* </span><span style="color: #62686E;">&#19981;&#28155;&#21152;&#20803;&#32032;&#21040;res &#21363;&#21407;&#26679;&#36820;&#22238;</span><span style="color: #62686E;"> *)</span>
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">{</span>v<span style="color: #f0e68c;">=</span>v<span style="color: #f0e68c;">;</span>l<span style="color: #f0e68c;">=</span>l<span style="color: #f0e68c;">;</span>r<span style="color: #f0e68c;">=</span>r<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> v<span style="color: #f0e68c;">::(</span>preorder <span style="color: #f0e68c;">(</span>preorder res r<span style="color: #f0e68c;">)</span> l<span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-org18de0c8" class="outline-2">
+<h2 id="org18de0c8">定义自然数类型 natural numbers</h2>
+<div class="outline-text-2" id="text-org18de0c8">
+</div>
+<div id="outline-container-orgd201ba3" class="outline-3">
+<h3 id="orgd201ba3">定义 nat</h3>
+<div class="outline-text-3" id="text-orgd201ba3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">nat</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> <span style="color: #51afef;">of</span> nat <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-org28aac59" class="outline-3">
+<h3 id="org28aac59">创建nat对象</h3>
+<div class="outline-text-3" id="text-org28aac59">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">zero</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span> 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">one</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> zero 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">two</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> one 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">three</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> two 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">four</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> three <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5a34d0c" class="outline-3">
+<h3 id="org5a34d0c">操作自然数</h3>
+<div class="outline-text-3" id="text-org5a34d0c">
+</div>
+<div id="outline-container-org78e45c1" class="outline-4">
+<h4 id="org78e45c1">是否为0</h4>
+<div class="outline-text-4" id="text-org78e45c1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_zero</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orgc26ffa8" class="outline-4">
+<h4 id="orgc26ffa8">前驱？</h4>
+<div class="outline-text-4" id="text-orgc26ffa8">
+<div class="org-src-container">
+<pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">pred</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> rest <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> rest
+  <span style="color: #ff4500;">;;</span>
+<span style="color: #62686E;">(* </span><span style="color: #62686E;">=======================</span><span style="color: #62686E;"> *)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">pred_e</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"pred zero is undefined"</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> rest <span style="color: #f0e68c;">-&gt;</span> rest
+  <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaf90913" class="outline-4">
+<h4 id="orgaf90913">加法运算</h4>
+<div class="outline-text-4" id="text-orgaf90913">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">nat_add</span><span style="color: #DFDFDF;"> n1 n2</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> n1 <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Zero</span> <span style="color: #f0e68c;">-&gt;</span> n2
+  <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> x <span style="color: #f0e68c;">-&gt;</span> nat_add x  <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> n2<span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc7e35a0" class="outline-4">
+<h4 id="orgc7e35a0">int和nat的相互转换</h4>
+<div class="outline-text-4" id="text-orgc7e35a0">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">int_of_nat</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span> 
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">int_of_nat_tr</span><span style="color: #DFDFDF;"> acc</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span> <span style="color: #f0e68c;">-&gt;</span> acc
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> x <span style="color: #f0e68c;">-&gt;</span> int_of_nat_tr <span style="color: #f0e68c;">(</span>1<span style="color: #f0e68c;">+</span>acc<span style="color: #f0e68c;">)</span> x
+  <span style="color: #f5deb3; font-weight: bold;">in</span>
+  int_of_nat_tr 0 n
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span>  <span style="color: #5cEfFF;">nat_of_int</span><span style="color: #DFDFDF;"> i</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">nat_of_int_tr</span><span style="color: #DFDFDF;"> acc</span> <span style="color: #f0e68c;">=</span>  <span style="color: #51afef;">function</span>
+      <span style="color: #f0e68c;">|</span>n <span style="color: #51afef;">when</span> n <span style="color: #f0e68c;">=</span> 0  <span style="color: #f0e68c;">-&gt;</span> acc 
+      <span style="color: #f0e68c;">|</span>n <span style="color: #51afef;">when</span> n <span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #f0e68c;">-&gt;</span> nat_of_int_tr <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> acc<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> 
+      <span style="color: #f0e68c;">|</span>_  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"n cannot be postived"</span>
+  <span style="color: #f5deb3; font-weight: bold;">in</span>
+  nat_of_int_tr <span style="color: #bbc2cf; background-color: #242730;">Zero</span> i
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+注意这里模式中使用了 <code>when</code> ，因此最后要有一个通配模式 <code>_</code> .
+否则将会有警告，即使模式包含了在逻辑上存在的所有情况：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">....</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span>n <span style="color: #51afef;">when</span> n <span style="color: #f0e68c;">=</span> 0  <span style="color: #f0e68c;">-&gt;</span> acc 
+  <span style="color: #f0e68c;">|</span>n <span style="color: #51afef;">when</span> n <span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #f0e68c;">-&gt;</span> nat_of_int_tr <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Nextnum</span> acc<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> 
+  <span style="color: #f0e68c;">|</span>n <span style="color: #51afef;">when</span> n <span style="color: #f0e68c;">&lt;</span> 0  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"n cannot be postived"</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+这种写法仍然会有警告：
+</p>
+<pre class="example">
+[partial-match]: this pattern-matching is not exhaustive.
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </body>
 </html>

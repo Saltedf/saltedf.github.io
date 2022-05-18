@@ -1,0 +1,5 @@
+(executable
+ ;; (name test_exception)
+  (name test_list_max_exn ) 
+ (libraries ounit2 )
+)

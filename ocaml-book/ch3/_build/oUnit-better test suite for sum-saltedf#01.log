@@ -1,0 +1,7 @@
+2022-05-05T08:55:22+00:00 saltedf#01 I: Start test better test suite for sum:0:empty.
+2022-05-05T08:55:22+00:00 saltedf#01 E: Test better test suite for sum:0:empty has failed.
+2022-05-05T08:55:22+00:00 saltedf#01 E: expected: 0 but got: 1 in test better test suite for sum:0:empty.
+2022-05-05T08:55:22+00:00 saltedf#01 E: Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+2022-05-05T08:55:22+00:00 saltedf#01 E: Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+2022-05-05T08:55:22+00:00 saltedf#01 E: 
+2022-05-05T08:55:22+00:00 saltedf#01 I: End test better test suite for sum:0:empty.

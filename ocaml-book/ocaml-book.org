@@ -1,0 +1,1414 @@
+#+TITLE: OCaml 杂记
+#+OPTIONS: toc:t  num:t  timestamp:nil 
+
+#+include: ../mytheme.setup 
+
+
+
+* CS3110 练习题
++ [[./ocaml-book/ch2/ex.org][Ch2]]
++ [[./ocaml-book/ch3/exercises.org][Ch3]]
+* opam包管理器
+
+
+
+~opam install XX~
+
+#+begin_src sh
+opam install -y utop odoc ounit2 qcheck bisect_ppx menhir ocaml-lsp-server ocamlformat ocamlformat-rpc
+#+end_src
+
+* utop交互式解释器
+
+每次启动utop都会自动加载 ~.ocamlinit~ 文件，它会自动执行脚本，
+使得不用每次都手动加载库
+
+#+begin_src ocaml
+  #use "topfind";;
+  #thread;;
+  #require "core.top";;
+  
+#+end_src
+
+** Exit utop
+
+#+begin_src ocaml
+  #quit;; 
+#+end_src
+
+#+begin_src ocaml
+exit 0;;
+#+end_src
+
+
+
+* 配置Emacs支持ocaml | Configure EMACS supports Ocaml
+
+#+begin_src ocaml
+opam install tuareg ocp-indent merlin
+opam install user-setup
+opam user-setup install
+#+end_src
+
+
+* 编译ocamlc
+
+#+begin_src sh
+ocamlc -o test.byte test.ml 
+#+end_src
+这和gcc类似，不同的是它还会产生中间文件： ~test.cmi test.cmo~
+
+
+** main()函数？
+
+ocaml中没有专门的main函数，文件（指的是dune中name命令指定的那个）中最后一个函数定义将作为整个程序的入口。
+
+** 构建系统Dune
+
++ 用dune创建项目根目录 Create a project root directory with dune
+  #+begin_src sh
+    dune init project dirname
+  #+end_src
+
++ create a file named dune in the project root directory
+  
+  #+begin_src elisp
+    (executable
+      (name XX) ;;XX为main函数所在文件的名字
+      ;;(libraries yyy) ;; erung: ounit2
+      )
+  #+end_src
+
++  Generate executable file
+
+  #+begin_src sh
+    dune build XX.exe 
+  #+end_src
+
++  run project
+  #+begin_src sh
+    # Manually
+    ./_build/default/XX.exe
+
+    # automatic
+    dune exec ./XX.exe
+  #+end_src
+
++ Clean up the _build directory
+  #+begin_src sh
+    dune clean # remove the _build directory 
+  #+end_src
+
+
+
+
+* ocaml的显著差别
+
+
+** 递归函数要用 ~rec~ 标记
+
+#+begin_src ocaml
+  let rec append lst1 lst2 =
+    match lst1 with
+    | [] -> lst2
+    | h :: t -> h :: (append t lst2 )
+  ;;
+#+end_src
+
+
+** 严格区分整数和浮点数的运算：
+
+int： ~0 + - * /  abs~ 
+
+float:  ~0. +. -. *. /. ~
+
+
+** 连接字符串: 用 ~^~
+
+#+begin_src ocaml
+"hello" ^ "world" 
+#+end_src
+
+
+** 带类型注释的函数定义
+
+#+begin_src ocaml 
+let func (a:int) (b: float) : string(*返回值*) =
+ ...
+#+end_src
+
+
+* let 不是表达式
+
+
+#+begin_src ocaml
+
+utop # let x = 3;;
+val x : int = 3
+
+utop # (fun x y -> x * y);;
+- : int -> int -> int = <fun>
+
+utop # (fun x y -> x * y) 4 5;;
+- : int = 20
+
+utop # let multf x y = x *. y;;
+val multf : float -> float -> float = <fun>
+
+utop # multf 1. 4.;;
+- : float = 4.
+#+end_src
+
+* let ... in ...表达式
+在utop环境下，所有的let定义都会被转化成层层嵌套的let..in..表达式。
+因此在表面上好像是支持了改变变量的值。
+
+
+There must be parentheses here:
+#+begin_src ocaml
+utop # let a = 19 in (fun x -> x + a)  19;;
+- : int = 38
+#+end_src
+
+
+本质上在ocaml中不存在多参函数，所谓的多参函数只是语法糖：
+
+#+begin_src ocaml
+utop # let multargs = fun x -> (fun y -> ( fun z -> x+y+z )) ;;
+val multargs : int -> int -> int -> int = <fun>
+
+utop # multargs 1 2 3 ;;
+- : int = 6
+
+utop # let same_as_multargs x y z = x+y+z ;;
+val same_as_multargs : int -> int -> int -> int = <fun>
+
+utop # same_as_multargs 1 2 3;;
+- : int = 6
+#+end_src
+
+
+
+范型：带撇的类型名 'a  'b 
+#+begin_src ocaml
+  utop # let foo = fun (n : int ) (x : 'a) (y : 'a) ->  if n > 0 then x else y ;;
+  val foo : int -> 'a -> 'a -> 'a = <fun>
+
+  utop # foo -1 "hello" "fuck" ;;
+  Error: This expression has type int -> 'a -> 'a -> 'a
+  but an expression was expected of type int
+
+  utop # foo 3 "hello" "fuck" ;;
+  - : string = "hello"
+
+  utop # foo (-1)  "hello" "fuck" ;;
+  - : string = "fuck"
+#+end_src
+
+
+* 运算符
+
+** 用括号定义标点符号 
+
+
+** 运算符@@ 分隔开函数和参数
+
+主要是为了避免空格分割导致参数的识别不正常：
+#+begin_src ocaml
+utop[3]> succ 3;;
+- : int = 4
+utop[4]> succ 1 * 4 ;;
+- : int = 8
+utop[5]> succ (1 * 4) ;;
+- : int = 5
+utop[6]> succ @@ 1 * 4;;
+- : int = 5
+#+end_src
+
+** 运算符|> 管道符
+#+begin_src ocaml
+let (|>) x f = f x  ;;
+#+end_src
+
+
+#+begin_src ocaml
+  let foo x : int = x*x +1;;
+  val foo : int -> int = <fun>
+
+  utop[1]> foo 3;;
+  - : int = 10
+
+  utop[2]> 3 |> foo;;
+  - : int = 10
+
+utop[13]> succ (foo (foo 3));;
+- : int = 102
+utop[14]> 3 |> foo |> foo |> succ ;;
+- : int = 102
+#+end_src
+
+
+
+
+
+** 文档
+
+~(**  .. *)~ 即是文档的格式。
+用方括号包围起来的将会被导出为等宽字体。
+
+#+begin_src ocaml
+(** [args] *)
+#+end_src
+
++ 前置条件
+  对参数含义的描述，以及对合法参数的约束，对动态类型的语言可能还要加上对参数类型的描述
++ 后置条件：
+  对返回值的约定。对错误情况/异常抛出的约定 
+
+
+** 打印
+
+print_xxx :返回类型为unit.
+
+唯一一个类型是unit的值是 ~()~
+类似于void，通常用于不关心输入参数/返回值时，这时候一般想利用函数的副作用。
+
+
+在let in中要求我们必须为值进行绑定： x = val
+对于返回类型为unit的函数：可以写成
+
+#+begin_src ocaml
+let _ = func args in ...
+#+end_src
+
+或者
+
+#+begin_src ocaml
+let () = func args in ...
+#+end_src
+
+
+#+begin_src ocaml
+#
+let ()  = print_endline "fuck" in 
+let ()  = print_endline "your" in 
+print_endline "mother" ;;
+#+end_src
+
+#+begin_src ocaml
+fuck
+your
+mother
+- : unit = ()
+#+end_src
+
+这种写法太繁琐了，可以像C中用逗号表达式分别对前面的表达式求值，但只将最后一个表达式的值返回。
+在Ocaml中是用 ~;~ 来分割的：
+
+#+begin_src ocaml
+ "hello" ; 233  (* 这会发出警告 it will cause warnings*)
+#+end_src
+
+#+begin_src ocaml
+- : int = 233 
+#+end_src
+
+因此可写成更简单的形式，而不用写成嵌套的 let..in..
+
+#+begin_src ocaml
+print_endline "fuck";
+print_endline "your";
+print_endline "mother"  (* 最后一个表达式后面无分号！ *)
+#+end_src
+
+
+在分号表达式中，若前面被忽略值的表达式的类型不是unit，则会发出警告。
+通过ignore函数可以消除警告。
+
+(ignore "hello") ; 233
+
+
+#+begin_src ocaml
+let ignore x = ()  
+#+end_src
+
+可见，分号表达式的主要作用是串联前面几个产生副作用的表达式，并在最后一个表达式中返回值。
+
+*** 格式化输出
+
+#+begin_src ocaml
+utop # Printf.printf "%s %F\n %!" "hello" 3.14 
+#+end_src
+
+#+begin_src ocaml
+hello 3.14
+ - : unit = ()
+#+end_src
+
+~%!~ 用来刷写缓冲区，类似于std::endl 
+
+~%F~ 浮点数
+
+~%i~ 整数
+
+
+*** 格式化字符串
+
+Printf.sprintf 会产生一个string
+
+
+
+
+
+
+
+* list
+ocaml 中的list是同类型元素构成的单链表： ~'a list~ 。
+in OCaml, the list is first class status
+
+ocaml 中的list是第一类的，这意味着有专门的语法支持list.
+每个list节点是一个pair.  ~[]~ 表示空list.
+
+** 创建list
+
+有两种方式： 
+
++ 通过 ~::~ 链接元素
+  
+  必须在最后链接上一个空节点 ~[]~ 
+  #+begin_src ocaml
+    1::2::3::[]
+    ;;
+  #+end_src
+
++ 通过方括号和分号
+  
+  这种方式可以看作是上面那种方式的语法糖，可以省略链接空列表。
+  #+begin_src ocaml
+    [1;2;3]
+    ;;
+  #+end_src
+
+
+** 用 ~@~ 连接两个list
+
+#+begin_src ocaml
+  let a = 1 :: 3 ::[] ;;
+  let b = 2 :: 4 ::[] ;;
+
+  a @ b ;;
+  
+  a @ [233] ;;
+#+end_src
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+** 通过模式匹配 访问元素
+#+begin_src ocaml
+  match XX with
+  | pattern1 -> do something
+  | pattern2 -> do something
+  | _ ->  ...
+#+end_src
+
+所谓模式就是数据的形式（样子），比如list可以是空的，也可以是不空的。
+#+begin_src ocaml
+  match lst with
+  | [] -> 0
+  | head :: tail -> head 
+#+end_src
+空list的形状就是 ~[]~ ，非空的列表意味着至少有一个有效元素： ~e :: []~ 
+因此，其形状是 ~head::tail~ 。
+
+在一个模式中不能有两个同名的符号：  ~x::x~ 
+
+有两种特殊的模式： ~_~ 和 ~x~ (x是随便一个符号名）
+它们都能和任意的数据匹配上，不同之处在于匹配上的数据不会绑定到 ~_~ 上，但是会绑定到 ~x~ 上。
+也就是说，在 ~->~ 右侧能否引用匹配上的值。
+#+begin_src ocaml
+  let rec length lst =
+    match lst with
+    | [] -> 0
+    | h :: t -> 1 + length t
+  ;;
+#+end_src
+
+在这个函数中的模式匹配里，第二个模式的 ~h~ 是没有必要的，因为箭头后面根本就没有使用 ~h~,
+
+~List.hd/List.tl~ 分别能取出list的head和tail, 但是当他们作用于空列表 ~[]~ 时，会抛出异常。
+而使用模式匹配的方式访问head/tail的好处是会强制你处理list的所有形式。
+
+
+
+
+
+
+** list的不可变
+
+在ocaml中，所有变量都是immutable，也就是无法被原地修改的。对list来说，只有被改变的元素才会被拷贝，而未改变的部分是共享的，不会发生额外的拷贝。
+
+eg：
+#+begin_src ocaml
+  let incr_first (lst : int list) : int list =
+    match lst with
+    |[] -> []
+    |h::t -> (h+1) :: t
+  ;;
+  
+#+end_src
+
+
+
+
+
+
+
+
+
+
+
+* 模式匹配
+
+~_~ 是通配符，不会和值进行绑定。
+
+在模式匹配中主要做了两件事情：
+
++ 判断模式和给定的值是否匹配
++ 决定值的那些部分可以和模式中的变量名进行绑定
+  我们用 ~h -> 1~ 这样的写法表示变量绑定：变量h的值为1
+
+用这个记号来看模式：
+
++ 模式x能匹配上任何value：  ~x->value~
++ 模式 ~_~ 能和任何值匹配，但不进行绑定。
++ 模式 ~[]~ 匹配上空list ~[]~，它也没有绑定。
++ 模式 ~[p1;...pn]~ 能匹配上形如 ~[v1;...vn]~ 的值，并且有 ~pi->vi~ .
+
+** 模式匹配的求值规则（动态语义）
+
+#+begin_src ocaml
+  match e with
+  | p1 -> e1
+    ...
+  | pn -> en
+  ;;
+#+end_src
+
++ 将表达式 ~e~ 求值为 ~v~ 
++ 将v分别和 ~p1~ ... ~pn~ 进行匹配。
++ 若v无法和任何模式匹配上，则会抛出 ~Match_failure~ 异常。
++ 否则，在第一个和v成功匹配的模式 ~pi~ 处停下，并用绑定 ~pi -> v~ 将  ~ei~ 中的 ~pi~ 替换掉，得到新的表达式 ~e'~
++ 对表达式 ~e'~ 求值为 ~v'~
++ 整个match表达式的值为 ~v'~
+
+** 模式匹配静态语义
+
+*** 类型推断/检查
+若 ~e : ta~ ，且  ~pi:ta~ ,  ~ei:tb~ , 则有：
+ ~match表达式 : tb~ 
+
+*** match的分支是否完整包含了所有情况
+#+begin_src
+[partial-match]: this pattern-matching is not exhaustive.
+#+end_src
+这种警告会在分支未完全覆盖可能出现的所有模式时发出：
+#+begin_src ocaml
+  let head lst =
+    match lst with
+    | h::_ -> h
+ (* | [] -> faliwith  "empty list"  *)
+  ;;
+#+end_src
+
+
+*** match中是否包含无用分支
+#+begin_src ocaml
+  let head lst =
+  match lst with
+    | h::t -> h
+    | [x] -> x
+    | [] -> 0
+  ;;
+#+end_src
+
+因为模式h::t已经包括了模式[x]的情况，因此这时会发出警告：
+#+begin_src
+[redundant-case]: this match case is unused.
+#+end_src
+
+但稍微调整一下分支的顺序，就能使这个例子的警告消失：
+#+begin_src ocaml
+  let head lst =
+  match lst with
+    | [x] -> x
+    | h::t -> h
+    | [] -> 0
+  ;;
+#+end_src
+
+
+
+
+** 一些关于list的模式
+
+#+begin_src ocaml
+  (* 至少含3个元素的list *)
+  _::_::_::_
+  (* 正好有两个元素的list *)
+  _::_::[] 
+#+end_src
+
+** 用于函数定义的简化模式匹配
+
++ 最后一个参数是要进行匹配的，需要省略不写.
++ 用 ~function~ 代替 ~match xx with~ .
+
+#+begin_src ocaml
+  let rec sum = function
+    | [] ->
+    | h::t -> h + sum t
+  ;;
+
+  let rec sum lst =
+    match lst with
+    | [] -> 0
+    | h::t -> h + sum t
+  ;;
+#+end_src
+
+** 更多模式
+
+*** 匹配上模式并满足when的条件
+
+~p when e~ : 当和模式p匹配且e的值为true
+#+begin_src ocaml 
+let first_zero = function 
+| [] -> true 
+| h::t when h = 0 -> true 
+| _ -> false 
+;;
+#+end_src
+
+#+begin_src ocaml 
+  let number_or_letter = function 
+    |'A' .. 'Z' | 'a' .. 'z' -> "letter" 
+    | '0' .. '9' -> "number"
+    | _ -> "??" 
+  ;;
+#+end_src
+这里有两个模式，一个是关于字符范围的，另一个是表示 OR 的。
+
+~'A' .. 'Z'~ 表示从A-Z的任意一个字符。
+~|~ 表示或
+
+** let in 中的模式匹配
+在语法中
+~let p=e in e1~
+p可以是模式，而不仅仅是一个标识符：
+
+#+begin_src ocaml
+  let (a,b) = (1, 'c' ) in
+  Printf.printf "%i,%c %!" a b
+  ;;
+#+end_src
+
+** 元组的模式匹配
+#+begin_src ocaml
+  let thrid (_,_,x,_) = x ;;
+
+  thrid 3,4,"hello", 5.0  ;; 
+#+end_src
+
+
+
+
+* 尾递归
+在函数定义中，从递归调用返回后没有其他计算.
+
+eg: sum函数
+
+这不是尾递归，因为从sum返回后还需要一次加法运算
+#+begin_src ocaml 
+  let rec sum n =
+    if n = 0 then 0
+    else n + sum (n-1)  
+  ;;
+#+end_src
+
+通过给递归函数增加一个参数 ~res~ 来保存中间结果使得它成为尾递归 ~tail recursion~
+
+#+begin_src ocaml 
+  let rec sum_tr res n  =
+    if n = 0 then res 
+    else sum_tr (res+n) (n-1) 
+  ;;
+  
+  let sum n =
+    sum_tr 0 n
+  ;;
+#+end_src
+
+本质上，这个递归版本的sum函数只是将规模为N的问题转化成了 ~一个~ 规模为N-1的子问题，这种原问题和子问题之间的依赖关系只是一个链表结构，而不是一个树状结构。
+只有树状的关系才无法成为尾递归，而在sum函数这个例子中完全不需要在 ~sum(n-1)~ 调用结束后再进行额外的计算来得到 ~sum n~ 的结果，而是将这部分计算放到 ~sum n-1~ 中完成
+
+
+
+eg: 尾递归函数from产生从i ~ j 的列表 
+#+begin_src ocaml
+
+  let rec from i j lst  =
+    if j < i then lst 
+    else from i (j-1) (j :: lst)
+  ;;
+
+  let ( -- ) i j =
+    from i j []
+  ;;
+
+  
+  (* Usage: *)
+  1 -- 10 ;;
+#+end_src
+
+#+begin_src
+       - : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+#+end_src
+
+OCaml中有类似的函数
+
+#+begin_src
+List.init  length  func  ==> [f 0;f 1;f 2;...;f (length-1) ] 
+#+end_src
+
+#+begin_src ocaml
+  let plus_one x = x + 1 ;;
+
+  List.init 10 plus_one ;;
+#+end_src
+
+
+
+* 变体 | Variants
+变体就像是能在enum中使用class的一种东西。
+
+Variant不能以大写字母开头！其下面的构造器名以大写字母开头！
+
+#+begin_src ocaml
+  type basic_color = Red | Green | Blue  ;;
+
+  let which_color  = function
+    | Red -> "red"
+    | Green -> "green"
+    | Blue -> "blue"
+  ;;
+#+end_src
+这些以大写字母开头的单词是构造器/标签Tag
+这些构造器Red能创建就是basic_color类型的值，并保留了这个值是Red的信息。
+构造器能携带值，通过定义时加上 ~Tag of ValueType~
+
+#+begin_src ocaml
+  type  token = Ident of string  | Num of int  ;;
+#+end_src
+
+#+begin_src ocaml 
+let tk = Ident "foo" ;;
+
+val tk : token = Ident "foo"
+#+end_src
+
+#+begin_src ocaml
+  Num 233 ;;
+  
+  - : token = Num 233
+#+end_src
+
+仍能从变量tk中获得它是一个Id的信息。
+#+begin_src ocaml
+  match tk with 
+  |Ident name ->  name 
+  |Num n -> string_of_int n 
+  ;;
+
+  - : string = "foo"
+#+end_src
+
+
+** 额外携带数据的Variant也被叫做代数数据类型
+因为它包含了类型的sum product运算：
+一个Varant值是多个构造器中的一种
+每个构造器能携带record/tuple类型。
+
+** 对Variant使用模式匹配的要点
+尽量避免使用 ~_~ ,否则当增加Variant的选项后，很可能忘记修改match的代码来增加对应的新分支，
+因为 ~_~ 通配符会匹配上这个新模式。
+
+
+** Variant的递归定义
+
+#+begin_src ocaml
+type tnode   = EmptyNode | Node of  int   * tnode * tnode
+;;
+#+end_src
+
+#+begin_src ocaml
+   Node  (233 , (Node (123 ,EmptyNode,EmptyNode )) ,EmptyNode ) ;;
+  
+  - : tnode = Node (233, Node (123, EmptyNode, EmptyNode), EmptyNode)
+#+end_src
+
+** ~and~ 关键字使类型定义可以是互相递归的
+
+#+begin_src ocaml 
+  type node  = { value : int ; nextnode : int mylist}
+  and  mylist = Nil | Node of int node
+  ;;
+  (* 同时定义了一个 record 和一个 variant*)
+#+end_src
+
+#+begin_src ocaml
+ Node{ value = 123 ; nextnode = Node{value = 2333 ; nextnode = Nil } } 
+;;
+#+end_src
+
+#+begin_src ocaml
+  type tnode = {value : int ; left : mytree ; right: mytree}
+  and mytree = TNil | TNode of tnode
+  ;;
+#+end_src
+
+** Variants的参数多态 
+带范型的Variants 
+#+begin_src ocaml 
+  type 'a node  = { value : 'a ; nextnode : 'a mylist}
+  and 'a mylist = Nil | Node of 'a node
+  ;;
+#+end_src
+
+当然，一个更清晰的版本是：
+#+begin_src ocaml
+  type 'a mylist = Nil | Node of 'a * 'a mylist  ;;
+#+end_src
+
+#+begin_src ocaml
+Node ( 233 , Node (123, Nil)) ;;
+#+end_src
+
+*多个类型参数:*
+#+begin_src ocaml
+  type ('a , 'b) mypair = {first :'a ;second :'b}
+  ;;
+#+end_src
+
+list/options 就是参数化Variant :
+#+begin_src ocaml
+  let  'a list = [] | ( :: ) of 'a * 'a list
+  ;;
+#+end_src
+#+begin_src ocaml
+  type 'a options = None | Some of 'a
+  ;;
+#+end_src
+
+
+** 多态Variant/匿名Variant
+
+当某些Variant只需要使用一次（eg 作为返回值），这时候给它一个全局定义是没必要的。
+这时需要匿名Variant：
+在构造器前面加上 =`= 
+
+#+begin_src ocaml
+  let mydiv a b =
+    if b = 0 then `Inf
+    else `Num (a/b)
+  ;;
+#+end_src
+
+#+begin_src ocaml
+val mydiv : int -> int -> [> `Inf | `Num of int ] = <fun>
+#+end_src
+
+#+begin_src ocaml
+  utop[41]> mydiv 2 3 ;;
+  - : [> `Inf | `Num of int ] = `Num 0
+#+end_src
+
+#+begin_src ocaml
+  utop[42]> mydiv 4 0 ;;
+  - : [> `Inf | `Num of int ] = `Inf
+#+end_src
+
+
+* 和match天生一对的Options= Some/None
+
+在不用空指针的情况下表达“返回结果可能为空。
+
+#+begin_src ocaml
+  let getstr  s =
+    if s = "" then None
+    else Some s
+  ;;
+#+end_src
+
+#+begin_src ocaml
+    getstr "" ;;
+    - : string option = None
+
+    getstr "hello" ;;
+    - : string option = Some "hello"
+#+end_src
+对需要处理值是Options的代码，需要用 ~match~ 进行匹配。
+#+begin_src ocaml
+  let dealwiths s = match s with 
+    |None -> "there is nothing"
+    |Some x -> "this is " ^ x 
+  ;;
+#+end_src
+
+#+begin_src ocaml
+  dealwiths (Some "a cat" ) ;;
+  - : string = "this is a cat"
+
+  dealwiths (getstr "") ;;
+  - : string = "there is nothing"
+#+end_src
+
+None 的类型是 ~'a option~ , Some expr的类型是 ~t option~ (expr:t)
+用None表示返回一个空 + 模式匹配强制要求处理Options所有可能的模式 = 强制要求检查返回值可能为空的场景。
+
+
+
+
+* 列表推导 | List Comprehensions
+一种产生list的语法糖。
+
+
+* OUnit2
+
+首先创建dune项目
+#+begin_src bash
+dune init project yourproject
+#+end_src
+
+在dune中链接ounit2:
+
+#+begin_src dune
+  (executable
+    (name test_xx)
+    (libraries ounit2))
+#+end_src
+
+
+创建测试文件  ~test_xx.ml~ 
+引入ounit2和被测试的模块
+#+begin_src ocaml
+  open Xx
+  open OUnit2
+
+#+end_src
+
+
+为某个函数/功能创建测试套件：
+#+begin_src ocaml
+  "测试套件名" >::: [  (* 测试项list *) ] 
+#+end_src
+
+编写测试用例：
+#+begin_src ocaml
+  "测试项目名" >:: (fun _ -> assert_xxx arg1 arg2 .. ) ;
+#+end_src
+
+运行一个测试套件：
+
+#+begin_src ocaml
+let _ = run_test_tt_main 测试套件 
+#+end_src
+
+
+
+完整例子：
+
+#+begin_src ocaml
+open OUnit2
+open Sum
+
+let tests = "test suite for sum" >::: [
+    "empty" >:: (fun _ -> assert_equal 0 (sum []) ) ;
+    "singleton" >:: (fun _ -> assert_equal 1 (sum [1]) ) ;
+    "two elements" >:: (fun _ -> assert_equal 3 (sum [1;2]));
+  ]
+
+let _ = run_test_tt_main tests 
+#+end_src
+
+
+** 打印测试用例出错时的值
+
+要给 ~assert_xxx~ 的 ~printer~ 参数传入一个输出字符串表达的函数，eg: ~string_of_int~ 
+#+begin_src ocaml
+
+  
+  let mytsts = "test suite for some module" >::: [
+      "case1" >:: (fun _ -> assert_equal 0 (sum []) ~printer:string_of_int ) ;
+      ]
+#+end_src
+
+
+会输出：
+#+begin_src 
+expected: 0 but got: 1
+#+end_src
+
+从这个打印结果能看出，assert的首个参数应该是期望的值。
+
+
+
+
+
+** 测试是否发出了异常
+
+#+begin_src ocaml
+"test case" >:: (fun _ -> assert_raise (异常对象) (fun () -> 能发出异常的表达式 ) ) 
+#+end_src
+
+
+#+begin_src ocaml
+  open OUnit2
+  open Stdlib   
+   
+  let raise_expection () =
+    raise (Failure "mytest")
+  ;;
+
+  let mytests = "test suite" >::: [
+      "test-raise-exceptions" >:: (fun _ -> assert_raises
+				      (Failure "mytest") (fun () -> raise_expection ( ) ))
+    ]
+
+  let _ = run_test_tt_main mytests ;; 
+#+end_src
+
+
+
+* Records & Tuples
+
+将几个数据放到一起的方式有两种：
+Records就像C中的结构体，主要特点是能按名字访问字段。
+Tuples不会给字段命名，而是通过位置来访问字段。
+二者都是定长的类型。
+
+** Record定义 
+
+#+begin_src ocaml
+  type ptype = TNormal | TFire | TWater ;;
+
+  type mon = {name : string ; hp : int ; ptype : ptype } ;;
+
+  let c = {name = "bird" ;hp = 40 ; ptype = TNormal } ;;
+  (* 字段的顺序可以和定义不一致 *)
+  
+#+end_src
+
+** 访问Record的字段
+
+*** 通过 ~R.field~
+
+field只能是定义中提到的标识符，而不是表达式。
+
+若想要通过某些计算来动态获得字段名，应该使用 ~map~ 类型。
+
+#+begin_src ocaml
+  c.name ;; 
+#+end_src
+
+*** 通过模式匹配
+#+begin_src ocaml
+  match c with
+    | { name=n; hp=h; ptype=t } -> n
+  ;;
+#+end_src
+
+
+** 从旧record中创建新record
+
+#+begin_src ocaml
+let new_c = { c with name = "world" ; hp = 123 } ;;
+#+end_src
+创建record拷贝，只是某些字段的值不同。
+
+
+
+
+
+
+
+
+** Tuple的定义
+#+begin_src ocaml
+  type subject = string * int ;; 
+#+end_src
+
+用小括号和 ~,~ 来创建一个tuple变量。
+#+begin_src ocaml
+let t = (23,3.0,"hello") ;; 
+#+end_src
+
+~int * float * string~ 是t的类型：
+#+begin_src ocaml
+val t : int * float * string = (23, 3., "hello)"
+#+end_src
+
+
+ 
+
+* 类型别名
+#+begin_src ocaml
+  type point = float * float ;;
+  type intlist = int list ;;
+  
+#+end_src
+
+
+
+
+
+
+* 异常
+OCaml中的异常是一个 *可拓展* 的Variant.
+
+有了异常的概念后，我们能完整地描述OCaml表达式的 *动态语义* ：
++ 被计算为一个值 evaluates to a value
++ 发出异常 raises an expection
++ 无限循环 an infinite loop
+
+（因此在match的分支中要充分考虑到前两类） 
+
+** 定义一个新的异常
+
+不携带数据：
+#+begin_src ocaml
+  exception SomethingWrong  ;; 
+#+end_src
+
+携带数据的构造器
+#+begin_src ocaml
+  exception MyException of int * string ;;
+#+end_src
+
+#+begin_src ocaml
+  MyException (22, "err" ) ;; 
+
+  - : exn = MyException(22, "err")
+#+end_src
+
+
+
+** 抛出异常
+
+raise是引发异常的通用手段。
+failwith只能引发Failure这个类型的异常。
+
+*** raise
+
+
+#+begin_src ocaml
+raise ( MyException (233,"error") ) ;;
+#+end_src
+
+注意raise的返回类型： ='a=
+这是一个范型，因为raise不会求值为某个值，而是抛出异常，因此它的作用是应付类型检查。
+在 if / match等结构中，都要求分支的类型相同。raise的返回类型为 ~'a~ 使得正常返回值的分支和发出异常的分支能够相容。
+
+
+#+begin_src ocaml
+   raise ;;
+  
+  - : exn -> 'a = <fun>
+#+end_src
+
+
+*** failwith
+#+begin_src ocaml
+failwith "xxx" ;;
+#+end_src
+等价于
+
+#+begin_src ocaml
+raise (Failure "xxx") ;;
+#+end_src
+
+
+** 捕获并处理异常
+
+用try with捕获异常后的行为应该是提供一个和表达式类型相同的值 
+#+begin_src ocaml
+  try 表达式 : T with
+  | Exn1 -> e1 : T
+  | Exn2 -> e2 : T
+  ;;
+#+end_src
+
+
+#+begin_src ocaml
+  let raise_some_exn a b =
+    match a,b with
+    | 0,_ -> raise SomethingWrong 
+    | _,0 -> raise ( MyException ( (-1) , "div by 0" ) )
+    | _,_ -> a/b
+  ;;
+#+end_src
+
+ ~try with~ 的目的是让异常消失，并在异常发生时赋予表达式一个值 （类型要和表达式的相同）
+
+match则更加通用，分支的类型不必和被匹配的表达式的类型一致。
+
+#+begin_src ocaml
+  let catch_exception a b = 
+    try
+      raise_some_exn a b
+    with
+    | SomethingWrong -> 0 
+    | MyException (i,s) -> 4611686018427387903
+  ;;
+#+end_src
+
+用match也能实现异常的捕获+处理，但更加麻烦：必须要写 =exception= ！
+
+#+begin_src ocaml
+  match raise_some_exn 1 0 with 
+    | exception (MyException ( i,s)) -> (string_of_int i ) ^ s 
+    | exception SomethingWrong -> "something wrong"
+    | x  -> string_of_int x 
+  ;;
+
+
+  match
+    try raise_some_exn 1 0 with (*根据发生的异常种类来为表达式赋以特殊值 *)
+    | SomethingWrong -> 0 
+    | MyException (i,s) ->  4611686018427387903 
+  with (*根据返回值的形式来决定后续动作 *)
+  | 0 -> "something wrong"
+  |  4611686018427387903   -> "div 0"
+  | x -> "result = " ^ string_of_int x
+  ;;
+#+end_src
+
+
+
+* 定义二叉树类型 Binary Tree
+
+Leaf表示空节点，即不存放值，仅作为占位使用。
+
+Node表示非空节点，是否为叶节点要看它是否有子节点。 
+
+叶节点： =Node(value,Leaf,Leaf)=
+非叶节点：左右子节点至少有一个不是 =Leaf= 
+
+** 用Tuples表示 | representation with tuples
+*** 定义 
+#+begin_src ocaml
+type 'tp tree = 
+|Leaf 
+|Node of 'tp * 'tp tree * 'tp tree
+;;
+#+end_src
+
+*** 创建对象 
+#+begin_src ocaml
+let a_tree =  Node(2,
+  Node(1,Leaf,Leaf),
+  Node(3,Leaf,Leaf)
+) ;;
+#+end_src
+
+*** 使用 
+#+begin_src ocaml
+let rec size_of_tree t = 
+match t with 
+|Leaf -> 0
+|Node(_,l,r) -> 1 + size_of_tree l + size_of_tree r
+;;
+#+end_src
+
+
+
+
+
+
+** 用Records表示 | representation with records
+
+*** 定义
+#+begin_src ocaml
+type 'a tree = 
+|Leaf
+|Node of { v : 'a ; 
+           l : 'a tree ; 
+           r : 'a tree }
+;;
+#+end_src
+*** 创建对象 
+#+begin_src ocaml
+  let a_tree = Node {v=2;
+		     l= Node{v=1;l=Leaf;r=Leaf};
+		     r= Node{v=3;l=Leaf;r=Leaf}
+		    } 
+  ;;
+#+end_src
+
+*** 使用方法，匹配tree对象 
+
+#+begin_src ocaml
+  let rec  size_of_tree tr = match tr with 
+    | Leaf ->  0
+    | Node{v=_;l=a;r=b} -> 1+ size_of_tree a + size_of_tree b 
+  ;;
+#+end_src
+
+（不要用 =val=  做变量名！）
+#+begin_src ocaml
+let rec is_member va t = match t with 
+|Leaf -> false 
+|Node {v=v;l=l;r=r} -> v=va || is_member va l || is_member va r 
+;;
+#+end_src
+
+先序遍历 preorder traversal
+
+#+begin_src ocaml
+  let rec preorder (t :'a tree) :  'a list = 
+    match t with 
+    |Leaf -> []
+    |Node{v=v;l=l;r=r} -> [v] @ preorder l @ preorder r 
+  ;;
+#+end_src
+
+因append操作 ~@~ 开销太大（线性时间），因此改用 ~::~ 来将每个节点的值加入list
+
+因此用一个输入参数res来记录上一次迭代过程的返回值
+
+
+
+#+begin_src 
+Node{v=1;l=Leaf;r=Leaf}   ==> [1]
+
+[2;1;3] == 2::[1;3]   => 2::(1::[3])
+
+[mid;l;r] => mid :: [l;r]   => mid::( l::( [r] ) )
+#+end_src
+
+
+先被应用 =preorder()= 的节点 先将值加入 =res= 队首 因此位置最终更靠后。 
+
+#+begin_src ocaml
+  let rec preorder (res :'a list)  (t :'a tree) : 'a list = 
+    match t with 
+    |Leaf -> res  (* 不添加元素到res 即原样返回 *)
+    |Node{v=v;l=l;r=r} -> v::(preorder (preorder res r) l)
+  ;;
+#+end_src
+
+
+
+ 
+
+* 定义自然数类型 natural numbers
+
+** 定义 nat
+#+begin_src ocaml
+  type nat = Zero | Nextnum of nat ;;
+#+end_src
+** 创建nat对象
+#+begin_src ocaml
+  let zero = Zero 
+  let one = Nextnum zero 
+  let two = Nextnum one 
+  let three = Nextnum two 
+  let four = Nextnum three ;;
+#+end_src
+
+** 操作自然数
+
+*** 是否为0
+#+begin_src ocaml
+  let is_zero  = function
+    | Zero -> true
+    | Nextnum _ -> false
+  ;;
+#+end_src
+*** 前驱？
+#+begin_src ocaml
+  let pred = function
+    | Zero -> None
+    | Nextnum rest -> Some rest
+  ;;
+(* ======================= *)
+  let pred_e = function
+    | Zero -> failwith "pred zero is undefined"
+    | Nextnum rest -> rest
+  ;;
+#+end_src
+
+*** 加法运算
+#+begin_src ocaml
+  let nat_add n1 n2 = match n1 with
+    |Zero -> n2
+    |Nextnum x -> nat_add x  (Nextnum n2)
+  ;;
+#+end_src
+
+
+
+*** int和nat的相互转换 
+
+#+begin_src ocaml
+  let int_of_nat n = 
+    let rec int_of_nat_tr acc  = function
+      | Zero -> acc
+      | Nextnum x -> int_of_nat_tr (1+acc) x
+    in
+    int_of_nat_tr 0 n
+  ;;
+#+end_src
+
+
+#+begin_src ocaml
+  let  nat_of_int i =
+    let rec nat_of_int_tr acc =  function
+	|n when n = 0  -> acc 
+	|n when n > 0 -> nat_of_int_tr (Nextnum acc)  (n-1) 
+	|_  -> failwith "n cannot be postived"
+    in
+    nat_of_int_tr Zero i
+  ;;
+#+end_src
+
+注意这里模式中使用了 =when= ，因此最后要有一个通配模式 =_= .
+否则将会有警告，即使模式包含了在逻辑上存在的所有情况：
+#+begin_src ocaml
+  .... = function
+    |n when n = 0  -> acc 
+    |n when n > 0 -> nat_of_int_tr (Nextnum acc)  (n-1) 
+    |n when n < 0  -> failwith "n cannot be postived"
+  ;;
+#+end_src
+这种写法仍然会有警告：
+#+begin_src
+ [partial-match]: this pattern-matching is not exhaustive.
+#+end_src
+
+
+
+
+
+
+

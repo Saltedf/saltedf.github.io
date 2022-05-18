@@ -1,0 +1,24 @@
+# -*- mode: org; -*-
+
+#+OPTIONS: html-style:nil  html-postamble:nil
+
+
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/htmlize.css\"/>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/bigblow.css\"/>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/hideshow.css\"/>")}
+
+
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js\"></script>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js\"></script>")}
+
+
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js\"></script>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js\"></script>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js\"></script>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/bigblow.js\"></script>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/hideshow.js\"></script>")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/lib/js/jquery.stickytableheaders.min.js\"></script>")}
+
+
+
+

@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-05-18 三 19:03 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org21a8456">1. ch2 ex</a>
+<ul>
+<li><a href="#org5d66d68">1.1. values</a></li>
+<li><a href="#org11dcde6">1.2. operators</a></li>
+<li><a href="#org5940b76">1.3. equality</a></li>
+<li><a href="#org7902300">1.4. assert</a></li>
+<li><a href="#orgdc42f43">1.5. if</a></li>
+<li><a href="#org7864b9d">1.6. double fun</a></li>
+<li><a href="#org6bb0b1e">1.7. more fun</a>
+<ul>
+<li><a href="#org3dfd70b">1.7.1. cube</a></li>
+<li><a href="#orgbaf70a8">1.7.2. sign</a></li>
+<li><a href="#orgb026989">1.7.3. the area of a circle</a></li>
+</ul>
+</li>
+<li><a href="#orgfeb041d">1.8. RMS 均方根</a></li>
+<li><a href="#org89238f0">1.9. date fun</a></li>
+<li><a href="#orgad699d1">1.10. fib</a></li>
+<li><a href="#org27b3e00">1.11. fib fast</a></li>
+<li><a href="#org9adad71">1.12. func type</a></li>
+<li><a href="#orga5b1ecc">1.13. divide</a></li>
+<li><a href="#org00392d0">1.14. associativity</a></li>
+<li><a href="#orgf0bcbec">1.15. average</a></li>
+<li><a href="#orgd0d6cb0">1.16. hello world</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org21a8456" class="outline-2">
+<h2 id="org21a8456"><span class="section-number-2">1.</span> <a href="https://cs3110.github.io/textbook/chapters/basics/exercises.html">ch2 ex</a></h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org5d66d68" class="outline-3">
+<h3 id="org5d66d68"><span class="section-number-3">1.1.</span> values</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> 7<span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">(</span>1<span style="color: #f0e68c;">+</span>2<span style="color: #f0e68c;">+</span>3<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 42
+
+utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"CS "</span> <span style="color: #f0e68c;">^</span> string_of_int 3110 <span style="color: #ff4500;">;;</span> 
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"CS 3110"</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org11dcde6" class="outline-3">
+<h3 id="org11dcde6"><span class="section-number-3">1.2.</span> operators</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> 42 <span style="color: #f0e68c;">*</span> 10 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 420
+
+utop <span style="color: #f0e68c;">#</span> 3.14 <span style="color: #f0e68c;">/.</span> 2.0 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">=</span> 1.57
+
+
+utop <span style="color: #f0e68c;">#</span> 4.2 <span style="color: #f0e68c;">*.</span> 4.2 <span style="color: #f0e68c;">*.</span> 4.2 <span style="color: #f0e68c;">*.</span> 4.2 <span style="color: #f0e68c;">*.</span> 4.2 <span style="color: #f0e68c;">*.</span> 4.2 <span style="color: #f0e68c;">*.</span> 4.2 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">=</span> 23053.933324800008
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5940b76" class="outline-3">
+<h3 id="org5940b76"><span class="section-number-3">1.3.</span> equality</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> 42 <span style="color: #f0e68c;">=</span> 42 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> bool <span style="color: #f0e68c;">=</span> <span style="color: #a991f1;">true</span>
+
+utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"hi"</span> <span style="color: #ff4500;">;;</span>  structural equality
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> bool <span style="color: #f0e68c;">=</span> <span style="color: #a991f1;">true</span>
+
+utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</span> <span style="color: #f0e68c;">==</span> <span style="color: #7bc275;">"hi"</span> <span style="color: #ff4500;">;;</span>  physical equality <span style="color: #f0e68c;">:</span>compare pointers<span style="color: #f0e68c;">/</span>addresses
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> bool <span style="color: #f0e68c;">=</span> <span style="color: #a991f1;">false</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7902300" class="outline-3">
+<h3 id="org7902300"><span class="section-number-3">1.4.</span> assert</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #51afef;">assert</span> <span style="color: #a991f1;">true</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #51afef;">assert</span> <span style="color: #a991f1;">false</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #bbc2cf; background-color: #242730;">Exception</span><span style="color: #f0e68c;">:</span> <span style="color: #7bc275;">"Assert_failure //toplevel//:1:0"</span>
+<span style="color: #bbc2cf; background-color: #242730;">Called</span> from <span style="color: #FCCE7B;">Stdlib__Fun.</span>protect <span style="color: #f5deb3; font-weight: bold;">in</span> file <span style="color: #7bc275;">"fun.ml"</span><span style="color: #f0e68c;">,</span> line 33<span style="color: #f0e68c;">,</span> characters 8<span style="color: #f0e68c;">-</span>15
+<span style="color: #bbc2cf; background-color: #242730;">Re</span><span style="color: #f0e68c;">-</span>raised at <span style="color: #FCCE7B;">Stdlib__Fun.</span>protect <span style="color: #f5deb3; font-weight: bold;">in</span> file <span style="color: #7bc275;">"fun.ml"</span><span style="color: #f0e68c;">,</span> line 38<span style="color: #f0e68c;">,</span> characters 6<span style="color: #f0e68c;">-</span>52
+<span style="color: #bbc2cf; background-color: #242730;">Called</span> from <span style="color: #FCCE7B;">Topeval.</span>load_lambda <span style="color: #f5deb3; font-weight: bold;">in</span> file <span style="color: #7bc275;">"toplevel/byte/topeval.ml"</span><span style="color: #f0e68c;">,</span> line 89<span style="color: #f0e68c;">,</span> characters 4<span style="color: #f0e68c;">-</span>150
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #51afef;">assert</span> <span style="color: #f0e68c;">(</span>2110 <span style="color: #f0e68c;">!=</span> 3110 <span style="color: #f0e68c;">)</span><span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdc42f43" class="outline-3">
+<h3 id="orgdc42f43"><span class="section-number-3">1.5.</span> if</h3>
+<div class="outline-text-3" id="text-1-5">
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #51afef;">if</span> 2 <span style="color: #f0e68c;">&gt;</span> 1 <span style="color: #51afef;">then</span> 42 <span style="color: #51afef;">else</span> 7 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 42
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7864b9d" class="outline-3">
+<h3 id="org7864b9d"><span class="section-number-3">1.6.</span> double fun</h3>
+<div class="outline-text-3" id="text-1-6">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">double</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> 2 <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">(</span>x<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #51afef;">assert</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>double <span style="color: #f0e68c;">(-</span>100<span style="color: #f0e68c;">))</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(-</span>200<span style="color: #f0e68c;">))</span> <span style="color: #f0e68c;">;</span>
+<span style="color: #51afef;">assert</span> <span style="color: #f0e68c;">(</span> 1 <span style="color: #f0e68c;">=</span>  <span style="color: #f0e68c;">(</span>double 0<span style="color: #f0e68c;">));</span>
+<span style="color: #51afef;">assert</span> <span style="color: #f0e68c;">(</span> 46 <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>double 23<span style="color: #f0e68c;">))</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6bb0b1e" class="outline-3">
+<h3 id="org6bb0b1e"><span class="section-number-3">1.7.</span> more fun</h3>
+<div class="outline-text-3" id="text-1-7">
+</div>
+<div id="outline-container-org3dfd70b" class="outline-4">
+<h4 id="org3dfd70b"><span class="section-number-4">1.7.1.</span> cube</h4>
+<div class="outline-text-4" id="text-1-7-1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">cube</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">float</span>  <span style="color: #f0e68c;">=</span> x <span style="color: #f0e68c;">*.</span> x <span style="color: #f0e68c;">*.</span> x <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbaf70a8" class="outline-4">
+<h4 id="orgbaf70a8"><span class="section-number-4">1.7.2.</span> sign</h4>
+<div class="outline-text-4" id="text-1-7-2">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sign</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int</span>  <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> x <span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #51afef;">then</span> 1
+  <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> x <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> 0
+  <span style="color: #51afef;">else</span> <span style="color: #f0e68c;">-</span>1
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb026989" class="outline-4">
+<h4 id="orgb026989"><span class="section-number-4">1.7.3.</span> the area of a circle</h4>
+<div class="outline-text-4" id="text-1-7-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">area_of_circle</span><span style="color: #DFDFDF;"> r</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">float</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> r <span style="color: #f0e68c;">&lt;</span> 0. <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"r&lt;0"</span> <span style="color: #f0e68c;">;</span>
+  <span style="color: #f0e68c;">(</span> 3.1415926 <span style="color: #f0e68c;">*.</span> r <span style="color: #f0e68c;">*.</span>  r<span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">absf</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">float</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> x <span style="color: #f0e68c;">&gt;=</span> 0. <span style="color: #51afef;">then</span> x
+  <span style="color: #51afef;">else</span> <span style="color: #f0e68c;">(-</span>1.<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">*.</span>  x
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #7e7e87;">(** [r] is the raduis of a circle *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">test_area_of_circle</span><span style="color: #DFDFDF;"> r expected_area</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">assert</span> <span style="color: #f0e68c;">(</span>absf <span style="color: #f0e68c;">((</span>area_of_circle r<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-.</span>  expected_area<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&lt;</span> 0.01 <span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+
+test_area_of_circle 2. 12.56 <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgfeb041d" class="outline-3">
+<h3 id="orgfeb041d"><span class="section-number-3">1.8.</span> RMS 均方根</h3>
+<div class="outline-text-3" id="text-1-8">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">rms</span><span style="color: #DFDFDF;"> x y</span> <span style="color: #f0e68c;">=</span>  sqrt <span style="color: #f0e68c;">@@</span> <span style="color: #f0e68c;">(</span>x <span style="color: #f0e68c;">*.</span> x <span style="color: #f0e68c;">+.</span> y <span style="color: #f0e68c;">*.</span> y<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">/.</span> 2. <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org89238f0" class="outline-3">
+<h3 id="org89238f0"><span class="section-number-3">1.9.</span> date fun</h3>
+<div class="outline-text-3" id="text-1-9">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #7e7e87;">(** [m] should be a month. [d] is day.</span>
+<span style="color: #7e7e87;">    if [m] and [d] is a valid date, then returns true *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">date</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">m</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">string</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;"> d</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">int</span><span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">(</span>  m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Jan"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;=</span> 31
+      <span style="color: #f0e68c;">||</span> m<span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Feb"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;=</span>28
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Mar"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;=</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Apr"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"May"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;=</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Jun"</span>  <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Jul"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;=</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Aug"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Sept"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;=</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Oct"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Nov"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;=</span> 31
+      <span style="color: #f0e68c;">||</span> m <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"Dec"</span> <span style="color: #f0e68c;">&amp;&amp;</span> d<span style="color: #f0e68c;">&gt;=</span>1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;</span> 31 <span style="color: #f0e68c;">)</span>
+  <span style="color: #51afef;">then</span> <span style="color: #a991f1;">true</span> 
+  <span style="color: #51afef;">else</span> <span style="color: #a991f1;">false</span>
+<span style="color: #ff4500;">;;</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgad699d1" class="outline-3">
+<h3 id="orgad699d1"><span class="section-number-3">1.10.</span> fib</h3>
+<div class="outline-text-3" id="text-1-10">
+<div class="org-src-container">
+<pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">fib</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">=</span> 1 <span style="color: #51afef;">then</span> 1
+    <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">=</span> 2 <span style="color: #51afef;">then</span> 1
+    <span style="color: #51afef;">else</span> fib <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">+</span> fib <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">-</span>2<span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org27b3e00" class="outline-3">
+<h3 id="org27b3e00"><span class="section-number-3">1.11.</span> fib fast</h3>
+<div class="outline-text-3" id="text-1-11">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">helper</span><span style="color: #DFDFDF;">  nstep pp p</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> nstep <span style="color: #f0e68c;">=</span> 1 <span style="color: #51afef;">then</span> p
+  <span style="color: #51afef;">else</span> helper <span style="color: #f0e68c;">(</span>nstep<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> p <span style="color: #f0e68c;">(</span>pp<span style="color: #f0e68c;">+</span>p <span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">fib_fast</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span> helper n 0 1 <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9adad71" class="outline-3">
+<h3 id="org9adad71"><span class="section-number-3">1.12.</span> func type</h3>
+<div class="outline-text-3" id="text-1-12">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">f</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">if</span> x <span style="color: #51afef;">then</span> x <span style="color: #51afef;">else</span> x  <span style="color: #62686E;">(* </span><span style="color: #62686E;">bool -&gt; bool</span><span style="color: #62686E;"> *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">g</span><span style="color: #DFDFDF;"> x y</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">if</span> y <span style="color: #51afef;">then</span> x <span style="color: #51afef;">else</span> x  <span style="color: #62686E;">(* </span><span style="color: #62686E;">'a -&gt; bool -&gt; 'a</span><span style="color: #62686E;"> *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">h</span><span style="color: #DFDFDF;"> x y z</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">if</span> x <span style="color: #51afef;">then</span> y <span style="color: #51afef;">else</span> z  <span style="color: #62686E;">(* </span><span style="color: #62686E;">bool -&gt; 'a -&gt; 'a -&gt; 'a</span><span style="color: #62686E;"> *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">i</span><span style="color: #DFDFDF;"> x y z</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">if</span> x <span style="color: #51afef;">then</span> y <span style="color: #51afef;">else</span> y  <span style="color: #62686E;">(* </span><span style="color: #62686E;">bool -&gt; 'a -&gt; 'b -&gt; 'a</span><span style="color: #62686E;"> *)</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga5b1ecc" class="outline-3">
+<h3 id="orga5b1ecc"><span class="section-number-3">1.13.</span> divide</h3>
+<div class="outline-text-3" id="text-1-13">
+<p>
+Write a function divide : numerator:float -&gt; denominator:float -&gt; float. Apply your function.
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">divide</span><span style="color: #DFDFDF;"> numerator denominator</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">(</span>denominator <span style="color: #f0e68c;">=</span> 0.<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"divide 0"</span> <span style="color: #f0e68c;">;</span>
+  numerator <span style="color: #f0e68c;">/.</span> denominator
+  <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org00392d0" class="outline-3">
+<h3 id="org00392d0"><span class="section-number-3">1.14.</span> associativity</h3>
+<div class="outline-text-3" id="text-1-14">
+<p>
+Suppose that we have defined let add x y = x + y.
+Which of the following produces an integer, which produces a function,
+and which produces an error?
+Decide on an answer, then check your answer in the toplevel.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">add 5 1  <span style="color: #f0e68c;">--&gt;</span> int
+add 5    <span style="color: #f0e68c;">--&gt;</span> func
+<span style="color: #f0e68c;">(</span>add 5<span style="color: #f0e68c;">)</span> 1 <span style="color: #f0e68c;">--&gt;</span> int
+add <span style="color: #f0e68c;">(</span>5 1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">--&gt;</span> error
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgf0bcbec" class="outline-3">
+<h3 id="orgf0bcbec"><span class="section-number-3">1.15.</span> average</h3>
+<div class="outline-text-3" id="text-1-15">
+<p>
+Define an infix operator +/. to compute the average of two floating-point numbers. For example,
+</p>
+
+<p>
+1.0 +/. 2.0 = 1.5
+</p>
+
+<ol class="org-ol">
+<li>+/. 0. = 0.</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+/.</span> <span style="color: #f0e68c;">)</span> a b <span style="color: #f0e68c;">=</span>
+ <span style="color: #f0e68c;">(</span> a <span style="color: #f0e68c;">+.</span> b<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">/.</span> 2.0
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgd0d6cb0" class="outline-3">
+<h3 id="orgd0d6cb0"><span class="section-number-3">1.16.</span> hello world</h3>
+<div class="outline-text-3" id="text-1-16">
+<p>
+print<sub>endline</sub> "Hello world!";;
+</p>
+
+<p>
+print<sub>string</sub> "Hello world!";;
+</p>
+
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml">print_string <span style="color: #7bc275;">"hello world"</span> <span style="color: #ff4500;">;;</span>
+hello world<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>
+
+print_endline <span style="color: #7bc275;">"hello world"</span> <span style="color: #ff4500;">;;</span>
+hello world
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

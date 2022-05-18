@@ -1,5 +1,9 @@
-#+TITLE: Emacs文本文件显示异常( 中文utf-8编码 )
-#+OPTIONS: num:nil toc:nil
+#+TITLE: Emacs使用
+#+OPTIONS: toc:t
+#+include: mytheme.setup 
+
+
+* 文本文件显示异常( 中文utf-8编码 )
 
 emacs 打开包含中文的文本文件后中文显示为8进制
 但在vim等编辑器中却显示正常
@@ -23,7 +27,25 @@ utf-8-unix
 
 
 
-* 参考
-https://emacs.stackexchange.com/questions/21467/getting-no-conversion-nil-encoding-each-time-when-opening-a-file-which-should
+*参考*
 
-https://lists.gnu.org/archive/html/emacs-devel/2018-11/msg00071.html 
++ https://emacs.stackexchange.com/questions/21467/getting-no-conversion-nil-encoding-each-time-when-opening-a-file-which-should
++ https://lists.gnu.org/archive/html/emacs-devel/2018-11/msg00071.html 
+
+
+* flycheck 入门
+
+显示所有问题：
+flycheck-list-errors 
+
+* 快捷键查看
+
+C-h b
+c-h k
+
+
+* 标签页
+c-x t  b/0/1/2 
+
+
+c-m-space 

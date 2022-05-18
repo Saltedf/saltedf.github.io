@@ -1,11 +1,9 @@
 #+TITLE: linux命令杂记
-#+OPTIONS: toc:t num:t
+#+OPTIONS: toc:t num:t minitoc:t
+#+include: mytheme.setup 
 
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./myorg.css"/>
 
-#+begin_src 
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://www.pirilampo.org/styles/readtheorg/css/readtheorg.css"/>
-#+end_src
+
 
 * du -h 以可读形式显示文件大小 
 
@@ -113,8 +111,9 @@ strace -c -p <PID>
 
 
 * objdump -D 显示可执行文件/库文件的反汇编
-
+#+begin_src bash
 objdump -D XXX | less 
+#+end_src
 不加less会显示太多!
 
 
@@ -137,7 +136,7 @@ $ ldd ./build/udpclient
 https://github.com/lujun9972/linux-document/blob/master/examples/10%20wget%20command%20examples.org
 
 #+begin_src 
-wget --mirror --convert-links --page-requisites ----no-parent -P /path/to/download https://example-domain.com
+wget --mirror --convert-links --page-requisites --no-parent -P /path/to/download https://example-domain.com
 #+end_src
 
 但这样可能会下载不全，原因可能有很多。这里遇到的问题是默认是不跨域名下载的。

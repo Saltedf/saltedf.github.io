@@ -1,0 +1,1297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-05-18 三 17:00 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgcfc1525">1. ch3</a>
+<ul>
+<li><a href="#org6ab7297">1.1. list expressions</a>
+<ul>
+<li><a href="#org72e2c4d">1.1.1. 使用方括号来创建一个含有整数 1~5 的list</a></li>
+<li><a href="#orga2833a9">1.1.2. 只用 <code>::</code> 和 <code>[]</code> 创建相同的list</a></li>
+<li><a href="#org4d38fbd">1.1.3. 用 <code>@</code> 但不能用 <code>::</code> ，并用上 <code>[2;3;4]</code> 这个表达式来创建相同的list</a></li>
+</ul>
+</li>
+<li><a href="#orge1a61b6">1.2. list的整数乘积</a></li>
+<li><a href="#org3147f0d">1.3. 连接list中的所有字符串</a></li>
+<li><a href="#orgd023a0b">1.4. 为product编写单元测试</a></li>
+<li><a href="#org438c8b9">1.5. 用模式匹配写下面三个函数</a>
+<ul>
+<li><a href="#org8726c91">1.5.1. list的首个元素是 “bigred”</a></li>
+<li><a href="#org3285c12">1.5.2. list恰好有两个/四个元素（不能用length函数）</a></li>
+<li><a href="#org243ab84">1.5.3. list的前两个元素是相等的</a></li>
+</ul>
+</li>
+<li><a href="#org897ad52">1.6. 用 <code>List</code> 标准库来解决问题：</a>
+<ul>
+<li><a href="#org0965367">1.6.1. 编写一个接受 <code>int list</code> 的函数，它返回list的第五个元素</a></li>
+<li><a href="#org21ba7d4">1.6.2. 编写一个接收 <code>int list</code> 的函数，它返回一个降序排列的list</a></li>
+</ul>
+</li>
+<li><a href="#orgadb6281">1.7. 分别为上面两个函数编写单元测试</a></li>
+<li><a href="#org378c2db">1.8. libray puzzle</a>
+<ul>
+<li><a href="#orgdb2aff9">1.8.1. 编写一个返回list的最后一个元素的函数</a></li>
+<li><a href="#orgf6006e2">1.8.2. 编写函数 any<sub>zeroes</sub> : int list -&gt; bool</a></li>
+</ul>
+</li>
+<li><a href="#org4cd728c">1.9. take/drop</a>
+<ul>
+<li><a href="#orgf04a75e">1.9.1. 编写函数 <code>take:int-&gt; 'a list-&gt;'a list</code></a></li>
+<li><a href="#org40dc6c5">1.9.2. 编写drop函数 <code>int -&gt; 'a list -&gt; 'a list</code></a></li>
+</ul>
+</li>
+<li><a href="#orgb4c2dee">1.10. 将take/drop改写成尾递归的写法</a></li>
+<li><a href="#org7c9a7a0">1.11. 是否为单峰list？</a></li>
+<li><a href="#org54a8cd3">1.12. 幂集：全体子集构成的集合</a></li>
+<li><a href="#org648b71f">1.13. print int list rec</a></li>
+<li><a href="#org53337ec">1.14. print int list iter</a></li>
+<li><a href="#org34dba8e">1.15. student 类型</a>
+<ul>
+<li><a href="#org3394963">1.15.1. student</a></li>
+<li><a href="#orga8f221c">1.15.2. student -&gt; string * string 返回学生姓名</a></li>
+<li><a href="#org2c9e8d2">1.15.3. string -&gt; string -&gt; float -&gt; student 创建学生record</a></li>
+</ul>
+</li>
+<li><a href="#org3fed5de">1.16. pokemon 类型</a></li>
+<li><a href="#org81b61a6">1.17. 安全的hd/tl函数</a></li>
+<li><a href="#orgd258cf7">1.18. pokefun</a></li>
+<li><a href="#org5f98768">1.19. date before</a></li>
+<li><a href="#org14eae8c">1.20. earliest date</a></li>
+<li><a href="#orge427173">1.21. assoc list</a></li>
+<li><a href="#org402cc4c">1.22. cards</a></li>
+<li><a href="#org85691c8">1.23. matching</a></li>
+<li><a href="#org7ff9882">1.24. quadrant 象限</a></li>
+<li><a href="#org812dead">1.25. 使用 when 重写quadrant函数</a></li>
+<li><a href="#org1ffb4c7">1.26. depth</a></li>
+<li><a href="#org69966da">1.27. shape</a></li>
+<li><a href="#orge8e0d85">1.28. list max exn</a></li>
+<li><a href="#org6e167ed">1.29. list max exn string</a></li>
+<li><a href="#org7ce4f2c">1.30. list max exn ounit</a></li>
+<li><a href="#org1ad49b4">1.31. 用二叉搜索树实现字典</a>
+<ul>
+<li><a href="#org1dd0e1b">1.31.1. 查找 [✭✭]</a></li>
+<li><a href="#orga0a1d0d">1.31.2. 插入 [✭✭✭]</a></li>
+<li><a href="#org2c385de">1.31.3. <code>is_bst</code> [✭✭✭✭]</a></li>
+</ul>
+</li>
+<li><a href="#orgdc277b2">1.32. quadrant poly (使用匿名Variant重写）</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<pre class="example">
+#+include: ../../mytheme2.setup
+</pre>
+
+
+
+<div id="outline-container-orgcfc1525" class="outline-2">
+<h2 id="orgcfc1525"><span class="section-number-2">1.</span> ch3</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org6ab7297" class="outline-3">
+<h3 id="org6ab7297"><span class="section-number-3">1.1.</span> list expressions</h3>
+<div class="outline-text-3" id="text-1-1">
+</div>
+<div id="outline-container-org72e2c4d" class="outline-4">
+<h4 id="org72e2c4d"><span class="section-number-4">1.1.1.</span> 使用方括号来创建一个含有整数 1~5 的list</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">]</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga2833a9" class="outline-4">
+<h4 id="orga2833a9"><span class="section-number-4">1.1.2.</span> 只用 <code>::</code> 和 <code>[]</code> 创建相同的list</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<div class="org-src-container">
+<pre class="src src-ocaml">1<span style="color: #f0e68c;">::</span>2<span style="color: #f0e68c;">::</span>3<span style="color: #f0e68c;">::</span>4<span style="color: #f0e68c;">::</span>5<span style="color: #f0e68c;">::[]</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4d38fbd" class="outline-4">
+<h4 id="org4d38fbd"><span class="section-number-4">1.1.3.</span> 用 <code>@</code> 但不能用 <code>::</code> ，并用上 <code>[2;3;4]</code> 这个表达式来创建相同的list</h4>
+<div class="outline-text-4" id="text-1-1-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>5<span style="color: #f0e68c;">]</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge1a61b6" class="outline-3">
+<h3 id="orge1a61b6"><span class="section-number-3">1.2.</span> list的整数乘积</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">product</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">product_tr</span><span style="color: #DFDFDF;"> acc</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span> 
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> acc 
+    <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #51afef;">when</span> h<span style="color: #f0e68c;">!=</span>0 <span style="color: #f0e68c;">-&gt;</span> product_tr <span style="color: #f0e68c;">(</span>h<span style="color: #f0e68c;">*</span>acc<span style="color: #f0e68c;">)</span> t
+    <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> 0 
+  <span style="color: #f5deb3; font-weight: bold;">in</span>
+  product_tr 1 lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3147f0d" class="outline-3">
+<h3 id="org3147f0d"><span class="section-number-3">1.3.</span> 连接list中的所有字符串</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">concat</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">concat_tr</span><span style="color: #DFDFDF;"> acc</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> acc
+    <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> concat_tr <span style="color: #f0e68c;">(</span>acc <span style="color: #f0e68c;">^</span> h<span style="color: #f0e68c;">)</span> t 
+  <span style="color: #f5deb3; font-weight: bold;">in</span> 
+  concat_tr <span style="color: #7bc275;">""</span> lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd023a0b" class="outline-3">
+<h3 id="orgd023a0b"><span class="section-number-3">1.4.</span> 为product编写单元测试</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Product</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">test_product</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test_product"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+    <span style="color: #7bc275;">"empty list"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 1 <span style="color: #f0e68c;">(</span>product <span style="color: #f0e68c;">[])</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">;</span>
+    <span style="color: #7bc275;">"one element"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 4 <span style="color: #f0e68c;">(</span>product <span style="color: #f0e68c;">[</span>4<span style="color: #f0e68c;">])</span> <span style="color: #f0e68c;">);</span>
+    <span style="color: #7bc275;">"two elelemts"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 30 <span style="color: #f0e68c;">(</span>product <span style="color: #f0e68c;">[</span>5<span style="color: #f0e68c;">;</span>6<span style="color: #f0e68c;">])</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">;</span>
+    <span style="color: #7bc275;">"contains zero"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 0 <span style="color: #f0e68c;">(</span>product <span style="color: #f0e68c;">[</span>0<span style="color: #f0e68c;">;</span>34<span style="color: #f0e68c;">;</span>54<span style="color: #f0e68c;">;</span>12<span style="color: #f0e68c;">;</span>1<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">;</span>6<span style="color: #f0e68c;">;]</span> <span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">);</span>
+  <span style="color: #f0e68c;">]</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main test_product
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org438c8b9" class="outline-3">
+<h3 id="org438c8b9"><span class="section-number-3">1.5.</span> 用模式匹配写下面三个函数</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+只要输入list满足性质就返回true,否则返回false
+</p>
+</div>
+
+<div id="outline-container-org8726c91" class="outline-4">
+<h4 id="org8726c91"><span class="section-number-4">1.5.1.</span> list的首个元素是 “bigred”</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">func1</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>_  <span style="color: #51afef;">when</span> h <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"bigred"</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span><span style="color: #a991f1;">false</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3285c12" class="outline-4">
+<h4 id="org3285c12"><span class="section-number-4">1.5.2.</span> list恰好有两个/四个元素（不能用length函数）</h4>
+<div class="outline-text-4" id="text-1-5-2">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">func2</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[</span>_<span style="color: #f0e68c;">;</span>_<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #a991f1;">true</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[</span> _<span style="color: #f0e68c;">;</span>_<span style="color: #f0e68c;">;</span>_<span style="color: #f0e68c;">;</span>_<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">-&gt;</span><span style="color: #a991f1;">true</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org243ab84" class="outline-4">
+<h4 id="org243ab84"><span class="section-number-4">1.5.3.</span> list的前两个元素是相等的</h4>
+<div class="outline-text-4" id="text-1-5-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">func3</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> a<span style="color: #f0e68c;">::</span>b<span style="color: #f0e68c;">::</span>_ <span style="color: #51afef;">when</span> a<span style="color: #f0e68c;">=</span>b <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org897ad52" class="outline-3">
+<h3 id="org897ad52"><span class="section-number-3">1.6.</span> 用 <code>List</code> 标准库来解决问题：</h3>
+<div class="outline-text-3" id="text-1-6">
+</div>
+<div id="outline-container-org0965367" class="outline-4">
+<h4 id="org0965367"><span class="section-number-4">1.6.1.</span> 编写一个接受 <code>int list</code> 的函数，它返回list的第五个元素</h4>
+<div class="outline-text-4" id="text-1-6-1">
+<p>
+若list少于5个元素，则返回0 。
+提示：用 <code>List.length</code> 和 <code>List.nth</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">fifth</span><span style="color: #DFDFDF;">  lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">List.</span>length lst<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&lt;</span> 5 <span style="color: #51afef;">then</span> 0
+  <span style="color: #51afef;">else</span> <span style="color: #FCCE7B;">List.</span>nth lst 4
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org21ba7d4" class="outline-4">
+<h4 id="org21ba7d4"><span class="section-number-4">1.6.2.</span> 编写一个接收 <code>int list</code> 的函数，它返回一个降序排列的list</h4>
+<div class="outline-text-4" id="text-1-6-2">
+<p>
+提示：用 <code>List.sort</code> ，并用 <code>Stdlib.compare</code>  作为它的首个参数。以及使用 <code>List.rev</code> (反转list）
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">descend</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  lst <span style="color: #f0e68c;">|&gt;</span>  <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">List.</span>sort <span style="color: #FCCE7B;">Stdlib.</span>compare<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">|&gt;</span> <span style="color: #FCCE7B;">List.</span>rev
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgadb6281" class="outline-3">
+<h3 id="orgadb6281"><span class="section-number-3">1.7.</span> 分别为上面两个函数编写单元测试</h3>
+<div class="outline-text-3" id="text-1-7">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Fifth</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make_fifth_testcase</span><span style="color: #DFDFDF;"> name expect lst</span> <span style="color: #f0e68c;">=</span>
+  name <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal  expect <span style="color: #f0e68c;">(</span>fifth lst<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">fifth_test</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test suite of fifth"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+    make_fifth_testcase <span style="color: #7bc275;">"empty list"</span> 0 <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">;</span>
+    make_fifth_testcase <span style="color: #7bc275;">"lewer than five elements"</span> 0 <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">;</span>
+    make_fifth_testcase <span style="color: #7bc275;">"exactly five elements"</span> 5 <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">;</span>
+    make_fifth_testcase <span style="color: #7bc275;">"more then five elements"</span> 5 <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">;</span>6<span style="color: #f0e68c;">]</span> 
+  <span style="color: #f0e68c;">]</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span>  <span style="color: #f0e68c;">=</span> run_test_tt_main fifth_test 
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Descend</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make_descend_testcase</span><span style="color: #DFDFDF;"> name expect lst</span> <span style="color: #f0e68c;">=</span>
+  name <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal expect <span style="color: #f0e68c;">(</span>descend lst<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span> 
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">descend_test_suite</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"test descend"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+    make_descend_testcase <span style="color: #7bc275;">"empty list"</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">;</span>
+    make_descend_testcase <span style="color: #7bc275;">"one element"</span> <span style="color: #f0e68c;">[</span>3<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">[</span>3<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">;</span>
+    make_descend_testcase <span style="color: #7bc275;">"ascending list"</span> <span style="color: #f0e68c;">[</span>3<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>1<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">]</span> 
+
+  <span style="color: #f0e68c;">]</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main descend_test_suite
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org378c2db" class="outline-3">
+<h3 id="org378c2db"><span class="section-number-3">1.8.</span> libray puzzle</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+解答只能是1-2行代码 
+</p>
+</div>
+
+<div id="outline-container-orgdb2aff9" class="outline-4">
+<h4 id="orgdb2aff9"><span class="section-number-4">1.8.1.</span> 编写一个返回list的最后一个元素的函数</h4>
+<div class="outline-text-4" id="text-1-8-1">
+<p>
+函数应假定输入的list是非空的；提示用两个库函数，不要在代码中使用模式匹配
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">last_element</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">assert</span> <span style="color: #f0e68c;">(</span>lst <span style="color: #f0e68c;">!=</span> <span style="color: #f0e68c;">[])</span> <span style="color: #f0e68c;">;</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">List.</span>nth lst  <span style="color: #f0e68c;">((</span><span style="color: #FCCE7B;">List.</span>length lst<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf6006e2" class="outline-4">
+<h4 id="orgf6006e2"><span class="section-number-4">1.8.2.</span> 编写函数 any<sub>zeroes</sub> : int list -&gt; bool</h4>
+<div class="outline-text-4" id="text-1-8-2">
+<p>
+此函数返回 true 当且仅当 输入list中至少有一个 0
+提示：使用一个库函数，不要用模式匹配。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">any_zeroes</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>mem 0 lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4cd728c" class="outline-3">
+<h3 id="org4cd728c"><span class="section-number-3">1.9.</span> take/drop</h3>
+<div class="outline-text-3" id="text-1-9">
+</div>
+<div id="outline-container-orgf04a75e" class="outline-4">
+<h4 id="orgf04a75e"><span class="section-number-4">1.9.1.</span> 编写函数 <code>take:int-&gt; 'a list-&gt;'a list</code></h4>
+<div class="outline-text-4" id="text-1-9-1">
+<p>
+使得 <code>take n lst</code> 返回lst的前n个元素。若lst少于n个元素，则返回整个list
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">take</span><span style="color: #DFDFDF;"> n lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">List.</span>length lst<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&lt;=</span> n <span style="color: #51afef;">then</span> lst
+  <span style="color: #51afef;">else</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">take_tr</span><span style="color: #DFDFDF;"> acc m l</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">,</span>l<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span> 
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>0<span style="color: #f0e68c;">,</span> _ <span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">List.</span>rev acc 
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span> _<span style="color: #f0e68c;">,</span> h<span style="color: #f0e68c;">::</span>t<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">-&gt;</span>take_tr <span style="color: #f0e68c;">(</span>h<span style="color: #f0e68c;">::</span>acc<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> t
+      <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"fail"</span> 
+    <span style="color: #f5deb3; font-weight: bold;">in</span>
+    take_tr <span style="color: #f0e68c;">[]</span> n lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org40dc6c5" class="outline-4">
+<h4 id="org40dc6c5"><span class="section-number-4">1.9.2.</span> 编写drop函数 <code>int -&gt; 'a list -&gt; 'a list</code></h4>
+<div class="outline-text-4" id="text-1-9-2">
+<p>
+满足 <code>drop n lit</code> 返回除了前n个之外的lst中剩下的元素。若lst少于n个元素，则返回空list
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">drop</span><span style="color: #DFDFDF;"> n lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">List.</span>length lst<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&lt;=</span> n <span style="color: #51afef;">then</span> <span style="color: #f0e68c;">[]</span>
+  <span style="color: #51afef;">else</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">drop_tr</span><span style="color: #DFDFDF;"> m l</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">,</span>l<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>0<span style="color: #f0e68c;">,</span>l<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> l
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>i<span style="color: #f0e68c;">,</span>h<span style="color: #f0e68c;">::</span>t<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> drop_tr <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> t
+      <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"something wrong"</span>
+    <span style="color: #f5deb3; font-weight: bold;">in</span>
+    drop_tr n lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb4c2dee" class="outline-3">
+<h3 id="orgb4c2dee"><span class="section-number-3">1.10.</span> 将take/drop改写成尾递归的写法</h3>
+<div class="outline-text-3" id="text-1-10">
+<p>
+并构造长list来测试这对两个函数的调用是否会导致栈溢出。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">--</span> <span style="color: #f0e68c;">)</span> s e <span style="color: #f0e68c;">=</span> 
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">from</span><span style="color: #DFDFDF;"> acc i j</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #51afef;">if</span> i <span style="color: #f0e68c;">&gt;</span> j <span style="color: #51afef;">then</span> acc
+    <span style="color: #51afef;">else</span>  from  <span style="color: #f0e68c;">(</span>j<span style="color: #f0e68c;">::</span>acc<span style="color: #f0e68c;">)</span> i <span style="color: #f0e68c;">(</span>j<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">in</span>
+  from <span style="color: #f0e68c;">[]</span> s e
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">longlist</span> <span style="color: #f0e68c;">=</span> 1 <span style="color: #f0e68c;">--</span> 1000000 <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7c9a7a0" class="outline-3">
+<h3 id="org7c9a7a0"><span class="section-number-3">1.11.</span> 是否为单峰list？</h3>
+<div class="outline-text-3" id="text-1-11">
+<p>
+编写函数 <code>is_unimodal : int list -&gt; bool</code> ,它接收一个整数list，并返回此列表是否为unimodal。
+一个unimodal list是一个list满足：存在一个元素，在之前的元素构成单调递增序列，在它之后的元素构成数组是单调递减的。
+增长部分/减少部分都有可能是空的。由相同元素构成的list也是unimodal，空list也是。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span>  <span style="color: #5cEfFF;">is_unimodal</span><span style="color: #DFDFDF;">  lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">impl</span><span style="color: #DFDFDF;">  is_ascend_seg  l</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #51afef;">match</span> l <span style="color: #51afef;">with</span>
+    <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+    <span style="color: #f0e68c;">|[</span>_<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+    <span style="color: #62686E;">(*</span><span style="color: #62686E;">&#19979;&#38754;&#30340;list&#27169;&#24335;&#34920;&#31034; &#33267;&#23569;&#21253;&#21547;&#20004;&#20010;&#20803;&#32032;&#65306;</span><span style="color: #62686E;">*)</span>
+    <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>m<span style="color: #f0e68c;">::</span>t <span style="color: #51afef;">when</span> h<span style="color: #f0e68c;">=</span>m  <span style="color: #f0e68c;">-&gt;</span> impl is_ascend_seg <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">::</span>t<span style="color: #f0e68c;">)</span>  
+    <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>m<span style="color: #f0e68c;">::</span>t <span style="color: #51afef;">when</span> h<span style="color: #f0e68c;">&lt;</span>m  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #51afef;">if</span> is_ascend_seg <span style="color: #51afef;">then</span> impl <span style="color: #a991f1;">true</span> <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">::</span>t<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">else</span> <span style="color: #a991f1;">false</span>
+    <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>m<span style="color: #f0e68c;">::</span>t <span style="color: #62686E;">(* </span><span style="color: #62686E;">when h&gt;m</span><span style="color: #62686E;"> *)</span><span style="color: #f0e68c;">-&gt;</span> impl <span style="color: #a991f1;">false</span> <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">::</span>t<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">in</span>
+  impl <span style="color: #a991f1;">true</span> lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org54a8cd3" class="outline-3">
+<h3 id="org54a8cd3"><span class="section-number-3">1.12.</span> 幂集：全体子集构成的集合</h3>
+<div class="outline-text-3" id="text-1-12">
+<p>
+编写函数 <code>powerset: int list -&gt; int list list</code> 接收一个list作为一个集合，并返回此集合的“幂集”
+（不用保持元素的顺序和输入list一致）
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">add_element</span><span style="color: #DFDFDF;"> acc e</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> acc
+  <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span>  add_element <span style="color: #f0e68c;">((</span>e<span style="color: #f0e68c;">::</span>h<span style="color: #f0e68c;">)::</span>acc<span style="color: #f0e68c;">)</span>  e t
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">powerset</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">]</span>
+  <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">s</span> <span style="color: #f0e68c;">=</span> powerset t <span style="color: #f5deb3; font-weight: bold;">in</span> <span style="color: #f0e68c;">(</span>add_element <span style="color: #f0e68c;">[]</span> h s <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">@</span> s
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org648b71f" class="outline-3">
+<h3 id="org648b71f"><span class="section-number-3">1.13.</span> print int list rec</h3>
+<div class="outline-text-3" id="text-1-13">
+<p>
+编写函数 <code>print_int_list: int list -&gt; unit</code> 使得：
+将输入list的每个元素作为一行打印出来。
+例如： <code>print_int_list [1;2;3]</code> 的输出是:
+</p>
+<pre class="example">
+1
+2
+3
+</pre>
+<p>
+基于下面的代码完成此函数：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">print_int_list</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+<span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">()</span>
+<span style="color: #f0e68c;">|</span> h <span style="color: #f0e68c;">::</span> t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #62686E;">(* </span><span style="color: #62686E;">fill in here</span><span style="color: #62686E;"> *)</span><span style="color: #f0e68c;">;</span> print_int_list t
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">print_int_list</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">()</span>
+  <span style="color: #f0e68c;">|</span> h <span style="color: #f0e68c;">::</span> t <span style="color: #f0e68c;">-&gt;</span>  print_endline <span style="color: #f0e68c;">(</span>string_of_int h<span style="color: #f0e68c;">);</span> print_int_list t
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-org53337ec" class="outline-3">
+<h3 id="org53337ec"><span class="section-number-3">1.14.</span> print int list iter</h3>
+<div class="outline-text-3" id="text-1-14">
+<p>
+编写函数  <code>print_int_list' : int list -&gt; unit</code>
+其功能和上一题相同，但不能使用 <code>rec</code> 关键字，不过能使用标准库中的 <code>List.iter</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">print_int_list'</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>iter <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #62686E;">(*</span><span style="color: #62686E;">fill in here</span><span style="color: #62686E;">*)</span>  <span style="color: #f0e68c;">)</span>  lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">print_int_list'</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>iter <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span>  print_endline <span style="color: #f0e68c;">(</span>string_of_int x<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">)</span>  lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+<div id="outline-container-org34dba8e" class="outline-3">
+<h3 id="org34dba8e"><span class="section-number-3">1.15.</span> student 类型</h3>
+<div class="outline-text-3" id="text-1-15">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">student</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>first_name <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">;</span>last_name<span style="color: #f0e68c;">:</span>string <span style="color: #f0e68c;">;</span>gpa <span style="color: #f0e68c;">:</span>float<span style="color: #f0e68c;">}</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+分别给出为下列类型的表达式：
+</p>
+</div>
+<div id="outline-container-org3394963" class="outline-4">
+<h4 id="org3394963"><span class="section-number-4">1.15.1.</span> student</h4>
+<div class="outline-text-4" id="text-1-15-1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">{</span>first_name<span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"salted"</span> <span style="color: #f0e68c;">;</span>last_name<span style="color: #f0e68c;">=</span><span style="color: #7bc275;">"sun"</span> <span style="color: #f0e68c;">;</span> gpa<span style="color: #f0e68c;">=</span> 3.0<span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga8f221c" class="outline-4">
+<h4 id="orga8f221c"><span class="section-number-4">1.15.2.</span> student -&gt; string * string 返回学生姓名</h4>
+<div class="outline-text-4" id="text-1-15-2">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">stu_name</span><span style="color: #DFDFDF;"> s</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f0e68c;">(</span>s.first_name <span style="color: #f0e68c;">,</span> s.last_name <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2c9e8d2" class="outline-4">
+<h4 id="org2c9e8d2"><span class="section-number-4">1.15.3.</span> string -&gt; string -&gt; float -&gt; student 创建学生record</h4>
+<div class="outline-text-4" id="text-1-15-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">init_stu_info</span><span style="color: #DFDFDF;"> f l g</span> <span style="color: #f0e68c;">=</span>
+   <span style="color: #f0e68c;">{</span>first_name<span style="color: #f0e68c;">=</span>f<span style="color: #f0e68c;">;</span>last_name<span style="color: #f0e68c;">=</span>l <span style="color: #f0e68c;">;</span>gpa <span style="color: #f0e68c;">=</span>g<span style="color: #f0e68c;">}</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org3fed5de" class="outline-3">
+<h3 id="org3fed5de"><span class="section-number-3">1.16.</span> pokemon 类型</h3>
+<div class="outline-text-3" id="text-1-16">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">poketype</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Normal</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Fire</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Water</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>用record定义pokemon类型，有字段 name:string hp:int ptype:poketype</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">pokemon</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span> name<span style="color: #f0e68c;">:</span>string<span style="color: #f0e68c;">;</span> hp<span style="color: #f0e68c;">:</span>int<span style="color: #f0e68c;">;</span> ptype<span style="color: #f0e68c;">:</span>poketype <span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>创建一个名为 <code>charizard</code> 的pokemon, 其hp=78，为火属性。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">{</span>name<span style="color: #f0e68c;">=</span><span style="color: #7bc275;">"charizard"</span> <span style="color: #f0e68c;">;</span> hp<span style="color: #f0e68c;">=</span>78<span style="color: #f0e68c;">;</span> ptype <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Fire</span> <span style="color: #f0e68c;">}</span><span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>创建一个名为 <code>squirtle</code> 的pokemon，其hp=44，水属性。</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">{</span>name<span style="color: #f0e68c;">=</span><span style="color: #7bc275;">"squirtle"</span> <span style="color: #f0e68c;">;</span> hp<span style="color: #f0e68c;">=</span>44<span style="color: #f0e68c;">;</span> ptype <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Water</span> <span style="color: #f0e68c;">}</span><span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org81b61a6" class="outline-3">
+<h3 id="org81b61a6"><span class="section-number-3">1.17.</span> 安全的hd/tl函数</h3>
+<div class="outline-text-3" id="text-1-17">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">safe_hd</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> h
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">safe_tl</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[</span>x<span style="color: #f0e68c;">]-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> x 
+  <span style="color: #f0e68c;">|</span> _<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span>  safe_tl t
+<span style="color: #ff4500;">;;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orgd258cf7" class="outline-3">
+<h3 id="orgd258cf7"><span class="section-number-3">1.18.</span> pokefun</h3>
+<div class="outline-text-3" id="text-1-18">
+<p>
+编写函数 <code>max_hp: pokemon list-&gt; pokemon option</code> 使得它返回hp最大的pokemon
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">max_hp_poke</span><span style="color: #DFDFDF;"> acc s</span> <span style="color: #f0e68c;">=</span>
+ <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>acc<span style="color: #f0e68c;">,</span>s<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+   <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">None</span><span style="color: #f0e68c;">,</span> a<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> a
+   <span style="color: #f0e68c;">|(</span>a<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">None</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> a
+   <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> x<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> y<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #51afef;">if</span> x.hp<span style="color: #f0e68c;">&gt;</span>y.hp <span style="color: #51afef;">then</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> x <span style="color: #51afef;">else</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> y
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">max_hp</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">impl</span><span style="color: #DFDFDF;"> acc</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> acc 
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> impl <span style="color: #f0e68c;">(</span>max_hp_poke acc <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> h<span style="color: #f0e68c;">))</span> t  
+  <span style="color: #f5deb3; font-weight: bold;">in</span>
+  impl <span style="color: #bbc2cf; background-color: #242730;">None</span> lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org5f98768" class="outline-3">
+<h3 id="org5f98768"><span class="section-number-3">1.19.</span> date before</h3>
+<div class="outline-text-3" id="text-1-19">
+<p>
+定义一个date-like三元组： <code>int*int*int</code>
+一个日期类型是 date-like 三元组，其首个元素是正整数年份，第二个元素是1-12的月份，而三个元素是1-31的
+</p>
+
+<p>
+编写函数 <code>is_before</code> ，它接收两个日期类型的参数，且若首个日期在第二个参数代表的日期的前面，则返回true.
+否则将返回false 。
+</p>
+
+<p>
+这个函数只能对合法日期是有效的，而不是任意的 date-like 类型。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">date_like</span> <span style="color: #f0e68c;">=</span> int<span style="color: #f0e68c;">*</span>int<span style="color: #f0e68c;">*</span>int 
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_leap_year</span><span style="color: #DFDFDF;"> y</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> y <span style="color: #f0e68c;">mod</span> 100 <span style="color: #f0e68c;">!=</span>0 <span style="color: #f0e68c;">&amp;&amp;</span> y <span style="color: #f0e68c;">mod</span> 4<span style="color: #f0e68c;">=</span>0 <span style="color: #51afef;">then</span> <span style="color: #a991f1;">true</span>
+  <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> y <span style="color: #f0e68c;">mod</span> 400 <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> <span style="color: #a991f1;">true</span>
+  <span style="color: #51afef;">else</span> <span style="color: #a991f1;">false</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_valid_date</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span>  <span style="color: #51afef;">when</span> y <span style="color: #f0e68c;">&lt;=</span> 0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>  
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> m<span style="color: #f0e68c;">&gt;</span>12 <span style="color: #f0e68c;">||</span> m<span style="color: #f0e68c;">&lt;</span>1 <span style="color: #f0e68c;">-&gt;</span><span style="color: #a991f1;">false</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> d<span style="color: #f0e68c;">&gt;</span>31 <span style="color: #f0e68c;">||</span> d<span style="color: #f0e68c;">&lt;</span>1 <span style="color: #f0e68c;">-&gt;</span><span style="color: #a991f1;">false</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span>  <span style="color: #f0e68c;">(</span>is_leap_year y<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&amp;&amp;</span> m <span style="color: #f0e68c;">=</span> 2 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&gt;</span>29  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span> 
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span>  <span style="color: #f0e68c;">not</span> <span style="color: #f0e68c;">(</span>is_leap_year y<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&amp;&amp;</span> m <span style="color: #f0e68c;">=</span> 2 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&gt;</span>28  <span style="color: #f0e68c;">-&gt;</span><span style="color: #a991f1;">false</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span>  m <span style="color: #f0e68c;">mod</span> 2<span style="color: #f0e68c;">=</span>0 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&gt;</span> 30  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_before</span><span style="color: #DFDFDF;"> d1 d2</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">not</span> <span style="color: #f0e68c;">(</span>is_valid_date d1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">||</span> <span style="color: #f0e68c;">not</span> <span style="color: #f0e68c;">(</span>is_valid_date d2<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"invalid date"</span>
+  <span style="color: #51afef;">else</span> 
+    <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>d1<span style="color: #f0e68c;">,</span>d2<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">((</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">),(</span>y1<span style="color: #f0e68c;">,</span>m1<span style="color: #f0e68c;">,</span>d1<span style="color: #f0e68c;">))</span> <span style="color: #51afef;">when</span> y<span style="color: #f0e68c;">&lt;</span>y1 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">((</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">),(</span>y1<span style="color: #f0e68c;">,</span>m1<span style="color: #f0e68c;">,</span>d1<span style="color: #f0e68c;">))</span> <span style="color: #51afef;">when</span> y<span style="color: #f0e68c;">=</span>y1 <span style="color: #f0e68c;">&amp;&amp;</span> m<span style="color: #f0e68c;">&lt;</span>m1 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">((</span>y<span style="color: #f0e68c;">,</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">),(</span>y1<span style="color: #f0e68c;">,</span>m1<span style="color: #f0e68c;">,</span>d1<span style="color: #f0e68c;">))</span> <span style="color: #51afef;">when</span> y<span style="color: #f0e68c;">=</span>y1 <span style="color: #f0e68c;">&amp;&amp;</span> m<span style="color: #f0e68c;">=</span>m1 <span style="color: #f0e68c;">&amp;&amp;</span> d <span style="color: #f0e68c;">&lt;</span> d1 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+    <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org14eae8c" class="outline-3">
+<h3 id="org14eae8c"><span class="section-number-3">1.20.</span> earliest date</h3>
+<div class="outline-text-3" id="text-1-20">
+<p>
+编写函数 <code>earliest: (int*int*int) list -&gt; (int*int*int) option</code> ，满足：
+</p>
+<ul class="org-ul">
+<li>若输入list为空，则返回None</li>
+<li>否则将返回list中最早的那个日期 Some date</li>
+</ul>
+
+<p>
+（提示使用上一题中的 <code>is_before</code> )
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">earlier</span><span style="color: #DFDFDF;"> d1 d2</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>d1<span style="color: #f0e68c;">,</span>d2<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">None</span><span style="color: #f0e68c;">,</span>x<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> x
+  <span style="color: #f0e68c;">|(</span>x<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">None</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> x
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> a<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> b<span style="color: #f0e68c;">)-&gt;</span> <span style="color: #51afef;">if</span> is_before a b <span style="color: #51afef;">then</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> a <span style="color: #51afef;">else</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> b
+
+
+
+ <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">earliest</span><span style="color: #DFDFDF;"> lst</span>  <span style="color: #f0e68c;">=</span>
+   <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">impl</span><span style="color: #DFDFDF;"> acc</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+   <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> acc
+   <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> impl <span style="color: #f0e68c;">(</span>earlier <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> h<span style="color: #f0e68c;">)</span> acc<span style="color: #f0e68c;">)</span> t  
+   <span style="color: #f5deb3; font-weight: bold;">in</span>
+   impl <span style="color: #bbc2cf; background-color: #242730;">None</span> lst
+ <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge427173" class="outline-3">
+<h3 id="orge427173"><span class="section-number-3">1.21.</span> assoc list</h3>
+<div class="outline-text-3" id="text-1-21">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">insert</span><span style="color: #DFDFDF;"> k v lst</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">)::</span>lst
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">lookup</span><span style="color: #DFDFDF;"> key</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">)::</span>t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #51afef;">if</span> k <span style="color: #f0e68c;">=</span> key <span style="color: #51afef;">then</span> v <span style="color: #51afef;">else</span> lookup key t
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+用上面这两个函数构造一个 association list，满足：
+将数字1映射为"one",2映射为"two", 3映射为"three"
+并且用key=2,和key=4进行查询。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">numlist</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[]</span> <span style="color: #ff4500;">;;</span>
+
+insert 1 <span style="color: #7bc275;">"one"</span> numlist<span style="color: #ff4500;">;;</span>
+insert 2 <span style="color: #7bc275;">"two"</span> numlist<span style="color: #ff4500;">;;</span>
+insert 3 <span style="color: #7bc275;">"three"</span> numlist<span style="color: #ff4500;">;;</span>
+
+lookup 2 <span style="color: #ff4500;">;;</span>
+lookup 4 <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org402cc4c" class="outline-3">
+<h3 id="org402cc4c"><span class="section-number-3">1.22.</span> cards</h3>
+<div class="outline-text-3" id="text-1-22">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">suit</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Clubs</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Diamonds</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Hearts</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Spades</span> <span style="color: #ff4500;">;;</span> <span style="color: #62686E;">(*</span><span style="color: #62686E;">&#33457;&#33394;</span><span style="color: #62686E;">*)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">rank</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #bbc2cf; background-color: #242730;">One</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Two</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Three</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Four</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Five</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Six</span> <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Seven</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Eight</span> <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Nine</span> <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Ten</span> <span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Jack</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Queen</span><span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">King</span><span style="color: #f0e68c;">|</span><span style="color: #bbc2cf; background-color: #242730;">Ace</span>
+<span style="color: #ff4500;">;;</span> <span style="color: #62686E;">(* </span><span style="color: #62686E;">&#28857;&#25968;</span><span style="color: #62686E;"> *)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">card</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f0e68c;">{</span> suit<span style="color: #f0e68c;">:</span>suit <span style="color: #f0e68c;">;</span> rank<span style="color: #f0e68c;">:</span>rank<span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">{</span> suit <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Clubs</span> <span style="color: #f0e68c;">;</span> rank<span style="color: #f0e68c;">=</span><span style="color: #bbc2cf; background-color: #242730;">Ace</span> <span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">{</span> suit <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Hearts</span><span style="color: #f0e68c;">;</span> rank<span style="color: #f0e68c;">=</span><span style="color: #bbc2cf; background-color: #242730;">Queen</span><span style="color: #f0e68c;">}</span><span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">{</span> suit <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Diamonds</span><span style="color: #f0e68c;">;</span> rank<span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Two</span><span style="color: #f0e68c;">}</span><span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">{</span> suit <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Spades</span> <span style="color: #f0e68c;">;</span> rank <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Seven</span><span style="color: #f0e68c;">}</span><span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org85691c8" class="outline-3">
+<h3 id="org85691c8"><span class="section-number-3">1.23.</span> matching</h3>
+<div class="outline-text-3" id="text-1-23">
+<p>
+为下面的每个模式，给出一个类型为 <code>int option list</code> 的值，使得它不能匹配上模式，并且它不是空list.
+若找不到这样的值则解释为什么。
+</p>
+
+<ul class="org-ul">
+<li>Some x::tl</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">[</span><span style="color: #bbc2cf; background-color: #242730;">None</span><span style="color: #f0e68c;">;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> 1<span style="color: #f0e68c;">]</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+因为此模式要求以某个形如Some x开头的list
+</p>
+
+<ul class="org-ul">
+<li>[Some 3110;None]</li>
+</ul>
+<p>
+此模式只能和 [Some 3110 ; None]相匹配
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">[</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> 2110<span style="color: #f0e68c;">;</span><span style="color: #bbc2cf; background-color: #242730;">None</span><span style="color: #f0e68c;">]</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>[Some x; _]</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">[</span><span style="color: #bbc2cf; background-color: #242730;">None</span><span style="color: #f0e68c;">;</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> 2<span style="color: #f0e68c;">]</span><span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li>h1::h2::tl
+此模式表示list中至少有两个元素</li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">[</span><span style="color: #bbc2cf; background-color: #242730;">Some</span> 1 <span style="color: #f0e68c;">]</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li>h::tl</li>
+</ul>
+<p>
+不能和此模式匹配的值仅有 [] 。因为此模式表示list中至少有一个元素。
+</p>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-org7ff9882" class="outline-3">
+<h3 id="org7ff9882"><span class="section-number-3">1.24.</span> quadrant 象限</h3>
+<div class="outline-text-3" id="text-1-24">
+<p>
+完成下面的象限函数，它能返回给定一点(x,y)所在的象限。
+约定在坐标轴上的点不属于任何象限。
+（提示：a.定义helper函数来返回整数的符号 b. 匹配pair）
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">quad</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">I</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">II</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">III</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">IV</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">sign</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Neg</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Pos</span>
+<span style="color: #ff4500;">;;</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sign</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">int</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">sign</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #f0e68c;">...</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">quadrant</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int</span><span style="color: #f0e68c;">*</span><span style="color: #FCCE7B;">int </span><span style="color: #f0e68c;">-&gt;</span><span style="color: #FCCE7B;"> quad option </span><span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">y</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span>
+    <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">...</span> <span style="color: #51afef;">with</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">...</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">I</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">...</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">II</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">...</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">III</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">...</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">IV</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">...</span> <span style="color: #f0e68c;">-&gt;</span> None
+</pre>
+</div>
+<p>
+解答：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sign</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">int</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">sign</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">match</span> x <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span>i <span style="color: #51afef;">when</span> i<span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Pos</span>
+  <span style="color: #f0e68c;">|</span>i <span style="color: #51afef;">when</span> i<span style="color: #f0e68c;">&lt;</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Neg</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Zero</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">quadrant</span><span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int</span><span style="color: #f0e68c;">*</span><span style="color: #FCCE7B;">int </span><span style="color: #f0e68c;">-&gt;</span><span style="color: #FCCE7B;"> quad option </span><span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">y</span><span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">-&gt;</span>
+  <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>sign x <span style="color: #f0e68c;">,</span> sign y<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">Pos</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Pos</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">I</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">Neg</span> <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Pos</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">II</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">Neg</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Neg</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">III</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">Pos</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Neg</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">IV</span>
+  <span style="color: #f0e68c;">|</span>_ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org812dead" class="outline-3">
+<h3 id="org812dead"><span class="section-number-3">1.25.</span> 使用 when 重写quadrant函数</h3>
+<div class="outline-text-3" id="text-1-25">
+<p>
+不能用上一问的辅助函数
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">quadrant'</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int</span><span style="color: #f0e68c;">*</span><span style="color: #FCCE7B;">int </span><span style="color: #f0e68c;">-&gt;</span><span style="color: #FCCE7B;"> quad option </span><span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">y</span><span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">-&gt;</span>
+   <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>x <span style="color: #f0e68c;">,</span> y<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+     <span style="color: #f0e68c;">|(</span>a<span style="color: #f0e68c;">,</span>b<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> a<span style="color: #f0e68c;">&gt;</span>0<span style="color: #f0e68c;">&amp;&amp;</span> b<span style="color: #f0e68c;">&gt;</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">I</span>
+     <span style="color: #f0e68c;">|(</span>a<span style="color: #f0e68c;">,</span>b<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> a<span style="color: #f0e68c;">&lt;</span>0<span style="color: #f0e68c;">&amp;&amp;</span> b<span style="color: #f0e68c;">&gt;</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">II</span>
+     <span style="color: #f0e68c;">|(</span>a<span style="color: #f0e68c;">,</span>b<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> a<span style="color: #f0e68c;">&lt;</span>0<span style="color: #f0e68c;">&amp;&amp;</span> b<span style="color: #f0e68c;">&lt;</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">III</span>
+     <span style="color: #f0e68c;">|(</span>a<span style="color: #f0e68c;">,</span>b<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> a<span style="color: #f0e68c;">&gt;</span>0 <span style="color: #f0e68c;">&amp;&amp;</span> b<span style="color: #f0e68c;">&lt;</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">IV</span>
+     <span style="color: #f0e68c;">|</span>_<span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org1ffb4c7" class="outline-3">
+<h3 id="org1ffb4c7"><span class="section-number-3">1.26.</span> depth</h3>
+<div class="outline-text-3" id="text-1-26">
+<p>
+编写函数 <code>depth: 'a tree -&gt; int</code> 返回从根到叶子节点的最长路径（节点个数)
+例如，空tree（Leaf）的深度为0
+(提示 可以使用库函数 <code>max</code> )
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">
+<span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a tree</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span> 'a <span style="color: #f0e68c;">*</span> 'a tree <span style="color: #f0e68c;">*</span> 'a tree <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">depth</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> 0
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span>v<span style="color: #f0e68c;">,</span>left<span style="color: #f0e68c;">,</span>right<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> 1 <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">(</span>max <span style="color: #f0e68c;">(</span>depth left<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>depth right<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org69966da" class="outline-3">
+<h3 id="org69966da"><span class="section-number-3">1.27.</span> shape</h3>
+<div class="outline-text-3" id="text-1-27">
+<p>
+编写函数 <code>same_shape: 'a tree -&gt; 'b tree -&gt; bool</code> ，它能判断两个tree是否有相同的形状，忽略在对应节点处的值的不同。
+提示：使用带有三个分支的模式匹配，被匹配的表达式是一对trees
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span>  <span style="color: #5cEfFF;">same_shape</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">ta</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">'a</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">tb</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">'b</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">bool</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>ta<span style="color: #f0e68c;">,</span>tb<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span> 
+  <span style="color: #f0e68c;">|(</span> <span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>_<span style="color: #f0e68c;">,</span>la<span style="color: #f0e68c;">,</span>ra<span style="color: #f0e68c;">))</span> <span style="color: #f0e68c;">,(</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>_<span style="color: #f0e68c;">,</span>lb<span style="color: #f0e68c;">,</span>rb<span style="color: #f0e68c;">)))</span> <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #f0e68c;">(</span>same_shape la lb<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&amp;&amp;(</span> same_shape ra rb<span style="color: #f0e68c;">)</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">ta</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>2<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>1<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>3<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span> 
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">tb</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span>2. <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>1.<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span>3.<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">same_shape ta tb <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> bool <span style="color: #f0e68c;">=</span> <span style="color: #a991f1;">true</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orge8e0d85" class="outline-3">
+<h3 id="orge8e0d85"><span class="section-number-3">1.28.</span> list max exn</h3>
+<div class="outline-text-3" id="text-1-28">
+<p>
+编写函数 <code>list_max: int list -&gt; int</code> 它返回list中的最大整数；若list为空则引发异常 <code>Failure "list_max"</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">list_max</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span> 
+      <span style="color: #f0e68c;">|[</span>x<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">-&gt;</span> x
+      <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> max h <span style="color: #f0e68c;">(</span>list_max t<span style="color: #f0e68c;">)</span>
+      <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"list_max"</span> 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6e167ed" class="outline-3">
+<h3 id="org6e167ed"><span class="section-number-3">1.29.</span> list max exn string</h3>
+<div class="outline-text-3" id="text-1-29">
+<p>
+编写函数 <code>list_max_string: int list -&gt; string</code> ，它返回一个包含list中最大整数的字符串。若list为空，则返回"empty"字符串。
+提示： 可以用库函数 <code>string_of_int</code> 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">list_max_string</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int list </span><span style="color: #f0e68c;">-&gt;</span><span style="color: #FCCE7B;"> string </span><span style="color: #f0e68c;">=</span> <span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">lst</span> <span style="color: #f0e68c;">-&gt;</span>
+  <span style="color: #51afef;">try</span> string_of_int <span style="color: #f0e68c;">(</span>list_max lst<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span>_ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">"empty"</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7ce4f2c" class="outline-3">
+<h3 id="org7ce4f2c"><span class="section-number-3">1.30.</span> list max exn ounit</h3>
+<div class="outline-text-3" id="text-1-30">
+<p>
+编写两个OUnit测试来检测函数：list max exn 是否在list为空时正确地引发了异常，以及在list不空时返回了list中的最大值。
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">list_max</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span> 
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[</span>x<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">-&gt;</span> x 
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> max h <span style="color: #f0e68c;">(</span>list_max t<span style="color: #f0e68c;">)</span> 
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">failwith</span> <span style="color: #7bc275;">"list_max"</span>
+<span style="color: #ff4500;">;;</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">test_list_max</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"list_max"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+    <span style="color: #7bc275;">"empty list"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_raises <span style="color: #f0e68c;">(</span><span style="color: #C57BDB;">Failure</span> <span style="color: #7bc275;">"list_max"</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">()</span> <span style="color: #f0e68c;">-&gt;</span> list_max <span style="color: #f0e68c;">[])</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">;</span>
+    <span style="color: #7bc275;">"nonempty list"</span> <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal 3 <span style="color: #f0e68c;">(</span>list_max <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>1<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">))</span> 
+  <span style="color: #f0e68c;">]</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main test_list_max <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1ad49b4" class="outline-3">
+<h3 id="org1ad49b4"><span class="section-number-3">1.31.</span> 用二叉搜索树实现字典</h3>
+<div class="outline-text-3" id="text-1-31">
+<p>
+回顾实验 assoc list，用关联列表来实现字典 ，其插入函数是常数时间，但查找要花费线性时间。
+</p>
+
+<p>
+有更高效的字典实现：使用二叉搜索树 。 树的每个节点将是一对键和值， 就像在关联列表中一样。
+此外，树满足二叉搜索树不变量 ：对于任何节点 n，所有 n 的左子树中的值具有小于 n 的键，
+并且 n 的右子树中的所有值都有键 大于 n 的key。 （不允许重复键。）
+</p>
+
+<p>
+例：
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">d</span> <span style="color: #f0e68c;">=</span> 
+  <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>2<span style="color: #f0e68c;">,</span><span style="color: #7bc275;">"two"</span><span style="color: #f0e68c;">),</span> 
+    <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>1<span style="color: #f0e68c;">,</span><span style="color: #7bc275;">"one"</span><span style="color: #f0e68c;">),</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">),</span>
+    <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>3<span style="color: #f0e68c;">,</span><span style="color: #7bc275;">"three"</span><span style="color: #f0e68c;">),</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span>
+  <span style="color: #f0e68c;">)</span>
+</pre>
+</div>
+
+<p>
+用二叉搜索树实现字典 :
+</p>
+</div>
+
+<div id="outline-container-org1dd0e1b" class="outline-4">
+<h4 id="org1dd0e1b"><span class="section-number-4">1.31.1.</span> 查找 [✭✭]</h4>
+<div class="outline-text-4" id="text-1-31-1">
+<p>
+写一个函数 <code>lookup : 'a -&gt; ('a*'b) tree -&gt; 'b option</code> 返回与给定键关联的值（如果存在）。
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">lookup</span><span style="color: #DFDFDF;"> key</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span> _<span style="color: #f0e68c;">,</span>_ <span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> k<span style="color: #f0e68c;">=</span> key <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> v
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">),</span> l<span style="color: #f0e68c;">,</span>_ <span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> k <span style="color: #f0e68c;">&gt;</span> key <span style="color: #f0e68c;">-&gt;</span> lookup key l
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">),</span> _<span style="color: #f0e68c;">,</span>r <span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> k <span style="color: #f0e68c;">&lt;</span> key <span style="color: #f0e68c;">-&gt;</span> lookup key r
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orga0a1d0d" class="outline-4">
+<h4 id="orga0a1d0d"><span class="section-number-4">1.31.2.</span> 插入 [✭✭✭]</h4>
+<div class="outline-text-4" id="text-1-31-2">
+<p>
+写一个函数 <code>insert : 'a -&gt; 'b -&gt; ('a*'b) tree -&gt; ('a*'b) tree</code> 它将新的键值映射添加到给定的二叉搜索树。 如果钥匙 已经映射到树中，输出树应该将键映射到 新的价值。
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">insert</span><span style="color: #DFDFDF;"> key value</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> k <span style="color: #f0e68c;">=</span> key <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>key<span style="color: #f0e68c;">,</span>value<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> k <span style="color: #f0e68c;">&gt;</span> key <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span> <span style="color: #f0e68c;">(</span>insert key value l<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">,</span> r<span style="color: #f0e68c;">)</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> k <span style="color: #f0e68c;">&lt;</span> key <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span> l <span style="color: #f0e68c;">,</span> <span style="color: #f0e68c;">(</span>insert key value r<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span>
+    <span style="color: #f0e68c;">|</span> _  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>key<span style="color: #f0e68c;">,</span>value<span style="color: #f0e68c;">),</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span> 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">dict</span> <span style="color: #f0e68c;">=</span> insert 3 <span style="color: #7bc275;">"three"</span> <span style="color: #f0e68c;">(</span>insert 1 <span style="color: #7bc275;">"one"</span>  <span style="color: #f0e68c;">(</span>insert 2 <span style="color: #7bc275;">"two"</span> dict<span style="color: #f0e68c;">))</span> <span style="color: #ff4500;">;;</span>
+
+ <span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">(</span>int <span style="color: #f0e68c;">*</span> string<span style="color: #f0e68c;">)</span> tree <span style="color: #f0e68c;">=</span>
+ <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>2<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"two"</span><span style="color: #f0e68c;">),</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>1<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"one"</span><span style="color: #f0e68c;">),</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">),</span>
+       <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>3<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"three"</span><span style="color: #f0e68c;">),</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">))</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org2c385de" class="outline-4">
+<h4 id="org2c385de"><span class="section-number-4">1.31.3.</span> <code>is_bst</code> [✭✭✭✭]</h4>
+<div class="outline-text-4" id="text-1-31-3">
+<p>
+编写函数 <code>is_bst: ('a * 'b) tree -&gt; bool</code> ，它返回true当且仅当给定的tree满足二叉搜索树的性质。
+此函数的一个高效版本是最多访问每个节点一次。
+</p>
+</div>
+<ol class="org-ol">
+<li><a id="org96cfe37"></a>提示<br />
+<div class="outline-text-5" id="text-1-31-3-1">
+<p>
+编写一个递归的辅助函数，它接收一个tree，返回下面三者之一：
+</p>
+
+<p>
+(i) tree中的最小值和最大值
+</p>
+
+<p>
+(ii) 若tree为空，则返回这个信息  
+</p>
+
+<p>
+(iii) 返回这个tree不是二叉搜索树
+</p>
+
+<p>
+<code>is_bst</code> 函数不可以是递归的，但它可以调用辅助函数，并在其返回结果上进行模式匹配。
+需要为辅助函数的返回类型定义一个变体variant类型。
+</p>
+</div>
+</li>
+
+
+<li><a id="orgf3e86ce"></a>solution<br />
+<div class="outline-text-5" id="text-1-31-3-2">
+<div class="org-src-container">
+<pre class="src src-ocaml">
+<span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a bst_return</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Empty</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">NotBst</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span> <span style="color: #51afef;">of</span> <span style="color: #f0e68c;">{</span> min<span style="color: #f0e68c;">:</span>'a<span style="color: #f0e68c;">;</span> max<span style="color: #f0e68c;">:</span> 'a<span style="color: #f0e68c;">}</span>  <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">helper</span><span style="color: #DFDFDF;"> get_key</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Empty</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>v<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span> <span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=</span>get_key v<span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=</span>get_key v<span style="color: #f0e68c;">}</span> 
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>v<span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>lv<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">),</span><span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>rv<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">))</span> <span style="color: #51afef;">when</span> get_key v <span style="color: #f0e68c;">&lt;=</span> get_key lv <span style="color: #f0e68c;">||</span> get_key v <span style="color: #f0e68c;">&gt;=</span> get_key rv <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">NotBst</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">(</span>v<span style="color: #f0e68c;">,</span>l<span style="color: #f0e68c;">,</span>r <span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">-&gt;</span>
+    <span style="color: #f5deb3; font-weight: bold;">begin</span>
+      <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>helper get_key l <span style="color: #f0e68c;">,</span> helper get_key r <span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span><span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=</span>lmin<span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=</span>lmax<span style="color: #f0e68c;">},</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span><span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=</span>rmin<span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=</span>rmax<span style="color: #f0e68c;">})</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span><span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=(</span>min lmin rmin<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=(</span>max lmax rmax<span style="color: #f0e68c;">)}</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span><span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=</span>lmin<span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=</span>lmax<span style="color: #f0e68c;">},</span><span style="color: #bbc2cf; background-color: #242730;">Empty</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span><span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=</span>lmin<span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=</span>lmax<span style="color: #f0e68c;">}</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span> <span style="color: #bbc2cf; background-color: #242730;">Empty</span> <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Bst</span><span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=</span>rmin<span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=</span>rmax<span style="color: #f0e68c;">})</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Bst</span><span style="color: #f0e68c;">{</span>min<span style="color: #f0e68c;">=</span>rmin<span style="color: #f0e68c;">;</span>max<span style="color: #f0e68c;">=</span>rmax<span style="color: #f0e68c;">}</span>
+      <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">NotBst</span>
+    <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_bst</span><span style="color: #DFDFDF;"> dict</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">get_key</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">y</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> x <span style="color: #f0e68c;">)</span> <span style="color: #f5deb3; font-weight: bold;">in</span>
+  <span style="color: #51afef;">match</span> helper get_key dict <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">NotBst</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span><span style="color: #a991f1;">true</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-orgdc277b2" class="outline-3">
+<h3 id="orgdc277b2"><span class="section-number-3">1.32.</span> quadrant poly (使用匿名Variant重写）</h3>
+<div class="outline-text-3" id="text-1-32">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">sign</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Neg</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`Pos</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`Zero</span> <span style="color: #f0e68c;">]</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">quadrant</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">*</span> int <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`I</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`II</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`III</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`IV</span> <span style="color: #f0e68c;">]</span> option
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sign</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+  <span style="color: #f0e68c;">|</span>i <span style="color: #51afef;">when</span> i<span style="color: #f0e68c;">&gt;</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Pos</span>
+  <span style="color: #f0e68c;">|</span>i <span style="color: #51afef;">when</span> i<span style="color: #f0e68c;">=</span>0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Zero</span>
+  <span style="color: #f0e68c;">|</span>_ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Neg</span>
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">quadrant</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">x</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">y</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>sign x<span style="color: #f0e68c;">,</span>sign y<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">`Pos</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">`Pos</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">`I</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">`Neg</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">`Pos</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">`II</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">`Neg</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">`Neg</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">`III</span>
+  <span style="color: #f0e68c;">|(</span><span style="color: #bbc2cf; background-color: #242730;">`Pos</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">`Neg</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #bbc2cf; background-color: #242730;">`IV</span>
+  <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span> 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
