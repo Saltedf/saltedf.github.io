@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-05-18 三 19:03 -->
+<!-- 2022-05-18 三 20:05 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
@@ -26,30 +26,30 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org21a8456">1. ch2 ex</a>
+<li><a href="#orge8126eb">1. ch2 ex</a>
 <ul>
-<li><a href="#org5d66d68">1.1. values</a></li>
-<li><a href="#org11dcde6">1.2. operators</a></li>
-<li><a href="#org5940b76">1.3. equality</a></li>
-<li><a href="#org7902300">1.4. assert</a></li>
-<li><a href="#orgdc42f43">1.5. if</a></li>
-<li><a href="#org7864b9d">1.6. double fun</a></li>
-<li><a href="#org6bb0b1e">1.7. more fun</a>
+<li><a href="#org14c505c">1.1. values</a></li>
+<li><a href="#org846cfec">1.2. operators</a></li>
+<li><a href="#org1467878">1.3. equality</a></li>
+<li><a href="#org5d7b649">1.4. assert</a></li>
+<li><a href="#orgaf8856a">1.5. if</a></li>
+<li><a href="#org7c4cd80">1.6. double fun</a></li>
+<li><a href="#orgb331954">1.7. more fun</a>
 <ul>
-<li><a href="#org3dfd70b">1.7.1. cube</a></li>
-<li><a href="#orgbaf70a8">1.7.2. sign</a></li>
-<li><a href="#orgb026989">1.7.3. the area of a circle</a></li>
+<li><a href="#orgd4cc5f0">1.7.1. cube</a></li>
+<li><a href="#org16f979e">1.7.2. sign</a></li>
+<li><a href="#orgb8ac63c">1.7.3. the area of a circle</a></li>
 </ul>
 </li>
-<li><a href="#orgfeb041d">1.8. RMS 均方根</a></li>
-<li><a href="#org89238f0">1.9. date fun</a></li>
-<li><a href="#orgad699d1">1.10. fib</a></li>
-<li><a href="#org27b3e00">1.11. fib fast</a></li>
-<li><a href="#org9adad71">1.12. func type</a></li>
-<li><a href="#orga5b1ecc">1.13. divide</a></li>
-<li><a href="#org00392d0">1.14. associativity</a></li>
-<li><a href="#orgf0bcbec">1.15. average</a></li>
-<li><a href="#orgd0d6cb0">1.16. hello world</a></li>
+<li><a href="#org34fca64">1.8. RMS 均方根</a></li>
+<li><a href="#org7894bfc">1.9. date fun</a></li>
+<li><a href="#org2af2640">1.10. fib</a></li>
+<li><a href="#org3f07ef5">1.11. fib fast</a></li>
+<li><a href="#orgb87be03">1.12. func type</a></li>
+<li><a href="#orgdfbc325">1.13. divide</a></li>
+<li><a href="#org2fd1c61">1.14. associativity</a></li>
+<li><a href="#orgdec4aa0">1.15. average</a></li>
+<li><a href="#org0f867b1">1.16. hello world</a></li>
 </ul>
 </li>
 </ul>
@@ -59,12 +59,12 @@
 
 
 
-<div id="outline-container-org21a8456" class="outline-2">
-<h2 id="org21a8456"><span class="section-number-2">1.</span> <a href="https://cs3110.github.io/textbook/chapters/basics/exercises.html">ch2 ex</a></h2>
+<div id="outline-container-orge8126eb" class="outline-2">
+<h2 id="orge8126eb"><span class="section-number-2">1.</span> <a href="https://cs3110.github.io/textbook/chapters/basics/exercises.html">ch2 ex</a></h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org5d66d68" class="outline-3">
-<h3 id="org5d66d68"><span class="section-number-3">1.1.</span> values</h3>
+<div id="outline-container-org14c505c" class="outline-3">
+<h3 id="org14c505c"><span class="section-number-3">1.1.</span> values</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> 7<span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">(</span>1<span style="color: #f0e68c;">+</span>2<span style="color: #f0e68c;">+</span>3<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
@@ -77,8 +77,8 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"CS "<
 </div>
 </div>
 
-<div id="outline-container-org11dcde6" class="outline-3">
-<h3 id="org11dcde6"><span class="section-number-3">1.2.</span> operators</h3>
+<div id="outline-container-org846cfec" class="outline-3">
+<h3 id="org846cfec"><span class="section-number-3">1.2.</span> operators</h3>
 <div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 <pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> 42 <span style="color: #f0e68c;">*</span> 10 <span style="color: #ff4500;">;;</span>
@@ -95,8 +95,8 @@ utop <span style="color: #f0e68c;">#</span> 4.2 <span style="color: #f0e68c;">*.
 </div>
 </div>
 
-<div id="outline-container-org5940b76" class="outline-3">
-<h3 id="org5940b76"><span class="section-number-3">1.3.</span> equality</h3>
+<div id="outline-container-org1467878" class="outline-3">
+<h3 id="org1467878"><span class="section-number-3">1.3.</span> equality</h3>
 <div class="outline-text-3" id="text-1-3">
 <div class="org-src-container">
 <pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> 42 <span style="color: #f0e68c;">=</span> 42 <span style="color: #ff4500;">;;</span>
@@ -112,8 +112,8 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</
 </div>
 </div>
 
-<div id="outline-container-org7902300" class="outline-3">
-<h3 id="org7902300"><span class="section-number-3">1.4.</span> assert</h3>
+<div id="outline-container-org5d7b649" class="outline-3">
+<h3 id="org5d7b649"><span class="section-number-3">1.4.</span> assert</h3>
 <div class="outline-text-3" id="text-1-4">
 <div class="org-src-container">
 <pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #51afef;">assert</span> <span style="color: #a991f1;">true</span> <span style="color: #ff4500;">;;</span>
@@ -138,8 +138,8 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</
 </div>
 </div>
 
-<div id="outline-container-orgdc42f43" class="outline-3">
-<h3 id="orgdc42f43"><span class="section-number-3">1.5.</span> if</h3>
+<div id="outline-container-orgaf8856a" class="outline-3">
+<h3 id="orgaf8856a"><span class="section-number-3">1.5.</span> if</h3>
 <div class="outline-text-3" id="text-1-5">
 <div class="org-src-container">
 <pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #51afef;">if</span> 2 <span style="color: #f0e68c;">&gt;</span> 1 <span style="color: #51afef;">then</span> 42 <span style="color: #51afef;">else</span> 7 <span style="color: #ff4500;">;;</span>
@@ -149,8 +149,8 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</
 </div>
 </div>
 
-<div id="outline-container-org7864b9d" class="outline-3">
-<h3 id="org7864b9d"><span class="section-number-3">1.6.</span> double fun</h3>
+<div id="outline-container-org7c4cd80" class="outline-3">
+<h3 id="org7c4cd80"><span class="section-number-3">1.6.</span> double fun</h3>
 <div class="outline-text-3" id="text-1-6">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">double</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> 2 <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">(</span>x<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
@@ -163,12 +163,12 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</
 </div>
 </div>
 
-<div id="outline-container-org6bb0b1e" class="outline-3">
-<h3 id="org6bb0b1e"><span class="section-number-3">1.7.</span> more fun</h3>
+<div id="outline-container-orgb331954" class="outline-3">
+<h3 id="orgb331954"><span class="section-number-3">1.7.</span> more fun</h3>
 <div class="outline-text-3" id="text-1-7">
 </div>
-<div id="outline-container-org3dfd70b" class="outline-4">
-<h4 id="org3dfd70b"><span class="section-number-4">1.7.1.</span> cube</h4>
+<div id="outline-container-orgd4cc5f0" class="outline-4">
+<h4 id="orgd4cc5f0"><span class="section-number-4">1.7.1.</span> cube</h4>
 <div class="outline-text-4" id="text-1-7-1">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">cube</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">float</span>  <span style="color: #f0e68c;">=</span> x <span style="color: #f0e68c;">*.</span> x <span style="color: #f0e68c;">*.</span> x <span style="color: #ff4500;">;;</span>
@@ -177,8 +177,8 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</
 </div>
 </div>
 
-<div id="outline-container-orgbaf70a8" class="outline-4">
-<h4 id="orgbaf70a8"><span class="section-number-4">1.7.2.</span> sign</h4>
+<div id="outline-container-org16f979e" class="outline-4">
+<h4 id="org16f979e"><span class="section-number-4">1.7.2.</span> sign</h4>
 <div class="outline-text-4" id="text-1-7-2">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sign</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">int</span>  <span style="color: #f0e68c;">=</span>
@@ -191,8 +191,8 @@ utop <span style="color: #f0e68c;">#</span> <span style="color: #7bc275;">"hi"</
 </div>
 </div>
 
-<div id="outline-container-orgb026989" class="outline-4">
-<h4 id="orgb026989"><span class="section-number-4">1.7.3.</span> the area of a circle</h4>
+<div id="outline-container-orgb8ac63c" class="outline-4">
+<h4 id="orgb8ac63c"><span class="section-number-4">1.7.3.</span> the area of a circle</h4>
 <div class="outline-text-4" id="text-1-7-3">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">area_of_circle</span><span style="color: #DFDFDF;"> r</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">float</span> <span style="color: #f0e68c;">=</span>
@@ -219,8 +219,8 @@ test_area_of_circle 2. 12.56 <span style="color: #ff4500;">;;</span>
 
 
 
-<div id="outline-container-orgfeb041d" class="outline-3">
-<h3 id="orgfeb041d"><span class="section-number-3">1.8.</span> RMS 均方根</h3>
+<div id="outline-container-org34fca64" class="outline-3">
+<h3 id="org34fca64"><span class="section-number-3">1.8.</span> RMS 均方根</h3>
 <div class="outline-text-3" id="text-1-8">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">rms</span><span style="color: #DFDFDF;"> x y</span> <span style="color: #f0e68c;">=</span>  sqrt <span style="color: #f0e68c;">@@</span> <span style="color: #f0e68c;">(</span>x <span style="color: #f0e68c;">*.</span> x <span style="color: #f0e68c;">+.</span> y <span style="color: #f0e68c;">*.</span> y<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">/.</span> 2. <span style="color: #ff4500;">;;</span>
@@ -230,8 +230,8 @@ test_area_of_circle 2. 12.56 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-org89238f0" class="outline-3">
-<h3 id="org89238f0"><span class="section-number-3">1.9.</span> date fun</h3>
+<div id="outline-container-org7894bfc" class="outline-3">
+<h3 id="org7894bfc"><span class="section-number-3">1.9.</span> date fun</h3>
 <div class="outline-text-3" id="text-1-9">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #7e7e87;">(** [m] should be a month. [d] is day.</span>
@@ -260,8 +260,8 @@ test_area_of_circle 2. 12.56 <span style="color: #ff4500;">;;</span>
 
 
 
-<div id="outline-container-orgad699d1" class="outline-3">
-<h3 id="orgad699d1"><span class="section-number-3">1.10.</span> fib</h3>
+<div id="outline-container-org2af2640" class="outline-3">
+<h3 id="org2af2640"><span class="section-number-3">1.10.</span> fib</h3>
 <div class="outline-text-3" id="text-1-10">
 <div class="org-src-container">
 <pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">fib</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
@@ -274,8 +274,8 @@ test_area_of_circle 2. 12.56 <span style="color: #ff4500;">;;</span>
 </div>
 </div>
 
-<div id="outline-container-org27b3e00" class="outline-3">
-<h3 id="org27b3e00"><span class="section-number-3">1.11.</span> fib fast</h3>
+<div id="outline-container-org3f07ef5" class="outline-3">
+<h3 id="org3f07ef5"><span class="section-number-3">1.11.</span> fib fast</h3>
 <div class="outline-text-3" id="text-1-11">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">helper</span><span style="color: #DFDFDF;">  nstep pp p</span> <span style="color: #f0e68c;">=</span>
@@ -289,8 +289,8 @@ test_area_of_circle 2. 12.56 <span style="color: #ff4500;">;;</span>
 </div>
 </div>
 
-<div id="outline-container-org9adad71" class="outline-3">
-<h3 id="org9adad71"><span class="section-number-3">1.12.</span> func type</h3>
+<div id="outline-container-orgb87be03" class="outline-3">
+<h3 id="orgb87be03"><span class="section-number-3">1.12.</span> func type</h3>
 <div class="outline-text-3" id="text-1-12">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">f</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">if</span> x <span style="color: #51afef;">then</span> x <span style="color: #51afef;">else</span> x  <span style="color: #62686E;">(* </span><span style="color: #62686E;">bool -&gt; bool</span><span style="color: #62686E;"> *)</span>
@@ -303,8 +303,8 @@ test_area_of_circle 2. 12.56 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-orga5b1ecc" class="outline-3">
-<h3 id="orga5b1ecc"><span class="section-number-3">1.13.</span> divide</h3>
+<div id="outline-container-orgdfbc325" class="outline-3">
+<h3 id="orgdfbc325"><span class="section-number-3">1.13.</span> divide</h3>
 <div class="outline-text-3" id="text-1-13">
 <p>
 Write a function divide : numerator:float -&gt; denominator:float -&gt; float. Apply your function.
@@ -322,8 +322,8 @@ Write a function divide : numerator:float -&gt; denominator:float -&gt; float. A
 </div>
 
 
-<div id="outline-container-org00392d0" class="outline-3">
-<h3 id="org00392d0"><span class="section-number-3">1.14.</span> associativity</h3>
+<div id="outline-container-org2fd1c61" class="outline-3">
+<h3 id="org2fd1c61"><span class="section-number-3">1.14.</span> associativity</h3>
 <div class="outline-text-3" id="text-1-14">
 <p>
 Suppose that we have defined let add x y = x + y.
@@ -343,8 +343,8 @@ add <span style="color: #f0e68c;">(</span>5 1<span style="color: #f0e68c;">)</sp
 
 
 
-<div id="outline-container-orgf0bcbec" class="outline-3">
-<h3 id="orgf0bcbec"><span class="section-number-3">1.15.</span> average</h3>
+<div id="outline-container-orgdec4aa0" class="outline-3">
+<h3 id="orgdec4aa0"><span class="section-number-3">1.15.</span> average</h3>
 <div class="outline-text-3" id="text-1-15">
 <p>
 Define an infix operator +/. to compute the average of two floating-point numbers. For example,
@@ -369,8 +369,8 @@ Define an infix operator +/. to compute the average of two floating-point number
 
 
 
-<div id="outline-container-orgd0d6cb0" class="outline-3">
-<h3 id="orgd0d6cb0"><span class="section-number-3">1.16.</span> hello world</h3>
+<div id="outline-container-org0f867b1" class="outline-3">
+<h3 id="org0f867b1"><span class="section-number-3">1.16.</span> hello world</h3>
 <div class="outline-text-3" id="text-1-16">
 <p>
 print<sub>endline</sub> "Hello world!";;

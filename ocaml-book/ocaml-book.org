@@ -6,8 +6,8 @@
 
 
 * CS3110 练习题
-+ [[./ocaml-book/ch2/ex.org][Ch2]]
-+ [[./ocaml-book/ch3/exercises.org][Ch3]]
++ [[./ch2/ex.org][Ch2]]
++ [[./ch3/exercises.org][Ch3]]
 * opam包管理器
 
 

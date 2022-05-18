@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-05-18 三 19:05 -->
+<!-- 2022-05-18 三 20:04 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>&lrm;</title>
@@ -26,79 +26,79 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org7c02ffc">1. ch3</a>
+<li><a href="#org6e426d8">1. ch3</a>
 <ul>
-<li><a href="#orgf71627b">1.1. list expressions</a>
+<li><a href="#org59d6415">1.1. list expressions</a>
 <ul>
-<li><a href="#orgce5cc5d">1.1.1. 使用方括号来创建一个含有整数 1~5 的list</a></li>
-<li><a href="#orgcc96503">1.1.2. 只用 <code>::</code> 和 <code>[]</code> 创建相同的list</a></li>
-<li><a href="#org9898173">1.1.3. 用 <code>@</code> 但不能用 <code>::</code> ，并用上 <code>[2;3;4]</code> 这个表达式来创建相同的list</a></li>
+<li><a href="#org692b736">1.1.1. 使用方括号来创建一个含有整数 1~5 的list</a></li>
+<li><a href="#orga41ba2b">1.1.2. 只用 <code>::</code> 和 <code>[]</code> 创建相同的list</a></li>
+<li><a href="#orgb1f820c">1.1.3. 用 <code>@</code> 但不能用 <code>::</code> ，并用上 <code>[2;3;4]</code> 这个表达式来创建相同的list</a></li>
 </ul>
 </li>
-<li><a href="#orgfa9a51e">1.2. list的整数乘积</a></li>
-<li><a href="#org4ecd3d5">1.3. 连接list中的所有字符串</a></li>
-<li><a href="#org5f871d0">1.4. 为product编写单元测试</a></li>
-<li><a href="#orgaed8511">1.5. 用模式匹配写下面三个函数</a>
+<li><a href="#orgdf984ba">1.2. list的整数乘积</a></li>
+<li><a href="#orgfe14e29">1.3. 连接list中的所有字符串</a></li>
+<li><a href="#orga635a7e">1.4. 为product编写单元测试</a></li>
+<li><a href="#orgad77d95">1.5. 用模式匹配写下面三个函数</a>
 <ul>
-<li><a href="#org3e93ea1">1.5.1. list的首个元素是 “bigred”</a></li>
-<li><a href="#org77f0b4d">1.5.2. list恰好有两个/四个元素（不能用length函数）</a></li>
-<li><a href="#orga80a8f8">1.5.3. list的前两个元素是相等的</a></li>
+<li><a href="#org454ce4f">1.5.1. list的首个元素是 “bigred”</a></li>
+<li><a href="#orge60a043">1.5.2. list恰好有两个/四个元素（不能用length函数）</a></li>
+<li><a href="#orgdedbc13">1.5.3. list的前两个元素是相等的</a></li>
 </ul>
 </li>
-<li><a href="#org4c285ca">1.6. 用 <code>List</code> 标准库来解决问题：</a>
+<li><a href="#org8efa400">1.6. 用 <code>List</code> 标准库来解决问题：</a>
 <ul>
-<li><a href="#orgf494c82">1.6.1. 编写一个接受 <code>int list</code> 的函数，它返回list的第五个元素</a></li>
-<li><a href="#orgc6fb507">1.6.2. 编写一个接收 <code>int list</code> 的函数，它返回一个降序排列的list</a></li>
+<li><a href="#org14b3885">1.6.1. 编写一个接受 <code>int list</code> 的函数，它返回list的第五个元素</a></li>
+<li><a href="#org61cd4c3">1.6.2. 编写一个接收 <code>int list</code> 的函数，它返回一个降序排列的list</a></li>
 </ul>
 </li>
-<li><a href="#orgdce1414">1.7. 分别为上面两个函数编写单元测试</a></li>
-<li><a href="#orgbff0760">1.8. libray puzzle</a>
+<li><a href="#org715d50d">1.7. 分别为上面两个函数编写单元测试</a></li>
+<li><a href="#org7e8876b">1.8. libray puzzle</a>
 <ul>
-<li><a href="#org3045402">1.8.1. 编写一个返回list的最后一个元素的函数</a></li>
-<li><a href="#org417a596">1.8.2. 编写函数 any<sub>zeroes</sub> : int list -&gt; bool</a></li>
+<li><a href="#orgb77ad3f">1.8.1. 编写一个返回list的最后一个元素的函数</a></li>
+<li><a href="#org768a843">1.8.2. 编写函数 any<sub>zeroes</sub> : int list -&gt; bool</a></li>
 </ul>
 </li>
-<li><a href="#org4b44521">1.9. take/drop</a>
+<li><a href="#orgce0a830">1.9. take/drop</a>
 <ul>
-<li><a href="#org14dd046">1.9.1. 编写函数 <code>take:int-&gt; 'a list-&gt;'a list</code></a></li>
-<li><a href="#org228f7eb">1.9.2. 编写drop函数 <code>int -&gt; 'a list -&gt; 'a list</code></a></li>
+<li><a href="#org5f626d5">1.9.1. 编写函数 <code>take:int-&gt; 'a list-&gt;'a list</code></a></li>
+<li><a href="#org72ba602">1.9.2. 编写drop函数 <code>int -&gt; 'a list -&gt; 'a list</code></a></li>
 </ul>
 </li>
-<li><a href="#orgac855d9">1.10. 将take/drop改写成尾递归的写法</a></li>
-<li><a href="#orgacacfe7">1.11. 是否为单峰list？</a></li>
-<li><a href="#orgb4e7c29">1.12. 幂集：全体子集构成的集合</a></li>
-<li><a href="#orgc85f168">1.13. print int list rec</a></li>
-<li><a href="#org6e3d8d8">1.14. print int list iter</a></li>
-<li><a href="#orgcad4856">1.15. student 类型</a>
+<li><a href="#org4639fbc">1.10. 将take/drop改写成尾递归的写法</a></li>
+<li><a href="#orgfc96654">1.11. 是否为单峰list？</a></li>
+<li><a href="#orga97b6b7">1.12. 幂集：全体子集构成的集合</a></li>
+<li><a href="#orgb77e869">1.13. print int list rec</a></li>
+<li><a href="#orgf820e38">1.14. print int list iter</a></li>
+<li><a href="#orgbf72099">1.15. student 类型</a>
 <ul>
-<li><a href="#orgcf91dba">1.15.1. student</a></li>
-<li><a href="#org8809834">1.15.2. student -&gt; string * string 返回学生姓名</a></li>
-<li><a href="#org799c323">1.15.3. string -&gt; string -&gt; float -&gt; student 创建学生record</a></li>
+<li><a href="#org5e09c3f">1.15.1. student</a></li>
+<li><a href="#org402106f">1.15.2. student -&gt; string * string 返回学生姓名</a></li>
+<li><a href="#org914ceab">1.15.3. string -&gt; string -&gt; float -&gt; student 创建学生record</a></li>
 </ul>
 </li>
-<li><a href="#org195d87f">1.16. pokemon 类型</a></li>
-<li><a href="#orgece2c5f">1.17. 安全的hd/tl函数</a></li>
-<li><a href="#orgc143e65">1.18. pokefun</a></li>
-<li><a href="#org6eb9682">1.19. date before</a></li>
-<li><a href="#orgc6cd403">1.20. earliest date</a></li>
-<li><a href="#org480530c">1.21. assoc list</a></li>
-<li><a href="#orgf3dda13">1.22. cards</a></li>
-<li><a href="#org59cf481">1.23. matching</a></li>
-<li><a href="#org5ffcd45">1.24. quadrant 象限</a></li>
-<li><a href="#orge10b742">1.25. 使用 when 重写quadrant函数</a></li>
-<li><a href="#org42ddd18">1.26. depth</a></li>
-<li><a href="#org66f4eaf">1.27. shape</a></li>
-<li><a href="#org92bc8bc">1.28. list max exn</a></li>
-<li><a href="#org1f98f59">1.29. list max exn string</a></li>
-<li><a href="#orgd6b7ae3">1.30. list max exn ounit</a></li>
-<li><a href="#org65756da">1.31. 用二叉搜索树实现字典</a>
+<li><a href="#org5ae9109">1.16. pokemon 类型</a></li>
+<li><a href="#org1180deb">1.17. 安全的hd/tl函数</a></li>
+<li><a href="#org994db3a">1.18. pokefun</a></li>
+<li><a href="#org645b4a0">1.19. date before</a></li>
+<li><a href="#org955afe9">1.20. earliest date</a></li>
+<li><a href="#org788efd8">1.21. assoc list</a></li>
+<li><a href="#org36ebb2f">1.22. cards</a></li>
+<li><a href="#orgf536c8e">1.23. matching</a></li>
+<li><a href="#orgf1b7a93">1.24. quadrant 象限</a></li>
+<li><a href="#orgbc2da10">1.25. 使用 when 重写quadrant函数</a></li>
+<li><a href="#org00f1ea8">1.26. depth</a></li>
+<li><a href="#org30beda3">1.27. shape</a></li>
+<li><a href="#orgdc78459">1.28. list max exn</a></li>
+<li><a href="#org0185553">1.29. list max exn string</a></li>
+<li><a href="#org43377f2">1.30. list max exn ounit</a></li>
+<li><a href="#orgf5a2a37">1.31. 用二叉搜索树实现字典</a>
 <ul>
-<li><a href="#org698e133">1.31.1. 查找 [✭✭]</a></li>
-<li><a href="#orgd7ceb28">1.31.2. 插入 [✭✭✭]</a></li>
-<li><a href="#org7dce7d8">1.31.3. <code>is_bst</code> [✭✭✭✭]</a></li>
+<li><a href="#org5a71a73">1.31.1. 查找 [✭✭]</a></li>
+<li><a href="#orgc7b2c5a">1.31.2. 插入 [✭✭✭]</a></li>
+<li><a href="#org333a658">1.31.3. <code>is_bst</code> [✭✭✭✭]</a></li>
 </ul>
 </li>
-<li><a href="#org67875f4">1.32. quadrant poly (使用匿名Variant重写）</a></li>
+<li><a href="#orgd940e7f">1.32. quadrant poly (使用匿名Variant重写）</a></li>
 </ul>
 </li>
 </ul>
@@ -109,16 +109,16 @@
 
 
 
-<div id="outline-container-org7c02ffc" class="outline-2">
-<h2 id="org7c02ffc"><span class="section-number-2">1.</span> ch3</h2>
+<div id="outline-container-org6e426d8" class="outline-2">
+<h2 id="org6e426d8"><span class="section-number-2">1.</span> ch3</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-orgf71627b" class="outline-3">
-<h3 id="orgf71627b"><span class="section-number-3">1.1.</span> list expressions</h3>
+<div id="outline-container-org59d6415" class="outline-3">
+<h3 id="org59d6415"><span class="section-number-3">1.1.</span> list expressions</h3>
 <div class="outline-text-3" id="text-1-1">
 </div>
-<div id="outline-container-orgce5cc5d" class="outline-4">
-<h4 id="orgce5cc5d"><span class="section-number-4">1.1.1.</span> 使用方括号来创建一个含有整数 1~5 的list</h4>
+<div id="outline-container-org692b736" class="outline-4">
+<h4 id="org692b736"><span class="section-number-4">1.1.1.</span> 使用方括号来创建一个含有整数 1~5 的list</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">]</span> <span style="color: #ff4500;">;;</span>
@@ -127,8 +127,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgcc96503" class="outline-4">
-<h4 id="orgcc96503"><span class="section-number-4">1.1.2.</span> 只用 <code>::</code> 和 <code>[]</code> 创建相同的list</h4>
+<div id="outline-container-orga41ba2b" class="outline-4">
+<h4 id="orga41ba2b"><span class="section-number-4">1.1.2.</span> 只用 <code>::</code> 和 <code>[]</code> 创建相同的list</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <div class="org-src-container">
 <pre class="src src-ocaml">1<span style="color: #f0e68c;">::</span>2<span style="color: #f0e68c;">::</span>3<span style="color: #f0e68c;">::</span>4<span style="color: #f0e68c;">::</span>5<span style="color: #f0e68c;">::[]</span> <span style="color: #ff4500;">;;</span>
@@ -137,8 +137,8 @@
 </div>
 </div>
 
-<div id="outline-container-org9898173" class="outline-4">
-<h4 id="org9898173"><span class="section-number-4">1.1.3.</span> 用 <code>@</code> 但不能用 <code>::</code> ，并用上 <code>[2;3;4]</code> 这个表达式来创建相同的list</h4>
+<div id="outline-container-orgb1f820c" class="outline-4">
+<h4 id="orgb1f820c"><span class="section-number-4">1.1.3.</span> 用 <code>@</code> 但不能用 <code>::</code> ，并用上 <code>[2;3;4]</code> 这个表达式来创建相同的list</h4>
 <div class="outline-text-4" id="text-1-1-3">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>5<span style="color: #f0e68c;">]</span> <span style="color: #ff4500;">;;</span>
@@ -148,8 +148,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgfa9a51e" class="outline-3">
-<h3 id="orgfa9a51e"><span class="section-number-3">1.2.</span> list的整数乘积</h3>
+<div id="outline-container-orgdf984ba" class="outline-3">
+<h3 id="orgdf984ba"><span class="section-number-3">1.2.</span> list的整数乘积</h3>
 <div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">product</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
@@ -165,8 +165,8 @@
 </div>
 </div>
 
-<div id="outline-container-org4ecd3d5" class="outline-3">
-<h3 id="org4ecd3d5"><span class="section-number-3">1.3.</span> 连接list中的所有字符串</h3>
+<div id="outline-container-orgfe14e29" class="outline-3">
+<h3 id="orgfe14e29"><span class="section-number-3">1.3.</span> 连接list中的所有字符串</h3>
 <div class="outline-text-3" id="text-1-3">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">concat</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
@@ -181,8 +181,8 @@
 </div>
 </div>
 
-<div id="outline-container-org5f871d0" class="outline-3">
-<h3 id="org5f871d0"><span class="section-number-3">1.4.</span> 为product编写单元测试</h3>
+<div id="outline-container-orga635a7e" class="outline-3">
+<h3 id="orga635a7e"><span class="section-number-3">1.4.</span> 为product编写单元测试</h3>
 <div class="outline-text-3" id="text-1-4">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
@@ -205,16 +205,16 @@
 
 
 
-<div id="outline-container-orgaed8511" class="outline-3">
-<h3 id="orgaed8511"><span class="section-number-3">1.5.</span> 用模式匹配写下面三个函数</h3>
+<div id="outline-container-orgad77d95" class="outline-3">
+<h3 id="orgad77d95"><span class="section-number-3">1.5.</span> 用模式匹配写下面三个函数</h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 只要输入list满足性质就返回true,否则返回false
 </p>
 </div>
 
-<div id="outline-container-org3e93ea1" class="outline-4">
-<h4 id="org3e93ea1"><span class="section-number-4">1.5.1.</span> list的首个元素是 “bigred”</h4>
+<div id="outline-container-org454ce4f" class="outline-4">
+<h4 id="org454ce4f"><span class="section-number-4">1.5.1.</span> list的首个元素是 “bigred”</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">func1</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
@@ -226,8 +226,8 @@
 </div>
 </div>
 
-<div id="outline-container-org77f0b4d" class="outline-4">
-<h4 id="org77f0b4d"><span class="section-number-4">1.5.2.</span> list恰好有两个/四个元素（不能用length函数）</h4>
+<div id="outline-container-orge60a043" class="outline-4">
+<h4 id="orge60a043"><span class="section-number-4">1.5.2.</span> list恰好有两个/四个元素（不能用length函数）</h4>
 <div class="outline-text-4" id="text-1-5-2">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">func2</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
@@ -240,8 +240,8 @@
 </div>
 </div>
 
-<div id="outline-container-orga80a8f8" class="outline-4">
-<h4 id="orga80a8f8"><span class="section-number-4">1.5.3.</span> list的前两个元素是相等的</h4>
+<div id="outline-container-orgdedbc13" class="outline-4">
+<h4 id="orgdedbc13"><span class="section-number-4">1.5.3.</span> list的前两个元素是相等的</h4>
 <div class="outline-text-4" id="text-1-5-3">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">func3</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
@@ -255,12 +255,12 @@
 </div>
 
 
-<div id="outline-container-org4c285ca" class="outline-3">
-<h3 id="org4c285ca"><span class="section-number-3">1.6.</span> 用 <code>List</code> 标准库来解决问题：</h3>
+<div id="outline-container-org8efa400" class="outline-3">
+<h3 id="org8efa400"><span class="section-number-3">1.6.</span> 用 <code>List</code> 标准库来解决问题：</h3>
 <div class="outline-text-3" id="text-1-6">
 </div>
-<div id="outline-container-orgf494c82" class="outline-4">
-<h4 id="orgf494c82"><span class="section-number-4">1.6.1.</span> 编写一个接受 <code>int list</code> 的函数，它返回list的第五个元素</h4>
+<div id="outline-container-org14b3885" class="outline-4">
+<h4 id="org14b3885"><span class="section-number-4">1.6.1.</span> 编写一个接受 <code>int list</code> 的函数，它返回list的第五个元素</h4>
 <div class="outline-text-4" id="text-1-6-1">
 <p>
 若list少于5个元素，则返回0 。
@@ -277,8 +277,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgc6fb507" class="outline-4">
-<h4 id="orgc6fb507"><span class="section-number-4">1.6.2.</span> 编写一个接收 <code>int list</code> 的函数，它返回一个降序排列的list</h4>
+<div id="outline-container-org61cd4c3" class="outline-4">
+<h4 id="org61cd4c3"><span class="section-number-4">1.6.2.</span> 编写一个接收 <code>int list</code> 的函数，它返回一个降序排列的list</h4>
 <div class="outline-text-4" id="text-1-6-2">
 <p>
 提示：用 <code>List.sort</code> ，并用 <code>Stdlib.compare</code>  作为它的首个参数。以及使用 <code>List.rev</code> (反转list）
@@ -296,8 +296,8 @@
 
 
 
-<div id="outline-container-orgdce1414" class="outline-3">
-<h3 id="orgdce1414"><span class="section-number-3">1.7.</span> 分别为上面两个函数编写单元测试</h3>
+<div id="outline-container-org715d50d" class="outline-3">
+<h3 id="org715d50d"><span class="section-number-3">1.7.</span> 分别为上面两个函数编写单元测试</h3>
 <div class="outline-text-3" id="text-1-7">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Fifth</span>
@@ -343,16 +343,16 @@
 
 
 
-<div id="outline-container-orgbff0760" class="outline-3">
-<h3 id="orgbff0760"><span class="section-number-3">1.8.</span> libray puzzle</h3>
+<div id="outline-container-org7e8876b" class="outline-3">
+<h3 id="org7e8876b"><span class="section-number-3">1.8.</span> libray puzzle</h3>
 <div class="outline-text-3" id="text-1-8">
 <p>
 解答只能是1-2行代码 
 </p>
 </div>
 
-<div id="outline-container-org3045402" class="outline-4">
-<h4 id="org3045402"><span class="section-number-4">1.8.1.</span> 编写一个返回list的最后一个元素的函数</h4>
+<div id="outline-container-orgb77ad3f" class="outline-4">
+<h4 id="orgb77ad3f"><span class="section-number-4">1.8.1.</span> 编写一个返回list的最后一个元素的函数</h4>
 <div class="outline-text-4" id="text-1-8-1">
 <p>
 函数应假定输入的list是非空的；提示用两个库函数，不要在代码中使用模式匹配
@@ -367,8 +367,8 @@
 </div>
 </div>
 
-<div id="outline-container-org417a596" class="outline-4">
-<h4 id="org417a596"><span class="section-number-4">1.8.2.</span> 编写函数 any<sub>zeroes</sub> : int list -&gt; bool</h4>
+<div id="outline-container-org768a843" class="outline-4">
+<h4 id="org768a843"><span class="section-number-4">1.8.2.</span> 编写函数 any<sub>zeroes</sub> : int list -&gt; bool</h4>
 <div class="outline-text-4" id="text-1-8-2">
 <p>
 此函数返回 true 当且仅当 输入list中至少有一个 0
@@ -385,12 +385,12 @@
 </div>
 </div>
 
-<div id="outline-container-org4b44521" class="outline-3">
-<h3 id="org4b44521"><span class="section-number-3">1.9.</span> take/drop</h3>
+<div id="outline-container-orgce0a830" class="outline-3">
+<h3 id="orgce0a830"><span class="section-number-3">1.9.</span> take/drop</h3>
 <div class="outline-text-3" id="text-1-9">
 </div>
-<div id="outline-container-org14dd046" class="outline-4">
-<h4 id="org14dd046"><span class="section-number-4">1.9.1.</span> 编写函数 <code>take:int-&gt; 'a list-&gt;'a list</code></h4>
+<div id="outline-container-org5f626d5" class="outline-4">
+<h4 id="org5f626d5"><span class="section-number-4">1.9.1.</span> 编写函数 <code>take:int-&gt; 'a list-&gt;'a list</code></h4>
 <div class="outline-text-4" id="text-1-9-1">
 <p>
 使得 <code>take n lst</code> 返回lst的前n个元素。若lst少于n个元素，则返回整个list
@@ -411,8 +411,8 @@
 </div>
 </div>
 
-<div id="outline-container-org228f7eb" class="outline-4">
-<h4 id="org228f7eb"><span class="section-number-4">1.9.2.</span> 编写drop函数 <code>int -&gt; 'a list -&gt; 'a list</code></h4>
+<div id="outline-container-org72ba602" class="outline-4">
+<h4 id="org72ba602"><span class="section-number-4">1.9.2.</span> 编写drop函数 <code>int -&gt; 'a list -&gt; 'a list</code></h4>
 <div class="outline-text-4" id="text-1-9-2">
 <p>
 满足 <code>drop n lit</code> 返回除了前n个之外的lst中剩下的元素。若lst少于n个元素，则返回空list
@@ -436,8 +436,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgac855d9" class="outline-3">
-<h3 id="orgac855d9"><span class="section-number-3">1.10.</span> 将take/drop改写成尾递归的写法</h3>
+<div id="outline-container-org4639fbc" class="outline-3">
+<h3 id="org4639fbc"><span class="section-number-3">1.10.</span> 将take/drop改写成尾递归的写法</h3>
 <div class="outline-text-3" id="text-1-10">
 <p>
 并构造长list来测试这对两个函数的调用是否会导致栈溢出。
@@ -462,8 +462,8 @@
 </div>
 
 
-<div id="outline-container-orgacacfe7" class="outline-3">
-<h3 id="orgacacfe7"><span class="section-number-3">1.11.</span> 是否为单峰list？</h3>
+<div id="outline-container-orgfc96654" class="outline-3">
+<h3 id="orgfc96654"><span class="section-number-3">1.11.</span> 是否为单峰list？</h3>
 <div class="outline-text-3" id="text-1-11">
 <p>
 编写函数 <code>is_unimodal : int list -&gt; bool</code> ,它接收一个整数list，并返回此列表是否为unimodal。
@@ -491,8 +491,8 @@
 
 
 
-<div id="outline-container-orgb4e7c29" class="outline-3">
-<h3 id="orgb4e7c29"><span class="section-number-3">1.12.</span> 幂集：全体子集构成的集合</h3>
+<div id="outline-container-orga97b6b7" class="outline-3">
+<h3 id="orga97b6b7"><span class="section-number-3">1.12.</span> 幂集：全体子集构成的集合</h3>
 <div class="outline-text-3" id="text-1-12">
 <p>
 编写函数 <code>powerset: int list -&gt; int list list</code> 接收一个list作为一个集合，并返回此集合的“幂集”
@@ -514,8 +514,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgc85f168" class="outline-3">
-<h3 id="orgc85f168"><span class="section-number-3">1.13.</span> print int list rec</h3>
+<div id="outline-container-orgb77e869" class="outline-3">
+<h3 id="orgb77e869"><span class="section-number-3">1.13.</span> print int list rec</h3>
 <div class="outline-text-3" id="text-1-13">
 <p>
 编写函数 <code>print_int_list: int list -&gt; unit</code> 使得：
@@ -551,8 +551,8 @@
 
 
 
-<div id="outline-container-org6e3d8d8" class="outline-3">
-<h3 id="org6e3d8d8"><span class="section-number-3">1.14.</span> print int list iter</h3>
+<div id="outline-container-orgf820e38" class="outline-3">
+<h3 id="orgf820e38"><span class="section-number-3">1.14.</span> print int list iter</h3>
 <div class="outline-text-3" id="text-1-14">
 <p>
 编写函数  <code>print_int_list' : int list -&gt; unit</code>
@@ -580,8 +580,8 @@
 
 
 
-<div id="outline-container-orgcad4856" class="outline-3">
-<h3 id="orgcad4856"><span class="section-number-3">1.15.</span> student 类型</h3>
+<div id="outline-container-orgbf72099" class="outline-3">
+<h3 id="orgbf72099"><span class="section-number-3">1.15.</span> student 类型</h3>
 <div class="outline-text-3" id="text-1-15">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">student</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>first_name <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">;</span>last_name<span style="color: #f0e68c;">:</span>string <span style="color: #f0e68c;">;</span>gpa <span style="color: #f0e68c;">:</span>float<span style="color: #f0e68c;">}</span>
@@ -592,8 +592,8 @@
 分别给出为下列类型的表达式：
 </p>
 </div>
-<div id="outline-container-orgcf91dba" class="outline-4">
-<h4 id="orgcf91dba"><span class="section-number-4">1.15.1.</span> student</h4>
+<div id="outline-container-org5e09c3f" class="outline-4">
+<h4 id="org5e09c3f"><span class="section-number-4">1.15.1.</span> student</h4>
 <div class="outline-text-4" id="text-1-15-1">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f0e68c;">{</span>first_name<span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"salted"</span> <span style="color: #f0e68c;">;</span>last_name<span style="color: #f0e68c;">=</span><span style="color: #7bc275;">"sun"</span> <span style="color: #f0e68c;">;</span> gpa<span style="color: #f0e68c;">=</span> 3.0<span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span>
@@ -602,8 +602,8 @@
 </div>
 </div>
 
-<div id="outline-container-org8809834" class="outline-4">
-<h4 id="org8809834"><span class="section-number-4">1.15.2.</span> student -&gt; string * string 返回学生姓名</h4>
+<div id="outline-container-org402106f" class="outline-4">
+<h4 id="org402106f"><span class="section-number-4">1.15.2.</span> student -&gt; string * string 返回学生姓名</h4>
 <div class="outline-text-4" id="text-1-15-2">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">stu_name</span><span style="color: #DFDFDF;"> s</span> <span style="color: #f0e68c;">=</span>
@@ -613,8 +613,8 @@
 </div>
 </div>
 
-<div id="outline-container-org799c323" class="outline-4">
-<h4 id="org799c323"><span class="section-number-4">1.15.3.</span> string -&gt; string -&gt; float -&gt; student 创建学生record</h4>
+<div id="outline-container-org914ceab" class="outline-4">
+<h4 id="org914ceab"><span class="section-number-4">1.15.3.</span> string -&gt; string -&gt; float -&gt; student 创建学生record</h4>
 <div class="outline-text-4" id="text-1-15-3">
 <div class="org-src-container">
 <pre class="src src-ocaml"> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">init_stu_info</span><span style="color: #DFDFDF;"> f l g</span> <span style="color: #f0e68c;">=</span>
@@ -629,8 +629,8 @@
 
 
 
-<div id="outline-container-org195d87f" class="outline-3">
-<h3 id="org195d87f"><span class="section-number-3">1.16.</span> pokemon 类型</h3>
+<div id="outline-container-org5ae9109" class="outline-3">
+<h3 id="org5ae9109"><span class="section-number-3">1.16.</span> pokemon 类型</h3>
 <div class="outline-text-3" id="text-1-16">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">poketype</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Normal</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Fire</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Water</span> <span style="color: #ff4500;">;;</span>
@@ -663,8 +663,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgece2c5f" class="outline-3">
-<h3 id="orgece2c5f"><span class="section-number-3">1.17.</span> 安全的hd/tl函数</h3>
+<div id="outline-container-org1180deb" class="outline-3">
+<h3 id="org1180deb"><span class="section-number-3">1.17.</span> 安全的hd/tl函数</h3>
 <div class="outline-text-3" id="text-1-17">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">safe_hd</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
@@ -685,8 +685,8 @@
 
 
 
-<div id="outline-container-orgc143e65" class="outline-3">
-<h3 id="orgc143e65"><span class="section-number-3">1.18.</span> pokefun</h3>
+<div id="outline-container-org994db3a" class="outline-3">
+<h3 id="org994db3a"><span class="section-number-3">1.18.</span> pokefun</h3>
 <div class="outline-text-3" id="text-1-18">
 <p>
 编写函数 <code>max_hp: pokemon list-&gt; pokemon option</code> 使得它返回hp最大的pokemon
@@ -714,8 +714,8 @@
 
 
 
-<div id="outline-container-org6eb9682" class="outline-3">
-<h3 id="org6eb9682"><span class="section-number-3">1.19.</span> date before</h3>
+<div id="outline-container-org645b4a0" class="outline-3">
+<h3 id="org645b4a0"><span class="section-number-3">1.19.</span> date before</h3>
 <div class="outline-text-3" id="text-1-19">
 <p>
 定义一个date-like三元组： <code>int*int*int</code>
@@ -767,8 +767,8 @@
 
 
 
-<div id="outline-container-orgc6cd403" class="outline-3">
-<h3 id="orgc6cd403"><span class="section-number-3">1.20.</span> earliest date</h3>
+<div id="outline-container-org955afe9" class="outline-3">
+<h3 id="org955afe9"><span class="section-number-3">1.20.</span> earliest date</h3>
 <div class="outline-text-3" id="text-1-20">
 <p>
 编写函数 <code>earliest: (int*int*int) list -&gt; (int*int*int) option</code> ，满足：
@@ -805,8 +805,8 @@
 </div>
 
 
-<div id="outline-container-org480530c" class="outline-3">
-<h3 id="org480530c"><span class="section-number-3">1.21.</span> assoc list</h3>
+<div id="outline-container-org788efd8" class="outline-3">
+<h3 id="org788efd8"><span class="section-number-3">1.21.</span> assoc list</h3>
 <div class="outline-text-3" id="text-1-21">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">insert</span><span style="color: #DFDFDF;"> k v lst</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">)::</span>lst
@@ -838,8 +838,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 </div>
 
-<div id="outline-container-orgf3dda13" class="outline-3">
-<h3 id="orgf3dda13"><span class="section-number-3">1.22.</span> cards</h3>
+<div id="outline-container-org36ebb2f" class="outline-3">
+<h3 id="org36ebb2f"><span class="section-number-3">1.22.</span> cards</h3>
 <div class="outline-text-3" id="text-1-22">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">suit</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Clubs</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Diamonds</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Hearts</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Spades</span> <span style="color: #ff4500;">;;</span> <span style="color: #62686E;">(*</span><span style="color: #62686E;">&#33457;&#33394;</span><span style="color: #62686E;">*)</span>
@@ -864,8 +864,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-org59cf481" class="outline-3">
-<h3 id="org59cf481"><span class="section-number-3">1.23.</span> matching</h3>
+<div id="outline-container-orgf536c8e" class="outline-3">
+<h3 id="orgf536c8e"><span class="section-number-3">1.23.</span> matching</h3>
 <div class="outline-text-3" id="text-1-23">
 <p>
 为下面的每个模式，给出一个类型为 <code>int option list</code> 的值，使得它不能匹配上模式，并且它不是空list.
@@ -926,8 +926,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 
 
 
-<div id="outline-container-org5ffcd45" class="outline-3">
-<h3 id="org5ffcd45"><span class="section-number-3">1.24.</span> quadrant 象限</h3>
+<div id="outline-container-orgf1b7a93" class="outline-3">
+<h3 id="orgf1b7a93"><span class="section-number-3">1.24.</span> quadrant 象限</h3>
 <div class="outline-text-3" id="text-1-24">
 <p>
 完成下面的象限函数，它能返回给定一点(x,y)所在的象限。
@@ -977,8 +977,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-orge10b742" class="outline-3">
-<h3 id="orge10b742"><span class="section-number-3">1.25.</span> 使用 when 重写quadrant函数</h3>
+<div id="outline-container-orgbc2da10" class="outline-3">
+<h3 id="orgbc2da10"><span class="section-number-3">1.25.</span> 使用 when 重写quadrant函数</h3>
 <div class="outline-text-3" id="text-1-25">
 <p>
 不能用上一问的辅助函数
@@ -1001,8 +1001,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 
 
 
-<div id="outline-container-org42ddd18" class="outline-3">
-<h3 id="org42ddd18"><span class="section-number-3">1.26.</span> depth</h3>
+<div id="outline-container-org00f1ea8" class="outline-3">
+<h3 id="org00f1ea8"><span class="section-number-3">1.26.</span> depth</h3>
 <div class="outline-text-3" id="text-1-26">
 <p>
 编写函数 <code>depth: 'a tree -&gt; int</code> 返回从根到叶子节点的最长路径（节点个数)
@@ -1024,8 +1024,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-org66f4eaf" class="outline-3">
-<h3 id="org66f4eaf"><span class="section-number-3">1.27.</span> shape</h3>
+<div id="outline-container-org30beda3" class="outline-3">
+<h3 id="org30beda3"><span class="section-number-3">1.27.</span> shape</h3>
 <div class="outline-text-3" id="text-1-27">
 <p>
 编写函数 <code>same_shape: 'a tree -&gt; 'b tree -&gt; bool</code> ，它能判断两个tree是否有相同的形状，忽略在对应节点处的值的不同。
@@ -1057,8 +1057,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 
 
 
-<div id="outline-container-org92bc8bc" class="outline-3">
-<h3 id="org92bc8bc"><span class="section-number-3">1.28.</span> list max exn</h3>
+<div id="outline-container-orgdc78459" class="outline-3">
+<h3 id="orgdc78459"><span class="section-number-3">1.28.</span> list max exn</h3>
 <div class="outline-text-3" id="text-1-28">
 <p>
 编写函数 <code>list_max: int list -&gt; int</code> 它返回list中的最大整数；若list为空则引发异常 <code>Failure "list_max"</code>
@@ -1075,8 +1075,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-org1f98f59" class="outline-3">
-<h3 id="org1f98f59"><span class="section-number-3">1.29.</span> list max exn string</h3>
+<div id="outline-container-org0185553" class="outline-3">
+<h3 id="org0185553"><span class="section-number-3">1.29.</span> list max exn string</h3>
 <div class="outline-text-3" id="text-1-29">
 <p>
 编写函数 <code>list_max_string: int list -&gt; string</code> ，它返回一个包含list中最大整数的字符串。若list为空，则返回"empty"字符串。
@@ -1093,8 +1093,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-orgd6b7ae3" class="outline-3">
-<h3 id="orgd6b7ae3"><span class="section-number-3">1.30.</span> list max exn ounit</h3>
+<div id="outline-container-org43377f2" class="outline-3">
+<h3 id="org43377f2"><span class="section-number-3">1.30.</span> list max exn ounit</h3>
 <div class="outline-text-3" id="text-1-30">
 <p>
 编写两个OUnit测试来检测函数：list max exn 是否在list为空时正确地引发了异常，以及在list不空时返回了list中的最大值。
@@ -1123,8 +1123,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-org65756da" class="outline-3">
-<h3 id="org65756da"><span class="section-number-3">1.31.</span> 用二叉搜索树实现字典</h3>
+<div id="outline-container-orgf5a2a37" class="outline-3">
+<h3 id="orgf5a2a37"><span class="section-number-3">1.31.</span> 用二叉搜索树实现字典</h3>
 <div class="outline-text-3" id="text-1-31">
 <p>
 回顾实验 assoc list，用关联列表来实现字典 ，其插入函数是常数时间，但查找要花费线性时间。
@@ -1153,8 +1153,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </p>
 </div>
 
-<div id="outline-container-org698e133" class="outline-4">
-<h4 id="org698e133"><span class="section-number-4">1.31.1.</span> 查找 [✭✭]</h4>
+<div id="outline-container-org5a71a73" class="outline-4">
+<h4 id="org5a71a73"><span class="section-number-4">1.31.1.</span> 查找 [✭✭]</h4>
 <div class="outline-text-4" id="text-1-31-1">
 <p>
 写一个函数 <code>lookup : 'a -&gt; ('a*'b) tree -&gt; 'b option</code> 返回与给定键关联的值（如果存在）。
@@ -1172,8 +1172,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-orgd7ceb28" class="outline-4">
-<h4 id="orgd7ceb28"><span class="section-number-4">1.31.2.</span> 插入 [✭✭✭]</h4>
+<div id="outline-container-orgc7b2c5a" class="outline-4">
+<h4 id="orgc7b2c5a"><span class="section-number-4">1.31.2.</span> 插入 [✭✭✭]</h4>
 <div class="outline-text-4" id="text-1-31-2">
 <p>
 写一个函数 <code>insert : 'a -&gt; 'b -&gt; ('a*'b) tree -&gt; ('a*'b) tree</code> 它将新的键值映射添加到给定的二叉搜索树。 如果钥匙 已经映射到树中，输出树应该将键映射到 新的价值。
@@ -1202,8 +1202,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 
 
 
-<div id="outline-container-org7dce7d8" class="outline-4">
-<h4 id="org7dce7d8"><span class="section-number-4">1.31.3.</span> <code>is_bst</code> [✭✭✭✭]</h4>
+<div id="outline-container-org333a658" class="outline-4">
+<h4 id="org333a658"><span class="section-number-4">1.31.3.</span> <code>is_bst</code> [✭✭✭✭]</h4>
 <div class="outline-text-4" id="text-1-31-3">
 <p>
 编写函数 <code>is_bst: ('a * 'b) tree -&gt; bool</code> ，它返回true当且仅当给定的tree满足二叉搜索树的性质。
@@ -1211,7 +1211,7 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </p>
 </div>
 <ol class="org-ol">
-<li><a id="org992ff72"></a>提示<br />
+<li><a id="org55910cd"></a>提示<br />
 <div class="outline-text-5" id="text-1-31-3-1">
 <p>
 编写一个递归的辅助函数，它接收一个tree，返回下面三者之一：
@@ -1237,7 +1237,7 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </li>
 
 
-<li><a id="org8ed4d43"></a>solution<br />
+<li><a id="org6e9b9af"></a>solution<br />
 <div class="outline-text-5" id="text-1-31-3-2">
 <div class="org-src-container">
 <pre class="src src-ocaml">
@@ -1274,8 +1274,8 @@ lookup 4 <span style="color: #ff4500;">;;</span>
 </div>
 
 
-<div id="outline-container-org67875f4" class="outline-3">
-<h3 id="org67875f4"><span class="section-number-3">1.32.</span> quadrant poly (使用匿名Variant重写）</h3>
+<div id="outline-container-orgd940e7f" class="outline-3">
+<h3 id="orgd940e7f"><span class="section-number-3">1.32.</span> quadrant poly (使用匿名Variant重写）</h3>
 <div class="outline-text-3" id="text-1-32">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">sign</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">`Neg</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`Pos</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">`Zero</span> <span style="color: #f0e68c;">]</span>
