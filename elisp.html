@@ -1,0 +1,3250 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-05-18 三 21:52 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>elisp</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">elisp</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org57c8393">基本约定</a>
+<ul>
+<li><a href="#org4713afb">"the lisp reader/printer"</a></li>
+<li><a href="#org2a03f0c">nil的语义</a>
+<ul>
+<li><a href="#orgf6c8a6e">bool值false</a></li>
+<li><a href="#org936a501">名为nil的符号，其值为nil</a></li>
+<li><a href="#org68b0f9a">空列表 ()</a></li>
+</ul>
+</li>
+<li><a href="#org91dccab">真值的表示</a></li>
+<li><a href="#org9efbf8a">nil和t都是常量</a></li>
+<li><a href="#org7e817c0">判断是否为bool类型</a></li>
+</ul>
+</li>
+<li><a href="#org345b6c4">require / provide</a>
+<ul>
+<li><a href="#orgcc11bc2">在文件末尾导出模块</a></li>
+<li><a href="#orgd71c985">导入模块</a></li>
+<li><a href="#org5af6720">emacs的导入模块的寻找路径(load-path)</a></li>
+<li><a href="#orgeb7afa1">添加新的模块到load-path</a></li>
+<li><a href="#org3e42867">将当前目录下的每个目录的路径加入到loadpath中</a></li>
+</ul>
+</li>
+<li><a href="#org294377d">interactive</a>
+<ul>
+<li><a href="#orgeb15f3f">简介</a></li>
+<li><a href="#org2d8b82f">以光标位置为参数 "d"</a></li>
+<li><a href="#orgbd3a070">前缀参数 "P/p"</a></li>
+</ul>
+</li>
+<li><a href="#orgd3c2785">文件/目录相关</a>
+<ul>
+<li><a href="#orgdc50dcb">当前目录 default-directory</a></li>
+<li><a href="#org74d2bc4">查找包含指定文件的父目录 locate-dominating-file</a></li>
+<li><a href="#org350a9bd">打开文件 find-file</a></li>
+<li><a href="#org9f91cca">判断某文件是否存在 file-exists-p</a></li>
+<li><a href="#org2868472">获取目录的名字 directory-file-name</a></li>
+<li><a href="#orgf3af360">获取文件路径的目录部分 file-name-directory</a></li>
+<li><a href="#org7b39b70">将路径转换为绝对路径 </a></li>
+<li><a href="#orge12484b">返回目录形式的文件路径(加个斜线在最后) file-name-as-directory</a></li>
+</ul>
+</li>
+<li><a href="#org0fe6527">list相关</a>
+<ul>
+<li><a href="#org94d6e1f">note</a>
+<ul>
+<li><a href="#orgf2a637c">判断是否为lisp类型变量 listp</a></li>
+<li><a href="#org9eafa4c">将新元素加入到list头部 </a></li>
+<li><a href="#orgd321cec">将新元素添加到list队首 push </a></li>
+<li><a href="#org0b6e8ff">对list作用上一函数,返回被映射的新list : mapcar</a></li>
+<li><a href="#orgbb3cb36">遍历list中的每个元素,并使用元素做一些事情(相当于对list使用for) : dolist</a></li>
+<li><a href="#org4d83365">在K-V对的list中找指定key的pair assq</a></li>
+<li><a href="#orgb2d3188">将每个元素映射后的结果用分隔符连接为字符串 mapconcat</a></li>
+</ul>
+</li>
+<li><a href="#org9381c56">list和cons cell</a></li>
+<li><a href="#orgaeb05a7">和list相关的谓词</a>
+<ul>
+<li><a href="#org5ad6a3b">判断是否为cons-cell? consp</a></li>
+<li><a href="#orgb7ee680">判断是否为原子类型 atom</a></li>
+<li><a href="#org8344023">判断是否为list listp</a></li>
+<li><a href="#org17b01db">判断对象是否为空 null</a></li>
+<li><a href="#orgab2a1a0">判断是否为正规list(proper-list) proper-list-p</a></li>
+</ul>
+</li>
+<li><a href="#org2114217">访问list中的元素</a>
+<ul>
+<li><a href="#org2ef5e7e">访问cons-cell中的car部分 car/car-safe</a></li>
+<li><a href="#org8e3855b">访问cons-cell中的cdr部分 cdr/cdr-safe</a></li>
+<li><a href="#orgf0016a1">移除list中首个元素,并返回它 pop</a></li>
+<li><a href="#org048f5d9">返回list中指定索引处元素 nth</a></li>
+<li><a href="#org80d034b">返回list中第N个CDR nthcdr</a></li>
+<li><a href="#orge574ad8">返回list中最后一个cons-cell last</a></li>
+<li><a href="#org3881318">去掉list中后N个元素(并返回剩下元素的拷贝)  butlast</a></li>
+<li><a href="#org930b422">去掉list中后N个元素(修改原来的list,无拷贝) nbutlast</a></li>
+<li><a href="#org14a9f42">安全的计算list长度 safe-length</a></li>
+<li><a href="#orgc82b98c">两次CAR操作 caar</a></li>
+<li><a href="#org1396980">两次CDR操作 cddr</a></li>
+<li><a href="#org89b4267">CAR+CDR操作 cadr</a></li>
+<li><a href="#org735aea6">CDR+CAR操作 cdar</a></li>
+</ul>
+</li>
+<li><a href="#org482720b">创建list/cons-cell</a>
+<ul>
+<li><a href="#org5329c03">创建cons-cell/ 在list头部添加元素  cons</a></li>
+<li><a href="#orgb6fdd62">创建N个指定元素的list make-list</a></li>
+<li><a href="#org29e2ba7">将一系列对象连成list append</a></li>
+<li><a href="#org31becd4">递归复制cons-cell  copy-tree</a></li>
+<li><a href="#orgd601ff6">将树tree转为list flatten-tree</a></li>
+<li><a href="#org2af2a3b">产生指定范围内的等差数列list : number-sequence</a></li>
+</ul>
+</li>
+<li><a href="#org9ebde47">修改list类型变量</a>
+<ul>
+<li><a href="#orgdf6e9c0">添加元素到list变量头部  push</a></li>
+<li><a href="#orgd8818d2">只要不重复就添加到list头部 add-to-list</a></li>
+<li><a href="#orge95b255"><span class="todo TODO">TODO</span> ??? add-to-ordered-list ???</a></li>
+</ul>
+</li>
+<li><a href="#org6f65d7d">修改已经存在的list结构</a>
+<ul>
+<li><a href="#orga95dabe">setcar</a></li>
+<li><a href="#orgfe7de6b">setcdr</a></li>
+<li><a href="#org7157d94">rearrangement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org02f0a4d">数据类型</a>
+<ul>
+<li><a href="#org9039e4b">简介</a></li>
+<li><a href="#org072d02b">对象的输出表示 &amp;&amp; 读取语法</a>
+<ul>
+<li><a href="#orga4b1982"><span class="todo TODO">TODO</span> 特殊的读取语法</a></li>
+</ul>
+</li>
+<li><a href="#orga12d255">注释</a></li>
+<li><a href="#orga13f892">和编程相关的类型</a>
+<ul>
+<li><a href="#org1939f93">整数类型</a></li>
+<li><a href="#org115ac49">浮点数类型</a></li>
+<li><a href="#orgcebab5b">字符表示</a></li>
+<li><a href="#orgbac24fb">符号类型</a></li>
+<li><a href="#orgb98b5bb">顺序/序列类型 sequence</a></li>
+<li><a href="#org6919e51">hash-table类型</a></li>
+<li><a href="#orgebd6397">函数类型</a></li>
+<li><a href="#org9e227b4">宏macro类型</a></li>
+<li><a href="#org64fa4c7">原生函数类型</a></li>
+<li><a href="#org0cc8497">字节码函数类型</a></li>
+<li><a href="#org3eabb4c">record类型</a></li>
+<li><a href="#orgbd44255">type-desciptors 类型描述符</a></li>
+<li><a href="#org5a959f7">autoload类型</a></li>
+<li><a href="#org59d6045">finalizer类型</a></li>
+</ul>
+</li>
+<li><a href="#orgc08a3ec">和编辑有关的类型 </a>
+<ul>
+<li><a href="#orgfc4a510">buffer类型</a></li>
+<li><a href="#orgd8e2fd9">标记类型 (buffer中的位置)</a></li>
+<li><a href="#orgc516d6c">窗口类型</a></li>
+<li><a href="#org3e87695">框架类型</a></li>
+<li><a href="#orgbaf5a05">终端类型</a></li>
+<li><a href="#orgeea7f72">窗口配置类型</a></li>
+<li><a href="#orgccd05e7">框架配置类型</a></li>
+<li><a href="#org5b90043">进程类型</a></li>
+<li><a href="#org074c8ec">线程类型</a></li>
+<li><a href="#org6c04df1">mutex类型(排他锁)</a></li>
+<li><a href="#orgb2ac268">条件变量类型</a></li>
+<li><a href="#org5b5f1cb">流类型</a></li>
+<li><a href="#org7b78dfd">keymap类型</a></li>
+<li><a href="#org67ae7d0">overlay类型</a></li>
+<li><a href="#org45df2d0">字体类型</a></li>
+</ul>
+</li>
+<li><a href="#orga8106d5"><span class="todo TODO">TODO</span> 环形对象的read-syntax</a></li>
+<li><a href="#org4063ba4"><span class="todo TODO">TODO</span> 类型谓词</a></li>
+<li><a href="#orgae13bd1">相等性判断</a>
+<ul>
+<li><a href="#orgf25d64e">eq</a></li>
+<li><a href="#org045a638">equal</a></li>
+<li><a href="#org426b992">equal-including-properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgd9f5cfb">显示</a>
+<ul>
+<li><a href="#orgd51fe33">自动换行</a></li>
+</ul>
+</li>
+<li><a href="#orga863568">数字</a>
+<ul>
+<li><a href="#orgf76046d">整数基础</a>
+<ul>
+<li><a href="#orgbab7d4f">整数的表示</a></li>
+<li><a href="#org61eb949">字符编码的范围</a></li>
+<li><a href="#org9dc91a9">整数的分类</a></li>
+<li><a href="#org723877d">变量</a></li>
+</ul>
+</li>
+<li><a href="#orgeaab639">浮点数基础</a>
+<ul>
+<li><a href="#orgcc249ab">函数</a></li>
+</ul>
+</li>
+<li><a href="#org9e523da">数字的类型谓词</a>
+<ul>
+<li><a href="#org849d48f">是否为bignum? bignump</a></li>
+<li><a href="#orgfb1127a">是否为fixnum? fixnump</a></li>
+<li><a href="#org4cf95d1">是否为浮点数? floatp</a></li>
+<li><a href="#org5fb25ee">是否为整数? integerp</a></li>
+<li><a href="#orgfdd3ce9">是否为数字? numberp</a></li>
+<li><a href="#orgdd6e478">是否为自然数(非负整数)? natnump / wholenump</a></li>
+<li><a href="#orgacd0ecd">是否为零? zerop</a></li>
+</ul>
+</li>
+<li><a href="#org0047e1b">数字的比较运算</a>
+<ul>
+<li><a href="#orgb781bea">函数</a></li>
+</ul>
+</li>
+<li><a href="#orgd6e81e9">数值转换</a>
+<ul>
+<li><a href="#orgd24e123">整数转浮点数 float</a></li>
+<li><a href="#org5fb63d5">浮点数舍入为整数 </a></li>
+</ul>
+</li>
+<li><a href="#org88968c4">算术运算</a>
+<ul>
+<li><a href="#orgea8e552">加一 1+</a></li>
+<li><a href="#org4563237">减一 1-</a></li>
+<li><a href="#org46b11ae">整数求余 %</a></li>
+<li><a href="#org3705d3f">mod</a></li>
+</ul>
+</li>
+<li><a href="#org1415cd6">返回浮点类型的舍入运算</a></li>
+<li><a href="#org72b2ff0">位运算</a>
+<ul>
+<li><a href="#orgc172bb7">算术移位 ash</a></li>
+<li><a href="#orga0e71f0">逻辑移位 lsh</a></li>
+<li><a href="#org2169405">逻辑 与 或 非 异或</a></li>
+<li><a href="#orga9cba63">logcount</a></li>
+</ul>
+</li>
+<li><a href="#orgbfb84ff">标准的数学函数</a></li>
+<li><a href="#org28d2a8f">随机数</a></li>
+</ul>
+</li>
+<li><a href="#org46f4160">字符串和字符</a>
+<ul>
+<li><a href="#orgef37b57"><span class="todo TODO">TODO</span> 简介</a></li>
+<li><a href="#org9bc3c4e">和字符串相关的谓词</a>
+<ul>
+<li><a href="#orgeebb7f2">判断对象是否为string？stringp</a></li>
+<li><a href="#org762b8ca">是否为string或空nil？string-or-null-p</a></li>
+<li><a href="#org42fce17">是否为字符或string类型？char-or-string-p</a></li>
+</ul>
+</li>
+<li><a href="#orga1c031a">产生新字符串的操作</a>
+<ul>
+<li><a href="#orgf8ea258">用N个字符创建字符串 make-string</a></li>
+<li><a href="#org4924424">用指定字符拼成串 string</a></li>
+<li><a href="#orgc5298d4">返回子串 substring</a></li>
+<li><a href="#org9b5a3ab">返回字串并去掉其文本属性 substring-no-properties</a></li>
+<li><a href="#org1dc56ba">连接字符串 concat</a></li>
+<li><a href="#org9381ebc">用分割符切分字符串为list split-string</a></li>
+</ul>
+</li>
+<li><a href="#org4086e77">修改字符串</a>
+<ul>
+<li><a href="#org0aa2017">修改指定索引上的字符 aset</a></li>
+<li><a href="#org803d340">将字符串从指定位置开始改为新串 store-substring</a></li>
+<li><a href="#orgdd4ba53">将一个字符串的内容清0 clear-string</a></li>
+</ul>
+</li>
+<li><a href="#org2c7ba31">比较字符串</a>
+<ul>
+<li><a href="#org022fb30">字符串比较 string=/string-equal</a></li>
+<li><a href="#orgf7c35f2">是否为某串的前/后缀? string-prefix-p  / string-suffix-p</a></li>
+<li><a href="#org946e987">取两字符串的一部分进行比较 compare-strings</a></li>
+<li><a href="#orgf74296c">比较key为string的alist,并返回对应cons  assoc-string</a></li>
+</ul>
+</li>
+<li><a href="#orgac8558b">字符串/字符的转换</a>
+<ul>
+<li><a href="#orgc6517f1">数字转为字符串 number-to-string</a></li>
+<li><a href="#org3d85072">字符串转为数字 string-to-string</a></li>
+<li><a href="#org52299cf">字符 &lt;==&gt; 字符串 char-to-string / string-to-char</a></li>
+</ul>
+</li>
+<li><a href="#orge04a244">格式化字符串</a></li>
+<li><a href="#org6e6b128"><span class="todo TODO">TODO</span> 自定义格式化</a></li>
+<li><a href="#org5967026"><span class="todo TODO">TODO</span> 大小写转换</a></li>
+<li><a href="#org9f639b1"><span class="todo TODO">TODO</span> case-table</a></li>
+<li><a href="#orgef5e330">note</a>
+<ul>
+<li><a href="#orgcac6c4b">按照指定格式产生字符串format</a></li>
+<li><a href="#org1649c09">获取某shell命令的返回结果字符串 shell-command-to-string</a></li>
+<li><a href="#orge2013d1">进行字符串匹配 string-match</a></li>
+<li><a href="#org9c4842b">返回string-match匹配上的模式串以及其中被()标记的部分 match-string</a></li>
+<li><a href="#org3b32970">替换掉字符串中的某部分 replace-regexp-in-string</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgfa9857c">文本属性</a></li>
+<li><a href="#org223b195">buffer</a>
+<ul>
+<li><a href="#orgf5e95ef">current buffer</a>
+<ul>
+<li><a href="#orgd7d6f99">简介</a></li>
+<li><a href="#orgdd1573c">current-buffer</a></li>
+<li><a href="#orga3aedc6">set-buffer</a></li>
+<li><a href="#orgcb99e96">保存current-buffer</a></li>
+<li><a href="#orgc722d6b">M-x启动的命令运行结束后，emacs会自动调用set-buffer来复位current buffer</a></li>
+<li><a href="#org1fda9a4">append-to-buffer</a></li>
+<li><a href="#org097ee3b">例子</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org714d170">操作系统接口</a>
+<ul>
+<li><a href="#org5e94a14">空闲定时器</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<pre class="example">
+M-x org-indent-mode
+</pre>
+
+
+
+<div id="outline-container-org57c8393" class="outline-2">
+<h2 id="org57c8393">基本约定</h2>
+<div class="outline-text-2" id="text-org57c8393">
+</div>
+<div id="outline-container-org4713afb" class="outline-3">
+<h3 id="org4713afb">"the lisp reader/printer"</h3>
+<div class="outline-text-3" id="text-org4713afb">
+<p>
+指代从lisp对象的文本表示转换为实际lisp对象的程序reader
+反之为printer
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2a03f0c" class="outline-3">
+<h3 id="org2a03f0c">nil的语义</h3>
+<div class="outline-text-3" id="text-org2a03f0c">
+</div>
+<div id="outline-container-orgf6c8a6e" class="outline-4">
+<h4 id="orgf6c8a6e">bool值false</h4>
+</div>
+<div id="outline-container-org936a501" class="outline-4">
+<h4 id="org936a501">名为nil的符号，其值为nil</h4>
+</div>
+<div id="outline-container-org68b0f9a" class="outline-4">
+<h4 id="org68b0f9a">空列表 ()</h4>
+</div>
+</div>
+
+<div id="outline-container-org91dccab" class="outline-3">
+<h3 id="org91dccab">真值的表示</h3>
+<div class="outline-text-3" id="text-org91dccab">
+<p>
+任何非nil的值都能表示true。但为了语义上的清析，多用“t” 来表示true
+这是一个名字为t，值为t的变量。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9efbf8a" class="outline-3">
+<h3 id="org9efbf8a">nil和t都是常量</h3>
+<div class="outline-text-3" id="text-org9efbf8a">
+<p>
+对它们的更改会导致setting-constant错误的产生。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7e817c0" class="outline-3">
+<h3 id="org7e817c0">判断是否为bool类型</h3>
+<div class="outline-text-3" id="text-org7e817c0">
+<p>
+(booleanp var)
+</p>
+
+<p>
+(booleanp nil)
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org345b6c4" class="outline-2">
+<h2 id="org345b6c4">require / provide</h2>
+<div class="outline-text-2" id="text-org345b6c4">
+</div>
+<div id="outline-container-orgcc11bc2" class="outline-3">
+<h3 id="orgcc11bc2">在文件末尾导出模块</h3>
+<div class="outline-text-3" id="text-orgcc11bc2">
+<p>
+(provide 'module-name)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd71c985" class="outline-3">
+<h3 id="orgd71c985">导入模块</h3>
+<div class="outline-text-3" id="text-orgd71c985">
+<p>
+(require 'module-name)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5af6720" class="outline-3">
+<h3 id="org5af6720">emacs的导入模块的寻找路径(load-path)</h3>
+<div class="outline-text-3" id="text-org5af6720">
+<p>
+在变量 load-path 中记录
+(<i>home/sun</i>.emacs.d/company-english-helper <i>home/sun</i>.emacs.d/insert-translated-name  。。。)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgeb7afa1" class="outline-3">
+<h3 id="orgeb7afa1">添加新的模块到load-path</h3>
+<div class="outline-text-3" id="text-orgeb7afa1">
+<p>
+(add-to-list 'load-path (expand-file-name "目录路径"))
+</p>
+
+<p>
+<a href="#org9ab6f32">No description for this link</a>
+<a href="#org1fe5f8b">No description for this link</a>
+<a href="#orga412362">No description for this link</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3e42867" class="outline-3">
+<h3 id="org3e42867">将当前目录下的每个目录的路径加入到loadpath中</h3>
+<div class="outline-text-3" id="text-org3e42867">
+<p>
+(normal-top-level-add-subdirs-to-load-path)
+</p>
+
+<p>
+Recursively add all subdirectories of ‘default-directory’ to ‘load-path’.
+</p>
+
+<p>
+eg: 
+default-directory == "./src/"
+则将 ./src/cpp/ ./src/mynote/ 等目录路径加入load-path中
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org294377d" class="outline-2">
+<h2 id="org294377d">interactive</h2>
+<div class="outline-text-2" id="text-org294377d">
+</div>
+<div id="outline-container-orgeb15f3f" class="outline-3">
+<h3 id="orgeb15f3f">简介</h3>
+<div class="outline-text-3" id="text-orgeb15f3f">
+<p>
+被interactive标记的函数可以通过emacs命令的方式被调用。
+且interactive有可选参数，用于对传入函数的参数进行控制。
+每个参数的处理方式对应一个字母，若有多个参数则要用 \n 将多个控制字符分隔开，如："n\ns"
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #62686E;">;; </span><span style="color: #62686E;">&#22312;STR&#21518;&#36830;&#25509;N&#20010;hello&#65292;&#24182;&#23558;&#32467;&#26524;&#25554;&#20837;&#21040;&#20809;&#26631;&#22788;</span>
+(<span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">test-arg</span>(n str)
+  (<span style="color: #51afef;">interactive</span> <span style="color: #7bc275;">"n\ns"</span>)
+  (<span style="color: #51afef;">setq</span> i 0)
+  (<span style="color: #51afef;">setq</span> inserted str)
+  (<span style="color: #51afef;">while</span> (&lt; i n)
+    (<span style="color: #51afef;">setq</span>  inserted  (concat inserted <span style="color: #7bc275;">" hello"</span>))
+    (<span style="color: #51afef;">setq</span> i (+ 1 i))
+    )
+  (insert inserted)
+  )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2d8b82f" class="outline-3">
+<h3 id="org2d8b82f">以光标位置为参数 "d"</h3>
+<div class="outline-text-3" id="text-org2d8b82f">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #62686E;">;; </span><span style="color: #62686E;">&#23558;&#24403;&#21069;buffer&#20174;&#24320;&#22836;&#21040;&#20809;&#26631;&#22788;&#30340;&#20869;&#23481;&#36861;&#21152;&#21040;&#25351;&#23450;buffer&#20013;</span>
+ (<span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">test-arg-p</span>(point)
+   (<span style="color: #51afef;">interactive</span> <span style="color: #7bc275;">"d"</span>)
+   (append-to-buffer <span style="color: #7bc275;">"*scratch*"</span> (point-min) point)
+ )
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbd3a070" class="outline-3">
+<h3 id="orgbd3a070">前缀参数 "P/p"</h3>
+<div class="outline-text-3" id="text-orgbd3a070">
+<p>
+比如常用的：
+<code>M Num M-x 命令</code>
+或
+<code>C-u Num M-x 命令</code>
+</p>
+
+<p>
+M或C-u后面紧跟的数字就是前缀参数 prefix-argument
+在函数定义中对应于第一个可选optional参数
+用C-u调用命令时,若不给出数字作为前缀参数的情况下,默认会以 '(4 . nil) == (4)作为前缀参数
+</p>
+
+<p>
+interactive函数中的模式字符：P、p可以控制它
+P 则将保留参数的原始形式，没输入就是nil
+p 则将参数强制转换为数字形式，会将未输入对应nil转换为1（丢失掉了空语义）
+</p>
+
+<p>
+直接用M-x调用(interactive "p/P") 标记的函数时,若函数带有可选参数,则会默认
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="outline-container-orgd3c2785" class="outline-2">
+<h2 id="orgd3c2785">文件/目录相关</h2>
+<div class="outline-text-2" id="text-orgd3c2785">
+</div>
+<div id="outline-container-orgdc50dcb" class="outline-3">
+<h3 id="orgdc50dcb">当前目录 default-directory</h3>
+<div class="outline-text-3" id="text-orgdc50dcb">
+<p>
+这是一个类似环境变量的东西
+</p>
+</div>
+</div>
+
+<div id="outline-container-org74d2bc4" class="outline-3">
+<h3 id="org74d2bc4">查找包含指定文件的父目录 locate-dominating-file</h3>
+<div class="outline-text-3" id="text-org74d2bc4">
+<p>
+(locate-dominating-file  "start-dir" "target-filename" ) &#x2013;&gt; 父目录
+</p>
+</div>
+</div>
+
+<div id="outline-container-org350a9bd" class="outline-3">
+<h3 id="org350a9bd">打开文件 find-file</h3>
+</div>
+<div id="outline-container-org9f91cca" class="outline-3">
+<h3 id="org9f91cca">判断某文件是否存在 file-exists-p</h3>
+</div>
+<div id="outline-container-org2868472" class="outline-3">
+<h3 id="org2868472">获取目录的名字 directory-file-name</h3>
+<div class="outline-text-3" id="text-org2868472">
+<p>
+<i>home/sun</i>   &#x2014;&gt;   /home/sun
+(少了路径最后的斜线)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf3af360" class="outline-3">
+<h3 id="orgf3af360">获取文件路径的目录部分 file-name-directory</h3>
+<div class="outline-text-3" id="text-orgf3af360">
+<p>
+<i>home/sun/test.md  &#x2014;&gt; /home/sun</i> 
+(返回的目录路径 末尾最后有斜线)
+</p>
+</div>
+</div>
+<div id="outline-container-org7b39b70" class="outline-3">
+<h3 id="org7b39b70">将路径转换为绝对路径 <a id="orga412362"></a></h3>
+<div class="outline-text-3" id="text-org7b39b70">
+<p>
+(expand-file-name "path")  将路径一律转换为绝对路径
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge12484b" class="outline-3">
+<h3 id="orge12484b">返回目录形式的文件路径(加个斜线在最后) file-name-as-directory</h3>
+<div class="outline-text-3" id="text-orge12484b">
+<p>
+(file-name-as-directory "./src") &#x2013;&gt; "./src/"
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0fe6527" class="outline-2">
+<h2 id="org0fe6527">list相关</h2>
+<div class="outline-text-2" id="text-org0fe6527">
+</div>
+<div id="outline-container-org94d6e1f" class="outline-3">
+<h3 id="org94d6e1f">note</h3>
+<div class="outline-text-3" id="text-org94d6e1f">
+<p>
+(cons  &#x2026;)
+(consp var)
+(list &#x2026;)
+(car list/cons)
+(cdr list/cons)
+</p>
+</div>
+
+<div id="outline-container-orgf2a637c" class="outline-4">
+<h4 id="orgf2a637c">判断是否为lisp类型变量 listp</h4>
+<div class="outline-text-4" id="text-orgf2a637c">
+<p>
+determine if the type of a variable is List 
+(listp var) 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9eafa4c" class="outline-4">
+<h4 id="org9eafa4c">将新元素加入到list头部 <a id="org9ab6f32"></a></h4>
+<div class="outline-text-4" id="text-org9eafa4c">
+<p>
+(add-to-list 'list-name  (new-element) )
+只要list中没有此元素，则将它添加到list中 并返回结果list
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd321cec" class="outline-4">
+<h4 id="orgd321cec">将新元素添加到list队首 push <a id="org1fe5f8b"></a></h4>
+<div class="outline-text-4" id="text-orgd321cec">
+<p>
+(push element list)
+</p>
+
+<p>
+相当于 (set list (cons element list)) 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org0b6e8ff" class="outline-4">
+<h4 id="org0b6e8ff">对list作用上一函数,返回被映射的新list : mapcar</h4>
+<div class="outline-text-4" id="text-org0b6e8ff">
+<p>
+(mapcar func list ) &#x2013;&gt; new-list
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbb3cb36" class="outline-4">
+<h4 id="orgbb3cb36">遍历list中的每个元素,并使用元素做一些事情(相当于对list使用for) : dolist</h4>
+<div class="outline-text-4" id="text-orgbb3cb36">
+<p>
+(dolist (element  list)
+(;; 对element进行操作)
+)
+</p>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org4d83365" class="outline-4">
+<h4 id="org4d83365">在K-V对的list中找指定key的pair assq</h4>
+<div class="outline-text-4" id="text-org4d83365">
+<p>
+(assq key pair-list) 
+因为是用eq对地址进行比较，因此一般用在以symbol为key的情况下。
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb2d3188" class="outline-4">
+<h4 id="orgb2d3188">将每个元素映射后的结果用分隔符连接为字符串 mapconcat</h4>
+<div class="outline-text-4" id="text-orgb2d3188">
+<p>
+(mapconcat func list 分隔符) 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9381c56" class="outline-3">
+<h3 id="org9381c56">list和cons cell</h3>
+<div class="outline-text-3" id="text-org9381c56">
+<p>
+list在lisp中不是基本数据类型, 它是由cons-cell构成的. cons-cell是一个有序对.
+list是一系列cons cell链接而成的,每个cons cell都引用下一个cons cell. list中的每个元素都对应于一个cons-cell
+每个cons-cell的car都存放着list中的一个元素, 其cdr用于链接list中的其它cons-cell. 
+约定上, list中的最后一个cons-cell的cdr是nil. 我们称这样以nil结尾的结构为 <code>正规list</code> . 在lisp中nil即表示符号也表示空列表.
+为了方便nil被视为 (nil . nil)
+</p>
+
+<p>
+若一个list的最后一个cons-cell的cdr不是nil, 则将这种list 称为 ~dotted-list. 因为其输出表示时用点对记号表示的.
+还有一种可能性就是某些cons-cell的cdr指向list中前面的cons-cell, 称这种list为环形list
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgaeb05a7" class="outline-3">
+<h3 id="orgaeb05a7">和list相关的谓词</h3>
+<div class="outline-text-3" id="text-orgaeb05a7">
+</div>
+<div id="outline-container-org5ad6a3b" class="outline-4">
+<h4 id="org5ad6a3b">判断是否为cons-cell? consp</h4>
+</div>
+
+<div id="outline-container-orgb7ee680" class="outline-4">
+<h4 id="orgb7ee680">判断是否为原子类型 atom</h4>
+<div class="outline-text-4" id="text-orgb7ee680">
+<p>
+atom == !consp
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8344023" class="outline-4">
+<h4 id="org8344023">判断是否为list listp</h4>
+<div class="outline-text-4" id="text-org8344023">
+<p>
+nlistp == ! lisp
+</p>
+</div>
+</div>
+
+<div id="outline-container-org17b01db" class="outline-4">
+<h4 id="org17b01db">判断对象是否为空 null</h4>
+</div>
+
+<div id="outline-container-orgab2a1a0" class="outline-4">
+<h4 id="orgab2a1a0">判断是否为正规list(proper-list) proper-list-p</h4>
+</div>
+</div>
+
+<div id="outline-container-org2114217" class="outline-3">
+<h3 id="org2114217">访问list中的元素</h3>
+<div class="outline-text-3" id="text-org2114217">
+</div>
+<div id="outline-container-org2ef5e7e" class="outline-4">
+<h4 id="org2ef5e7e">访问cons-cell中的car部分 car/car-safe</h4>
+<div class="outline-text-4" id="text-org2ef5e7e">
+<p>
+car-safe会判断对象是否为cons-cell类型, 如不是则会返回空
+</p>
+</div>
+</div>
+<div id="outline-container-org8e3855b" class="outline-4">
+<h4 id="org8e3855b">访问cons-cell中的cdr部分 cdr/cdr-safe</h4>
+</div>
+
+<div id="outline-container-orgf0016a1" class="outline-4">
+<h4 id="orgf0016a1">移除list中首个元素,并返回它 pop</h4>
+<div class="outline-text-4" id="text-orgf0016a1">
+<p>
+(pop '(1 3 4)) ==&gt; 1 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org048f5d9" class="outline-4">
+<h4 id="org048f5d9">返回list中指定索引处元素 nth</h4>
+<div class="outline-text-4" id="text-org048f5d9">
+<p>
+(nth 0 '(1 2 3)) &#x2013;&gt; 1 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org80d034b" class="outline-4">
+<h4 id="org80d034b">返回list中第N个CDR nthcdr</h4>
+<div class="outline-text-4" id="text-org80d034b">
+<p>
+(nthcdr 0 '(1 3 4)) &#x2013;&gt; '(1 3 4)
+(nthcdr 1 '(1 3 4)) &#x2013;&gt; '(3 4)
+(nthcdr 2 '(1 3 4)) &#x2013;&gt; '(4)
+(nthcdr 3 '(1 3 4)) &#x2013;&gt; nil
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge574ad8" class="outline-4">
+<h4 id="orge574ad8">返回list中最后一个cons-cell last</h4>
+<div class="outline-text-4" id="text-orge574ad8">
+<p>
+(last '(1 2 3)) &#x2013;&gt; (1)
+(last '(2)) &#x2013;&gt; (2) 
+其返回结果的CAR是list的最后一个元素
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3881318" class="outline-4">
+<h4 id="org3881318">去掉list中后N个元素(并返回剩下元素的拷贝)  butlast</h4>
+<div class="outline-text-4" id="text-org3881318">
+<p>
+(butlast '(1 2 3)) &#x2013;&gt; (1 2)
+(butlast '(1 2 3) 1 ) &#x2013;&gt; (1 2)
+(butlast '(1 2 3) 2 ) &#x2013;&gt; (1) 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org930b422" class="outline-4">
+<h4 id="org930b422">去掉list中后N个元素(修改原来的list,无拷贝) nbutlast</h4>
+</div>
+
+<div id="outline-container-org14a9f42" class="outline-4">
+<h4 id="org14a9f42">安全的计算list长度 safe-length</h4>
+<div class="outline-text-4" id="text-org14a9f42">
+<p>
+不用担心环形list导致的无限循环
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc82b98c" class="outline-4">
+<h4 id="orgc82b98c">两次CAR操作 caar</h4>
+<div class="outline-text-4" id="text-orgc82b98c">
+<p>
+(caar list)
+</p>
+</div>
+</div>
+<div id="outline-container-org1396980" class="outline-4">
+<h4 id="org1396980">两次CDR操作 cddr</h4>
+</div>
+<div id="outline-container-org89b4267" class="outline-4">
+<h4 id="org89b4267">CAR+CDR操作 cadr</h4>
+</div>
+<div id="outline-container-org735aea6" class="outline-4">
+<h4 id="org735aea6">CDR+CAR操作 cdar</h4>
+</div>
+</div>
+
+<div id="outline-container-org482720b" class="outline-3">
+<h3 id="org482720b">创建list/cons-cell</h3>
+<div class="outline-text-3" id="text-org482720b">
+</div>
+<div id="outline-container-org5329c03" class="outline-4">
+<h4 id="org5329c03">创建cons-cell/ 在list头部添加元素  cons</h4>
+<div class="outline-text-4" id="text-org5329c03">
+<p>
+(cons 1 '(2)) &#x2013;&gt; (1 2) == (1 . (2 . nil))
+</p>
+
+<p>
+(cons 1 '() ) &#x2013;&gt; (1) == (1 . nil)
+</p>
+
+<p>
+(cons 1 2) &#x2013;&gt; (1 . 2) 
+</p>
+</div>
+</div>
+<div id="outline-container-orgb6fdd62" class="outline-4">
+<h4 id="orgb6fdd62">创建N个指定元素的list make-list</h4>
+<div class="outline-text-4" id="text-orgb6fdd62">
+<p>
+(make-list N elem)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org29e2ba7" class="outline-4">
+<h4 id="org29e2ba7">将一系列对象连成list append</h4>
+<div class="outline-text-4" id="text-org29e2ba7">
+<p>
+append 一系列序列类型的对象 (最后一个必为list!) 
+(append '(1 3) '(2 4) ) &#x2013;&gt; (1 3 2 4)
+</p>
+
+<p>
+该函数会复制除了最后一个参数之外的所有参数, 再和最后一个参数组合成list
+这衍生出了 <code>复制list</code> 的方法
+(append 要复制的list  nil ) &#x2013;&gt; list副本
+</p>
+</div>
+</div>
+
+<div id="outline-container-org31becd4" class="outline-4">
+<h4 id="org31becd4">递归复制cons-cell  copy-tree</h4>
+<div class="outline-text-4" id="text-org31becd4">
+<p>
+(copy-tree tree/cons-cell类型  [是否复制vector])
+通过递归复制将产生一个新的cons-cell. 
+</p>
+
+<p>
+参数可以是非cons-cell类型的, 但这样不会导致复制, 而是简单地返回该参数对应的对象.
+除非参数是个vector类型的对象, 且将第三个参数设为t
+</p>
+
+<p>
+例子
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #51afef;">setq</span> vec [2 3 4])
+(message <span style="color: #7bc275;">"%s"</span> (eq vec (copy-tree vec))) <span style="color: #62686E;">;;</span><span style="color: #62686E;">--&gt; t &#35828;&#26126;&#26159;&#21516;&#19968;&#23545;&#35937;,vector&#24182;&#27809;&#26377;&#21457;&#29983;&#22797;&#21046;</span>
+(message <span style="color: #7bc275;">"%s"</span> (eq vec (copy-tree vec t)) ) --&gt; nil &#21363;&#19981;&#26159;&#21516;&#19968;&#23545;&#35937;,&#21457;&#29983;&#20102;&#23545;vector&#30340;&#22797;&#21046;
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgd601ff6" class="outline-4">
+<h4 id="orgd601ff6">将树tree转为list flatten-tree</h4>
+</div>
+
+
+
+<div id="outline-container-org2af2a3b" class="outline-4">
+<h4 id="org2af2a3b">产生指定范围内的等差数列list : number-sequence</h4>
+<div class="outline-text-4" id="text-org2af2a3b">
+<p>
+(number-sequence 开始 结束 公差 ) 
+</p>
+
+<p>
+例子
+(number-sequence 2 10)  &#x2013;&gt; (2 3 4 5 6 7 8 9 10) 
+</p>
+
+<p>
+(number-sequence 10 2 -1) &#x2013;&gt; (10 9 8 7 6 5 4 3 2) 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9ebde47" class="outline-3">
+<h3 id="org9ebde47">修改list类型变量</h3>
+<div class="outline-text-3" id="text-org9ebde47">
+</div>
+<div id="outline-container-orgdf6e9c0" class="outline-4">
+<h4 id="orgdf6e9c0">添加元素到list变量头部  push</h4>
+<div class="outline-text-4" id="text-orgdf6e9c0">
+<p>
+(push 新元素  list变量) == (set list变量 (cons list变量 新元素))
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgd8818d2" class="outline-4">
+<h4 id="orgd8818d2">只要不重复就添加到list头部 add-to-list</h4>
+<div class="outline-text-4" id="text-orgd8818d2">
+<p>
+(add-to-list list对象  元素 )
+</p>
+
+<p>
+(add-to-list '(2 3 4) 3) ==&gt; (2 3 4)
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orge95b255" class="outline-4">
+<h4 id="orge95b255"><span class="todo TODO">TODO</span> ??? add-to-ordered-list ???</h4>
+<div class="outline-text-4" id="text-orge95b255">
+<p>
+(add-to-ordered-list list变量  元素 [位置] ) 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #51afef;">let*</span> ((foo '(b d e) ))
+(add-to-ordered-list 'foo 'a )
+(message <span style="color: #7bc275;">"%s"</span>  foo) <span style="color: #62686E;">;; </span><span style="color: #62686E;">--&gt; a b d e </span>
+)
+
+(<span style="color: #51afef;">let*</span> ((foo '(b d e) ))
+  (add-to-ordered-list 'foo 'a 3)
+  (message <span style="color: #7bc275;">"%s"</span>  foo) <span style="color: #62686E;">;; </span><span style="color: #62686E;">--&gt; d a b e </span>
+)
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6f65d7d" class="outline-3">
+<h3 id="org6f65d7d">修改已经存在的list结构</h3>
+<div class="outline-text-3" id="text-org6f65d7d">
+<p>
+可以用setcar和setcdr来修改cons-cell的car和cdr部分, 这两个操作是破坏性的(原地修改?), 因为他们修改了已经存在的list
+破坏性的操作应当只用在mutable的list上: 即使用cons/list等操作形成的list.
+由引用(quoting ')创建的list是不应该用下面这操作进行修改的.
+</p>
+</div>
+
+<div id="outline-container-orga95dabe" class="outline-4">
+<h4 id="orga95dabe">setcar</h4>
+<div class="outline-text-4" id="text-orga95dabe">
+<p>
+(setcar mutable-list 新的car) &#x2013;&gt; 新的car
+</p>
+
+<p>
+(setcar (cons 1 3) 2) &#x2013;&gt; 2
+</p>
+
+<p>
+若使用setcar的cons-cell是某些list中的一部分, 则这些list也会受影响
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #51afef;">setq</span>  x (list 'a 'b 'c))
+(<span style="color: #51afef;">setq</span>  y (list 'z (cdr x)))
+
+(setcar (cdr x ) 'foo)
+
+(message <span style="color: #7bc275;">"%s"</span> x) --&gt;  ('a 'foo 'c) 
+(message <span style="color: #7bc275;">"%s"</span> y) --&gt; ('z 'foo 'c)
+
+
+
+x:
+ --------------       --------------       --------------
+| car   | cdr  |     | car   | cdr  |     | car   | cdr  |
+|   a   |   o-------&gt;|   b   |   o-------&gt;|   c   |  nil |
+|       |      |  --&gt;|       |      |     |       |      |
+ --------------  |    --------------       --------------
+                 |
+y:               |
+ --------------  |
+| car   | cdr  | |
+|   z   |   o----
+|       |      |
+ --------------
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgfe7de6b" class="outline-4">
+<h4 id="orgfe7de6b">setcdr</h4>
+<div class="outline-text-4" id="text-orgfe7de6b">
+<p>
+将cons-cell的cdr指向新的cons-cell对象
+</p>
+
+<p>
+(setq x (list 1 2 3))
+(setcdr x '(5)) &#x2013;&gt; (5)
+</p>
+
+<p>
+可以利用它删除list中间的元素
+eg:
+(setq y (list 2 3 4))
+(setcdr y (cdr (cdr y)) )
+ ==&gt; y = ( 2 4)
+</p>
+
+<p>
+也可利用它在list中插入元素
+</p>
+
+<p>
+(setq z (list 3 4 5)
+(setcdr z (cons 1 (cdr z)))
+z &#x2013;&gt; (3 1 4 5)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7157d94" class="outline-4">
+<h4 id="org7157d94">rearrangement</h4>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org02f0a4d" class="outline-2">
+<h2 id="org02f0a4d">数据类型</h2>
+<div class="outline-text-2" id="text-org02f0a4d">
+</div>
+<div id="outline-container-org9039e4b" class="outline-3">
+<h3 id="org9039e4b">简介</h3>
+<div class="outline-text-3" id="text-org9039e4b">
+<p>
+lisp对象：被lisp程序使用和操纵的程序
+type/data type : lisp对象组成的集合
+</p>
+
+<p>
+一个对象至少属于一个类型，并且类型之间是可以相交的；因此，可以说一个对象是否属于某特定的类型，但不能问它的类型是什么
+</p>
+
+<p>
+<code>primitive类型</code> ：内置于emacs，并用来构造其它类型
+</p>
+
+<p>
+每个lisp对象属于有且唯一的primitive类型。
+</p>
+
+<p>
+如：integer, float, cons, symbol, string, vector, hash-table, subr, byte-code function, record, buffer
+</p>
+
+<p>
+每个primitive类型都有一个对应的类型检查函数，如：(string-p var)
+</p>
+
+<p>
+lisp是 <code>self-typing</code> 的，即每个primitive类型的lisp对象本身包含了类型信息，避免了类似在C语言中无法区分数字和指针。
+</p>
+
+<p>
+每个lisp变量可以是任何类型的，不需要事先为变量声明类型。并且它能记住存放的值、类型&#x2026;
+</p>
+</div>
+</div>
+
+<div id="outline-container-org072d02b" class="outline-3">
+<h3 id="org072d02b">对象的输出表示 &amp;&amp; 读取语法</h3>
+<div class="outline-text-3" id="text-org072d02b">
+<p>
+对象的输出表示就是函数prin1的输出格式，每种data type有唯一的输出
+对象的读取语法是函数read能接受的输入格式，它不一定是唯一的。
+大多数对象的输出表示就是其read syntax，但某些类型的对象是没有读取语法的，这种对象的输出表示为
+ <code>#&lt;类型 对象名&gt;</code>
+例如buffer对象的输出：#&lt;buffer elisp.org&gt;
+</p>
+
+<p>
+在其他语言中，一个表达式仅有文本表示的形式；但在lisp中，一个表达式首先是lisp对象的形式，其次才是被称为读取语法的文本形式。 
+</p>
+
+<p>
+每当你交互地求值一个表达式时，lisp解释器首先读取表达式的文本表示，并构造对应的lisp对象，最后对该lisp对象进行求值。即：
+ 文本 &#x2014;reading&#x2014;&gt; lisp对象 &#x2014;evaluate&#x2014;&gt; 值（结果） 
+</p>
+</div>
+
+
+<div id="outline-container-orga4b1982" class="outline-4">
+<h4 id="orga4b1982"><span class="todo TODO">TODO</span> 特殊的读取语法</h4>
+<div class="outline-text-4" id="text-orga4b1982">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">记号</th>
+<th scope="col" class="org-left">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">#&lt;..&gt;</td>
+<td class="org-left">该对象无读取语法</td>
+</tr>
+
+<tr>
+<td class="org-left">##</td>
+<td class="org-left">无名对象的内部表示</td>
+</tr>
+
+<tr>
+<td class="org-left">#'</td>
+<td class="org-left">function的缩写</td>
+</tr>
+
+<tr>
+<td class="org-left">#:AB</td>
+<td class="org-left">名为AB的符号</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga12d255" class="outline-3">
+<h3 id="orga12d255">注释</h3>
+<div class="outline-text-3" id="text-orga12d255">
+<p>
+单行注释： 以分号; 开始
+针对二进制数据的注释：#@count 。跳过下面count个字符
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga13f892" class="outline-3">
+<h3 id="orga13f892">和编程相关的类型</h3>
+<div class="outline-text-3" id="text-orga13f892">
+<p>
+elisp中的类型可以粗略地分成两类：和lisp编程相关的，和<a href="#org0a533bf">编辑</a>相关的
+</p>
+</div>
+
+<div id="outline-container-org1939f93" class="outline-4">
+<h4 id="org1939f93">整数类型</h4>
+<div class="outline-text-4" id="text-org1939f93">
+<p>
+具体来说存在两类整数：
+fixnums 定长整数：取值范围取决于机器
+bignums 任意精度的大整数
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org8f7bb67"></a>相等性测试<br />
+<div class="outline-text-5" id="text-org8f7bb67">
+<p>
+通用操作： <code>eql</code> 和 <code>=</code> 
+fixnums还可以使用 ~eq~进行比较
+</p>
+
+<p>
+(message "%s" (eql 2333 2333))
+</p>
+</div>
+</li>
+
+<li><a id="org2f6fd7d"></a>类型判断<br />
+<div class="outline-text-5" id="text-org2f6fd7d">
+<p>
+可以手工地用fixnums的取值范围进行比较。
+most-negative-fixnum 和 most-postitive-fixnum 
+</p>
+
+<p>
+也可以利用现成的谓词：
+fixnump 
+bignump
+</p>
+</div>
+</li>
+
+<li><a id="org312e754"></a>整数的读取语法、输出表示<br />
+<div class="outline-text-5" id="text-org312e754">
+<p>
+十进制数字的序列，符号是可选的
+输出表示是不会出现 前面的“+”和最后的“.”
+</p>
+</div>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org115ac49" class="outline-4">
+<h4 id="org115ac49">浮点数类型</h4>
+<div class="outline-text-4" id="text-org115ac49">
+<p>
+emacs中使用C的double类型来存储浮点数，其内部表示为2<sup>N</sup>
+其输出表示要么包含小数点或指数，要么两者都有。
+</p>
+
+<p>
+例如1200的输出表示有:
+1200.0
++12e2
+12.0e2
+&#x2026;
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcebab5b" class="outline-4">
+<h4 id="orgcebab5b">字符表示</h4>
+<div class="outline-text-4" id="text-orgcebab5b">
+<p>
+在emacs中，一个字符本质上只是一个数字而已。换句话讲，字符实际上表示为它们的字符编码。
+</p>
+</div>
+<ul class="org-ul">
+<li><a id="org09e1999"></a>基础字符语法<br />
+<div class="outline-text-5" id="text-org09e1999">
+<p>
+读取语法： 问号+字符
+例：字符A的读取语法：?A
+</p>
+
+<p>
+非字母的读取语法要更特殊一些，需要加上\进行转义
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">字符</th>
+<th scope="col" class="org-left">读取语法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">(</td>
+<td class="org-left">?\(</td>
+</tr>
+
+<tr>
+<td class="org-left">\</td>
+<td class="org-left">?\\</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+
+
+<li><a id="org93195be"></a>CTRL字符的语法<br />
+<div class="outline-text-5" id="text-org93195be">
+<p>
+例如控制字符：C-i 的读取语法为
+?\C-i 或 ?\<sup>i</sup>
+</p>
+
+<p>
+DEL： ?\^? 或 ?\C-?
+</p>
+</div>
+</li>
+<li><a id="org01216dc"></a>META字符的语法<br />
+<div class="outline-text-5" id="text-org01216dc">
+<p>
+例如，M-A字符的写法： ?\M-A  或 ?\M-\101
+C-M-a 的read syntax为：?\M-\C-b 或 ?\M-\C-\001
+</p>
+</div>
+</li>
+
+<li><a id="org8e4b886"></a>其它字符修饰位<br />
+<div class="outline-text-5" id="text-org8e4b886">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">shift</td>
+<td class="org-left">&sect;-</td>
+</tr>
+
+<tr>
+<td class="org-left">alt</td>
+<td class="org-left">\A-</td>
+</tr>
+
+<tr>
+<td class="org-left">hyper</td>
+<td class="org-left">\H-</td>
+</tr>
+
+<tr>
+<td class="org-left">super</td>
+<td class="org-left">\s-</td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">space</td>
+<td class="org-left">\s</td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+<div id="outline-container-orgbac24fb" class="outline-4">
+<h4 id="orgbac24fb">符号类型</h4>
+<div class="outline-text-4" id="text-orgbac24fb">
+<p>
+elisp中的符号是带名字的对象。通常情况下，符号的名字是唯一的，不存在两个符号有相同的名字。
+一个符号可以是一个变量、一个函数名，或者指代一个属性列表。在给定的上下文中，一个符号只能有一个用法。
+</p>
+
+<p>
+符号名称以 <code>:</code> 开头的是 <code>keyword</code> 符号。这些符号自动地变为常量，通常被用在比较一些特定的选项和未知的符号。
+</p>
+
+<p>
+命名规则：elisp中的符号名几乎可以是任何字符构成的，字母，数字，标点符号+-*/_~!@$%^&amp;=:&lt;&gt;{} 
+当有字符产生了歧义，都可以通过用“\”对字符进行转义，来代表这个字符本身。
+因此“\t”可以成为符号名，它仅仅表示名字为t的符号。甚至一串数字也能作为符号名，只要对每个数字用反斜线进行转义即可。eg "\2\3\3"也是符号名。
+</p>
+
+<p>
+符号名的输出表示的特殊规则：
+<code>##</code> 无名的内部符号
+<code>#:foo</code> 名为foo的内部符号
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb98b5bb" class="outline-4">
+<h4 id="orgb98b5bb">顺序/序列类型 sequence</h4>
+<div class="outline-text-4" id="text-orgb98b5bb">
+</div>
+<ul class="org-ul">
+<li><a id="orge9505e2"></a>概述<br />
+<div class="outline-text-5" id="text-orge9505e2">
+<p>
+表示有序集合，有两种顺序类型：list 和 数组
+</p>
+
+<p>
+list能存放任何类型的元素，其长度可以通过增加、减少元素来改变
+array是定长的序列，它还可以细分为：字符串、vector、char-table、bool-vector 。
+vector可以存放任意类型的元素，而字符串只能是字符元素的定长序列，bool-vector中的元素只能是t/nil
+char-table和vector相似，但它是通过该字符来索引的。
+字符串中的字符和buffer中的字符一样，有文本属性。但vector中的字符就不支持文本属性
+</p>
+
+<p>
+list和array有很多相同之处，如：都有长度L，有效索引从0到L-1。
+一些函数被称为 <code>序列函数</code> ，能接受任意类型的sequence作为参数。 <code>(length X)</code> 是典型的序列函数
+</p>
+
+<p>
+读取语法：
+若读入了某序列类型的对象的读取语法两次，则会导致创建两个内容相同的序列。这条规则的例外是空list：无论读取了几次空列表的read syntax，空表()总是代表相同的对象nil
+</p>
+</div>
+</li>
+
+
+<li><a id="org93d535b"></a>cons cell和list类型<br />
+<div class="outline-text-5" id="text-org93d535b">
+<p>
+cons cell是由两个slot组成的对象，每个slot能存放任意类型的对象。
+称CAR为cons cell中的首个元素，CDR为第二个元素。
+</p>
+
+<p>
+list是由一系列cons cell组合而成的，每个cons-cell的CDR slot要么存放了下一个cons-cell，要么存放了空list对象nil。
+因为大多数cons-cell被用作list的一部分，我们将任何由cons-cell组合而成（哪怕不是这种组合方式）的结构称为 <code>list结构</code> 
+</p>
+
+<p>
+由于cons-cell在lisp中是十分重要的概念，我们给那些不含cons-cell的对象一个单独的名字： <code>原子atoms</code>
+</p>
+
+
+<p>
+list的 <code>read syntax和输出表示</code> 是一样的：
+(A 23) 
+(A nil)
+()
+nil
+( (1 2) )
+</p>
+
+<p>
+在读取list的read-syntax后，括号内的每个元素都被创建了相应的cons-cell：其car为该元素本身，cdr指向下一个cons-cell，最后一个cons-cell的CDR为nil
+</p>
+
+<p>
+例子： (A () ) ==  (A nil) 的图示
+</p>
+
+<pre class="example">
+ --- ---      --- ---
+|   |   |--&gt; |   |   |--&gt; nil
+ --- ---      --- ---
+  |            |
+  |            |
+   --&gt; A        --&gt; nil
+</pre>
+</div>
+
+
+<ul class="org-ul">
+<li><a id="orgb90cfc2"></a>点对记号<br />
+<div class="outline-text-6" id="text-orgb90cfc2">
+<p>
+这是表示cons-cell的car和cdr的隐式记号，(a . b) 
+在“点对”记号下：list (1 2 3) 写作
+（1 . (2 . (3 . nil))) 
+</p>
+</div>
+</li>
+
+<li><a id="org2413348"></a><code>alist</code> 关联列表<br />
+<div class="outline-text-6" id="text-org2413348">
+<p>
+是一个元素都是cons-cell的列表。
+( (k1 . v1) (k2 . v2) (k3 . v3) )
+这种列表的元素的car叫做key，cdr叫做associate value（关联值）
+</p>
+
+<p>
+关联列表经常被用作stack，因为在其开头添加和删除元素比较容易。
+</p>
+</div>
+</li>
+</ul>
+</li>
+
+
+<li><a id="org7ff6a1d"></a>array数组类型<br />
+<ul class="org-ul">
+<li><a id="org17f87b6"></a>array概述<br />
+<div class="outline-text-6" id="text-org17f87b6">
+<p>
+数组类型是顺序类型的子集，并且包含了string、vector、bool-vector、char-table类型。
+</p>
+
+<p>
+数组类型的对象是由任意数量的、连续存储的slot组成的，每个slot用于存放/引用其它lisp对象。
+访问任意array元素所花费的时间几乎是相同的，而访问list的元素所花时间和其所在位置成正比。
+数组的最大长度是最大的fixnum，这取决于机器架构和内存大小。
+</p>
+
+<p>
+每种array类型都有其特殊的read-syntax。
+</p>
+</div>
+</li>
+
+<li><a id="org1be3cbb"></a>字符串类型<br />
+<ul class="org-ul">
+<li><a id="org0fbba23"></a>read-syntax<br />
+<div class="outline-text-7" id="text-org0fbba23">
+<p>
+string 的read-syntax是由双引号包围的字符序列。
+使用\ 来转义如 " \ 这样的特殊字符。&#x2013;&gt;  \"  <br />
+在字面表示中使用反引号+&lt;enter&gt; 可以在显示上将长字符串分成多行，但实际上却并没有将其分割。
+eg：
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #7bc275;">"hello \</span>
+<span style="color: #7bc275;">world"</span>
+&#21363;&#65306;
+<span style="color: #7bc275;">"hello world"</span>
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org8647ea0"></a><span class="todo TODO">TODO</span> string中的非ASCII字符<br /></li>
+
+<li><a id="org657450c"></a><span class="todo TODO">TODO</span> string中的非打印字符<br /></li>
+
+<li><a id="org459961b"></a>string中的文本属性<br />
+<div class="outline-text-7" id="text-org459961b">
+<p>
+带有文本属性的字符串的read syntax和输出表示为
+#("字符串" 0 3 (face bold) 3 4 nil 4 7 (face italic))
+即字符串+属性列表，每个属性是一个三元组，前两个数字是属性的作用范围，最后一个是属性。
+</p>
+</div>
+</li>
+</ul>
+</li>
+
+
+<li><a id="orgdd8d3ec"></a>vector类型<br />
+<div class="outline-text-6" id="text-orgdd8d3ec">
+<p>
+vector是任何类型元素构成的一维数组，访问vector的元素花费常数级别的时间，输出表示和read syntax都是相同的：
+整vector是由中括号包围起来的。
+[1 "two" 233] 
+</p>
+</div>
+</li>
+
+
+<li><a id="orga20d3f9"></a>char-table类型<br />
+<div class="outline-text-6" id="text-orga20d3f9">
+<p>
+其输出表示、read syntax和vector类似，只是它是以#<sup>开始的</sup>。
+</p>
+
+<p>
+have a parent to inherit from, 
+a default value, 
+and a small number of extra slots to use for special purposes. 
+</p>
+
+<p>
+specify a single value for a whole character set.
+</p>
+</div>
+</li>
+
+<li><a id="org3237566"></a>bool-vector类型<br />
+<div class="outline-text-6" id="text-org3237566">
+<p>
+其输出表示类似于string，除了它是以"#&amp;"开始的。
+</p>
+
+<p>
+一个字符表示8位，前面的位数说明了该bool-vector实际上包含了该字符对应的低N位
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">#&amp;N位"^@"</td>
+<td class="org-left">八个0中的低N位, 字符^@表示八个0</td>
+</tr>
+
+<tr>
+<td class="org-left">#&amp;N位"<sup>O</sup>"</td>
+<td class="org-left">八个1中的低N位，字符<sup>O表示八个1</sup></td>
+</tr>
+
+<tr>
+<td class="org-left">#&amp;3"\337"</td>
+<td class="org-left">八进制数，bool-vector取这9位中的低三位</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+(make-bool-vector 4 nil)
+#&amp;4""
+</p>
+
+<p>
+(equal #&amp;3"\337" #&amp;"\007")  &#x2014;&gt; true 
+因为低3位是相同的
+</p>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org6919e51" class="outline-4">
+<h4 id="org6919e51">hash-table类型</h4>
+<div class="outline-text-4" id="text-org6919e51">
+<p>
+hash-table是一种查询速度更快的alist，可以通过key迅速查到对应的值。
+</p>
+
+<p>
+以#s开始，括号中的前半部分是hash-table的一些属性，最后是hashtable的键值对
+#s(hash-table size 30 data (key1 val1 key2 300))
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgebd6397" class="outline-4">
+<h4 id="orgebd6397">函数类型</h4>
+<div class="outline-text-4" id="text-orgebd6397">
+<p>
+lisp中的函数不仅是可执行的代码，也是lisp对象。未经编译的lisp函数是lambda表达式（以lambda开头的list）
+</p>
+
+<p>
+在很多语言中，不可能存在没有名字的函数，但在lisp中，一个lambda表达式可以像一个函数被调用。
+为了强调这点，也将lambda称为匿名函数。
+</p>
+
+<p>
+大多数的函数调用是通过函数名的，但可以在运行时也能构造函数对象，并用原生函数funcall和apply来调用它。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9e227b4" class="outline-4">
+<h4 id="org9e227b4">宏macro类型</h4>
+<div class="outline-text-4" id="text-org9e227b4">
+<p>
+lisp中的宏是用户定义的用来扩展lisp语言本身的结构，它作为对象的表现更像函数，但有着不同的参数传递语义。
+从形式上来看宏是一个以macro开始的列表，其CDR是lisp函数对象（包含lambda）
+lisp宏对象通常用内置的 <code>defmacro</code> 来定义，但也可以用以macro开头的列表来定义
+</p>
+</div>
+</div>
+
+<div id="outline-container-org64fa4c7" class="outline-4">
+<h4 id="org64fa4c7">原生函数类型</h4>
+<div class="outline-text-4" id="text-org64fa4c7">
+<p>
+原生primitive函数是可以用lisp的方式调用的C实现的函数，它也被叫做 <code>subrc</code> 或 <code>内建函数</code> 
+当原生函数被调用时，默认会先对其参数进行求值，除非使用特殊的方式来调用原生函数。
+对调用者来说，无所谓函数是否是原生的。只有在lisp中重新定义原生函数时才要进行区分，因为C代码中仍会调用原始的C函数，而不会调用重新定义的lisp版本函数。因此尽量不要重定义原生函数。
+</p>
+
+<ul class="org-ul">
+<li>返回符号对应的函数对象（function cell）</li>
+</ul>
+<p>
+(symbol-function '符号名)
+</p>
+
+<ul class="org-ul">
+<li>判断是否是原生函数</li>
+</ul>
+<p>
+(subrp '函数对象function-cell)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0cc8497" class="outline-4">
+<h4 id="org0cc8497">字节码函数类型</h4>
+<div class="outline-text-4" id="text-org0cc8497">
+<p>
+字节码函数对象是通过 字节编译(byte-compiling) Lisp代码产生的.
+在内部字节码函数对象十分类似vector. 然而在函数调用中, 求值器会对这种类型进行特殊处理.
+</p>
+</div>
+</div>
+<div id="outline-container-org3eabb4c" class="outline-4">
+<h4 id="org3eabb4c">record类型</h4>
+<div class="outline-text-4" id="text-org3eabb4c">
+<p>
+record在形式上类似vector, 但其首个元素是用来存放类型名的. 可以用type-of获取
+record经常用于自定义新类型.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbd44255" class="outline-4">
+<h4 id="orgbd44255">type-desciptors 类型描述符</h4>
+<div class="outline-text-4" id="text-orgbd44255">
+<p>
+类型描述符是一个存放着类型信息的record, 首个位置必须是类型名. 函数type-of依赖这个特性返回record对象的类型. 
+</p>
+
+<p>
+cl-structure-class
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5a959f7" class="outline-4">
+<h4 id="org5a959f7">autoload类型</h4>
+<div class="outline-text-4" id="text-org5a959f7">
+<p>
+autoload对象是一个以"autoload"开头的list. 它是某些函数定义的占位符, 记录了有助于找到函数定义的信息 (文件名等)  只有当用到该函数时,才会寻找定义并导入, 然后将占位符换成真正的定义. 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org59d6045" class="outline-4">
+<h4 id="org59d6045">finalizer类型</h4>
+<div class="outline-text-4" id="text-org59d6045">
+<p>
+一个finalizer类型的对象负责清理某些不再需要的对象. finalizer对象中包含一个lisp函数对象 ,当一个finalizer对象在一轮垃圾回收后 变为不可达时, emacs会调用finalizer中的函数对象. 在finalizer对象是否为不可达时, 不会将其它finalizer对象对当前finalizer对象的引用计入在内.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgc08a3ec" class="outline-3">
+<h3 id="orgc08a3ec">和编辑有关的类型 <a id="org0a533bf"></a></h3>
+<div class="outline-text-3" id="text-orgc08a3ec">
+</div>
+<div id="outline-container-orgfc4a510" class="outline-4">
+<h4 id="orgfc4a510">buffer类型</h4>
+<div class="outline-text-4" id="text-orgfc4a510">
+<p>
+buffer是一个存放着能被编辑的文本的对象. 大多数buffer存放的内容是位于磁盘上的文件,因此这些buffer是可修改的. 但另一些buffer却不是. 大多数的buffer是对用户可见的,因此会被显示在屏幕上.但一个buffer不需要在每个窗口中都显示,每个buffer有被称为 <code>point</code> 的指定位置. 大多数编辑命令作用于 <code>current buffer</code> 中的point(光标)附近. 在任何一个时刻只能存在一个current buffer .
+buffer对象中的内容十分类似字符串,但buffer不像string那样被使用. 例如可以高效地插入文字到buffer中,但对字符串进行插入则涉及到字符串的拼接, 并且还要返回一个新的字符串对象.
+</p>
+
+<p>
+一些数据结构是和每个buffer都相关的:
+</p>
+<ul class="org-ul">
+<li>局部语法表</li>
+<li>局部keymap</li>
+<li>buffer内的变量list</li>
+<li>覆盖 overlay</li>
+<li>buffer内文字的文本属性</li>
+</ul>
+
+<p>
+局部的keymap和变量list是独立于全局的变量定义和键位绑定的,他们只是用来控制程序在不同buffer中的行为.
+</p>
+
+<p>
+buffer可以是间接的, 这意味着一个buffer可以和另一个buffer共享文本,但可以用不同的方式显示它.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd8e2fd9" class="outline-4">
+<h4 id="orgd8e2fd9">标记类型 (buffer中的位置)</h4>
+<div class="outline-text-4" id="text-orgd8e2fd9">
+<p>
+marker类型对象描述了在特定buffer中的位置, 每个marker有两个部分: 其一是buffer,其二是位置
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc516d6c" class="outline-4">
+<h4 id="orgc516d6c">窗口类型</h4>
+<div class="outline-text-4" id="text-orgc516d6c">
+<p>
+是用来显示一个buffer的终端屏幕的一部分. 每个窗口都有一个关联的buffer, 其内容显示在window上, 反之对每个给出的buffer来说, 它要么不出现在任何window中,要么出现在一个或多个window中.
+</p>
+
+<p>
+尽管多个窗口可以同时存在, 但在任何一个时刻,只能有一个window是 <code>select window</code> ,它是emacs准备好执行命令时,光标所在的window. 通常select window显示的是current buffer, 但也有例外的情况.
+</p>
+
+<p>
+在屏幕上window被分组到frame. 每个窗口属于唯一一个框架frame.
+</p>
+
+<p>
+window同样没有read syntax, 其输出表示中包含了窗口序号, 窗口序号唯一地标识了窗口.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3e87695" class="outline-4">
+<h4 id="org3e87695">框架类型</h4>
+<div class="outline-text-4" id="text-org3e87695">
+<p>
+窗口类型是其子类型?
+frame是包含了一个或多个window对象的屏幕区域. 常常也用术语"frame"指代屏幕区域. 
+</p>
+</div>
+</div>
+<div id="outline-container-orgbaf5a05" class="outline-4">
+<h4 id="orgbaf5a05">终端类型</h4>
+<div class="outline-text-4" id="text-orgbaf5a05">
+<p>
+用于显示框架对象的终端设备
+</p>
+</div>
+</div>
+<div id="outline-container-orgeea7f72" class="outline-4">
+<h4 id="orgeea7f72">窗口配置类型</h4>
+<div class="outline-text-4" id="text-orgeea7f72">
+<p>
+记录了窗口在frame中的布局信息, 因此可以用这些信息来恢复窗口的排列方式.
+</p>
+</div>
+</div>
+<div id="outline-container-orgccd05e7" class="outline-4">
+<h4 id="orgccd05e7">框架配置类型</h4>
+<div class="outline-text-4" id="text-orgccd05e7">
+<p>
+记录了所有frame的状态
+通常是一个list, 其CAR为frame-configuration, 其CDR为一个alist, 每个元素记录了一个frame的各种信息
+</p>
+</div>
+</div>
+<div id="outline-container-org5b90043" class="outline-4">
+<h4 id="org5b90043">进程类型</h4>
+</div>
+<div id="outline-container-org074c8ec" class="outline-4">
+<h4 id="org074c8ec">线程类型</h4>
+</div>
+<div id="outline-container-org6c04df1" class="outline-4">
+<h4 id="org6c04df1">mutex类型(排他锁)</h4>
+</div>
+<div id="outline-container-orgb2ac268" class="outline-4">
+<h4 id="orgb2ac268">条件变量类型</h4>
+</div>
+
+<div id="outline-container-org5b5f1cb" class="outline-4">
+<h4 id="org5b5f1cb">流类型</h4>
+<div class="outline-text-4" id="text-org5b5f1cb">
+<p>
+用于接收和发送字符.
+很多类型都可以完成这样的功能,当通常输入流从键盘/buffer/文件 中获取字符, 输出流发送字符到buffer中或echo area
+</p>
+
+<p>
+对象nil在这里还能表示一个流,它表示的是标准输入/输出; 类似地,对象t 表示使用minibuffer的输入流, 或者通过echo area的输出流
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7b78dfd" class="outline-4">
+<h4 id="org7b78dfd">keymap类型</h4>
+<div class="outline-text-4" id="text-org7b78dfd">
+<p>
+描述了击键及其触发的函数的对应关系
+</p>
+</div>
+</div>
+<div id="outline-container-org67ae7d0" class="outline-4">
+<h4 id="org67ae7d0">overlay类型</h4>
+<div class="outline-text-4" id="text-org67ae7d0">
+<p>
+覆盖是如何表示的
+</p>
+</div>
+</div>
+<div id="outline-container-org45df2d0" class="outline-4">
+<h4 id="org45df2d0">字体类型</h4>
+<div class="outline-text-4" id="text-org45df2d0">
+<p>
+控制显示文本的字体
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga8106d5" class="outline-3">
+<h3 id="orga8106d5"><span class="todo TODO">TODO</span> 环形对象的read-syntax</h3>
+</div>
+
+<div id="outline-container-org4063ba4" class="outline-3">
+<h3 id="org4063ba4"><span class="todo TODO">TODO</span> 类型谓词</h3>
+</div>
+
+<div id="outline-container-orgae13bd1" class="outline-3">
+<h3 id="orgae13bd1">相等性判断</h3>
+<div class="outline-text-3" id="text-orgae13bd1">
+</div>
+<div id="outline-container-orgf25d64e" class="outline-4">
+<h4 id="orgf25d64e">eq</h4>
+<div class="outline-text-4" id="text-orgf25d64e">
+<p>
+eq 判断符号 在符号是同一个是才返回t
+eq 判断非数值 只有是同一对象才是true, 内容相同也为nil
+eq 判断数值 若值/类型不同,则返回nil;若两个定点数的值相同则为t; 若两个值相同的非定点数比较则结果不定.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org045a638" class="outline-4">
+<h4 id="org045a638">equal</h4>
+<div class="outline-text-4" id="text-org045a638">
+<p>
+若两个被比较的对象有相同的组成,则为t ; 并且若它们用eq比较的结果为t, 则它们用equal结果也为t
+</p>
+</div>
+</div>
+
+<div id="outline-container-org426b992" class="outline-4">
+<h4 id="org426b992">equal-including-properties</h4>
+<div class="outline-text-4" id="text-org426b992">
+<p>
+它几乎和equal的行为相同,除了在比较字符串时,它同时会比较文本属性,只要当属性也相同时才为t 
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+<div id="outline-container-orgd9f5cfb" class="outline-2">
+<h2 id="orgd9f5cfb">显示</h2>
+<div class="outline-text-2" id="text-orgd9f5cfb">
+</div>
+<div id="outline-container-orgd51fe33" class="outline-3">
+<h3 id="orgd51fe33">自动换行</h3>
+<div class="outline-text-3" id="text-orgd51fe33">
+<p>
+默认的行为是截断显示过长的行，将truncate-lines设为nil即可
+(setq truncate-lines nil)
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orga863568" class="outline-2">
+<h2 id="orga863568">数字</h2>
+<div class="outline-text-2" id="text-orga863568">
+<p>
+elisp支持两种数值类型: 整数 浮点数.
+整数的运算是精准的.浮点数运算有舍入误差.
+</p>
+
+<p>
+本章中很多函数的参数是marker类型的,而不仅仅是数字.因此对这些函数的形参的描述是number-or-marker, 当参数为marker (buffer,position)类型时,其中的位置参数是被实际使用的, buffer会被忽略掉.
+</p>
+</div>
+
+<div id="outline-container-orgf76046d" class="outline-3">
+<h3 id="orgf76046d">整数基础</h3>
+<div class="outline-text-3" id="text-orgf76046d">
+</div>
+<div id="outline-container-orgbab7d4f" class="outline-4">
+<h4 id="orgbab7d4f">整数的表示</h4>
+<div class="outline-text-4" id="text-orgbab7d4f">
+<p>
+lisp reader将如下形式作为整数读入:
+<code>[正负号] 非空的十进制数字序列 [小数点]</code> 
+十进制之外的基数可以通过"#"加上基数字符来指定:
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">#b</td>
+<td class="org-left">二进制</td>
+<td class="org-left">#b101100</td>
+</tr>
+
+<tr>
+<td class="org-left">#o</td>
+<td class="org-left">八进制</td>
+<td class="org-left">#o54</td>
+</tr>
+
+<tr>
+<td class="org-left">#x</td>
+<td class="org-left">十六进制</td>
+<td class="org-left">#x2c</td>
+</tr>
+
+<tr>
+<td class="org-left">#N</td>
+<td class="org-left">N进制, 2&lt;=N&lt;=36</td>
+<td class="org-left">#24r1k</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div id="outline-container-org61eb949" class="outline-4">
+<h4 id="org61eb949">字符编码的范围</h4>
+<div class="outline-text-4" id="text-org61eb949">
+<p>
+0 ~ (max-char)
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9dc91a9" class="outline-4">
+<h4 id="org9dc91a9">整数的分类</h4>
+<div class="outline-text-4" id="text-org9dc91a9">
+<ul class="org-ul">
+<li>fixnum 范围被机器架构限制</li>
+<li>bignum 范围被内存大小等限制</li>
+</ul>
+<p>
+更安全通用的比较整数的方法是用 <code>eql</code> 和 <code>=</code> 
+</p>
+
+<p>
+bignum整数永远不等于fixnum整数, 因为只要在fixnum范围之内的整数一定会被表示为fixnum
+</p>
+</div>
+</div>
+
+<div id="outline-container-org723877d" class="outline-4">
+<h4 id="org723877d">变量</h4>
+<div class="outline-text-4" id="text-org723877d">
+<p>
+most-positive-fixnum 
+fixnum的最大值
+most-negative-fixnum
+fixnum的最小值
+</p>
+
+<p>
+integer-width
+用于限制整数范围,任何整数的二进制表示最大不能超过integer-width位.
+换句话说,任何整数的绝对值 &lt; 2^ integer-width 
+超出该范围会导致范围错误
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgeaab639" class="outline-3">
+<h3 id="orgeaab639">浮点数基础</h3>
+<div class="outline-text-3" id="text-orgeaab639">
+<p>
+浮点数的范围和C中的double类型相同.
+read-syntax:
+1500.0
+15e2
+&#x2026;
+</p>
+
+
+<p>
+-0.0和0在 <code>=</code> 的比较下是相同的.
+</p>
+
+<p>
+支持正负无穷的表示: NaN
+-X.XXe+NaN 
+两个NaN类型的数值被视作相等,当且仅当其符号和有效数字X.XX都相同
+</p>
+
+<p>
+在有符号0/NaN数值参与比较时,非数值函数(eql equal &#x2026; ) 的行为是很混乱的.
+(equal 0.0 -0.0) &#x2013;&gt; nil
+(= 0.0 -0.0) -&gt; t 
+</p>
+</div>
+
+<div id="outline-container-orgcc249ab" class="outline-4">
+<h4 id="orgcc249ab">函数</h4>
+<div class="outline-text-4" id="text-orgcc249ab">
+</div>
+<ul class="org-ul">
+<li><a id="org3f3ecba"></a>是否为合法的数字 isnan<br />
+<div class="outline-text-5" id="text-org3f3ecba">
+<p>
+(isnan num) 当参数为NaN/nil时返回t
+</p>
+</div>
+</li>
+
+<li><a id="org82564aa"></a>返回浮点数的指数表示 frexp<br />
+<div class="outline-text-5" id="text-org82564aa">
+<p>
+(frexp x) &#x2013;&gt; (s . e) 
+x = s*2<sup>e</sup>
+s为浮点数 0.5 &lt;= s &lt;= 1.0
+e为整数
+</p>
+
+<p>
+特殊:
+(frexp 0.0) &#x2013;&gt; (0.0 . 0)
+(frexp 0.0e+NaN) &#x2013;&gt; (0.0e+NaN . 0) 
+(frexp -1.0e+INF) &#x2013;&gt; (-1.0e+INF . 0) 
+</p>
+</div>
+</li>
+
+<li><a id="orgcd50a92"></a>从浮点数的指数表示中计算出浮点数的值 idexp<br />
+<div class="outline-text-5" id="text-orgcd50a92">
+<p>
+(idexp s e) &#x2013;&gt; s*2<sup>e</sup> 
+</p>
+</div>
+</li>
+
+
+<li><a id="orgc9825cd"></a>返回log<sub>2</sub>(x)的结果 logb<br />
+<div class="outline-text-5" id="text-orgc9825cd">
+<p>
+(logb 8) &#x2013;&gt; 3
+(logb 10) &#x2013;&gt; 3
+(logb 0) &#x2013;&gt; -1.0e+INF
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9e523da" class="outline-3">
+<h3 id="org9e523da">数字的类型谓词</h3>
+<div class="outline-text-3" id="text-org9e523da">
+</div>
+<div id="outline-container-org849d48f" class="outline-4">
+<h4 id="org849d48f">是否为bignum? bignump</h4>
+<div class="outline-text-4" id="text-org849d48f">
+<p>
+bignum要用=/eql进行比较
+</p>
+</div>
+</div>
+<div id="outline-container-orgfb1127a" class="outline-4">
+<h4 id="orgfb1127a">是否为fixnum? fixnump</h4>
+<div class="outline-text-4" id="text-orgfb1127a">
+<p>
+fixnum不仅能用=/eql进行比较,还能用eq进行比较
+</p>
+</div>
+</div>
+<div id="outline-container-org4cf95d1" class="outline-4">
+<h4 id="org4cf95d1">是否为浮点数? floatp</h4>
+</div>
+
+<div id="outline-container-org5fb25ee" class="outline-4">
+<h4 id="org5fb25ee">是否为整数? integerp</h4>
+</div>
+<div id="outline-container-orgfdd3ce9" class="outline-4">
+<h4 id="orgfdd3ce9">是否为数字? numberp</h4>
+</div>
+<div id="outline-container-orgdd6e478" class="outline-4">
+<h4 id="orgdd6e478">是否为自然数(非负整数)? natnump / wholenump</h4>
+</div>
+<div id="outline-container-orgacd0ecd" class="outline-4">
+<h4 id="orgacd0ecd">是否为零? zerop</h4>
+<div class="outline-text-4" id="text-orgacd0ecd">
+<p>
+等价于 (= x 0) 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0047e1b" class="outline-3">
+<h3 id="org0047e1b">数字的比较运算</h3>
+<div class="outline-text-3" id="text-org0047e1b">
+<p>
+比较两个数字在数值上的相等性,通常要用 <code>=</code> . 而不是 eq eql equal 
+用=比较浮点数和bignum有可能出现会相等,因为它只是做数值比较(二进制比较?)
+eq是用来比较二者是否为同一对象.(地址相同?)
+eql/equal则无法比较两个数字的值究竟是否相等,因为只要类型/内容不同就返回nil
+(eql/equal 1.0 1) &#x2013;&gt; nil 
+</p>
+
+
+<p>
+在elisp中,若两个fixnum的数值相等,则它们必然是同一对象,此时用=或eq的结果相同.
+有时用eq比较fixnum和一个未知的值是很方便的,因为eq在那个未知值不是数字类型时不会报错
+换言之eq允许任何类型的两个对象进行比较. 
+反之, = 会在参数不是数字/marker时报错.不过最好还是尽量用=, 因为它更安全.
+eql/equal 只能用于数字间比较, 它会比对 数值和类型.=只对数值本身进行比较
+因此 (eql 1 1.0) &#x2013;&gt; nil 
+</p>
+
+<p>
+还有一个关于浮点数比较的问题, 因为浮点数的算术是不准确的, 因此直接比较浮点数的相等性是不太好的. 通常更好的做法是判断它们是否近似相等:
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">(<span style="color: #51afef;">defvar</span> <span style="color: #DFDFDF;">fuzz-factor</span> 1.0e-6)
+(<span style="color: #51afef;">defun</span> <span style="color: #5cEfFF;">approx-equal</span> (x y)
+(<span style="color: #51afef;">or</span> (= x y)
+    (&lt;  (/  (abs (- x y) )
+             (max (abs x) (abs y) )) 
+        fuzz-factor)))
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-orgb781bea" class="outline-4">
+<h4 id="orgb781bea">函数</h4>
+<div class="outline-text-4" id="text-orgb781bea">
+<p>
+既能用在数字上,又能用在marker上:
+</p>
+
+<p>
+= 数值相等
+/= 数值不等
+max min abs 
+&lt;
+&lt;=
+&gt;
+&gt;=
+</p>
+<hr />
+<p>
+eql 只能比较数字, 不能用在marker上
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd6e81e9" class="outline-3">
+<h3 id="orgd6e81e9">数值转换</h3>
+<div class="outline-text-3" id="text-orgd6e81e9">
+</div>
+<div id="outline-container-orgd24e123" class="outline-4">
+<h4 id="orgd24e123">整数转浮点数 float</h4>
+<div class="outline-text-4" id="text-orgd24e123">
+<p>
+(float num) 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5fb63d5" class="outline-4">
+<h4 id="org5fb63d5">浮点数舍入为整数 <a id="org5ffd36c"></a></h4>
+<div class="outline-text-4" id="text-org5fb63d5">
+</div>
+<ul class="org-ul">
+<li><a id="org245b7fe"></a>截断浮点数为整数 truncate<br />
+<div class="outline-text-5" id="text-org245b7fe">
+<p>
+(truncate num [除数=1] ) &#x2013;&gt;  (num / 除数) 结果的整数部分 
+(truncate -1.2) &#x2013;&gt; -1
+(truncate -3.4 3) &#x2013;&gt; -1 
+</p>
+</div>
+</li>
+
+<li><a id="org6577bab"></a>将浮点数向下取整 floor<br />
+<div class="outline-text-5" id="text-org6577bab">
+<p>
+(floor num [除数=1] ) &#x2013;&gt; 将(num / 除数) 的结果向下取整
+(floor 1.3) &#x2013;&gt; 1
+(floor -3.4) &#x2013;&gt; -4 
+(floor 5.99 3) &#x2013;&gt; 1
+</p>
+</div>
+</li>
+
+<li><a id="org839c4f2"></a>将浮点数向上取整 ceiling<br />
+<div class="outline-text-5" id="text-org839c4f2">
+<p>
+(ceiling num [除数=1] ) &#x2013;&gt; 将(num / 除数) 的结果向上取整
+(ceiling 1.3) &#x2013;&gt; 2
+(ceiling -3.4) &#x2013;&gt; -3
+(ceiling 5.99 3) &#x2013;&gt; 2
+</p>
+</div>
+</li>
+
+<li><a id="org334f009"></a>将浮点数转换为最近的整数 round<br />
+<div class="outline-text-5" id="text-org334f009">
+<p>
+(round num [除数=1] ) &#x2013;&gt; 取(num/除数)的结果最近的整数
+(round 1.3) &#x2013;&gt; 1
+(round 2.6) &#x2013;&gt; 3
+(round -1.4) &#x2013;&gt; -1
+(round 5.99 3) &#x2013;&gt; 2
+</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org88968c4" class="outline-3">
+<h3 id="org88968c4">算术运算</h3>
+<div class="outline-text-3" id="text-org88968c4">
+</div>
+<div id="outline-container-orgea8e552" class="outline-4">
+<h4 id="orgea8e552">加一 1+</h4>
+</div>
+<div id="outline-container-org4563237" class="outline-4">
+<h4 id="org4563237">减一 1-</h4>
+</div>
+<div id="outline-container-org46b11ae" class="outline-4">
+<h4 id="org46b11ae">整数求余 %</h4>
+<div class="outline-text-4" id="text-org46b11ae">
+<p>
+所求出的abs商必须满足和abs除数之积&lt;=abs 被除数 , 在这种约束下将余数作为结果.
+只允许两个整数之间进行运算.
+(% 9 -4) &#x2013;&gt; 1
+(% -9 4) &#x2013;&gt; -1 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3705d3f" class="outline-4">
+<h4 id="org3705d3f">mod</h4>
+<div class="outline-text-4" id="text-org3705d3f">
+<p>
+允许浮点数作为参数
+结果的正负和 除数一致
+(mod 9 -4) &#x2013;&gt; -3
+(mod -9 4) &#x2013;&gt; -1
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org1415cd6" class="outline-3">
+<h3 id="org1415cd6">返回浮点类型的舍入运算</h3>
+<div class="outline-text-3" id="text-org1415cd6">
+<p>
+也是将浮点数舍入为整数.但区别是结果是整数的浮点形式(eg 4.0) <a href="#org5ffd36c">No description for this link</a>
+</p>
+
+<p>
+(ftruncate 3.8) &#x2013;&gt; 3.0
+(ffloor 4.5) &#x2013;&gt; 4.0
+(fceiling 4.5) &#x2013;&gt; 5.0
+(fround 3.8) &#x2013;&gt; 4.0
+</p>
+</div>
+</div>
+<div id="outline-container-org72b2ff0" class="outline-3">
+<h3 id="org72b2ff0">位运算</h3>
+<div class="outline-text-3" id="text-org72b2ff0">
+</div>
+<div id="outline-container-orgc172bb7" class="outline-4">
+<h4 id="orgc172bb7">算术移位 ash</h4>
+<div class="outline-text-4" id="text-orgc172bb7">
+<p>
+(ash num 位数) 
+算术右移在最高位上补相应的符号位
+</p>
+</div>
+</div>
+<div id="outline-container-orga0e71f0" class="outline-4">
+<h4 id="orga0e71f0">逻辑移位 lsh</h4>
+<div class="outline-text-4" id="text-orga0e71f0">
+<p>
+(lsh num 位数) 
+逻辑右移在最高位上补0 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org2169405" class="outline-4">
+<h4 id="org2169405">逻辑 与 或 非 异或</h4>
+<div class="outline-text-4" id="text-org2169405">
+<p>
+logand
+logior
+lognot
+logxor
+</p>
+</div>
+</div>
+<div id="outline-container-orga9cba63" class="outline-4">
+<h4 id="orga9cba63">logcount</h4>
+<div class="outline-text-4" id="text-orga9cba63">
+<p>
+正整数 &#x2013;&gt; 返回二进制表示中1的个数
+负整数 &#x2013;&gt; 返回补码表示中0的个数 
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbfb84ff" class="outline-3">
+<h3 id="orgbfb84ff">标准的数学函数</h3>
+<div class="outline-text-3" id="text-orgbfb84ff">
+<p>
+sqrt 
+log x a &#x2013;&gt; log<sub>a</sub>(x)
+expt x y &#x2013;&gt; x<sup>y</sup>
+exp n   &#x2013;&gt; e<sup>n</sup>
+float-e
+float-pi
+sin
+cos
+tan
+acos
+asin
+atan
+</p>
+</div>
+</div>
+
+<div id="outline-container-org28d2a8f" class="outline-3">
+<h3 id="org28d2a8f">随机数</h3>
+<div class="outline-text-3" id="text-org28d2a8f">
+<p>
+(random [limit]) &#x2013;&gt; 整数 
+</p>
+
+<p>
+limit为空, 返回任意一个fixnum, [most-negative-fixnum , most-positive-fixnum]
+当limit==fixnums ,返回一个介于[0,fixnums]的随机数
+当limit== t ,emacs重启时选择一个新的随机种子. 
+若limit为字符串,则会根据该串选择一个新的随机数种子. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org46f4160" class="outline-2">
+<h2 id="org46f4160">字符串和字符</h2>
+<div class="outline-text-2" id="text-org46f4160">
+</div>
+<div id="outline-container-orgef37b57" class="outline-3">
+<h3 id="orgef37b57"><span class="todo TODO">TODO</span> 简介</h3>
+<div class="outline-text-3" id="text-orgef37b57">
+<p>
+字符在elisp中被表示为数字.
+字符串是字符的定长序列.和C不同, elisp中的字符串不是以某种特殊字符结尾的
+因为字符串是数组array类型的一种, 因此任由能用在数组上的函数都能用于字符串.
+可以用 <code>aref</code> 来访问字符串中的某个字符.
+</p>
+
+<p>
+在elisp中有两种非ASCII字符的表示方式: 单字节和多字节. 大多数情况下无须关心二者的差别.
+</p>
+
+<p>
+按键序列 TODO
+</p>
+
+<p>
+string-match &#x2013;&gt; match-string / replace-match
+</p>
+
+<p>
+字符串和buffer一样有文本属性。所有文本拷贝同时也会拷贝这些文本属性。
+</p>
+
+<p>
+不要将length用于计算字符串在显示上的宽度，而是要用string-width
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9bc3c4e" class="outline-3">
+<h3 id="org9bc3c4e">和字符串相关的谓词</h3>
+<div class="outline-text-3" id="text-org9bc3c4e">
+</div>
+<div id="outline-container-orgeebb7f2" class="outline-4">
+<h4 id="orgeebb7f2">判断对象是否为string？stringp</h4>
+<div class="outline-text-4" id="text-orgeebb7f2">
+<p>
+stringp
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org762b8ca" class="outline-4">
+<h4 id="org762b8ca">是否为string或空nil？string-or-null-p</h4>
+</div>
+
+
+<div id="outline-container-org42fce17" class="outline-4">
+<h4 id="org42fce17">是否为字符或string类型？char-or-string-p</h4>
+</div>
+</div>
+
+
+<div id="outline-container-orga1c031a" class="outline-3">
+<h3 id="orga1c031a">产生新字符串的操作</h3>
+<div class="outline-text-3" id="text-orga1c031a">
+</div>
+<div id="outline-container-orgf8ea258" class="outline-4">
+<h4 id="orgf8ea258">用N个字符创建字符串 make-string</h4>
+<div class="outline-text-4" id="text-orgf8ea258">
+<p>
+(make-string N 字符 [是否为多字节串] )
+(make-string N ?c) &#x2013;&gt; “N个c”
+</p>
+
+<p>
+只要传入字符为ACSII字符，那么产生的就是单字节串。有时可能需要产生的是多字节串，比如要和其它多字节串连接。
+只要将最后一个参数设为t即可
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4924424" class="outline-4">
+<h4 id="org4924424">用指定字符拼成串 string</h4>
+<div class="outline-text-4" id="text-org4924424">
+<p>
+(string ?a ?b) &#x2013;&gt; "ab"
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc5298d4" class="outline-4">
+<h4 id="orgc5298d4">返回子串 substring</h4>
+<div class="outline-text-4" id="text-orgc5298d4">
+<p>
+(substring 字符串 开始索引 结束索引)
+其范围是左闭右开的。
+若索引为负数，则最后一个字符的索引为-1.
+若索引为nil，则它表示的是开头或结尾
+</p>
+
+<p>
+(substring "hello" 0 2) &#x2013;&gt; "he"
+(substring "hello" -5 -3) &#x2013;&gt; "he"
+</p>
+
+
+<p>
+substring 也能用在vector上：
+(substring [1 23 a (b) 3] 0 3)
+</p>
+
+<p>
+(substring "XX") 相当于对该串内容和属性作拷贝
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9b5a3ab" class="outline-4">
+<h4 id="org9b5a3ab">返回字串并去掉其文本属性 substring-no-properties</h4>
+<div class="outline-text-4" id="text-org9b5a3ab">
+<p>
+(substring-no-properties 串 start end)
+</p>
+
+<p>
+(substring-no-properties 串) 相当于去掉原串的属性
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1dc56ba" class="outline-4">
+<h4 id="org1dc56ba">连接字符串 concat</h4>
+<div class="outline-text-4" id="text-org1dc56ba">
+<p>
+concat能接受所有序列类型的对象，包含ASCII码的list、vector将被视作字符序列。
+</p>
+
+<p>
+(concat "abc" "-def") &#x2013;&gt; "abc-def"
+(concat "abc" (list 120 121) [122] ) &#x2013;&gt; "abcxyz"
+</p>
+
+<p>
+concat的返回值不一定总是会创建一个新的string，可能会返回一个已经存在的串。
+若想对返回值进行修改（原址更改），最好先用 <code>copy-sequence</code> 将返回值拷贝一份再作更改
+</p>
+</div>
+</div>
+<div id="outline-container-org9381ebc" class="outline-4">
+<h4 id="org9381ebc">用分割符切分字符串为list split-string</h4>
+<div class="outline-text-4" id="text-org9381ebc">
+<p>
+(split-string 字符串 [分隔符] [是否省略空串] [去除前后的特定字符的正则] )
+</p>
+
+<p>
+eg: (split-string  字符串  "[\n\r]+") &#x2013;&gt;  字符串的list
+(以换行符作切割)
+</p>
+
+<p>
+(split-string "food" "o" ) &#x2013;&gt; "f" "" "d"
+(split-string "food" "o" t) &#x2013;&gt; "f" "d"
+(split-string "<span class="underline"><span class="underline">food_</span></span>" "o" t "_+") &#x2013;&gt; "f" "d"
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org2716fc9"></a>变量:切分字符串的默认分隔符 split-string-default-separators<br /></li>
+</ul>
+</div>
+</div>
+
+
+
+<div id="outline-container-org4086e77" class="outline-3">
+<h3 id="org4086e77">修改字符串</h3>
+<div class="outline-text-3" id="text-org4086e77">
+<p>
+可以用如下操作修改mutable字符串
+</p>
+</div>
+
+<div id="outline-container-org0aa2017" class="outline-4">
+<h4 id="org0aa2017">修改指定索引上的字符 aset</h4>
+<div class="outline-text-4" id="text-org0aa2017">
+<p>
+(aset 字符串 index 新char)
+</p>
+
+<p>
+例子:
+(let* ( (str "hello") )
+    (aset str 0 ?f)
+    (message str)
+    ) &#x2013;&gt;"fello"
+</p>
+</div>
+</div>
+
+<div id="outline-container-org803d340" class="outline-4">
+<h4 id="org803d340">将字符串从指定位置开始改为新串 store-substring</h4>
+<div class="outline-text-4" id="text-org803d340">
+<p>
+(store-substring 字符串 index 字符/字符串)
+将字符串从index开始替换为指定串，前提是不能超出原字符串的长度
+</p>
+
+<p>
+(store-substring "hello" 1 "???" ) &#x2013;&gt; "h???o"
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdd4ba53" class="outline-4">
+<h4 id="orgdd4ba53">将一个字符串的内容清0 clear-string</h4>
+<div class="outline-text-4" id="text-orgdd4ba53">
+<p>
+(let* (( str "hello"))
+(clear-string str )
+(message str))  &#x2013;&gt;       
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org2c7ba31" class="outline-3">
+<h3 id="org2c7ba31">比较字符串</h3>
+<div class="outline-text-3" id="text-org2c7ba31">
+</div>
+<div id="outline-container-org022fb30" class="outline-4">
+<h4 id="org022fb30">字符串比较 string=/string-equal</h4>
+<div class="outline-text-4" id="text-org022fb30">
+<p>
+只比较二者的字符序列是否相同。不对文本属性进行比较。
+</p>
+
+<p>
+(string= A B)
+(string-equal 字符串a 字符串b)
+</p>
+
+<p>
+(string&gt; A B) (string-greaterp A B)
+(string&lt; A B) (string-lessp A B)
+</p>
+
+<p>
+(string-distance str1 str2)
+str1变为str2所需要更改的字符数
+"a" &#x2013;&gt; "b" = 1
+"a" &#x2013;&gt; "ab" = 1
+"ab" &#x2013;&gt; "bc" = 2
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf7c35f2" class="outline-4">
+<h4 id="orgf7c35f2">是否为某串的前/后缀? string-prefix-p  / string-suffix-p</h4>
+<div class="outline-text-4" id="text-orgf7c35f2">
+<p>
+(string-prefix-p 前缀 字符串 [是否忽略大小写])    
+(string-suffix-p 后缀 字符串 [是否忽略大小写])    
+</p>
+</div>
+</div>
+
+<div id="outline-container-org946e987" class="outline-4">
+<h4 id="org946e987">取两字符串的一部分进行比较 compare-strings</h4>
+<div class="outline-text-4" id="text-org946e987">
+<p>
+(compare-strings 字符串a 开始 结束 
+                 字符串b 开始 结束
+		 [是否忽略大小写] )
+</p>
+
+<p>
+(message "%s"   (compare-strings "hello" 0 nil "aaahelloworld" 3 8) ) ==&gt; t 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgf74296c" class="outline-4">
+<h4 id="orgf74296c">比较key为string的alist,并返回对应cons  assoc-string</h4>
+<div class="outline-text-4" id="text-orgf74296c">
+<p>
+(assoc-string 字符串key alist  [是否忽略大小写])
+alist要是key为string类型的, 会调用compare-strings进行比较.
+特别地,可以将alist换为由string/符号组成的list, 
+</p>
+
+<p>
+例:
+</p>
+<div class="org-src-container">
+<pre class="src src-emacs-lisp">
+(message <span style="color: #7bc275;">"%s"</span> (assoc-string <span style="color: #7bc275;">"abc"</span> '((<span style="color: #7bc275;">"ab"</span> . 233) (<span style="color: #7bc275;">"fb"</span> . 33) (<span style="color: #7bc275;">"abc"</span> . 44))  )) --&gt; (<span style="color: #7bc275;">"abc"</span> . 44)
+
+(message <span style="color: #7bc275;">"%s"</span> (assoc-string <span style="color: #7bc275;">"abc"</span> '(<span style="color: #7bc275;">"ab"</span> <span style="color: #7bc275;">"baxc"</span> <span style="color: #7bc275;">"abc"</span>)  )) 
+
+(<span style="color: #51afef;">let*</span> ((xyz 100)
+(abc 300)
+(edf 400)
+)
+ (assoc-string <span style="color: #7bc275;">"abc"</span> '(list xyz abc edf)  )  <span style="color: #7bc275;">"abc"</span> 
+)
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgac8558b" class="outline-3">
+<h3 id="orgac8558b">字符串/字符的转换</h3>
+<div class="outline-text-3" id="text-orgac8558b">
+</div>
+<div id="outline-container-orgc6517f1" class="outline-4">
+<h4 id="orgc6517f1">数字转为字符串 number-to-string</h4>
+</div>
+
+<div id="outline-container-org3d85072" class="outline-4">
+<h4 id="org3d85072">字符串转为数字 string-to-string</h4>
+</div>
+
+<div id="outline-container-org52299cf" class="outline-4">
+<h4 id="org52299cf">字符 &lt;==&gt; 字符串 char-to-string / string-to-char</h4>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-orge04a244" class="outline-3">
+<h3 id="orge04a244">格式化字符串</h3>
+<div class="outline-text-3" id="text-orge04a244">
+<p>
+主要是formart
+</p>
+
+<p>
+%s 无双引号和转义\的lisp对象输出表示
+%S 有双引号和转义字符\的输出表示
+%o 将数字输出为八进制数字的字符串
+%d 十进制
+%x/%X 十六进制
+%c 字符类型 ?a
+</p>
+
+<p>
+%f 带小数点的浮点数表示
+%e 浮点数的指数形式
+(message (format "%e" 23.6666666))
+</p>
+
+<p>
+(message (format "%f" 23.6666666))
+</p>
+
+<p>
+%% 表示一个百分号本身.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org6e6b128" class="outline-3">
+<h3 id="org6e6b128"><span class="todo TODO">TODO</span> 自定义格式化</h3>
+</div>
+
+<div id="outline-container-org5967026" class="outline-3">
+<h3 id="org5967026"><span class="todo TODO">TODO</span> 大小写转换</h3>
+<div class="outline-text-3" id="text-org5967026">
+<p>
+downcase
+upcase
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org9f639b1" class="outline-3">
+<h3 id="org9f639b1"><span class="todo TODO">TODO</span> case-table</h3>
+</div>
+
+<div id="outline-container-orgef5e330" class="outline-3">
+<h3 id="orgef5e330">note</h3>
+<div class="outline-text-3" id="text-orgef5e330">
+</div>
+<div id="outline-container-orgcac6c4b" class="outline-4">
+<h4 id="orgcac6c4b">按照指定格式产生字符串format</h4>
+<div class="outline-text-4" id="text-orgcac6c4b">
+<p>
+(format "格式字符串" 可变参数(各种lisp对象) )
+类似于C中的 sprintf/snprintf 
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1649c09" class="outline-4">
+<h4 id="org1649c09">获取某shell命令的返回结果字符串 shell-command-to-string</h4>
+<div class="outline-text-4" id="text-org1649c09">
+<p>
+(shell-command-to-string "ls") &#x2013;&gt; 命令的结果
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge2013d1" class="outline-4">
+<h4 id="orge2013d1">进行字符串匹配 string-match</h4>
+<div class="outline-text-4" id="text-orge2013d1">
+<p>
+(string-match "某个模式串的正则+用括号标记要提取的部分"  str  [start-index] )
+返回模式串在str中的开始index
+</p>
+
+<p>
+"hello1234world" <code>==</code>"\\([0-9]+\\)[a-z]+"==========&gt;  5 (能找到子串和正则匹配) 
+</p>
+</div>
+</div>
+<div id="outline-container-org9c4842b" class="outline-4">
+<h4 id="org9c4842b">返回string-match匹配上的模式串以及其中被()标记的部分 match-string</h4>
+<div class="outline-text-4" id="text-org9c4842b">
+<p>
+(match-string 0 str) &#x2013;&gt; 整个匹配上的模式串
+(match-string 1 str) &#x2013;&gt; 模式串中第一个被()标记的部分
+(match-string 2 str) &#x2013;&gt; 模式串中第二个被()标记的部分
+</p>
+</div>
+</div>
+<div id="outline-container-org3b32970" class="outline-4">
+<h4 id="org3b32970">替换掉字符串中的某部分 replace-regexp-in-string</h4>
+<div class="outline-text-4" id="text-org3b32970">
+<p>
+(replace-regexp-in-string "被替换部分的正则"  "用来替换的str"  string) 
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="outline-container-orgfa9857c" class="outline-2">
+<h2 id="orgfa9857c">文本属性</h2>
+<div class="outline-text-2" id="text-orgfa9857c">
+<p>
+文本属性是buffer/string中字符的属性. 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org223b195" class="outline-2">
+<h2 id="org223b195">buffer</h2>
+<div class="outline-text-2" id="text-org223b195">
+<p>
+buffer-list
+所有buffer的list
+</p>
+
+<p>
+buffer-file-name 
+在current-buffer对应于某个打开的文件时,返回其文件路径,否则返回空
+</p>
+
+<p>
+buffer-modified-p
+判断当前buffer是否修改过
+</p>
+
+<p>
+buffer-name
+返回当前buffer的名字
+</p>
+
+<p>
+basic-save-buffer
+保存当前buffer
+</p>
+
+<p>
+(with-temp-message "消息" body)
+执行body(不显示其输出?),并在minibuffer上显示指定消息
+</p>
+
+<p>
+设为当前buffer 
+(set-buffer buffer) 
+</p>
+</div>
+
+
+
+<div id="outline-container-orgf5e95ef" class="outline-3">
+<h3 id="orgf5e95ef">current buffer</h3>
+<div class="outline-text-3" id="text-orgf5e95ef">
+</div>
+<div id="outline-container-orgd7d6f99" class="outline-4">
+<h4 id="orgd7d6f99">简介</h4>
+<div class="outline-text-4" id="text-orgd7d6f99">
+<p>
+current buffer表示能被elisp代码操作的文本区域, 任何一个时刻只能同时存在一个current buffer.
+</p>
+
+<p>
+通常current buffer 就是选中窗口所显示的buffer,但它也可以被修改.
+elisp程序可能为了对某buffer进行操作,而将它指定为当前buffer.不过仅仅修改current buffer并不会使得屏幕上显示的内容发生变化
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgdd1573c" class="outline-4">
+<h4 id="orgdd1573c">current-buffer</h4>
+<div class="outline-text-4" id="text-orgdd1573c">
+<p>
+(current-buffer) &#x2013;&gt; return current buffer
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga3aedc6" class="outline-4">
+<h4 id="orga3aedc6">set-buffer</h4>
+<div class="outline-text-4" id="text-orga3aedc6">
+<p>
+(set-buffer buffer对象/buffer名:字符串) &#x2013;&gt; 当前buffer
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcb99e96" class="outline-4">
+<h4 id="orgcb99e96">保存current-buffer</h4>
+<div class="outline-text-4" id="text-orgcb99e96">
+<p>
+save-excursion 
+保存当前buffer和其point, 然后执行body,最后恢复buffer到current-buffer,并恢复points
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc722d6b" class="outline-4">
+<h4 id="orgc722d6b">M-x启动的命令运行结束后，emacs会自动调用set-buffer来复位current buffer</h4>
+<div class="outline-text-4" id="text-orgc722d6b">
+<p>
+目的是为了将current-buffer重新设置为选中窗口所显示的那个buffer
+避免了操作对象混乱的情况。
+</p>
+
+<p>
+因此不能使用set-buffer从显示上切换current buffer（switch-to-buffer)
+</p>
+
+<p>
+并且不能依赖这个特性来恢复当前缓冲区，因为修改了current buffer的程序不一定总是以编辑器的命令循环的方式被调用
+它同样可以被其它程序调用，因此要注意current buffer的变化，不能依赖此特性。
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1fda9a4" class="outline-4">
+<h4 id="org1fda9a4">append-to-buffer</h4>
+<div class="outline-text-4" id="text-org1fda9a4">
+<p>
+将current buffer中指定范围的文本追加到指定buffer中
+</p>
+
+<p>
+<code>(append-to-buffer Buffer对象/Buffer名[string] start-point end-point)</code>
+</p>
+</div>
+
+<ul class="org-ul">
+<li><a id="org232e376"></a>例子<br />
+<div class="outline-text-5" id="text-org232e376">
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #62686E;">;; </span><span style="color: #62686E;">&#23558;&#24403;&#21069;buffer&#20013;&#20174;&#24320;&#22836;&#21040;&#20809;&#26631;&#22788;&#30340;&#25991;&#26412;&#36861;&#21152;&#21040;&#25351;&#23450;buffer&#20013;</span>
+(append-to-buffer <span style="color: #7bc275;">"*scratch*"</span> (point-min) (point))
+</pre>
+</div>
+</div>
+</li>
+
+<li><a id="org6f3b55c"></a>位置的指定<br />
+<ul class="org-ul">
+<li><a id="org9bb8c6e"></a>(point) 在current buffer中的光标位置<br /></li>
+<li><a id="orgbd15305"></a>(point-min)<br />
+<div class="outline-text-6" id="text-orgbd15305">
+<p>
+current buffer 中最小的位置，通常为1
+</p>
+</div>
+</li>
+
+
+<li><a id="org7fc98bb"></a>(point-max)<br />
+<div class="outline-text-6" id="text-org7fc98bb">
+<p>
+current buffer 中最大的位置，通常为1+buffer中字符数
+</p>
+</div>
+</li>
+
+<li><a id="org440d406"></a>(buffer-end flag)<br />
+<div class="outline-text-6" id="text-org440d406">
+<p>
+返回point-min，若 flag &lt;= 0
+返回point-max，若 flag &gt; 0
+</p>
+</div>
+</li>
+
+<li><a id="orgbc2c941"></a>(buffer-size [buffer对象] )<br />
+<div class="outline-text-6" id="text-orgbc2c941">
+<p>
+返回（当前）buffer对象中的字符总数。可选参数不支持输入buffer名
+</p>
+</div>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<div id="outline-container-org097ee3b" class="outline-4">
+<h4 id="org097ee3b">例子</h4>
+<div class="outline-text-4" id="text-org097ee3b">
+<p>
+这个函数说明了这点，首先随意打开一个除了scratch之外的buffer，
+并确保*scratch*这个buffer存在。
+然后调用test-buffer函数，可以观察到下面几点
+</p>
+
+<p>
+(defun test-buffer()
+    (interactive)
+  (set-buffer "<b>scratch</b>")
+  (insert "operate this buffer ")
+  )
+</p>
+
+
+<ol class="org-ol">
+<li>显示上没有切换到其它buffer</li>
+<li>当前窗口的buffer并没有被插入文本</li>
+<li>查看*scratch*发现有新的文本被插入</li>
+<li>M-: (current-buffer) 后发现，current-buffer并不是代码中设置的</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org714d170" class="outline-2">
+<h2 id="org714d170">操作系统接口</h2>
+<div class="outline-text-2" id="text-org714d170">
+</div>
+<div id="outline-container-org5e94a14" class="outline-3">
+<h3 id="org5e94a14">空闲定时器</h3>
+<div class="outline-text-3" id="text-org5e94a14">
+<p>
+在emacs空闲指定秒数时运行计时器.
+</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

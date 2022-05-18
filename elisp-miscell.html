@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-05-18 三 21:42 -->
+<!-- 2022-05-18 三 21:56 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>elisp 杂记</title>
@@ -27,17 +27,17 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orga9c66a9">在org模式下快速插入代码块</a></li>
-<li><a href="#org1f8e3e4">生成相对路径来指向org的主题</a></li>
+<li><a href="#org4611568">在org模式下快速插入代码块</a></li>
+<li><a href="#orgdf1188a">生成相对路径来指向org的主题</a></li>
 </ul>
 </div>
 </div>
 
 
 
-<div id="outline-container-orga9c66a9" class="outline-2">
-<h2 id="orga9c66a9">在org模式下快速插入代码块</h2>
-<div class="outline-text-2" id="text-orga9c66a9">
+<div id="outline-container-org4611568" class="outline-2">
+<h2 id="org4611568">在org模式下快速插入代码块</h2>
+<div class="outline-text-2" id="text-org4611568">
 <p>
 在org中插入一个代码块比起markdown要麻烦不少:
 </p>
@@ -173,9 +173,9 @@
 
 
 
-<div id="outline-container-org1f8e3e4" class="outline-2">
-<h2 id="org1f8e3e4">生成相对路径来指向org的主题</h2>
-<div class="outline-text-2" id="text-org1f8e3e4">
+<div id="outline-container-orgdf1188a" class="outline-2">
+<h2 id="orgdf1188a">生成相对路径来指向org的主题</h2>
+<div class="outline-text-2" id="text-orgdf1188a">
 <div class="org-src-container">
 <pre class="src src-emacs-lisp"><span style="color: #62686E;">;;;;;;;;;;;;;;;</span><span style="color: #62686E;">&#29992;&#30456;&#23545;&#36335;&#24452;&#20174;&#24403;&#21069;&#30446;&#24405;&#35775;&#38382;&#39033;&#30446;&#26681;&#30446;&#24405;;;;;;;;;;;;;;;;;;</span>
 (<span style="color: #51afef;">setq</span> org-confirm-babel-evaluate nil) <span style="color: #62686E;">;; </span><span style="color: #62686E;">org&#27169;&#24335;&#19979;&#36816;&#34892;&#20195;&#30721;&#26080;&#38656;&#25163;&#21160;&#30830;&#35748;</span>
@@ -215,6 +215,38 @@
   (insert   (concat <span style="color: #7bc275;">"#+include: "</span>  (rel-path)  <span style="color: #7bc275;">"mytheme.setup \n"</span>))
   )
 
+</pre>
+</div>
+
+
+<p>
+在org文件头部执行： <code>org-setup-mytheme</code>
+</p>
+<pre class="example">
+#+include: ./mytheme.setup
+</pre>
+
+
+<div class="org-src-container">
+<pre class="src src-org"><span style="color: #62686E;"># -*- mode: org; -*-</span>
+<span style="color: #7e7e87;">#+OPTIONS: html-style:nil  html-postamble:nil</span>
+
+
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/htmlize.css\"/&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/bigblow.css\"/&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/hideshow.css\"/&gt;")}
+
+
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js\"&gt;&lt;/script&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js\"&gt;&lt;/script&gt;")}
+
+
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js\"&gt;&lt;/script&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js\"&gt;&lt;/script&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js\"&gt;&lt;/script&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/bigblow.js\"&gt;&lt;/script&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/hideshow.js\"&gt;&lt;/script&gt;")}
+src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: &lt;script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/lib/js/jquery.stickytableheaders.min.js\"&gt;&lt;/script&gt;")}
 </pre>
 </div>
 </div>

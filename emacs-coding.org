@@ -43,9 +43,12 @@ flycheck-list-errors
 C-h b
 c-h k
 
-
 * 标签页
 c-x t  b/0/1/2 
 
 
 c-m-space 
+
+
+
+

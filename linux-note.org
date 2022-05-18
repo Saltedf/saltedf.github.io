@@ -174,7 +174,16 @@ sudo apt-get update
 
 
 
-* 重启ssh服务
+* 在ArchLinux中安装deb
+
+#+begin_src sh 
+  yay -Sy dpkg
+  
+  dpkg -i  xxx.deb
+#+end_src
+
+* ssh 
+** 重启ssh服务
 
 
 
@@ -187,7 +196,7 @@ sudo service ssh restart
 
 
 
-* 查看ssh服务是否启动
+** 查看ssh服务是否启动
 
 #+begin_src bash
 sudo lsof -i :22 

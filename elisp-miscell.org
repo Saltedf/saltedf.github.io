@@ -1,10 +1,11 @@
-#+TITLE:  在org模式下快速插入代码块
+#+TITLE: elisp 杂记
 #+include: mytheme.setup 
 
 #+OPTIONS: num:nil
 
 
 
+* 在org模式下快速插入代码块
 
 
 在org中插入一个代码块比起markdown要麻烦不少:
@@ -104,7 +105,7 @@
 #+end_src
 
 
-+ 参考
+*参考*
   
  + https://segmentfault.com/a/1190000039313306
 
@@ -113,3 +114,75 @@
  + http://xahlee.info/emacs/emacs/elisp_thing-at-point.html
 
 
+ 
+* 生成相对路径来指向org的主题
+
+#+begin_src emacs-lisp
+;;;;;;;;;;;;;;;用相对路径从当前目录访问项目根目录;;;;;;;;;;;;;;;;;
+(setq org-confirm-babel-evaluate nil) ;; org模式下运行代码无需手动确认
+(require 'project)
+(defun count-dir (str)
+  "Count the number of '/' in the STR."
+  (let* ( (clist (mapcar #'char-to-string str) )
+	  (cnt 0) )
+    (dolist (ch clist  cnt)
+      (if (string= ch "/" )    
+	  (setq cnt (+ 1 cnt))
+	))))
+
+(defun path-diff ()
+  "The current directory position is from the depth of the root directory of the project."
+  (let* ( (current (expand-file-name(concat "" (format default-directory))))
+	  (root (expand-file-name (locate-dominating-file "." "mytheme.setup" ))))
+    (message "%s\n" current)
+    (message "%s\n" root) 
+    (- (count-dir current) (count-dir root) )
+    )
+  )
+    
+(defun rel-path ()
+  "Return to the relative path to the root directory of the project."
+  (let* ( (cnt (path-diff))
+	  (path "" )   )
+    (while (> cnt 0)
+      (setq path (concat path  "../" ) )
+      (setq cnt (- cnt 1 )))
+    (concat path "") 
+    )
+  )
+
+(defun org-setup-mytheme( )
+  (interactive) 
+  (insert   (concat "#+include: "  (rel-path)  "mytheme.setup \n"))
+  )
+   
+#+end_src
+
+
+在org文件头部执行： =org-setup-mytheme=
+#+begin_src
+#+include: ./mytheme.setup
+#+end_src
+
+
+#+begin_src org
+  # -*- mode: org; -*-
+  #+OPTIONS: html-style:nil  html-postamble:nil
+
+
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/htmlize.css\"/>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/bigblow.css\"/>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <link rel=\"stylesheet\" type=\"text/css\" href=\"" (rel-path) "org-html-themes/src/bigblow_theme/css/hideshow.css\"/>")}
+
+
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js\"></script>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js\"></script>")}
+
+
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js\"></script>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js\"></script>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js\"></script>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/bigblow.js\"></script>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/bigblow_theme/js/hideshow.js\"></script>")}
+  src_emacs-lisp[:results raw]{(concat "#+HTML_HEAD: <script type=\"text/javascript\" src=\"" (rel-path) "org-html-themes/src/lib/js/jquery.stickytableheaders.min.js\"></script>")}
+#+end_src

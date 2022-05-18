@@ -1,8 +1,13 @@
-#+TITEL elisp
+#+TITLE: elisp
+#+OPTIONS: num:nil 
+#+include: ./mytheme.setup
 
-#+SETUPFILE: ./mytheme.setup
 
+#+begin_src
 M-x org-indent-mode
+#+end_src
+
+
 
 ** 基本约定
 *** "the lisp reader/printer"

@@ -4,10 +4,11 @@
 
 * 目录 
 
-** [[./elisp-insert-code-block.org][快速插入代码块]]
+** [[./elisp.org][Elisp学习]]
+** [[./elisp-miscell.org][Elisp杂记]]
 ** [[./emacs-coding.org][Emacs org文件编码问题]]
 ** [[./linux-note.org][linux命令杂记]]
 ** [[./cpp-primer.html][C++ primer杂记]] 
 ** [[./cmake-learning.org][CMake学习]]
-
+** [[./cpp-iterator.html][C++迭代器]]
 ** [[./ocaml-book/ocaml-book.org][OCaml杂记]]
