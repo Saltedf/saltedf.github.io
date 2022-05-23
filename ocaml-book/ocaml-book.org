@@ -1,6 +1,5 @@
 #+TITLE: OCaml 杂记
-#+OPTIONS: toc:t  num:t  timestamp:nil 
-
+#+OPTIONS: toc:nil  num:nil  timestamp:nil 
 #+include: ../mytheme.setup 
 
 
@@ -8,6 +7,7 @@
 * CS3110 练习题
 + [[./ch2/ex.org][Ch2]]
 + [[./ch3/exercises.org][Ch3]]
+  
 * opam包管理器
 
 
@@ -17,6 +17,7 @@
 #+begin_src sh
 opam install -y utop odoc ounit2 qcheck bisect_ppx menhir ocaml-lsp-server ocamlformat ocamlformat-rpc
 #+end_src
+
 
 * utop交互式解释器
 
@@ -75,7 +76,7 @@ ocaml中没有专门的main函数，文件（指的是dune中name命令指定的
   #+begin_src elisp
     (executable
       (name XX) ;;XX为main函数所在文件的名字
-      ;;(libraries yyy) ;; erung: ounit2
+      ;;(libraries yyy) ;; eg: ounit2
       )
   #+end_src
 
@@ -1412,3 +1413,553 @@ Node{v=1;l=Leaf;r=Leaf}   ==> [1]
 
 
 
+
+
+* 高阶函数
+
+所谓高阶函数，就是将函数作为参数/返回值的函数。
+
+** 将函数作为参数
+#+begin_src ocaml
+  let double x = 2 * x ;; (* 两倍 *) 
+
+  (* 四倍 *)
+  let fourth x = double ( double x) ;; 
+  let fourth' x = x |> double |> double ;;
+#+end_src
+
+#+begin_src ocaml
+  let square x = x*x ;; (* 平方 *)
+
+  (* 四次方 *)
+  let quad x = square (square x) 
+  let quad' x = x |> square |> square ;;
+#+end_src
+
+上面这两个例子有某种相似之处：都apply某个函数两次
+因此可以编写一个高阶函数，它将某函数f应用两次到参数上。
+#+begin_src ocaml
+  let apply_twice f x = f (f x) 
+  let apply_twice' f x = x |> f |> f ;;
+#+end_src
+因此可以重写上面的函数：
+#+begin_src ocaml
+  let fourth x = apply_twice double x ;;
+
+  let quad x = apply_twice square x ;;
+#+end_src
+
+
+
+** 将函数作为返回值
+
+#+begin_src ocaml
+  apply_twice double ;;
+  
+  - : int -> int = <fun>
+#+end_src
+通过部分应用apply_twice，返回了一个新的函数
+
+
+** map/reduce
+
+map/reduce 是典型的高阶函数，在逻辑上它们都接收一个函数作为参数。
+map将输入的函数/运算应用到list的每个元素上，并返回一个由运算结果构成的list
+reduce利用输入的函数/操作将list中的元素合成为一个结果 
+
+*** map
+map将一个list映射为另一个list
+#+begin_src ocaml
+  let rec addone = function
+    |[] -> []
+    |h::t -> (h+1) :: (addone t)
+  ;;
+
+  let rec concat_3110 = function
+    |[] -> []
+    |h::t -> (h^ "3110" ) :: (concat_3110 t)
+  ;;
+#+end_src
+这两个函数都是将列表中的某个元素变换成另一个，并返回由这些新元素构成的列表。
+它们的形式也是十分相似的：将变换后的首个元素 链接上 (递归调用list的剩余部分）
+
+因此我们能通过抽取出相同的代码，形成一个新的函数，不同的部分作为参数传入，这就是 =map= 。
+#+begin_src ocaml
+  let rec map func = function
+    |[] -> []
+    |h::t -> (func h) :: (map func t)
+  ;;
+#+end_src
+
+通过map重新定义上面的两个函数 （部分应用map）
+#+begin_src ocaml
+  let addone' = map (fun x -> x+1)
+  let concat_3110' = map (fun s -> s ^ "3110" )
+  ;;
+#+end_src
+
+将int list转换为string list
+#+begin_src ocaml
+  let strlist_of_intlist = map string_of_int ;;
+#+end_src
+
+
+
+
+
+
+*** 抽象原则
+抽取出重复出现的代码模式，不要重复编写它们。
+
+
+*** fold 
+
+将一个list映射为一个新的list元素。标准库中提供了 =fold= 函数
+
+#+begin_src ocaml
+  let rec sum = function
+    |[] -> 0
+    |h::t -> h + (sum t)
+
+  let rec concat = function
+    |[] -> ""
+    |h::t -> h ^ (concat t)
+  ;;
+#+end_src
+同样能发现重复出现的模式：
+
+不同之处在于，这两个函数是将一个二元运算施加到 首个元素 和 （递归调用list的剩余部分）
+
+将相同的模式抽出作为函数体，将不同的部分设为参数，让使用者负责提供：
+#+begin_src ocaml
+  let rec reduce init op  = function
+    |[] -> init
+    |h::t -> op  h (reduce init op t)
+  ;;
+#+end_src
+
+同样重写上面两个函数：
+#+begin_src ocaml
+  let sum' = reduce 0 ( + )
+
+  let concat' = reduce "" ( ^ )
+  ;;
+#+end_src
+
+
+**** fold的结合性
+
+在这个函数中我们观察op作用到list中的元素的顺序，由于后调用的函数先返回（栈的性质：先进后出，后进先出）
+因此后面的reduce调用会先进行计算，反应到list中的元素的计算顺序就是：从list尾部的元素开始向头部进行op运算：
+也可以说，运算op是右结合的。
+
+有一个库函数反应了这一点：
+#+begin_src ocaml
+List.fold_right f list init ;;
+#+end_src
+它计算过程是
+#+begin_src ocaml
+List.fold_right f [a;b;c] init == f a (f b (f c init)) 
+#+end_src
+
+这种fold（reduce）就是上面实现过的函数：
+#+begin_src ocaml
+  let rec fold_right init f  = function
+      |[] -> init
+      |h::t -> f h (fold init f t)
+  ;;
+#+end_src
+
+
+对称地，也有一个库函数： =List.fold_left= ，它从list头部向list尾部应用op运算。
+#+begin_src ocaml
+  let fold_left init f lst =
+    let rec impl acc f = function
+      |[] -> acc
+      |h::t -> impl (f acc h) f t
+    in
+    impl init f lst
+  ;;
+#+end_src
+务必要注意那些不满足“结合性”的运算，对这种运算要严格区分“从右侧开始折叠”/“从左侧开始折叠”的概念。
+（如：减法）
+
+另外，对于满足结合性的运算，优先考虑使用fold_left，因为它是尾递归（迭代）。
+对于那些仅满足右结合性的运算，若不想使用非尾递归的 =fold_right= ，则可以将list反转（ =List.rev= ），再对其进行 =fold_left=
+
+ 
+
+
+*** filter
+过滤：接收一个函数作为谓词，将list中满足谓词的元素组成的新list返回。
+
+从list中过滤出奇数/偶数 
+#+begin_src ocaml
+  let rec evens = function
+    |[] -> []
+    |h::t -> if (h mod 2) == 0 then h::(evens t) else  t
+  ;;
+
+  let rec odds = function
+    |[] -> []
+    | h::t -> if (h mod 2) != 0 then h::(odds t) else t
+  ;;
+#+end_src
+
+显然这两个函数几乎就是一样的，因此将相同的部分抽取出来作为函数体，不同的部分提取为参数
+#+begin_src ocaml
+  let rec filter p = function
+    |[] -> []
+    |h::t -> if (p h) then h::(filter p t) else filter p t
+  ;;
+#+end_src  
+
+#+begin_src ocaml
+  let evens = filter (fun i -> (i mod 2) = 0 )
+  let odds = filter (fun i -> (i mod 2) != 0 )
+  ;;
+#+end_src
+
+
+目前这个filter函数不是尾递归的，可以将它改写成尾递归版本。
+一般地改写成尾递归的方法如下：
+
+1. 为递归定义的函数增加一个 acc 参数，作为每次的累计值。
+2. 为递归的平凡情况返回acc
+3. 在每次递归调用时更新acc 
+
+#+begin_src ocaml
+  let filter p lst = 
+    let rec impl acc p = function
+      |[] -> List.rev acc 
+      |h::t -> impl (if (p h) then h::acc else acc) p t 
+    in
+    impl [] p lst 
+  ;;
+#+end_src
+
+这个例子不完全符合上面的三步，主要是为了避免使用list的添加到尾部的操作（线性时间）
+而选择了用 =::= (cons)来更新acc，因此最后得到acc的顺序是反的，最后返回时需要List.rev来反转列表。
+
+
+
+*** tree版本的map/fold
+
+#+begin_src ocaml
+  type 'a tree =
+      Leaf
+    | Node of 'a * 'a tree * 'a tree
+  ;;
+#+end_src
+
+#+begin_src ocaml
+  let rec tree_map func = function
+    |Leaf -> Leaf
+    |Node (v,l,r) -> Node( (func v),(tree_map func l),(tree_map func r) )
+  ;;
+#+end_src
+
+#+begin_src ocaml
+  let rec tree_fold init op = function
+    | Leaf -> init
+    |Node (v, l,r) -> op v (op
+			      (tree_fold init op l)
+			      (tree_fold init op r))
+  ;;
+  
+#+end_src
+ 
+
+
+
+
+
+* 模块
+
+引入模块的动机就是希望能将代码分成一个个能被单独理解和编写的部分。
+提供模块的抽象需要有语言的支持：
+
++ 命名空间 ：structure
++ 接口：signature
++ 封装：abstract type ( 以及signatures )
++ 代码重用：include / functor
+
+** =struct= 关键字
+
+*** 创建struct模块
+
+struct的名字必须是以大写字母开头的 
+#+begin_src ocaml
+  module Myspace = struct
+    let myfunc = (* .... *)  ;; 
+  end
+#+end_src
+
+
+*** struct module的语义
+模块不能作为参数/返回值，也不能用let绑定到某个名字上。
+
++ 求值
+从上到下依次对每个定义进行求值，最后返回一个module类型的值，它绑定了名字和值
+而后又将module值绑定到 =module MyName= 中的名字上。
+
+
+
+
+*** 使用struct模块中的定义 
+#+begin_src ocaml
+  Myspace.myfunc ....
+#+end_src
+
+在使用中有个麻烦的问题是，若出现的多个定义同属于同一模块时，没有必要每次都加上命名空间前缀。
+有3个方法能避免重复书写struct模块名：
+
++ 1. =open= 关键字 
+
+局部open
+#+begin_src ocaml
+  let retval =
+    let open MyStack in
+    Empty |> push 3 |> top
+  ;;
+#+end_src
+
+全局open
+#+begin_src ocaml
+  open MyStack (* 到文件末尾 *)
+  let val = Empty |> push 3 |> push 4 |> top 
+#+end_src
+
++ 2. 在表达式之前加上 =MyName.= 
+#+begin_src ocaml
+let t = MyTree. Node(2,Leaf,Leaf) ;;
+#+end_src
+
+编译器能自行推断出Node/Leaf所属的命名空间 
+
++ 3. 为变量添加类型注释 
+#+begin_src ocaml
+  let t : int MyTree.tree = Node(2,Leaf,Leaf) ;;
+#+end_src
+
+
+
+*** 例子：MyStack
+
+#+begin_src ocaml
+  module MyStack = struct
+
+    type 'a stack =
+      |Empty 
+      |Entry of 'a * 'a stack
+
+    let push e stk = function
+      Entry(e,stk)
+
+    let pop = function
+      |Empty -> Empty
+      |Entry(_,rest) ->  rest
+
+    let top = function
+      |Empty -> None
+      |Entry(top, _ )-> Some top
+			  
+    let top_exn = function
+      |Empty -> failwith "Empty Stack"
+      |Entry(top,_) -> top
+
+  end
+  ;;
+#+end_src
+
+这里实现是一个函数式数据结构，这意味着任何对数据结构的操作都无法修改它的数据，而是创建一个新的数据结构对象。
+我们称这种数据结构是持久的。
+
+
+*** 例子：ListQueue
+用list实现queue
+#+begin_src ocaml
+   module ListQueue = struct
+
+     type 'a queue = 'a list
+
+     let enqueue v  que =
+       que @ [v]  (*线性时间*)
+
+     let dequeue = function
+       |[] -> None
+       |_::t -> Some t 
+
+     let dequeue_exn = function
+       |[] -> failwith "empty queue"
+       |_::t -> t
+
+     let first = function
+       |[] -> None
+       |h::_ -> Some h
+
+     let first_exn = function
+       |[] -> failwith "empty queue"
+       |h::_ -> h
+
+   end
+  ;;
+#+end_src
+
+这个实现的一个问题就是其入队操作要花费线性时间。
+有一个解决方法是用两个list，分别表示queue的前面和后面。
+eg: front= [2;4], back=[7;6;5] (逆序) ==> queue = [2;4; 5;6;7]
+这样实现的队列在均摊时间上是常数级的。
+#+begin_src ocaml
+  module TwoListQueue = struct
+    
+    type 'a queue = {
+      front: 'a list ;
+      back: 'a list 
+    }
+
+    let empty = {
+      front= [];
+      back = []
+    }
+
+    let peek = function
+      |{front=[] } -> None
+      |{front=x::_ ;} -> Some x
+    ;;
+
+    let enqueue x = function
+      |{front=[] } -> {front=[x] ; back=[] }
+      |q -> {q with back=x::q.back}  (* 即：当front不为空list时*)
+
+    let dequeue = function
+      |{front=[]} -> None
+      |{front= _::[] ;back=b} -> Some {front = List.rev b ;back=[] } 
+      |{front=_::t;back=b} -> Some {front = t ;back=b}
+
+  end
+#+end_src
+
+在peek的实现中，面临着一个选择就是当front为空时应该如何匹配，我们可以分别列出back为[]或非空的list。
+或者我们来假设front为空时，back也必然为空，这个假设基于我们的入队操作优先作用到哪个list上。
+只要我们在实现中优先让入队作用到front上，这样就能确保front为空时，必然能推出back也为空。
+并且在出队操作时保证front为空时，将back中的元素自动补充到front中。
+
+基于这个假设，queue的模式大致有两类：
+{front=[]}，以及其它情况。
+
+
+dequeue的实现中，看似只需要第一个模式和第三个模式即可，即当front为空以及front不为空时。
+但是第三个模式的操作结果可能会破坏之前的假设（不变量）：front为空必然推出back为空
+
+因此需要在出队时额外区分一种情况：front中只有一个元素。此时需要在出队后，将back中的元素补充到front,这样才能维持不变量。
+
+
+
+
+
+
+#+begin_quote
+*异常和Options的选择* 
+
+采用异常的好处是不用额外处理函数的返回值，相对地，用Options的坏处是可能需要额外剥离 =Some x=
+换句话讲，采用异常的函数更容易和管道符 =|>= 一起使用。而采用option的函数则不能出现在管道符的之间。
+
+
+#+begin_src ocaml
+  (* 这样无法通过编译： *）
+  empty |> enqueue 2 |> enqueue 4 |> dequeue |> peek 
+#+end_src
+
+#+begin_src ocaml
+  (* 换用抛出异常的版本就可以了 *)
+  empty |> enqueue 2 |> enqueue 4 |> dequeue_exn |> peek
+#+end_src
+
+为此可以重写2个能自动剥离输入参数为 =Some= 的新管道符，
+
+一个专门用于连接那些返回option的函数： =>>|=
+
+另一个用于那些返回普通值的函数（使用用异常的） =>>==
+#+begin_src ocaml
+  let ( >>| ) opt func =
+    match opt  with
+    |None -> None 
+    |Some v -> (func v)
+  ;;
+#+end_src
+#+begin_src ocaml
+ let ( >>= ) opt f_exn =
+    match opt  with
+    |None -> None 
+    |Some v -> Some (f_exn v)
+  ;;
+#+end_src
+
+#+begin_src ocaml
+  let open TwoListQueue in 
+  empty |> enqueue 2 |> enqueue 4 |> dequeue >>= enqueue 3 >>|  dequeue >>=  peek
+  ;;  
+#+end_src
+
+#+end_quote
+
+
+
+
+
+
+** =sig= 关键字
+
+定义接口 （定义一个新的module type）
+#+begin_src ocaml
+  module type Fact = sig 
+    val fact : int -> int 
+  end
+#+end_src
+
+实现接口 （创建一个类型为 module type Fact类型的“对象” ）
+#+begin_src ocaml
+  module RescursiveFact : Fact = struct
+    let rec fact n =
+      if n=0 then 1 else n * fact (n-1)
+  end
+(*****************************************) 
+  module TailRescursiveFact : Fact =struct
+    let rec fact_iteration acc = function
+      |0 -> acc
+      |n -> fact_iteration (acc*n) (n-1)
+    let fact n = fact_iteration 1 n
+  end
+  ;;
+#+end_src
+在实现中必须出现接口中定义过的东西，这时在实现中定义其它东西是不会报错的。
+#+begin_src ocaml
+  module type Addone = sig
+    val addone: int list -> int list
+  end
+
+  module MyAddone: Addone  = struct
+    let incr x  = x+1
+    let rec addone = function
+      |[] -> []
+      |h::t -> (1+ h ) :: (addone t)
+  end
+  ;;
+#+end_src
+
+使用这种实现某个接口sig的struct时，只能使用sig声明过的东西，struct中的其它定义对外是不可访问的。
+
+#+begin_src ocaml
+  (* 这是不允许的：
+   MyAddone.incr 4;; *)
+  
+  MyAddone.addone [1;3;5] ;;(*合法操作*)
+#+end_src
+
+
+
+** 例子：改写MyStack 
+
+
+** 抽象类型 abstract type 
