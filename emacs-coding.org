@@ -52,3 +52,14 @@ c-m-space
 
 
 
+
+
+* 查看光标处字符对应的acsii码
+describe-char  
+
+C-x =
+
+分别显示 10进制/8进制/16进制 形式的acsii码
+
+
+

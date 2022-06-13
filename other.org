@@ -1,0 +1,11 @@
+
+
+* STK scheme 安装
+
+arch linux
+
+sudo pacman -Sy  lib32-libsm
+
+下载UCB版本的stk的rpm包, 解压后sudo cp到根目录
+
+运行时用命令 sudo stk 来启动 ! 

@@ -1,5 +1,5 @@
 (executable
-	(name  )
+	(name test_add_row_vectors)
 	(libraries ounit2)
 )
 

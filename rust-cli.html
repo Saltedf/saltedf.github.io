@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-06-11 六 22:18 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>rust-cli</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">rust-cli</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgc1fd5fa">1. Ch1</a>
+<ul>
+<li><a href="#org08c9e32">1.1. cargo创建并运行项目</a></li>
+<li><a href="#org9c09db6">1.2. 测试</a></li>
+<li><a href="#orge28907f">1.3. 添加依赖</a></li>
+<li><a href="#org60d08fd">1.4. 退出码</a></li>
+<li><a href="#orgd2284ed">1.5. 测试输出结果</a></li>
+</ul>
+</li>
+<li><a href="#org9dce323">2. Ch2 echo</a>
+<ul>
+<li><a href="#orga418412">2.1. echo的行为</a></li>
+<li><a href="#org4ec25f2">2.2. 获取命令行参数</a></li>
+<li><a href="#org47d6dfc">2.3. 用 <code>clap</code> 解析命令行参数</a></li>
+<li><a href="#org7e06f2f">2.4. 根据 <code>with_name()</code> 取出参数值</a></li>
+<li><a href="#org7f607b6">2.5. 编写集成测试</a>
+<ul>
+<li><a href="#org5abf585">2.5.1. 和echo的输出进行对比</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org89748c0">3. Ch3 cat</a></li>
+<li><a href="#orge6a68ca">4. Ch4 head</a></li>
+<li><a href="#orge18333e">5. Ch5 wc</a></li>
+<li><a href="#org3957c69">6. Ch6 uniq</a></li>
+<li><a href="#org7610d26">7. Ch7 find</a></li>
+<li><a href="#orgc23819e">8. Ch8 cut</a></li>
+<li><a href="#org2af80b4">9. Ch9 grep</a></li>
+<li><a href="#orgb845099">10. Ch10 comm</a></li>
+<li><a href="#org0265ab2">11. Ch11 tail</a></li>
+<li><a href="#org18c09de">12. Ch12 fortune</a></li>
+<li><a href="#org67066b4">13. Ch13 cal</a></li>
+<li><a href="#orgdecc13c">14. Ch14 ls</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgc1fd5fa" class="outline-2">
+<h2 id="orgc1fd5fa"><span class="section-number-2">1.</span> Ch1</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org08c9e32" class="outline-3">
+<h3 id="org08c9e32"><span class="section-number-3">1.1.</span> cargo创建并运行项目</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+<code>println!()</code> 是一个宏 <code>macro</code> , 它本质上是一段能生成代码的代码. 所有以 <code>!</code> 结尾的"函数"都是macro, 
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-bash">mkdir -p parent/child <span style="color: #62686E;"># </span><span style="color: #62686E;">-p &#36873;&#39033;&#33021;&#22312;&#21019;&#24314;child&#30446;&#24405;&#21069;&#20808;&#21019;&#24314;parent </span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-bash">cargo new 
+</pre>
+</div>
+<p>
+不显示编译信息并运行 
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">cargo run --quiet
+<span style="color: #62686E;"># </span><span style="color: #62686E;">Or: </span>
+cargo run -q 
+</pre>
+</div>
+<p>
+默认情况下cargo会创建一个debug版本的程序, 
+</p>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org9c09db6" class="outline-3">
+<h3 id="org9c09db6"><span class="section-number-3">1.2.</span> 测试</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+新建目录tests
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">$  tree -L 2
+.
+&#9500;&#9472;&#9472; Cargo.lock
+&#9500;&#9472;&#9472; Cargo.toml
+&#9500;&#9472;&#9472; hello
+&#9474;&#160;&#160; &#9492;&#9472;&#9472; src
+&#9500;&#9472;&#9472; src
+&#9474;&#160;&#160; &#9500;&#9472;&#9472; main
+&#9474;&#160;&#160; &#9500;&#9472;&#9472; main.rs
+&#9474;&#160;&#160; &#9492;&#9472;&#9472; part2.rs
+&#9500;&#9472;&#9472; target
+&#9474;&#160;&#160; &#9500;&#9472;&#9472; CACHEDIR.TAG
+&#9474;&#160;&#160; &#9500;&#9472;&#9472; debug
+&#9474;&#160;&#160; &#9500;&#9472;&#9472; rls
+&#9474;&#160;&#160; &#9492;&#9472;&#9472; tmp
+&#9492;&#9472;&#9472; tests
+    &#9492;&#9472;&#9472; cli.rs
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #C57BDB; font-weight: bold;">#[test]</span>
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">works</span>() {
+    <span style="color: #C57BDB; font-weight: bold;">assert!</span>(<span style="color: #51afef;">true</span>);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a991f1;">std</span>::<span style="color: #a991f1;">process</span>::<span style="color: #FCCE7B;">Command</span>;
+
+<span style="color: #C57BDB; font-weight: bold;">#[test]</span>
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">runs</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::new(<span style="color: #7bc275;">"ls"</span>);
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">res</span> = cmd.output(); <span style="color: #62686E;">// </span><span style="color: #62686E;">&#36820;&#22238;&#31867;&#22411;&#20026; Result </span>
+    <span style="color: #C57BDB; font-weight: bold;">assert!</span>(res.is_ok());
+    <span style="color: #C57BDB; font-weight: bold;">assert!</span>(<span style="color: #51afef;">false</span>);
+}
+</pre>
+</div>
+
+<p>
+启动测试:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash">cargo run <span style="color: #62686E;"># </span><span style="color: #62686E;">shell</span>
+
+M-x rust-test <span style="color: #62686E;"># </span><span style="color: #62686E;">emacs</span>
+</pre>
+</div>
+
+
+<p>
+只有环境变量中记录的命令才能直接运行:
+</p>
+
+<p>
+查看环境变量, 并用 <code>tr</code> 将 <code>:</code> 替换为换行符
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">echo</span> $<span style="color: #DFDFDF;">PATH</span> | tr : <span style="color: #7bc275;">'\n'</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orge28907f" class="outline-3">
+<h3 id="orge28907f"><span class="section-number-3">1.3.</span> 添加依赖</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+为了让我们自己写的程序能像命令一样用Command的方式调用, 我们需要一个包 <code>assert_cmd</code> ,因为它只是在测试中被使用,因此将它加入到 <code>[dev-dependencies]</code> 下:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-toml">...
+[dependencies]
+
+[dev-dependencies]
+assert_cmd = "1"
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-bash">cargo build
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a991f1;">assert_cmd</span>::<span style="color: #FCCE7B;">Command</span>; 
+
+<span style="color: #C57BDB; font-weight: bold;">#[test]</span>
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">runs</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::cargo_bin(<span style="color: #7bc275;">"hellorust"</span>).unwrap();
+    cmd.assert().success();
+}
+</pre>
+</div>
+<p>
+cargo<sub>bin创建一个运行hellorust程序的命令</sub>, 并返回一个Result类型的值, <code>unwrap()</code> 尝试将Result中Ok的内容取出来, 若不是Ok, 则会引发panic()
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">pub</span> <span style="color: #51afef;">enum</span> <span style="color: #FCCE7B;">Result</span>&lt;<span style="color: #FCCE7B;">T</span>, <span style="color: #FCCE7B;">E</span>&gt; {
+    <span style="color: #FCCE7B;">Ok</span>(<span style="color: #FCCE7B;">T</span>),
+    <span style="color: #FCCE7B;">Err</span>(<span style="color: #FCCE7B;">E</span>),
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #62686E;">(*</span><span style="color: #62686E;">OCaml</span><span style="color: #62686E;">*)</span>
+<span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">'t</span><span style="color: #f0e68c;">,</span><span style="color: #FCCE7B;">'e</span><span style="color: #f0e68c;">)</span><span style="color: #FCCE7B;"> result</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #bbc2cf; background-color: #242730;">Ok</span> <span style="color: #51afef;">of</span> 't
+  <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Err</span> <span style="color: #51afef;">of</span> 'e
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org60d08fd" class="outline-3">
+<h3 id="org60d08fd"><span class="section-number-3">1.4.</span> 退出码</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+命令行程序会返回一个退出码来说明程序运行结束的状态.
+有一个命令 <code>true</code> 总是将退出码置为0
+</p>
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">true</span>
+<span style="color: #C57BDB;">echo</span> $<span style="color: #DFDFDF;">?</span>
+0
+</pre>
+</div>
+<p>
+类似地, <code>false</code> 命令总是将退出码置为1
+</p>
+
+<p>
+我们可以自己写一个 <code>true</code> 
+创建 <code>src/bin/true.rs</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-rust">$ tree src/
+src/
+&#9500;&#9472;&#9472; bin
+&#9474; &#9492;&#9472;&#9472; <span style="color: #51afef;">true</span>.rs
+&#9492;&#9472;&#9472; main.rs
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>() {
+    <span style="color: #a991f1;">std</span>::<span style="color: #a991f1;">process</span>::exit(0);
+}
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-bash">cargo run --quite --bin true
+</pre>
+</div>
+
+<p>
+并对其进行测试:
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #C57BDB; font-weight: bold;">#[test]</span>
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">true_ok</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::cargo_bin(<span style="color: #7bc275;">"true"</span>).unwrap();
+    cmd.assert().success();
+}
+</pre>
+</div>
+
+<p>
+注: rust的test不一定会按照顺序执行, 因为rust本身是一本并发安全的语言,它可以并行运行多个测试.
+</p>
+
+<p>
+可以使它只用一个线程进行测试:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">cargo test --test-threads=1
+</pre>
+</div>
+
+
+
+<p>
+rust中的程序默认以0作为退出码, 因此true.rs可以写成:
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>() {} 
+</pre>
+</div>
+
+<p>
+同理编写 <code>false.rs</code> 并对其进行测试
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>(){
+    <span style="color: #a991f1;">std</span>::<span style="color: #a991f1;">process</span>::exit(1);
+}
+</pre>
+</div>
+<p>
+也能用 <code>abort()</code> 实现退出码为1
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span> (){
+    <span style="color: #a991f1;">std</span>::<span style="color: #a991f1;">process</span>::abort();
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust">cargo run -q --bin <span style="color: #51afef;">false</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">false_not_ok</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::cargo_bin(<span style="color: #7bc275;">"false"</span>).unwrap();
+    cmd.assert().failure();
+  }
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust">cargo test 
+</pre>
+</div>
+
+<p>
+退出码使得程序能够用 <code>&amp;&amp;</code> 组合起来, 当中间遇到退出码非0时, 后续的命令不会被执行. eg : <code>false &amp;&amp; ls</code> 
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgd2284ed" class="outline-3">
+<h3 id="orgd2284ed"><span class="section-number-3">1.5.</span> 测试输出结果</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+假设要对 <code>src/main.rs</code> 的输出进行测试:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>(){
+    <span style="color: #C57BDB;">println!</span>(<span style="color: #7bc275;">"hello"</span>);
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">runs</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::cargo_bin(<span style="color: #7bc275;">"hellorust"</span>).unwrap();
+    cmd.assert().success().stdout(<span style="color: #7bc275;">"hello\n"</span>) ;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org9dce323" class="outline-2">
+<h2 id="org9dce323"><span class="section-number-2">2.</span> Ch2 echo</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-orga418412" class="outline-3">
+<h3 id="orga418412"><span class="section-number-3">2.1.</span> echo的行为</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">echo</span> hello
+hello
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">echo</span> <span style="color: #7bc275;">"hello world"</span>
+hello world
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">echo</span> hello   world <span style="color: #62686E;"># </span><span style="color: #62686E;">&#20256;&#20837;&#20102;&#20004;&#20010;&#21442;&#25968; </span>
+hello world
+</pre>
+</div>
+
+<p>
+echo会在字符串末尾自动添加换行, 因此这里有两次换行
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">echo</span> <span style="color: #7bc275;">"a\n"</span> 
+a
+
+</pre>
+</div>
+
+<p>
+这里只有一次换行, 因为-n选项使得末尾换行被替换为 <code>'\c'</code> 
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">echo</span> -n <span style="color: #7bc275;">"a\n"</span> 
+a
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #C57BDB;">echo</span> -n  <span style="color: #7bc275;">"hello"</span>
+hello%
+<span style="color: #C57BDB;">echo</span> -n <span style="color: #7bc275;">"a"</span>  
+a%            
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org4ec25f2" class="outline-3">
+<h3 id="org4ec25f2"><span class="section-number-3">2.2.</span> 获取命令行参数</h3>
+<div class="outline-text-3" id="text-2-2">
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>() {
+    <span style="color: #C57BDB;">println!</span>(<span style="color: #7bc275;">"</span><span style="color: #7bc275; font-style: italic;">{:?}</span><span style="color: #7bc275;">"</span>, <span style="color: #a991f1;">std</span>::<span style="color: #a991f1;">env</span>::args()); 
+}
+</pre>
+</div>
+<p>
+<code>{}</code> 是一个占位符, 只有实现了 <code>std::fmt:Display</code> 的对象才能用它打印.
+在这里不能用, 而是要使用 <code>{:?}</code> 来输出 debug 版本的struct 
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #62686E;"># </span><span style="color: #62686E;">inner: &#21518;&#38754;&#30340;&#23601;&#26159;struct&#20013;&#30340;&#20869;&#23481;  </span>
+~/src/rust-learning/echor $ cargo run -q
+Args { inner: [<span style="color: #7bc275;">"target/debug/echor"</span>] }
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-bash">$ cargo run -q arg1 hello
+
+Args { inner: [<span style="color: #7bc275;">"target/debug/echor"</span>, <span style="color: #7bc275;">"arg1"</span>, <span style="color: #7bc275;">"hello"</span>] }
+</pre>
+</div>
+<p>
+但是加入我们希望传入一个选项参数, <code>-n</code> 会被当成是cargo的参数
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">cargo run -n hello
+</pre>
+</div>
+<p>
+因此需要用 <code>--</code> 来指明cargo选项参数的结束:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">cargo run -- -n hello 
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-bash">$ cargo run -q -- -n -q hello
+Args { inner: [<span style="color: #7bc275;">"target/debug/echor"</span>, <span style="color: #7bc275;">"-n"</span>, <span style="color: #7bc275;">"-q"</span>, <span style="color: #7bc275;">"hello"</span>] }
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org47d6dfc" class="outline-3">
+<h3 id="org47d6dfc"><span class="section-number-3">2.3.</span> 用 <code>clap</code> 解析命令行参数</h3>
+<div class="outline-text-3" id="text-2-3">
+<pre class="example">
+[dependencies]
+clap = "2"
+</pre>
+<pre class="example">
+cargo build
+</pre>
+<p>
+查看文件大小 
+</p>
+<div class="org-src-container">
+<pre class="src src-bash">du -shc .
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a991f1;">clap</span>::<span style="color: #FCCE7B;">App</span>;
+
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">_matches</span> = <span style="color: #FCCE7B;">App</span>::new(<span style="color: #7bc275;">"echor"</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">&#24212;&#29992;&#21517; </span>
+        .version(<span style="color: #7bc275;">"0.1.0"</span>)
+        .author(<span style="color: #7bc275;">"sun"</span>)
+        .about(<span style="color: #7bc275;">"echo in rust"</span>)
+        .get_matches() ; <span style="color: #62686E;">// </span><span style="color: #62686E;">&#35299;&#26512;&#21629;&#20196;&#34892;&#21442;&#25968; </span>
+}
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-bash">$ cargo run -q -- -h
+echor 0.1.0
+sun
+<span style="color: #C57BDB;">echo</span><span style="color: #51afef;"> in</span> rust
+
+USAGE:
+    echor
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a991f1;">clap</span>::{<span style="color: #FCCE7B;">App</span>,<span style="color: #FCCE7B;">Arg</span>};
+
+
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>() {
+
+    <span style="color: #62686E;">//  </span><span style="color: #62686E;">println!("{:?}", std::env::args());</span>
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">matches</span> = <span style="color: #FCCE7B;">App</span>::new(<span style="color: #7bc275;">"echor"</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">&#24212;&#29992;&#21517; </span>
+        .version(<span style="color: #7bc275;">"0.1.0"</span>)
+        .author(<span style="color: #7bc275;">"sun"</span>)
+        .about(<span style="color: #7bc275;">"echo in rust"</span>)
+        .arg(<span style="color: #FCCE7B;">Arg</span>::with_name(<span style="color: #7bc275;">"test"</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">&#20316;&#20026;map&#30340;key, &#29992;&#20110;&#21462;&#20986;&#20540;</span>
+             .value_name(<span style="color: #7bc275;">"TEXT"</span>) 
+             .help(<span style="color: #7bc275;">"input test"</span>)
+             .required(<span style="color: #51afef;">true</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">&#26159;&#21542;&#26159;&#24517;&#39035;&#30340;&#21442;&#25968; </span>
+             .min_values(1), <span style="color: #62686E;">// </span><span style="color: #62686E;">&#19988;&#27492;&#21442;&#25968;&#33267;&#23569;&#35201;&#26377;&#19968;&#20010; </span>
+        )
+        .arg(<span style="color: #FCCE7B;">Arg</span>::with_name(<span style="color: #7bc275;">"omit_newline"</span>) 
+             .short(<span style="color: #7bc275;">"n"</span>)
+             .help(<span style="color: #7bc275;">"don't print newline"</span>)
+             .takes_value(<span style="color: #51afef;">false</span>), <span style="color: #62686E;">// </span><span style="color: #62686E;">&#26080;&#38656;&#20026;&#27492;&#36873;&#39033;&#20256;&#20540; </span>
+        )
+        .get_matches() ; <span style="color: #62686E;">// </span><span style="color: #62686E;">&#35299;&#26512;&#21629;&#20196;&#34892;&#21442;&#25968;</span>
+    <span style="color: #C57BDB;">println!</span>(<span style="color: #7bc275;">"</span><span style="color: #7bc275; font-style: italic;">{:#?}</span><span style="color: #7bc275;">"</span>, matches); <span style="color: #62686E;">//</span><span style="color: #62686E;">&#29992;&#25442;&#34892;&#21644;&#32553;&#36827;&#36827;&#34892;&#25171;&#21360; </span>
+}
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-rust"> $ cargo run -q -- -n  hello world 
+<span style="color: #FCCE7B;">ArgMatches</span> {
+    <span style="color: #DFDFDF;">args</span>: {
+        <span style="color: #7bc275;">"omit_newline"</span>: <span style="color: #FCCE7B;">MatchedArg</span> {
+            <span style="color: #DFDFDF;">occurs</span>: 1,
+            <span style="color: #DFDFDF;">indices</span>: [
+                1,
+            ],
+            <span style="color: #DFDFDF;">vals</span>: [],
+        },
+        <span style="color: #7bc275;">"test"</span>: <span style="color: #FCCE7B;">MatchedArg</span> {
+            <span style="color: #DFDFDF;">occurs</span>: 2,
+            <span style="color: #DFDFDF;">indices</span>: [
+                2,
+                3,
+            ],
+            <span style="color: #DFDFDF;">vals</span>: [
+                <span style="color: #7bc275;">"hello"</span>,
+                <span style="color: #7bc275;">"world"</span>,
+            ],
+        },
+    },
+    <span style="color: #DFDFDF;">subcommand</span>: <span style="color: #FCCE7B;">None</span>,
+    <span style="color: #DFDFDF;">usage</span>: <span style="color: #FCCE7B;">Some</span>(
+        <span style="color: #7bc275;">"USAGE:\n    echor [FLAGS] &lt;TEXT&gt;..."</span>,
+    ),
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-bash">$ cargo run -q -- -h
+echor 0.1.0
+sun
+<span style="color: #C57BDB;">echo</span><span style="color: #51afef;"> in</span> rust
+
+USAGE:
+    echor [FLAGS] &lt;TEXT&gt;...
+
+FLAGS:
+    -h, --help       Prints help information
+    -n               don<span style="color: #7bc275;">'t print newline</span>
+<span style="color: #7bc275;">    -V, --version    Prints version information</span>
+
+<span style="color: #7bc275;">ARGS:</span>
+<span style="color: #7bc275;">    &lt;TEXT&gt;...    input test</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7e06f2f" class="outline-3">
+<h3 id="org7e06f2f"><span class="section-number-3">2.4.</span> 根据 <code>with_name()</code> 取出参数值</h3>
+<div class="outline-text-3" id="text-2-4">
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #FCCE7B;">ArgMatches</span>::values_of -&gt; <span style="color: #FCCE7B;">Option</span>&lt;<span style="color: #FCCE7B;">Values</span>&gt; <span style="color: #62686E;">// </span><span style="color: #62686E;">Values&#26159;&#36845;&#20195;&#22120; </span>
+
+<span style="color: #FCCE7B;">ArgMatches</span>::values_of_lossy -&gt; <span style="color: #FCCE7B;">Option</span>&lt;<span style="color: #FCCE7B;">Vec</span>&lt;<span style="color: #FCCE7B;">String</span>&gt;&gt; 
+</pre>
+</div>
+
+
+<p>
+取出必需的 "text" 参数 :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust">matches.values_of_lossy(<span style="color: #7bc275;">"text"</span>).unwrap(); 
+</pre>
+</div>
+
+<p>
+对可选的 <code>-n</code> 参数, 要先判断其是否存在 
+</p>
+<div class="org-src-container">
+<pre class="src src-rust">matches.is_present(<span style="color: #7bc275;">"omit_newline"</span>);
+</pre>
+</div>
+
+
+<p>
+为了让输出的结果h之间每个都恰好间隔以后一个空格, 我们需要用到 <code>Vec::join</code> 函数 :
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">v</span> = <span style="color: #C57BDB; font-weight: bold;">vec!</span>[<span style="color: #7bc275;">"hello"</span>,<span style="color: #7bc275;">"world"</span>];
+<span style="color: #C57BDB;">println!</span>(<span style="color: #7bc275;">"</span><span style="color: #7bc275; font-style: italic;">{}</span><span style="color: #7bc275;">"</span>, v.join(<span style="color: #7bc275;">"@"</span>)) ;
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-rust">hello@world
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a991f1;">clap</span>::{<span style="color: #FCCE7B;">App</span>,<span style="color: #FCCE7B;">Arg</span>};
+
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">main</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">matches</span> = <span style="color: #FCCE7B;">App</span>::new(<span style="color: #7bc275;">"echor"</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">&#24212;&#29992;&#21517; </span>
+        .version(<span style="color: #7bc275;">"0.1.0"</span>)
+        .author(<span style="color: #7bc275;">"sun"</span>)
+        .about(<span style="color: #7bc275;">"echo in rust"</span>)
+        .arg(<span style="color: #FCCE7B;">Arg</span>::with_name(<span style="color: #7bc275;">"test"</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">&#20316;&#20026;map&#30340;key, &#29992;&#20110;&#21462;&#20986;&#20540;</span>
+             .value_name(<span style="color: #7bc275;">"TEXT"</span>) 
+             .help(<span style="color: #7bc275;">"input test"</span>)
+             .required(<span style="color: #51afef;">true</span>) <span style="color: #62686E;">// </span><span style="color: #62686E;">&#26159;&#21542;&#26159;&#24517;&#39035;&#30340;&#21442;&#25968; </span>
+             .min_values(1), <span style="color: #62686E;">// </span><span style="color: #62686E;">&#19988;&#27492;&#21442;&#25968;&#33267;&#23569;&#35201;&#26377;&#19968;&#20010; </span>
+        )
+        .arg(<span style="color: #FCCE7B;">Arg</span>::with_name(<span style="color: #7bc275;">"omit_newline"</span>) 
+             .short(<span style="color: #7bc275;">"n"</span>)
+             .help(<span style="color: #7bc275;">"don't print newline"</span>)
+             .takes_value(<span style="color: #51afef;">false</span>), <span style="color: #62686E;">// </span><span style="color: #62686E;">&#26080;&#38656;&#20026;&#27492;&#36873;&#39033;&#20256;&#20540; </span>
+        )
+        .get_matches() ; <span style="color: #62686E;">// </span><span style="color: #62686E;">&#35299;&#26512;&#21629;&#20196;&#34892;&#21442;&#25968;</span>
+
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">text</span> = matches.values_of_lossy(<span style="color: #7bc275;">"text"</span>).unwrap();
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">is_newline</span> = matches.is_present(<span style="color: #7bc275;">"omit_newline"</span>);
+
+    <span style="color: #C57BDB;">print!</span>(<span style="color: #7bc275;">"</span><span style="color: #7bc275; font-style: italic;">{}{}</span><span style="color: #7bc275;">"</span>, text.join(<span style="color: #7bc275;">" "</span>), <span style="color: #51afef;">if</span> is_newline  {<span style="color: #7bc275;">""</span>} <span style="color: #51afef;">else</span> {<span style="color: #7bc275;">"\n"</span> }) ;
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org7f607b6" class="outline-3">
+<h3 id="org7f607b6"><span class="section-number-3">2.5.</span> 编写集成测试</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+为了进行测试, 除了使用 <code>assert_cmd</code> 之外, 还要使用 <code>predicates</code> , 即: "谓词". 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-toml">[dev-dependencies]
+ assert_cmd = "2"
+ predicates = "2"
+</pre>
+</div>
+<p>
+因为有的时候测试应满足的条件不是简单地判断是否等于某个值, 比如说输出中应包含了 "USAGE" 这个字符串. 这时候就需要使用"谓词".
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a991f1;">assert_cmd</span>::<span style="color: #FCCE7B;">Command</span>;
+<span style="color: #51afef;">use</span> <span style="color: #a991f1;">predicates</span>::<span style="color: #a991f1;">prelude</span>::* ;
+<span style="color: #C57BDB; font-weight: bold;">#[test]</span>
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">dies_no_args</span>() {
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::cargo_bin(<span style="color: #7bc275;">"echor"</span>).unwrap();
+    cmd.assert().failure().stderr(<span style="color: #a991f1;">predicate</span>::<span style="color: #FCCE7B;">str</span>::contains(<span style="color: #7bc275;">"USAGE"</span>) ); 
+}
+</pre>
+</div>
+<p>
+另外有一个技巧就是为一组测试的函数名用相同的前缀, 例如 <code>dies</code> 
+这样可以使cargo test只运行这些包含了前缀的测试: 
+</p>
+<pre class="example">
+cargo test dies
+</pre>
+
+<p>
+用 <code>.arg()</code> 传入参数进行测试:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #C57BDB; font-weight: bold;">#[test]</span>
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">one_arg</span>(){
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::cargo_bin(<span style="color: #7bc275;">"echor"</span>).unwrap();
+    cmd.arg(<span style="color: #7bc275;">"hello"</span>).assert().success().stdout(<span style="color: #a991f1;">predicate</span>::<span style="color: #FCCE7B;">str</span>::contains(<span style="color: #7bc275;">"hello"</span>));
+}
+</pre>
+</div>
+</div>
+
+
+<div id="outline-container-org5abf585" class="outline-4">
+<h4 id="org5abf585"><span class="section-number-4">2.5.1.</span> 和echo的输出进行对比</h4>
+<div class="outline-text-4" id="text-2-5-1">
+<p>
+首先要生成echo的结果:
+</p>
+<div class="org-src-container">
+<pre class="src src-bash"><span style="color: #62686E;">#</span><span style="color: #62686E;">!/bin/</span><span style="color: #51afef;">bash</span>
+
+<span style="color: #DFDFDF;">OUTDIR</span>=<span style="color: #7bc275;">"tests/expected"</span>
+<span style="color: #62686E;"># </span><span style="color: #62686E;">&#27880;&#24847;&#20013;&#25324;&#21495;&#20043;&#38388;&#30340;&#31354;&#26684; </span>
+[[ <span style="color: #C57BDB; font-weight: bold;">!</span> -d <span style="color: #7bc275;">"$OUTDIR"</span> ]] &amp;&amp; mkdir -p <span style="color: #7bc275;">"$OUTDIR"</span> <span style="color: #62686E;"># </span><span style="color: #62686E;">&#21028;&#26029;&#26159;&#21542;&#23384;&#22312;&#27492;&#30446;&#24405;, &#19981;&#23384;&#22312;&#21017;&#21019;&#24314; </span>
+
+<span style="color: #C57BDB;">echo</span> <span style="color: #7bc275;">"hello there"</span> &gt; $<span style="color: #DFDFDF;">OUTDIR</span>/hello1
+<span style="color: #C57BDB;">echo</span> <span style="color: #7bc275;">"hello"</span>   <span style="color: #7bc275;">"there"</span> &gt; $<span style="color: #DFDFDF;">OUTDIR</span>/hello2
+<span style="color: #C57BDB;">echo</span> -n <span style="color: #7bc275;">"hello   there"</span> &gt; $<span style="color: #DFDFDF;">OUTDIR</span>/hello1n
+<span style="color: #C57BDB;">echo</span> -n <span style="color: #7bc275;">"hello"</span> <span style="color: #7bc275;">"there"</span> &gt; $<span style="color: #DFDFDF;">OUTDIR</span>/hello2n
+</pre>
+</div>
+<p>
+然后分别编写测试
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a991f1;">std</span>::fs;
+<span style="color: #C57BDB; font-weight: bold;">#[test]</span>
+<span style="color: #51afef;">fn</span> <span style="color: #5cEfFF;">hello1</span>(){
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">outfile</span> = <span style="color: #7bc275;">"tests/expected/hello1"</span> ;
+    <span style="color: #51afef;">let</span> <span style="color: #DFDFDF;">expected</span> = <span style="color: #a991f1;">fs</span>::read_to_string(outfile).unwrap();
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #DFDFDF;">cmd</span> = <span style="color: #FCCE7B;">Command</span>::cargo_bin(<span style="color: #7bc275;">"echor"</span>).unwrap();
+    cmd.arg(<span style="color: #7bc275;">"hello there"</span>).assert().success().stdout(expected);
+}
+</pre>
+</div>
+<p>
+在上面的所有代码中, 我们都直接使用了 <code>unwrap()</code> 来取出Result中的OK值, 但这也默认了程序的结果始终都是正常的. 这样的假设当然是不合理的, 因此我们要创建一个Result类型:
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #62686E;">//  </span><span style="color: #62686E;">TestResult = Ok of unit | Err of Box&lt;dyn std::error::Error&gt;</span>
+<span style="color: #51afef;">type</span> <span style="color: #FCCE7B;">TestResult</span> = <span style="color: #FCCE7B;">Result</span>&lt;(), <span style="color: #FCCE7B;">Box</span>&lt;<span style="color: #51afef;">dyn</span> <span style="color: #a991f1;">std</span>::<span style="color: #a991f1;">error</span>::<span style="color: #FCCE7B;">Error</span>&gt;&gt; ;
+</pre>
+</div>
+<ul class="org-ul">
+<li><code>Box</code> 表示这是一个指向堆中内存的指针</li>
+<li><code>dyn</code> 表示对 <code>std::error::Error</code> 进行的方法调用是动态分发的(多态)</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org89748c0" class="outline-2">
+<h2 id="org89748c0"><span class="section-number-2">3.</span> Ch3 cat</h2>
+</div>
+<div id="outline-container-orge6a68ca" class="outline-2">
+<h2 id="orge6a68ca"><span class="section-number-2">4.</span> Ch4 head</h2>
+</div>
+
+<div id="outline-container-orge18333e" class="outline-2">
+<h2 id="orge18333e"><span class="section-number-2">5.</span> Ch5 wc</h2>
+</div>
+<div id="outline-container-org3957c69" class="outline-2">
+<h2 id="org3957c69"><span class="section-number-2">6.</span> Ch6 uniq</h2>
+</div>
+<div id="outline-container-org7610d26" class="outline-2">
+<h2 id="org7610d26"><span class="section-number-2">7.</span> Ch7 find</h2>
+</div>
+<div id="outline-container-orgc23819e" class="outline-2">
+<h2 id="orgc23819e"><span class="section-number-2">8.</span> Ch8 cut</h2>
+</div>
+<div id="outline-container-org2af80b4" class="outline-2">
+<h2 id="org2af80b4"><span class="section-number-2">9.</span> Ch9 grep</h2>
+</div>
+<div id="outline-container-orgb845099" class="outline-2">
+<h2 id="orgb845099"><span class="section-number-2">10.</span> Ch10 comm</h2>
+</div>
+
+<div id="outline-container-org0265ab2" class="outline-2">
+<h2 id="org0265ab2"><span class="section-number-2">11.</span> Ch11 tail</h2>
+</div>
+
+
+<div id="outline-container-org18c09de" class="outline-2">
+<h2 id="org18c09de"><span class="section-number-2">12.</span> Ch12 fortune</h2>
+</div>
+
+<div id="outline-container-org67066b4" class="outline-2">
+<h2 id="org67066b4"><span class="section-number-2">13.</span> Ch13 cal</h2>
+</div>
+
+<div id="outline-container-orgdecc13c" class="outline-2">
+<h2 id="orgdecc13c"><span class="section-number-2">14.</span> Ch14 ls</h2>
+</div>
+</div>
+</body>
+</html>

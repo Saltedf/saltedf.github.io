@@ -1,0 +1,10 @@
+(** @canonical Dune__exe.Matrix *)
+module Matrix = Dune__exe__Matrix
+
+
+(** @canonical Dune__exe.Test_add_row_vectors *)
+module Test_add_row_vectors = Dune__exe__Test_add_row_vectors
+
+
+(** @canonical Dune__exe.Test_is_valid_matrix *)
+module Test_is_valid_matrix = Dune__exe__Test_is_valid_matrix

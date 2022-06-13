@@ -1,0 +1,1245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-06-13 一 20:26 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ch5</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">ch5</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#orgbba29a6">1. Ch5</a>
+<ul>
+<li><a href="#orgd036e42">1.1. complex synonym</a></li>
+<li><a href="#org0964f4f">1.2. complex encapsulation</a></li>
+<li><a href="#orgaccfedd">1.3. big list queue</a></li>
+<li><a href="#org69ed192">1.4. big batched queue</a></li>
+<li><a href="#org2149de3">1.5. queue efficiency</a></li>
+<li><a href="#orgb2dba21">1.6. binary search tree map</a></li>
+<li><a href="#orgf42854b">1.7. fraction</a></li>
+<li><a href="#org3a4b86b">1.8. fraction reduced</a></li>
+<li><a href="#org9363925">1.9. make char map</a></li>
+<li><a href="#orga567b1f">1.10. char ordered</a></li>
+<li><a href="#orga470e4b">1.11. use char map</a></li>
+<li><a href="#orgb0f0f56">1.12. bindings</a></li>
+<li><a href="#org03705d5">1.13. date order</a></li>
+<li><a href="#org40e7e23">1.14. calender</a></li>
+<li><a href="#orge083ace">1.15. print calendar</a></li>
+<li><a href="#org2c86b69">1.16. is for</a></li>
+<li><a href="#org2aca28a">1.17. first after</a></li>
+<li><a href="#orgd0b7edb">1.18. sets</a></li>
+<li><a href="#orgcc72060">1.19. tostring</a></li>
+<li><a href="#orgb23fdb9">1.20. Print</a></li>
+<li><a href="#orgcaa3ed9">1.21. Print Int</a></li>
+<li><a href="#org6fb1b4f">1.22. Print String</a></li>
+<li><a href="#org3072a2d">1.23. Print Reuse</a></li>
+<li><a href="#org770c872">1.24. Print String reuse revisited</a></li>
+<li><a href="#org9e33de0">1.25. implementation without interface</a></li>
+<li><a href="#org88262b3">1.26. implementation with interface</a></li>
+<li><a href="#orge99b1a5">1.27. implementation with abstracted interface</a></li>
+<li><a href="#orgf51ff27">1.28. printer for date</a></li>
+<li><a href="#orgc61af41">1.29. refactor arith(算术)</a>
+<ul>
+<li><a href="#orgc6d72d5">1.29.1. 原始 <code>algebra.ml</code> 的类型:</a></li>
+<li><a href="#orgcd0b442">1.29.2. 重构后的 <code>algebra.ml</code></a></li>
+<li><a href="#orgcb7b314">1.29.3. <code>ocamlc -i algebra.ml</code> 的输出</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-orgbba29a6" class="outline-2">
+<h2 id="orgbba29a6"><span class="section-number-2">1.</span> Ch5</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgd036e42" class="outline-3">
+<h3 id="orgd036e42"><span class="section-number-3">1.1.</span> complex synonym</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">ComplexSig</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">*</span> float
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">add</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">*</span> float <span style="color: #f0e68c;">-&gt;</span> float <span style="color: #f0e68c;">*</span> float <span style="color: #f0e68c;">-&gt;</span> float <span style="color: #f0e68c;">*</span> float
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+<p>
+这是一个表示复数的module type
+为它添加 <code>type t = float * float</code> 对代码进行改进.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">ComplexSig</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> float <span style="color: #f0e68c;">*</span> float
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">add</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0964f4f" class="outline-3">
+<h3 id="org0964f4f"><span class="section-number-3">1.2.</span> complex encapsulation</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">Complex</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">ComplexSig</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> float <span style="color: #f0e68c;">*</span> float
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">zero</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>0.<span style="color: #f0e68c;">,</span> 0.<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">add</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">r1</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;"> i1</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">r2</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;"> i2</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> r1 <span style="color: #f0e68c;">+.</span> r2<span style="color: #f0e68c;">,</span> i1 <span style="color: #f0e68c;">+.</span> i2
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+<p>
+分别进行如下的修改, 并观察出现的错误:
+</p>
+
+<ul class="org-ul">
+<li>移除 <code>zero</code></li>
+</ul>
+<pre class="example">
+Error: Signature mismatch:
+       Modules do not match:
+	 sig
+	   type t = float * float
+	   val add : float * float -&gt; float * float -&gt; float * float
+	 end
+       is not included in
+	 ComplexSig
+       The value `zero' is required but not provided
+</pre>
+
+<ul class="org-ul">
+<li>移除 <code>add</code></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #bbc2cf; background-color: #242730;">Error</span><span style="color: #f0e68c;">:</span> <span style="color: #bbc2cf; background-color: #242730;">Signature</span> mismatch<span style="color: #f0e68c;">:</span>
+       <span style="color: #bbc2cf; background-color: #242730;">Modules</span> <span style="color: #51afef;">do</span> <span style="color: #f0e68c;">not</span> <span style="color: #51afef;">match</span><span style="color: #f0e68c;">:</span>
+         <span style="color: #f5deb3; font-weight: bold;">sig</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> float <span style="color: #f0e68c;">*</span> float <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> float <span style="color: #f0e68c;">*</span> float <span style="color: #f5deb3; font-weight: bold;">end</span>
+       is <span style="color: #f0e68c;">not</span> included <span style="color: #f5deb3; font-weight: bold;">in</span>
+         <span style="color: #bbc2cf; background-color: #242730;">ComplexSig</span>
+       <span style="color: #bbc2cf; background-color: #242730;">The</span> value <span style="color: #bbc2cf; background-color: #242730;">`add'</span> is required but <span style="color: #f0e68c;">not</span> provided 
+</pre>
+</div>
+
+<ul class="org-ul">
+<li>修改 <code>zero</code> 为 <code>let zero = 0, 0</code></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #bbc2cf; background-color: #242730;">Error</span><span style="color: #f0e68c;">:</span> <span style="color: #bbc2cf; background-color: #242730;">Signature</span> mismatch<span style="color: #f0e68c;">:</span>
+       <span style="color: #f0e68c;">...</span>
+       <span style="color: #bbc2cf; background-color: #242730;">Values</span> <span style="color: #51afef;">do</span> <span style="color: #f0e68c;">not</span> <span style="color: #51afef;">match</span><span style="color: #f0e68c;">:</span>
+         <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">*</span> int
+       is <span style="color: #f0e68c;">not</span> included <span style="color: #f5deb3; font-weight: bold;">in</span>
+         <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaccfedd" class="outline-3">
+<h3 id="orgaccfedd"><span class="section-number-3">1.3.</span> big list queue</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+使用下列代码创建长度成倍增长的 ListQueue : 10, 100, 1000 &#x2026;
+在出现明显的延迟之前最大能创建多长的 Queue ?
+在出现10s以上的延迟之前能创建的最长的Queue ?
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">  <span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Queue</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a t</span>
+    <span style="color: #51afef;">exception</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyQueue</span>
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">empty</span> <span style="color: #f0e68c;">:</span> 'a t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">is_empty</span> <span style="color: #f0e68c;">:</span> 'a t <span style="color: #f0e68c;">-&gt;</span> bool
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">size</span> <span style="color: #f0e68c;">:</span> 'a t <span style="color: #f0e68c;">-&gt;</span> int
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">enqueue</span> <span style="color: #f0e68c;">:</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a t <span style="color: #f0e68c;">-&gt;</span> 'a t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">front</span> <span style="color: #f0e68c;">:</span> 'a t <span style="color: #f0e68c;">-&gt;</span> 'a
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">dequeue</span> <span style="color: #f0e68c;">:</span> 'a t <span style="color: #f0e68c;">-&gt;</span> 'a t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_list</span> <span style="color: #f0e68c;">:</span> 'a t <span style="color: #f0e68c;">-&gt;</span> 'a list 
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">ListQueue</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Queue</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a t</span> <span style="color: #f0e68c;">=</span> 'a list
+  <span style="color: #51afef;">exception</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyQueue</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">empty</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[]</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_empty</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">true</span>
+    <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">size</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>length
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">enqueue</span><span style="color: #DFDFDF;"> e q</span> <span style="color: #f0e68c;">=</span> q <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">[</span>e<span style="color: #f0e68c;">]</span>  <span style="color: #62686E;">(* </span><span style="color: #62686E;">!!</span><span style="color: #62686E;"> *)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">front</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">raise</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyQueue</span>
+    <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>_ <span style="color: #f0e68c;">-&gt;</span> h
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">dequeue</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">raise</span> <span style="color: #bbc2cf; background-color: #242730;">EmptyQueue</span>
+    <span style="color: #f0e68c;">|</span> _<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> t 
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">to_list</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Fun.</span>id <span style="color: #62686E;">(* </span><span style="color: #62686E;">&#24658;&#31561;&#26144;&#23556;</span><span style="color: #62686E;"> *)</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #7e7e87;">(** Creates a ListQueue filled with [n] elements. *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">fill_listqueue</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">loop</span><span style="color: #DFDFDF;"> n q</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> q
+    <span style="color: #51afef;">else</span> loop <span style="color: #f0e68c;">(</span>n <span style="color: #f0e68c;">-</span> 1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">ListQueue.</span>enqueue n q<span style="color: #f0e68c;">)</span> <span style="color: #f5deb3; font-weight: bold;">in</span>
+  loop n <span style="color: #FCCE7B;">ListQueue.</span>empty
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+
+<p>
+A1: fill<sub>listqueue</sub> 10000 ;;
+</p>
+
+<p>
+A2:  fill<sub>listqueue</sub> 100000 ;;
+</p>
+</div>
+</div>
+
+<div id="outline-container-org69ed192" class="outline-3">
+<h3 id="org69ed192"><span class="section-number-3">1.4.</span> big batched queue</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+用下面的代码来重复上题的实验
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span>  <span style="color: #FCCE7B;">BatchedQueue</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a queue</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>
+    front<span style="color: #f0e68c;">:</span> 'a list <span style="color: #f0e68c;">;</span>
+    back<span style="color: #f0e68c;">:</span> 'a list 
+  <span style="color: #f0e68c;">}</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">empty</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>
+    front<span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[];</span>
+    back <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[]</span>
+  <span style="color: #f0e68c;">}</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">peek</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|{</span>front<span style="color: #f0e68c;">=[]</span> <span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+    <span style="color: #f0e68c;">|{</span>front<span style="color: #f0e68c;">=</span>x<span style="color: #f0e68c;">::</span>_ <span style="color: #f0e68c;">;}</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> x
+
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">enqueue</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|{</span>front<span style="color: #f0e68c;">=[]</span> <span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">{</span>front<span style="color: #f0e68c;">=[</span>x<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">;</span> back<span style="color: #f0e68c;">=[]</span> <span style="color: #f0e68c;">}</span>
+    <span style="color: #f0e68c;">|</span>q <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">{</span>q <span style="color: #51afef;">with</span> back<span style="color: #f0e68c;">=</span>x<span style="color: #f0e68c;">::</span>q.back<span style="color: #f0e68c;">}</span>  <span style="color: #62686E;">(* </span><span style="color: #62686E;">&#21363;&#65306;&#24403;front&#19981;&#20026;&#31354;list&#26102;</span><span style="color: #62686E;">*)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">dequeue</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|{</span>front<span style="color: #f0e68c;">=[]}</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">None</span>
+    <span style="color: #f0e68c;">|{</span>front<span style="color: #f0e68c;">=</span> _<span style="color: #f0e68c;">::[]</span> <span style="color: #f0e68c;">;</span>back<span style="color: #f0e68c;">=</span>b<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #f0e68c;">{</span>front <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>rev b <span style="color: #f0e68c;">;</span>back<span style="color: #f0e68c;">=[]</span> <span style="color: #f0e68c;">}</span> 
+    <span style="color: #f0e68c;">|{</span>front<span style="color: #f0e68c;">=</span>_<span style="color: #f0e68c;">::</span>t<span style="color: #f0e68c;">;</span>back<span style="color: #f0e68c;">=</span>b<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Some</span> <span style="color: #f0e68c;">{</span>front <span style="color: #f0e68c;">=</span> t <span style="color: #f0e68c;">;</span>back<span style="color: #f0e68c;">=</span>b<span style="color: #f0e68c;">}</span>
+
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">fill_batchedqueue</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">loop</span><span style="color: #DFDFDF;"> n q</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> q
+    <span style="color: #51afef;">else</span> loop <span style="color: #f0e68c;">(</span>n <span style="color: #f0e68c;">-</span> 1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">BatchedQueue.</span>enqueue n q<span style="color: #f0e68c;">)</span> <span style="color: #f5deb3; font-weight: bold;">in</span>
+  loop n <span style="color: #FCCE7B;">BatchedQueue.</span>empty
+</pre>
+</div>
+
+
+<p>
+此时才会出现10s以上的延迟  fill<sub>batchedqueue</sub> 1000000000 ;;
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2149de3" class="outline-3">
+<h3 id="org2149de3"><span class="section-number-3">1.5.</span> queue efficiency</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+比较两种入队 <code>enqueue</code> 操作的实现.用你自己的话解释为何 <code>ListQueue.enqueue</code> 是线性时间的.
+</p>
+
+<p>
+考虑 <code>BatchedQueue.enqueue</code> 假设
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgb2dba21" class="outline-3">
+<h3 id="orgb2dba21"><span class="section-number-3">1.6.</span> binary search tree map</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+编写module <code>BstMap</code> , 用二叉搜索树实现 <code>Map</code> 模块, 每个节点应该存储一个 pair (key,value)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Map</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #51afef;">exception</span> <span style="color: #bbc2cf; background-color: #242730;">Empty</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">'k</span><span style="color: #f0e68c;">,</span><span style="color: #FCCE7B;">'v </span><span style="color: #f0e68c;">)</span><span style="color: #FCCE7B;"> t</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">empty</span> <span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">(</span>'k<span style="color: #f0e68c;">,</span>'v<span style="color: #f0e68c;">)</span> t
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">insert</span> <span style="color: #f0e68c;">:</span> 'k <span style="color: #f0e68c;">-&gt;</span> 'v <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>'k<span style="color: #f0e68c;">,</span>'v<span style="color: #f0e68c;">)</span> t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>'k<span style="color: #f0e68c;">,</span>'v<span style="color: #f0e68c;">)</span> t
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">lookup</span> <span style="color: #f0e68c;">:</span> 'k <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>'k<span style="color: #f0e68c;">,</span>'v<span style="color: #f0e68c;">)</span> t <span style="color: #f0e68c;">-&gt;</span> 'v 
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">bindings</span> <span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">(</span>'k<span style="color: #f0e68c;">,</span>'v<span style="color: #f0e68c;">)</span> t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>'k <span style="color: #f0e68c;">*</span> 'v<span style="color: #f0e68c;">)</span> list  
+<span style="color: #f5deb3; font-weight: bold;">end</span> <span style="color: #ff4500;">;;</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">BstMapImpl</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #51afef;">exception</span> <span style="color: #bbc2cf; background-color: #242730;">Empty</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">'k</span><span style="color: #f0e68c;">,</span><span style="color: #FCCE7B;">'v</span><span style="color: #f0e68c;">)</span><span style="color: #FCCE7B;"> t</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #51afef;">of</span> <span style="color: #f0e68c;">(</span>'k <span style="color: #f0e68c;">*</span> 'v<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">(</span>'k<span style="color: #f0e68c;">,</span>'v<span style="color: #f0e68c;">)</span> t <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">(</span>'k<span style="color: #f0e68c;">,</span>'v<span style="color: #f0e68c;">)</span> t 
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">empty</span> <span style="color: #f0e68c;">=</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span>  <span style="color: #5cEfFF;">insert</span><span style="color: #DFDFDF;"> key value</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">(</span>key<span style="color: #f0e68c;">,</span>value<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">,</span><span style="color: #bbc2cf; background-color: #242730;">Leaf</span><span style="color: #f0e68c;">)</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> key <span style="color: #f0e68c;">&lt;</span> k <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),(</span>insert key value l<span style="color: #f0e68c;">),</span>r<span style="color: #f0e68c;">)</span> 
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> key <span style="color: #f0e68c;">&gt;</span> k <span style="color: #f0e68c;">-&gt;</span>   <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,(</span>insert key value r<span style="color: #f0e68c;">))</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>value<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">lookup</span><span style="color: #DFDFDF;"> key</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">raise</span>  <span style="color: #bbc2cf; background-color: #242730;">Empty</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> key <span style="color: #f0e68c;">&lt;</span> k <span style="color: #f0e68c;">-&gt;</span>  lookup key l
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">),</span>_<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> key <span style="color: #f0e68c;">&gt;</span> k <span style="color: #f0e68c;">-&gt;</span> lookup key r
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span> <span style="color: #f0e68c;">((</span>_<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>_<span style="color: #f0e68c;">,</span>_<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> v
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">bindings</span><span style="color: #DFDFDF;"> m</span>  <span style="color: #f0e68c;">=</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">bindings_aux</span><span style="color: #DFDFDF;"> acc</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Leaf</span> <span style="color: #f0e68c;">-&gt;</span> acc 
+    <span style="color: #f0e68c;">|</span> <span style="color: #bbc2cf; background-color: #242730;">Node</span><span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">),</span>l<span style="color: #f0e68c;">,</span>r<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #f0e68c;">(</span>bindings_aux <span style="color: #f0e68c;">(</span>bindings_aux <span style="color: #f0e68c;">((</span>k<span style="color: #f0e68c;">,</span>v<span style="color: #f0e68c;">)::</span>acc<span style="color: #f0e68c;">)</span>  l<span style="color: #f0e68c;">)</span> r<span style="color: #f0e68c;">)</span>
+    <span style="color: #f5deb3; font-weight: bold;">in</span>
+    bindings_aux <span style="color: #f0e68c;">[]</span> m 
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">BstMap</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">Map</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">BstMapImpl</span> <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> <span style="color: #FCCE7B;">BstMapImpl.</span> <span style="color: #f0e68c;">(</span>empty <span style="color: #f0e68c;">|&gt;</span> insert 1 <span style="color: #7bc275;">"hello"</span> <span style="color: #f0e68c;">|&gt;</span> insert 2 <span style="color: #7bc275;">"fuck"</span> <span style="color: #f0e68c;">|&gt;</span> insert 4 <span style="color: #7bc275;">"dead"</span> <span style="color: #f0e68c;">|&gt;</span> lookup 2 <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"fuck"</span>
+
+<span style="color: #f0e68c;">#</span> <span style="color: #FCCE7B;">BstMapImpl.</span> <span style="color: #f0e68c;">(</span>empty <span style="color: #f0e68c;">|&gt;</span> insert 1 <span style="color: #7bc275;">"hello"</span> <span style="color: #f0e68c;">|&gt;</span> insert 2 <span style="color: #7bc275;">"fuck"</span> <span style="color: #f0e68c;">|&gt;</span> insert 4 <span style="color: #7bc275;">"dead"</span> <span style="color: #f0e68c;">|&gt;</span> bindings  <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">(</span>int <span style="color: #f0e68c;">*</span> string<span style="color: #f0e68c;">)</span> list <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[(</span>4<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"dead"</span><span style="color: #f0e68c;">);</span> <span style="color: #f0e68c;">(</span>2<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"fuck"</span><span style="color: #f0e68c;">);</span> <span style="color: #f0e68c;">(</span>1<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"hello"</span><span style="color: #f0e68c;">)]</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgf42854b" class="outline-3">
+<h3 id="orgf42854b"><span class="section-number-3">1.7.</span> fraction</h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+实现下面的分数 <code>Fraction</code> 模块type
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Fraction</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #62686E;">(* </span><span style="color: #62686E;">A fraction is a rational number p/q, where q != 0.</span><span style="color: #62686E;">*)</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+
+  <span style="color: #7e7e87;">(** [make n d] is n/d. Requires d != 0. *)</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">make</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> t
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">numerator</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> int
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">denominator</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> int
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_float</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> float
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">add</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">mul</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">TupleFraction</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Fraction</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> int <span style="color: #f0e68c;">*</span> int
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make</span><span style="color: #DFDFDF;"> n d</span> <span style="color: #f0e68c;">=</span><span style="color: #51afef;">if</span> d<span style="color: #f0e68c;">=</span>0 <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">raise</span> <span style="color: #C57BDB;">Division_by_zero</span> <span style="color: #51afef;">else</span>  <span style="color: #f0e68c;">(</span>n <span style="color: #f0e68c;">,</span>d <span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">numerator</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> n
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">denominator</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> d
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">to_string</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span> string_of_int n <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">^</span> <span style="color: #7bc275;">"/"</span> <span style="color: #f0e68c;">^</span> <span style="color: #f0e68c;">(</span>string_of_int d<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">to_float</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>float_of_int n<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">/.</span> <span style="color: #f0e68c;">(</span>float_of_int d<span style="color: #f0e68c;">)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">add</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n'</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d'</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span>  <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">*</span>d' <span style="color: #f0e68c;">+</span> n' <span style="color: #f0e68c;">*</span>d <span style="color: #f0e68c;">,</span> d<span style="color: #f0e68c;">*</span>d' <span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">mul</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n'</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d'</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">*</span>n'  <span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">*</span>d'<span style="color: #f0e68c;">)</span> 
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3a4b86b" class="outline-3">
+<h3 id="org3a4b86b"><span class="section-number-3">1.8.</span> fraction reduced</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+实现自动约分到最简形式的分数
+分母要保持为正数
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #7e7e87;">(** [gcd x y] is the greatest common divisor of [x] and [y].</span>
+<span style="color: #7e7e87;">    Requires: [x] and [y] are positive. *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">gcd</span><span style="color: #DFDFDF;"> x y</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> x <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> y
+  <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">(</span>x <span style="color: #f0e68c;">&lt;</span> y<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">then</span> gcd <span style="color: #f0e68c;">(</span>y <span style="color: #f0e68c;">-</span> x<span style="color: #f0e68c;">)</span> x
+  <span style="color: #51afef;">else</span> gcd y <span style="color: #f0e68c;">(</span>x <span style="color: #f0e68c;">-</span> y<span style="color: #f0e68c;">)</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml">
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">ReducedFraction</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Fraction</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> int <span style="color: #f0e68c;">*</span> int
+
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">mygcd</span><span style="color: #DFDFDF;"> x y</span> <span style="color: #f0e68c;">=</span> 
+      <span style="color: #51afef;">if</span> x <span style="color: #f0e68c;">mod</span> y <span style="color: #f0e68c;">=</span> 0 <span style="color: #51afef;">then</span> y 
+      <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> x <span style="color: #f0e68c;">&lt;</span> y <span style="color: #51afef;">then</span> mygcd y x 
+      <span style="color: #51afef;">else</span>  mygcd y <span style="color: #f0e68c;">(</span>x <span style="color: #f0e68c;">mod</span> y<span style="color: #f0e68c;">)</span>
+
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">reduce</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">g</span> <span style="color: #f0e68c;">=</span> mygcd n d <span style="color: #f5deb3; font-weight: bold;">in</span> <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">/</span>g<span style="color: #f0e68c;">,</span> d<span style="color: #f0e68c;">/</span>g <span style="color: #f0e68c;">)</span> 
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make</span><span style="color: #DFDFDF;"> n d</span> <span style="color: #f0e68c;">=</span><span style="color: #51afef;">if</span> d<span style="color: #f0e68c;">=</span>0 <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">raise</span> <span style="color: #C57BDB;">Division_by_zero</span> <span style="color: #51afef;">else</span> reduce <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span>
+
+
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">numerator</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> n
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">denominator</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> d
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">to_string</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span> string_of_int n <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">^</span> <span style="color: #7bc275;">"/"</span> <span style="color: #f0e68c;">^</span> <span style="color: #f0e68c;">(</span>string_of_int d<span style="color: #f0e68c;">)</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">to_float</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>float_of_int n<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">/.</span> <span style="color: #f0e68c;">(</span>float_of_int d<span style="color: #f0e68c;">)</span>
+
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">add</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n'</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d'</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span>  reduce <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">*</span>d' <span style="color: #f0e68c;">+</span> n' <span style="color: #f0e68c;">*</span>d <span style="color: #f0e68c;">,</span> d<span style="color: #f0e68c;">*</span>d' <span style="color: #f0e68c;">)</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">mul</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">n'</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">d'</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> reduce <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">*</span>n'  <span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">*</span>d'<span style="color: #f0e68c;">)</span> 
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9363925" class="outline-3">
+<h3 id="org9363925"><span class="section-number-3">1.9.</span> make char map</h3>
+<div class="outline-text-3" id="text-1-9">
+<p>
+为了创建标准库中的map, 我们要使用functor <code>Map.Make</code> 创建一个特化了key的module:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">CharMap</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Map.Make</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">Char</span><span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+<p>
+这产生了一个signature
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">CharMap</span> <span style="color: #f0e68c;">:</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">key</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Char.</span>t
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">'a t</span> <span style="color: #f0e68c;">=</span> 'a <span style="color: #FCCE7B;">Map.</span><span style="color: #bbc2cf; background-color: #242730;">Make</span><span style="color: #f0e68c;">(</span><span style="color: #bbc2cf; background-color: #242730;">Char</span><span style="color: #f0e68c;">)</span>.t
+   <span style="color: #f0e68c;">...</span>
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">empty</span> <span style="color: #f0e68c;">:</span> 'a t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">add</span> <span style="color: #f0e68c;">:</span> key <span style="color: #f0e68c;">-&gt;</span> 'a <span style="color: #f0e68c;">-&gt;</span> 'a t <span style="color: #f0e68c;">-&gt;</span> 'a t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">remove</span> <span style="color: #f0e68c;">:</span> key <span style="color: #f0e68c;">-&gt;</span> 'a t <span style="color: #f0e68c;">-&gt;</span> 'a t
+        <span style="color: #f0e68c;">...</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga567b1f" class="outline-3">
+<h3 id="orga567b1f"><span class="section-number-3">1.10.</span> char ordered</h3>
+<div class="outline-text-3" id="text-1-10">
+<p>
+functor <code>Map.Make</code> 需要一个和 <code>Map.OrderType</code> 相匹配的module. 查看 <code>Char</code> 和此module的文档, 解释为何 <code>Char</code> 能作为 <code>Map.Make</code> 的参数.
+因为 OrderType 中有两个声明 :
+</p>
+
+<pre class="example">
+type t : key的类型
+val compare : t -&gt; t -&gt; int  用来比较key的函数 (k1 - k2)
+</pre>
+<p>
+而 <code>Char</code> 中也有这两个定义:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> char 
+<span style="color: #7e7e87;">(**  An alias for the type of characters. *)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">compare</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> int
+<span style="color: #7e7e87;">(**  The comparison function for characters, with the same specification as compare. Along with the type t, this function compare allows the module Char to be passed as argument to the functors Set.Make and Map.Make. *)</span>
+</pre>
+</div>
+<p>
+因此 Char 满足 signature <code>Map.Ordertype</code>
+</p>
+</div>
+</div>
+<div id="outline-container-orga470e4b" class="outline-3">
+<h3 id="orga470e4b"><span class="section-number-3">1.11.</span> use char map</h3>
+<div class="outline-text-3" id="text-1-11">
+<p>
+使用 <code>CharMap</code> 创建包含下述内容
+</p>
+
+<ul class="org-ul">
+<li>'A' maps to "Alpha"</li>
+
+<li>'E' maps to "Echo"</li>
+
+<li>'S' maps to "Sierra"</li>
+
+<li>'V' maps to "Victor"</li>
+</ul>
+
+<p>
+用 <code>CharMap.find</code> 寻找'E'的值.
+移除 'A'的绑定.
+使用 <code>CharMap.mem</code> 检查是否 'A' 仍存在绑定.
+使用 <code>CharMap.bindings</code> 将 map 转化为 accociation list.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">m</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">CharMap.</span> <span style="color: #f0e68c;">(</span>empty <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #7bc275;">'A'</span> <span style="color: #7bc275;">"Alpha"</span> <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #7bc275;">'E'</span> <span style="color: #7bc275;">"echo"</span> <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #7bc275;">'S'</span> <span style="color: #7bc275;">"Sierra"</span> <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #7bc275;">'V'</span> <span style="color: #7bc275;">"Victor"</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #FCCE7B;">CharMap.</span>find <span style="color: #7bc275;">'E'</span> m <span style="color: #ff4500;">;;</span>
+<span style="color: #7e7e87;">(** - : string = "echo" *)</span>
+m <span style="color: #f0e68c;">|&gt;</span>  <span style="color: #FCCE7B;">CharMap.</span>remove <span style="color: #7bc275;">'A'</span> <span style="color: #f0e68c;">|&gt;</span>  <span style="color: #FCCE7B;">CharMap.</span>mem <span style="color: #7bc275;">'A'</span><span style="color: #ff4500;">;;</span>
+<span style="color: #7e7e87;">(** - : bool = false *)</span>
+<span style="color: #FCCE7B;">CharMap.</span>bindings m <span style="color: #ff4500;">;;</span>
+<span style="color: #7e7e87;">(** [(A, "Alpha"); (E, "echo"); (S, "Sierra"); (V, "Victor")] *)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb0f0f56" class="outline-3">
+<h3 id="orgb0f0f56"><span class="section-number-3">1.12.</span> bindings</h3>
+<div class="outline-text-3" id="text-1-12">
+<p>
+查看 <code>Map.S</code> 的文档, 找到 bindings 的规范, 下面哪几个表达式会返回相同的 alist?
+</p>
+<ul class="org-ul">
+<li><code>CharMap.(empty |&gt; add 'x' 0 |&gt; add 'y' 1 |&gt; bindings)</code></li>
+
+<li><code>CharMap.(empty |&gt; add 'y' 1 |&gt; add 'x' 0 |&gt; bindings)</code></li>
+
+<li><code>CharMap.(empty |&gt; add 'x' 2 |&gt; add 'y' 1 |&gt; remove 'x' |&gt; add 'x' 0 |&gt; bindings)</code></li>
+</ul>
+
+<p>
+三个表达式返回的 alist 都是相同的.
+因为根据规范, 返回的list是按照key的顺序排序的, 因此和添加的顺序无关. 
+</p>
+<pre class="example">
+val bindings : 'a t -&gt; (key * 'a) list
+
+Return the list of all bindings of the given map. The returned list is sorted in increasing order of keys with respect to the ordering Ord.compare, where Ord is the argument given to Stdlib.Map.Make
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org03705d5" class="outline-3">
+<h3 id="org03705d5"><span class="section-number-3">1.13.</span> date order</h3>
+<div class="outline-text-3" id="text-1-13">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">date</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>month <span style="color: #f0e68c;">:</span> int<span style="color: #f0e68c;">;</span> day <span style="color: #f0e68c;">:</span> int<span style="color: #f0e68c;">}</span>
+</pre>
+</div>
+
+<p>
+例如 3月31日被表示为 <code>{month = 3; day = 31}</code> . 下面将会实现一个key的类型为date的Map.
+显然这可能会存在无效的日期: {month = 2 ; day = 89} 对无效日期的行为不做特殊规定.
+为了用 <code>Map.Make</code> 生成Map, 我们需要实现 Map.OrderedType signature.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">Date</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">date</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>month <span style="color: #f0e68c;">:</span>int <span style="color: #f0e68c;">;</span> day <span style="color: #f0e68c;">:</span> int<span style="color: #f0e68c;">}</span> 
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> date
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">compare</span><span style="color: #DFDFDF;"> d1 d2</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>d1.month <span style="color: #f0e68c;">-</span> d2.month  <span style="color: #f0e68c;">,</span> d1.day<span style="color: #f0e68c;">-</span>d2.day<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> m <span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #f0e68c;">-&gt;</span> 1
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>m<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> m <span style="color: #f0e68c;">&lt;</span> 0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">-</span>1
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>0<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> d <span style="color: #f0e68c;">&gt;</span> 0 <span style="color: #f0e68c;">-&gt;</span> 1
+    <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>0<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> d <span style="color: #f0e68c;">&lt;</span> 0 <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">-</span>1
+    <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> 0
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org40e7e23" class="outline-3">
+<h3 id="org40e7e23"><span class="section-number-3">1.14.</span> calender</h3>
+<div class="outline-text-3" id="text-1-14">
+<p>
+用上一问的 <code>Date</code> 和 <code>Map.Make</code> 创建 <code>DateMap</code> module, 并定义一个 日历 <code>calendar</code> 类型:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">calendar</span> <span style="color: #f0e68c;">=</span> string <span style="color: #FCCE7B;">DateMap.</span>t <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<p>
+其想法是将日期映射到那天要进行的事件名称. 
+使用 <code>calender</code> 加入几个日期:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #FCCE7B;">DateMap.</span> <span style="color: #f0e68c;">(</span>empty <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #f0e68c;">{</span>month<span style="color: #f0e68c;">=</span>10<span style="color: #f0e68c;">;</span>day<span style="color: #f0e68c;">=</span>12<span style="color: #f0e68c;">}</span> <span style="color: #7bc275;">"my birthday!"</span> <span style="color: #f0e68c;">|&gt;</span> bindings<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge083ace" class="outline-3">
+<h3 id="orge083ace"><span class="section-number-3">1.15.</span> print calendar</h3>
+<div class="outline-text-3" id="text-1-15">
+<p>
+编写函数 <code>print_calendar: calendar -&gt; unit</code> 它打印日历中所有元素
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">print_calendar</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">cal</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">calender</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">DateMap.</span>iter <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">d e</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">Printf.</span>printf <span style="color: #7bc275;">"%i&#26376;%i&#26085;: %s \n"</span> d.month d.day e <span style="color: #f0e68c;">)</span> cal 
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2c86b69" class="outline-3">
+<h3 id="org2c86b69"><span class="section-number-3">1.16.</span> is for</h3>
+<div class="outline-text-3" id="text-1-16">
+<p>
+编写函数 <code>is_for: string CharMap.t -&gt; string CharMap.t</code> 使得将一个绑定为 <code>ki -&gt; vi</code> 的Map,映射为绑定为 <code>ki -&gt; "ki is for vi"</code> .
+提示: 用Map.S中的函数可以得到一个只有一行的解答.
+为了将字符转换为string, 可以用 <code>String.make</code> , 更高级的做法是用 <code>Printf.sprintf</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_for</span><span style="color: #DFDFDF;"> m</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">CharMap.</span>mapi <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">k v</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">Printf.</span>sprintf <span style="color: #7bc275;">"%c is for %s"</span> k v <span style="color: #f0e68c;">)</span> m
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> <span style="color: #FCCE7B;">CharMap.</span> <span style="color: #f0e68c;">(</span>empty <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #7bc275;">'a'</span> <span style="color: #7bc275;">"apple"</span> <span style="color: #f0e68c;">|&gt;</span> is_for <span style="color: #f0e68c;">|&gt;</span> bindings<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">CharMap.</span>key <span style="color: #f0e68c;">*</span> string<span style="color: #f0e68c;">)</span> list <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[(</span>a<span style="color: #f0e68c;">,</span> <span style="color: #7bc275;">"a is for apple"</span><span style="color: #f0e68c;">)]</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2aca28a" class="outline-3">
+<h3 id="org2aca28a"><span class="section-number-3">1.17.</span> first after</h3>
+<div class="outline-text-3" id="text-1-17">
+<p>
+编写函数 <code>first_after : calendar -&gt; Date.t -&gt; string</code> , 它返回在给定日期之后(不包含该日期)的首个事项的名称. 若没有这样的事件, 函数应抛出 <code>Not_found</code> 异常.(它是标准库中定义的异常)
+提示: 可用 <code>Map.S</code> 中的函数来完成仅有一行的解答.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">first_after</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">cal</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">calendar</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">Date.</span><span style="color: #FCCE7B;">t</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span>
+ <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">d</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">e</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">DateMap.</span>find_first <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">k</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">Date.</span>compare k d<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&gt;</span> 0<span style="color: #f0e68c;">)</span> cal
+ <span style="color: #f5deb3; font-weight: bold;">in</span> e
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span>  first_after <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">DateMap.</span> <span style="color: #f0e68c;">(</span>empty <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #f0e68c;">{</span>month<span style="color: #f0e68c;">=</span>10<span style="color: #f0e68c;">;</span>day<span style="color: #f0e68c;">=</span>12<span style="color: #f0e68c;">}</span> <span style="color: #7bc275;">"my birthday!"</span> <span style="color: #f0e68c;">))</span> <span style="color: #f0e68c;">{</span>month<span style="color: #f0e68c;">=</span>10<span style="color: #f0e68c;">;</span>day<span style="color: #f0e68c;">=</span>1<span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span> 
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"my birthday!"</span>
+
+<span style="color: #f0e68c;">#</span>  first_after <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">DateMap.</span> <span style="color: #f0e68c;">(</span>empty <span style="color: #f0e68c;">|&gt;</span> add <span style="color: #f0e68c;">{</span>month<span style="color: #f0e68c;">=</span>10<span style="color: #f0e68c;">;</span>day<span style="color: #f0e68c;">=</span>12<span style="color: #f0e68c;">}</span> <span style="color: #7bc275;">"my birthday!"</span> <span style="color: #f0e68c;">))</span> <span style="color: #f0e68c;">{</span>month<span style="color: #f0e68c;">=</span>11<span style="color: #f0e68c;">;</span>day<span style="color: #f0e68c;">=</span>1<span style="color: #f0e68c;">}</span> <span style="color: #ff4500;">;;</span> 
+<span style="color: #bbc2cf; background-color: #242730;">Exception</span><span style="color: #f0e68c;">:</span> <span style="color: #C57BDB;">Not_found</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd0b7edb" class="outline-3">
+<h3 id="orgd0b7edb"><span class="section-number-3">1.18.</span> sets</h3>
+<div class="outline-text-3" id="text-1-18">
+<p>
+标准库中的 <code>Set</code> 模块十分类似于 <code>Map</code> , 使用它创建一个代表了大小写不敏感字符串的集合. 仅仅是大小写不同的两个字符串集合应视作相同.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">InsStr</span><span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span> 
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> string
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">compare</span><span style="color: #DFDFDF;"> a b</span> <span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;">String.</span> <span style="color: #f0e68c;">(</span>compare <span style="color: #f0e68c;">(</span>lowercase_ascii a<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>lowercase_ascii b<span style="color: #f0e68c;">))</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">InsStrSet</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Set.Make</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">InsStr </span><span style="color: #f0e68c;">)</span><span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcc72060" class="outline-3">
+<h3 id="orgcc72060"><span class="section-number-3">1.19.</span> tostring</h3>
+<div class="outline-text-3" id="text-1-19">
+<p>
+编写module type <code>ToString</code> 指定一个signature, 它包含了抽象类型t, 和一个函数 <code>to_string : t -&gt; string</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">ToString</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb23fdb9" class="outline-3">
+<h3 id="orgb23fdb9"><span class="section-number-3">1.20.</span> Print</h3>
+<div class="outline-text-3" id="text-1-20">
+<p>
+编写functor <code>Print</code> ,它接收一个名为 <code>M</code> 的 <code>ToString</code> 模块, 并返回一个只有一个 <code>print: M.t -&gt; unit</code> 定义的模块, 此函数打印出值的字符串表示.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">Print</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">M</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">ToString</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">print</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">m</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">M.</span><span style="color: #FCCE7B;">t</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #FCCE7B;">Printf.</span>printf <span style="color: #7bc275;">"%s\n"</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">M.</span>to_string m<span style="color: #f0e68c;">)</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcaa3ed9" class="outline-3">
+<h3 id="orgcaa3ed9"><span class="section-number-3">1.21.</span> Print Int</h3>
+<div class="outline-text-3" id="text-1-21">
+<p>
+创建模块 <code>PrintInt</code> 作为应用functor <code>Print</code> 到 <code>Int</code> 上的结果. 编写 <code>Int</code> 模块, 其 <code>Int.t</code> 应为 int.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">Int</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> int
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">to_string</span> <span style="color: #f0e68c;">=</span> string_of_int
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">PrintInt</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Print</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">Int</span><span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> <span style="color: #FCCE7B;">PrintInt.</span>print 234 <span style="color: #ff4500;">;;</span>
+234
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6fb1b4f" class="outline-3">
+<h3 id="org6fb1b4f"><span class="section-number-3">1.22.</span> Print String</h3>
+<div class="outline-text-3" id="text-1-22">
+<p>
+创建名为 <code>PrintString</code> 的模块, 它是应用 <code>Print</code> 到 <code>MyString</code> 上的结果.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">MyString</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> string
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">to_string</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Fun.</span>id
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">PrintString</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Print</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">MyString</span><span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> <span style="color: #FCCE7B;">PrintString.</span>print <span style="color: #7bc275;">"hello"</span>  <span style="color: #ff4500;">;;</span>
+hello
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">()</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3072a2d" class="outline-3">
+<h3 id="org3072a2d"><span class="section-number-3">1.23.</span> Print Reuse</h3>
+<div class="outline-text-3" id="text-1-23">
+<p>
+解释 <code>Print</code> 是如何实现代码复用的?
+</p>
+
+<p>
+打印值这一函数需要值的类型, 和如何将此类型的值转化为字符串. 除此之外的逻辑都是相同的. 因此将这两个不同点打包成一个module type: <code>ToString</code> ,并针对输入为 <code>ToString</code> 这样的模块产生相应的打印函数. 
+</p>
+</div>
+</div>
+<div id="outline-container-org770c872" class="outline-3">
+<h3 id="org770c872"><span class="section-number-3">1.24.</span> Print String reuse revisited</h3>
+<div class="outline-text-3" id="text-1-24">
+<p>
+<code>PrintString</code> 模块仅支持一个操作: <code>to_string</code> , 现在希望不用copy的方式创建一个包含了 <code>String</code> 模块中所有函数并且含有 <code>print</code>.
+定义模块 <code>StringWithPrint</code>
+提示: 使用两个include语句
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">StringWithPrint</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">String</span>
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">Print</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">MyString</span><span style="color: #f0e68c;">)</span> 
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9e33de0" class="outline-3">
+<h3 id="org9e33de0"><span class="section-number-3">1.25.</span> implementation without interface</h3>
+<div class="outline-text-3" id="text-1-25">
+<p>
+创建 <code>date.ml</code> 并包含下面的代码:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">date</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>month <span style="color: #f0e68c;">:</span> int<span style="color: #f0e68c;">;</span> day <span style="color: #f0e68c;">:</span> int<span style="color: #f0e68c;">}</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make_date</span><span style="color: #DFDFDF;"> month day</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>month<span style="color: #f0e68c;">;</span> day<span style="color: #f0e68c;">}</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">get_month</span><span style="color: #DFDFDF;"> d</span> <span style="color: #f0e68c;">=</span> d.month
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">get_day</span><span style="color: #DFDFDF;"> d</span> <span style="color: #f0e68c;">=</span> d.day
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">to_string</span><span style="color: #DFDFDF;"> d</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>string_of_int d.month<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">^</span> <span style="color: #7bc275;">"/"</span> <span style="color: #f0e68c;">^</span> <span style="color: #f0e68c;">(</span>string_of_int d.day<span style="color: #f0e68c;">)</span>
+</pre>
+</div>
+<p>
+创建 <code>dune</code> 文件
+</p>
+<div class="org-src-container">
+<pre class="src src-elisp">(library
+ (name date)) 
+</pre>
+</div>
+<p>
+加载此库文件到utop:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">dune utop 
+</pre>
+</div>
+<p>
+在utop中, open <code>Date</code>, 创建一个日期,并访问它的day字段, 并将日期转换为string 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Date</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">(</span>make_date 3 5 <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">|&gt;</span> get_day <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 5
+
+<span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">(</span>make_date 3 5 <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">|&gt;</span> to_string <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"3/5"</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org88262b3" class="outline-3">
+<h3 id="org88262b3"><span class="section-number-3">1.26.</span> implementation with interface</h3>
+<div class="outline-text-3" id="text-1-26">
+<p>
+继续上一个问题, 创建文件 <code>date.mli</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">date</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>month <span style="color: #f0e68c;">:</span> int<span style="color: #f0e68c;">;</span> day <span style="color: #f0e68c;">:</span> int<span style="color: #f0e68c;">}</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">make_date</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int <span style="color: #f0e68c;">-&gt;</span> date
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">get_month</span> <span style="color: #f0e68c;">:</span> date <span style="color: #f0e68c;">-&gt;</span> int
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">get_day</span> <span style="color: #f0e68c;">:</span> date <span style="color: #f0e68c;">-&gt;</span> int
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> date <span style="color: #f0e68c;">-&gt;</span> string
+</pre>
+</div>
+<p>
+并在utop中重复上一问中的操作 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Date</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">(</span>make_date 3 6<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">|&gt;</span> get_day <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 6
+
+<span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">(</span>make_date 3 6<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">|&gt;</span> to_string <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"3/6"</span>
+
+<span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">d</span> <span style="color: #f0e68c;">=</span> make_date 3 6 <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">d</span> <span style="color: #f0e68c;">:</span> date <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">{</span>month <span style="color: #f0e68c;">=</span> 3<span style="color: #f0e68c;">;</span> day <span style="color: #f0e68c;">=</span> 6<span style="color: #f0e68c;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge99b1a5" class="outline-3">
+<h3 id="orge99b1a5"><span class="section-number-3">1.27.</span> implementation with abstracted interface</h3>
+<div class="outline-text-3" id="text-1-27">
+<p>
+在上两个问题的基础上, 修改 <code>date.mli</code> 中的第一行 为: 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">date</span> 
+</pre>
+</div>
+<p>
+现在类型date变为抽象的. 重复之前的操作.观察不同之处.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Date</span><span style="color: #ff4500;">;;</span>
+
+<span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">d</span> <span style="color: #f0e68c;">=</span> make_date 3 6 <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">d</span> <span style="color: #f0e68c;">:</span> date <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">&lt;</span>abstr<span style="color: #f0e68c;">&gt;</span>
+
+<span style="color: #f0e68c;">#</span> d <span style="color: #f0e68c;">|&gt;</span> get_day <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 6
+
+<span style="color: #f0e68c;">#</span> d <span style="color: #f0e68c;">|&gt;</span> to_string <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"3/6"</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgf51ff27" class="outline-3">
+<h3 id="orgf51ff27"><span class="section-number-3">1.28.</span> printer for date</h3>
+<div class="outline-text-3" id="text-1-28">
+<p>
+为 <code>date.mli</code> 添加声明
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">format</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Format.</span>formatter <span style="color: #f0e68c;">-&gt;</span> date <span style="color: #f0e68c;">-&gt;</span> unit 
+</pre>
+</div>
+<p>
+并且添加一个 <code>format</code> 的定义到 <code>date.ml</code>
+提示: 使用 <code>Format.fprintf</code> 和 <code>Date.to_string</code>
+</p>
+
+<p>
+重新编译,并加载到utop, load "date.cmo" ,并安装 date的格式化器 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span>install_printer <span style="color: #FCCE7B;">Date.</span>format<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+<b>解答:</b>  
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">format</span><span style="color: #DFDFDF;"> f d</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">Format.</span>fprintf f <span style="color: #7bc275;">"%s"</span> <span style="color: #f0e68c;">(</span>to_string d<span style="color: #f0e68c;">)</span>
+</pre>
+</div>
+<pre class="example">
+ocamlc date.mli
+ocamlc date.ml 
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">utop <span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">#</span>load <span style="color: #7bc275;">"date.cmo"</span> <span style="color: #ff4500;">;;</span>
+
+utop <span style="color: #f0e68c;">#</span> <span style="color: #f0e68c;">#</span>install_printer  <span style="color: #FCCE7B;">Date.</span>format <span style="color: #ff4500;">;;</span>
+
+utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Date</span> <span style="color: #ff4500;">;;</span>
+
+utop <span style="color: #f0e68c;">#</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">d</span> <span style="color: #f0e68c;">=</span> make_date 3 4 <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">d</span> <span style="color: #f0e68c;">:</span> date <span style="color: #f0e68c;">=</span> 3<span style="color: #f0e68c;">/</span>4
+
+utop <span style="color: #f0e68c;">#</span> d <span style="color: #f0e68c;">|&gt;</span> get_day <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 4
+
+utop <span style="color: #f0e68c;">#</span> d <span style="color: #f0e68c;">|&gt;</span> to_string <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"3/4"</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgc61af41" class="outline-3">
+<h3 id="orgc61af41"><span class="section-number-3">1.29.</span> refactor arith(算术)</h3>
+<div class="outline-text-3" id="text-1-29">
+<p>
+下载文件 <a href="./algebra.ml"> <code>algebra.ml</code> </a> ,它包含了两个signatures和四个structures
+</p>
+
+<ol class="org-ol">
+<li>环是描述称为环的代数结构的签名，环是加法和乘法运算符的抽象。</li>
+
+<li>域是描述代数结构的签名，称为域，它就像一个环，但也有一个除法运算的抽象。</li>
+
+<li>IntRing 和 FloatRing 是根据 int 和 float 实现环的结构。</li>
+
+<li>IntField 和 FloatField 是根据 int 和 float 实现字段的结构。</li>
+
+<li>IntRational 和 FloatRational 是根据比例（也称为分数）实现字段的结构，即 int pair 和 float pair</li>
+</ol>
+
+
+
+<p>
+使用 <code>include</code>, functor, 引入额外的structure/signature来提高代码复用的数量.
+这有一些关于重构建议:
+</p>
+
+<ul class="org-ul">
+<li>不要在一个以上的sig中 <b>直接声明</b> name, 而是要用include的方式引入已有的名字 .</li>
+<li>只需要分别为 <code>int</code>, <code>float</code> , 分数  <b>直接定义</b> 三次代数操作和数字(即: plus,minus,times,divide,zero,one) .例如 <code>IntField.( + )</code> 不应该被直接定义为 <code>Stdlib.( + )</code>, 而是要用 <code>include</code> / functor的方式复用已有的定义.</li>
+
+<li>有理数的strutures可以用一个简单的functor分别应用到 <code>IntField</code> / <code>FloatField</code> 来生成.</li>
+
+<li>消除所有多余的 <code>of_int</code> 是可能的, 例如, 他被直接定义一次, 其余的struct可以复用该定义.并且只在一个sig中直接声明它. 这需要使用functor. 还需要发明一种算法，可以将整数转换为任意环表示，而不管该环的表示类型是什么。</li>
+</ul>
+
+<p>
+完成后，所有模块的类型应保持不变。可以通过运行 <code>ocamlc -i algebra.ml</code> 查看这些类型。
+</p>
+</div>
+
+<div id="outline-container-orgc6d72d5" class="outline-4">
+<h4 id="orgc6d72d5"><span class="section-number-4">1.29.1.</span> 原始 <code>algebra.ml</code> 的类型:</h4>
+<div class="outline-text-4" id="text-1-29-1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Ring</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> t
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Field</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">/</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> t
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRing</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Ring</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntField</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRing</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Ring</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatField</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRational</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRational</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgcd0b442" class="outline-4">
+<h4 id="orgcd0b442"><span class="section-number-4">1.29.2.</span> 重构后的 <code>algebra.ml</code></h4>
+<div class="outline-text-4" id="text-1-29-2">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">RingWithoutOfInt</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">AddOfInt</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">W</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> RingWithoutOfInt </span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">W</span> 
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">of_int</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">loop</span><span style="color: #DFDFDF;"> acc</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+      <span style="color: #f0e68c;">|</span>0 <span style="color: #f0e68c;">-&gt;</span> acc
+      <span style="color: #f0e68c;">|</span>num <span style="color: #f0e68c;">-&gt;</span> loop <span style="color: #FCCE7B;">W.</span> <span style="color: #f0e68c;">(</span>one <span style="color: #f0e68c;">+</span> acc <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>num<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span>
+    <span style="color: #f5deb3; font-weight: bold;">in</span> loop <span style="color: #FCCE7B;">W.</span>zero n
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Ring</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">RingWithoutOfInt</span>
+
+   <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> t    
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Field</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">Ring</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">/</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRingImpl</span>  <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">AddOfInt</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;"> </span><span style="color: #f5deb3; font-weight: bold;">struct</span>
+<span style="color: #FCCE7B;">  </span><span style="color: #f5deb3; font-weight: bold;">type</span><span style="color: #FCCE7B;"> t </span><span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;"> int</span>
+
+<span style="color: #FCCE7B;">  </span><span style="color: #f5deb3; font-weight: bold;">let</span><span style="color: #FCCE7B;"> zero </span><span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;"> 0</span>
+
+<span style="color: #FCCE7B;">  </span><span style="color: #f5deb3; font-weight: bold;">let</span><span style="color: #FCCE7B;"> one </span><span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;"> 1</span>
+
+<span style="color: #FCCE7B;">  </span><span style="color: #f5deb3; font-weight: bold;">let</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">+</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">)</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">+</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">)</span>
+
+<span style="color: #FCCE7B;">  </span><span style="color: #f5deb3; font-weight: bold;">let</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">~-</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">)</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">~-</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">)</span>
+
+<span style="color: #FCCE7B;">  </span><span style="color: #f5deb3; font-weight: bold;">let</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">*</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">)</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">*</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">)</span>
+
+<span style="color: #FCCE7B;">  </span><span style="color: #f5deb3; font-weight: bold;">let</span><span style="color: #FCCE7B;"> to_string </span><span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;"> string_of_int</span>
+
+<span style="color: #f5deb3; font-weight: bold;">end</span><span style="color: #FCCE7B;"> </span><span style="color: #f0e68c;">)</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRing</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Ring</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">IntRingImpl</span> 
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntField</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">IntRingImpl</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">/</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">=</span>   <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">/</span> <span style="color: #f0e68c;">)</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRingImpl</span>  <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">AddOfInt</span> <span style="color: #f0e68c;">(</span><span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> float
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">zero</span> <span style="color: #f0e68c;">=</span> 0.
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">one</span> <span style="color: #f0e68c;">=</span> 1.
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">+</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+.</span> <span style="color: #f0e68c;">)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">~-</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-.</span> <span style="color: #f0e68c;">)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">*</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*.</span> <span style="color: #f0e68c;">)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">to_string</span> <span style="color: #f0e68c;">=</span> string_of_float
+
+<span style="color: #f5deb3; font-weight: bold;">end</span><span style="color: #f0e68c;">)</span> 
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRing</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Ring</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">FloatRingImpl</span> 
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatField</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">FloatRingImpl</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">/</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">/.</span> <span style="color: #f0e68c;">)</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">ToRational</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">F</span><span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;">Field</span><span style="color: #f0e68c;">)</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>  <span style="color: #f0e68c;">=</span><span style="color: #f5deb3; font-weight: bold;">struct</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">include</span> <span style="color: #FCCE7B;">AddOfInt</span><span style="color: #f0e68c;">(</span><span style="color: #f5deb3; font-weight: bold;">struct</span> 
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">F.</span>t <span style="color: #f0e68c;">*</span> <span style="color: #FCCE7B;">F.</span>t
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">zero</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">F.</span>zero<span style="color: #f0e68c;">,</span><span style="color: #FCCE7B;">F.</span>zero<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">one</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">F.</span>one <span style="color: #f0e68c;">,</span><span style="color: #FCCE7B;">F.</span>one<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">((</span>a<span style="color: #f0e68c;">,</span>b<span style="color: #f0e68c;">):</span><span style="color: #FCCE7B;">t</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">((</span>c<span style="color: #f0e68c;">,</span>d<span style="color: #f0e68c;">):</span><span style="color: #FCCE7B;">t</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span>  <span style="color: #FCCE7B;">F.</span> <span style="color: #f0e68c;">((</span>a <span style="color: #f0e68c;">*</span> d<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">(</span>c <span style="color: #f0e68c;">*</span> b<span style="color: #f0e68c;">),</span> b <span style="color: #f0e68c;">*</span> d<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">((</span>a<span style="color: #f0e68c;">,</span> b<span style="color: #f0e68c;">):</span><span style="color: #FCCE7B;">t</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">F.</span> <span style="color: #f0e68c;">(-</span>a<span style="color: #f0e68c;">,</span> b<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>a<span style="color: #f0e68c;">,</span> b<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>c<span style="color: #f0e68c;">,</span> d<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">F.</span> <span style="color: #f0e68c;">(</span>a <span style="color: #f0e68c;">*</span> c<span style="color: #f0e68c;">,</span> b <span style="color: #f0e68c;">*</span> d<span style="color: #f0e68c;">)</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">to_string</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">a</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;"> b</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">F.</span>to_string a <span style="color: #f0e68c;">^</span> <span style="color: #7bc275;">"/"</span> <span style="color: #f0e68c;">^</span> <span style="color: #FCCE7B;">F.</span>to_string b 
+<span style="color: #f5deb3; font-weight: bold;">end</span> <span style="color: #f0e68c;">)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">/</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">((</span>a<span style="color: #f0e68c;">,</span> b<span style="color: #f0e68c;">):</span><span style="color: #FCCE7B;">t</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">((</span>c<span style="color: #f0e68c;">,</span> d<span style="color: #f0e68c;">):</span><span style="color: #FCCE7B;">t</span><span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;">F.</span> <span style="color: #f0e68c;">(</span>a <span style="color: #f0e68c;">*</span> d<span style="color: #f0e68c;">,</span> b <span style="color: #f0e68c;">*</span> c<span style="color: #f0e68c;">)</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRational</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>  <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">ToRational</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">IntField</span><span style="color: #f0e68c;">)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRational</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">ToRational</span><span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">FloatField</span><span style="color: #f0e68c;">)</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgcb7b314" class="outline-4">
+<h4 id="orgcb7b314"><span class="section-number-4">1.29.3.</span> <code>ocamlc -i algebra.ml</code> 的输出</h4>
+<div class="outline-text-4" id="text-1-29-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">RingWithoutOfInt</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">AddOfInt</span> <span style="color: #f0e68c;">:</span>
+  <span style="color: #f5deb3; font-weight: bold;">functor</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">W</span> <span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> RingWithoutOfInt</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span>
+    <span style="color: #f5deb3; font-weight: bold;">sig</span>
+      <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">W.</span>t
+      <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+      <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+      <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+      <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+      <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+      <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+      <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">W.</span>t
+    <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Ring</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> t
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">Field</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span>
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">/</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRingImpl</span> <span style="color: #f0e68c;">:</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> int
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> int
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRing</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Ring</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntField</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRingImpl</span> <span style="color: #f0e68c;">:</span>
+  <span style="color: #f5deb3; font-weight: bold;">sig</span>
+    <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #FCCE7B;">t</span> <span style="color: #f0e68c;">=</span> float
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">zero</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">one</span> <span style="color: #f0e68c;">:</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">~-</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> t <span style="color: #f0e68c;">-&gt;</span> t
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">to_string</span> <span style="color: #f0e68c;">:</span> t <span style="color: #f0e68c;">-&gt;</span> string
+    <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #5cEfFF;">of_int</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">-&gt;</span> float
+  <span style="color: #f5deb3; font-weight: bold;">end</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRing</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Ring</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatField</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">ToRational</span> <span style="color: #f0e68c;">:</span> <span style="color: #f5deb3; font-weight: bold;">functor</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">F</span> <span style="color: #f0e68c;">:</span><span style="color: #FCCE7B;"> Field</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #bbc2cf; background-color: #242730;">Field</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">IntRational</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #FCCE7B;">FloatRational</span> <span style="color: #f0e68c;">:</span> <span style="color: #FCCE7B;">Field</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,641 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-05-27 五 23:50 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>&lrm;</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="../../org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="../../org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org61be321">1. ch4</a>
+<ul>
+<li><a href="#orgaa4c1fb">1.1. </a></li>
+<li><a href="#org00ebe16">1.2. mystery operator 1</a></li>
+<li><a href="#org645ae00">1.3. mystery operator 2</a></li>
+<li><a href="#org37ed791">1.4. repeat</a></li>
+<li><a href="#orge3efa78">1.5. product</a></li>
+<li><a href="#orga0c37a8">1.6. terse product</a></li>
+<li><a href="#orgb7a3cf5">1.7. <code>sum_cube_odd</code></a></li>
+<li><a href="#orgdf0f025">1.8. <code>sum_cube_odd</code> pipeline</a></li>
+<li><a href="#org1ff43e9">1.9. exists</a></li>
+<li><a href="#orge56de72">1.10. account balance</a></li>
+<li><a href="#org823def6">1.11. library uncurried</a></li>
+<li><a href="#orged7ab4a">1.12. map composition</a></li>
+<li><a href="#orga816fcc">1.13. more list fun</a></li>
+<li><a href="#org706e786">1.14. association list keys</a></li>
+<li><a href="#org90a3420">1.15. valid matrix</a></li>
+<li><a href="#org65f36e6">1.16. row vector add</a></li>
+<li><a href="#org24f31f0">1.17. matrix add</a></li>
+<li><a href="#orgc9651da">1.18. matrix multiply</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org61be321" class="outline-2">
+<h2 id="org61be321"><span class="section-number-2">1.</span> ch4</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-orgaa4c1fb" class="outline-3">
+<h3 id="orgaa4c1fb"><span class="section-number-3">1.1.</span> </h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">double</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> 2<span style="color: #f0e68c;">*</span>x
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">square</span><span style="color: #DFDFDF;"> x</span> <span style="color: #f0e68c;">=</span> x<span style="color: #f0e68c;">*</span>x
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">twice</span><span style="color: #DFDFDF;"> f x</span> <span style="color: #f0e68c;">=</span> f <span style="color: #f0e68c;">(</span>f x<span style="color: #f0e68c;">)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">quad</span> <span style="color: #f0e68c;">=</span> twice double
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">fourth</span> <span style="color: #f0e68c;">=</span> twice square
+</pre>
+</div>
+<p>
+确定 quad 和forth的类型,
+val quad : int -&gt; int = &lt;fun&gt;
+val fourth : int -&gt; int = &lt;fun&gt;
+</p>
+
+<p>
+twice部分应用,仅传入一个double,返回一个函数: 
+val twice : ('a -&gt; 'a) -&gt; 'a -&gt; 'a = &lt;fun&gt;
+</p>
+
+<p>
+'a -&gt; 'a = &lt;fun&gt; 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org00ebe16" class="outline-3">
+<h3 id="org00ebe16"><span class="section-number-3">1.2.</span> mystery operator 1</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+下面这个运算符的作用是?
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> $ <span style="color: #f0e68c;">)</span> f x <span style="color: #f0e68c;">=</span> f x 
+</pre>
+</div>
+<p>
+分割了函数和参数部分,并应用f到x上
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f0e68c;">#</span> square 2<span style="color: #f0e68c;">+</span>2 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 6
+<span style="color: #f0e68c;">#</span> square $ 2<span style="color: #f0e68c;">+</span>2 <span style="color: #ff4500;">;;</span>
+<span style="color: #f0e68c;">-</span> <span style="color: #f0e68c;">:</span> int <span style="color: #f0e68c;">=</span> 16
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org645ae00" class="outline-3">
+<h3 id="org645ae00"><span class="section-number-3">1.3.</span> mystery operator 2</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">@@</span> <span style="color: #f0e68c;">)</span> f g x <span style="color: #f0e68c;">=</span> x <span style="color: #f0e68c;">|&gt;</span> g <span style="color: #f0e68c;">|&gt;</span> f
+</pre>
+</div>
+<p>
+作用是函数复合: <code>f@@g(x) =</code> f(g(x))= 
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org37ed791" class="outline-3">
+<h3 id="org37ed791"><span class="section-number-3">1.4.</span> repeat</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+编写函数repeat满足: repeat f n x 的效果是f应用于x上n次
+例如: <code>repeat f 3 x  --&gt;  f (f (f x))</code>
+<code>repeat f 0 x  -&gt; x</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">repeat</span><span style="color: #DFDFDF;"> f n x</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> n <span style="color: #f0e68c;">&gt;</span> 0
+  <span style="color: #51afef;">then</span> repeat f <span style="color: #f0e68c;">(</span>n<span style="color: #f0e68c;">-</span>1<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span>f x<span style="color: #f0e68c;">)</span>
+  <span style="color: #51afef;">else</span> x
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge3efa78" class="outline-3">
+<h3 id="orge3efa78"><span class="section-number-3">1.5.</span> product</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+用 <code>fold_left/fold_right</code> 编写函数  <code>product_left/product_right</code> , 它能计算list中的所有浮点数之积. 规定空list的积为1.0
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">
+ <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">fold_left</span><span style="color: #DFDFDF;"> f init lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">impl</span><span style="color: #DFDFDF;"> acc f</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> acc
+    <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> impl <span style="color: #f0e68c;">(</span>f acc h<span style="color: #f0e68c;">)</span> f t
+  <span style="color: #f5deb3; font-weight: bold;">in</span>
+  impl init f lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">product_left</span><span style="color: #DFDFDF;"> flst</span> <span style="color: #f0e68c;">=</span>
+  fold_left <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">acc f</span> <span style="color: #f0e68c;">-&gt;</span> acc<span style="color: #f0e68c;">*.</span>f<span style="color: #f0e68c;">)</span> 1.0 flst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">product_right</span><span style="color: #DFDFDF;"> flst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>fold_right <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">acc f</span> <span style="color: #f0e68c;">-&gt;</span> acc <span style="color: #f0e68c;">*.</span> f<span style="color: #f0e68c;">)</span> flst 1.0
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga0c37a8" class="outline-3">
+<h3 id="orga0c37a8"><span class="section-number-3">1.6.</span> terse product</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+尽量让你的上一问的解答变得简洁.
+提示: 是否能省略 <code>fun</code> ,是否能省略 <code>lst</code> 参数.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">product_left</span>  <span style="color: #f0e68c;">=</span> fold_left <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*.</span> <span style="color: #f0e68c;">)</span> 1.  <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">product_right</span><span style="color: #DFDFDF;"> flst</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>fold_right <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*.</span> <span style="color: #f0e68c;">)</span> flst 1. <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb7a3cf5" class="outline-3">
+<h3 id="orgb7a3cf5"><span class="section-number-3">1.7.</span> <code>sum_cube_odd</code></h3>
+<div class="outline-text-3" id="text-1-7">
+<p>
+计算 0-n的立方和, 不要自己编写递归函数, 使用 <code>map, fold, filter, ( -- )operator</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml">
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sum_cube_odd</span><span style="color: #DFDFDF;"> n</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">lst</span> <span style="color: #f0e68c;">=</span> 0 <span style="color: #f0e68c;">--</span> n <span style="color: #f5deb3; font-weight: bold;">in</span>
+    fold_left <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> 0 <span style="color: #f0e68c;">(</span>map <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> x<span style="color: #f0e68c;">*</span>x<span style="color: #f0e68c;">*</span>x<span style="color: #f0e68c;">)</span> lst<span style="color: #f0e68c;">)</span>
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdf0f025" class="outline-3">
+<h3 id="orgdf0f025"><span class="section-number-3">1.8.</span> <code>sum_cube_odd</code> pipeline</h3>
+<div class="outline-text-3" id="text-1-8">
+<p>
+用 <code>|&gt;</code> 重写上一题
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">sum_cube_odd_pipeline</span><span style="color: #DFDFDF;">  n</span> <span style="color: #f0e68c;">=</span>
+   <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">lst</span> <span style="color: #f0e68c;">=</span> 0 <span style="color: #f0e68c;">--</span> n <span style="color: #f5deb3; font-weight: bold;">in</span>
+     lst <span style="color: #f0e68c;">|&gt;</span> map <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> x<span style="color: #f0e68c;">*</span>x<span style="color: #f0e68c;">*</span>x<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">|&gt;</span> fold_left <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> 0 
+ <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org1ff43e9" class="outline-3">
+<h3 id="org1ff43e9"><span class="section-number-3">1.9.</span> exists</h3>
+<div class="outline-text-3" id="text-1-9">
+<p>
+编写函数 <code>exists: ('a -&gt; bool) -&gt; 'a list -&gt; bool</code> ,
+使得 <code>exists p [a1; ...; an]</code> 返回 list中是否至少有一个元素满足谓词p
+即要计算 <code>(p a1) || (p a2) || ... || (p an)</code>
+对空list, 此函数返回false
+</p>
+
+<p>
+编写三个版本的解答:
+</p>
+<ul class="org-ul">
+<li><code>exists_rec</code> , 它是一个递归函数, 且不用到List模块</li>
+<li><code>exists_fold</code> , 它只能用List模块中的fold函数,并且实现中不能出现 <code>rec</code></li>
+<li><code>exists_lib</code> , 它使用除 <code>fold_left</code> 或 <code>fold_right</code> 之外的 List 模块函数的任意组合，并且不使用  <code>rec</code>  关键字。</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">exists_rec</span><span style="color: #DFDFDF;"> p</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span> 
+  <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span> 
+  <span style="color: #f0e68c;">|</span>h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>p h<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">||</span> exists_rec t
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">exists_fold</span><span style="color: #DFDFDF;"> p lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>fold_left <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">acc e</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">(</span>p e<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">||</span> acc<span style="color: #f0e68c;">)</span> <span style="color: #a991f1;">false</span> lst  <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">exists_lib</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>exists<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge56de72" class="outline-3">
+<h3 id="orge56de72"><span class="section-number-3">1.10.</span> account balance</h3>
+<div class="outline-text-3" id="text-1-10">
+<p>
+编写三个版本的函数: <code>fold_left</code> , <code>fold_right</code> ,直接编写递归函数
+满足: 对一个表示借款的数字list, 从账户余额中扣除这些借款, 并返回剩下的额度
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">account_balance1</span><span style="color: #DFDFDF;"> acc lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>acc <span style="color: #f0e68c;">,</span> lst<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>a <span style="color: #f0e68c;">,</span> _ <span style="color: #f0e68c;">)</span> <span style="color: #51afef;">when</span> a <span style="color: #f0e68c;">&lt;=</span> 0 <span style="color: #f0e68c;">-&gt;</span> 0
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>a <span style="color: #f0e68c;">,</span> <span style="color: #f0e68c;">[])</span>  <span style="color: #f0e68c;">-&gt;</span> a
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>a<span style="color: #f0e68c;">,</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> account_balance1 <span style="color: #f0e68c;">(</span>a<span style="color: #f0e68c;">-</span>h<span style="color: #f0e68c;">)</span> t
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">account_balance2</span><span style="color: #DFDFDF;"> account lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>fold_left <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">acc e</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #51afef;">if</span> acc<span style="color: #f0e68c;">&gt;</span>e <span style="color: #51afef;">then</span> <span style="color: #f0e68c;">(</span>acc <span style="color: #f0e68c;">-</span> e<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">else</span> 0<span style="color: #f0e68c;">)</span> account lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">account_balance3</span><span style="color: #DFDFDF;"> account lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>fold_right  <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">e acc</span>  <span style="color: #f0e68c;">-&gt;</span> <span style="color: #51afef;">if</span> acc<span style="color: #f0e68c;">&gt;</span>e <span style="color: #51afef;">then</span> <span style="color: #f0e68c;">(</span>acc <span style="color: #f0e68c;">-</span> e<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">else</span> 0<span style="color: #f0e68c;">)</span> lst account 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org823def6" class="outline-3">
+<h3 id="org823def6"><span class="section-number-3">1.11.</span> library uncurried</h3>
+<div class="outline-text-3" id="text-1-11">
+<p>
+这是List.nth的uncurried版本: 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">uncurried_nth</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">lst</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;"> n</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>nth lst n
+</pre>
+</div>
+
+<p>
+为下面的库函数编写uncurried版本:
+</p>
+
+<ul class="org-ul">
+<li><code>List.append</code></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">uncurried_append</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">h</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">t</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>append h t <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><code>Char.compare</code></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">uncurried_char_compare</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">c1 </span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;"> c2</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Char.</span>compare c1 c2 <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<ul class="org-ul">
+<li><code>Stdlib.max</code></li>
+</ul>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">uncurried_stdlib_max</span><span style="color: #DFDFDF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">fst</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">snd</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">Stdlib.</span>max fst snd <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+
+<p>
+更统一的写法: 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">uncurried_two_args</span><span style="color: #DFDFDF;">  f2 </span><span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">fst</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">snd</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">=</span>  f2 fst snd  <span style="color: #ff4500;">;;</span>
+
+uncurried_two_args <span style="color: #FCCE7B;">List.</span>append <span style="color: #ff4500;">;;</span>
+uncurried_two_args <span style="color: #FCCE7B;">Char.</span>compare <span style="color: #ff4500;">;;</span>
+uncurried_two_args <span style="color: #FCCE7B;">Stdlib.</span>max <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orged7ab4a" class="outline-3">
+<h3 id="orged7ab4a"><span class="section-number-3">1.12.</span> map composition</h3>
+<div class="outline-text-3" id="text-1-12">
+<p>
+将 <code>List.map f (List.map g lst)</code> 替换为只需要进行一次 <code>List.map</code> 调用的表达式
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">map_compose</span><span style="color: #DFDFDF;"> f g lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">@@</span> <span style="color: #f0e68c;">)</span> f g x <span style="color: #f0e68c;">=</span> x <span style="color: #f0e68c;">|&gt;</span> g <span style="color: #f0e68c;">|&gt;</span> f  <span style="color: #f5deb3; font-weight: bold;">in</span> 
+  <span style="color: #FCCE7B;">List.</span>map <span style="color: #f0e68c;">(</span>f<span style="color: #f0e68c;">@@</span>g <span style="color: #f0e68c;">)</span> lst
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga816fcc" class="outline-3">
+<h3 id="orga816fcc"><span class="section-number-3">1.13.</span> more list fun</h3>
+<div class="outline-text-3" id="text-1-13">
+<p>
+每次只用 <code>List.fold / List.map / List.filter</code> 中的一个编写下面的函数
+</p>
+<ul class="org-ul">
+<li>找出list中那些长度&gt;3的字符串</li>
+<li>为list中的每个元素加上 1.0</li>
+<li>给定一个字符串的list <code>strs</code> ,以及一个字符串 <code>sep</code> , 生成一个由 <code>strs</code> 中的字符串组成且用 <code>sep</code> 分割的长字符串.
+(确保没有多余的 <code>sep</code> )</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">len_greater_then_three</span><span style="color: #DFDFDF;"> strs</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>filter <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">s</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">String.</span>length s <span style="color: #f0e68c;">&gt;</span>3<span style="color: #f0e68c;">)</span> strs <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">add_float_one</span><span style="color: #DFDFDF;"> lst</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #FCCE7B;">List.</span>map <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> x <span style="color: #f0e68c;">+.</span> 1.0<span style="color: #f0e68c;">)</span> lst <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">concat_with_sep</span><span style="color: #DFDFDF;"> sep</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span> 
+  <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #7bc275;">""</span>
+  <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">List.</span>fold_left <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">acc e</span> <span style="color: #f0e68c;">-&gt;</span> acc <span style="color: #f0e68c;">^</span> sep <span style="color: #f0e68c;">^</span> e<span style="color: #f0e68c;">)</span> h t 
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org706e786" class="outline-3">
+<h3 id="org706e786"><span class="section-number-3">1.14.</span> association list keys</h3>
+<div class="outline-text-3" id="text-1-14">
+<p>
+association list 是一种字典的实现, 它是以pair为元素的list.
+编写函数 <code>keys: ('a * 'b) list -&gt; 'a list</code> 根据association list返回由不重复的key构成的list
+keys的顺序没有要求.
+尽可能用一行实现该函数,并且其时间和空间复杂度都是线性的.
+(提示: 使用 <code>List.sort_uniq</code> )
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">keys</span><span style="color: #DFDFDF;"> dict</span> <span style="color: #f0e68c;">=</span>
+  dict <span style="color: #f0e68c;">|&gt;</span> <span style="color: #FCCE7B;">List.</span>map <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #f0e68c;">(</span><span style="color: #DFDFDF;">k</span><span style="color: #f0e68c;">,</span><span style="color: #DFDFDF;">v</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> k<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">|&gt;</span> <span style="color: #FCCE7B;">List.</span>sort_uniq <span style="color: #FCCE7B;">Stdlib.</span>compare <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org90a3420" class="outline-3">
+<h3 id="org90a3420"><span class="section-number-3">1.15.</span> valid matrix</h3>
+<div class="outline-text-3" id="text-1-15">
+<p>
+用行向量的形式表示下面的矩阵为 <code>[[1; 1; 1]; [9; 8; 7]]</code>
+</p>
+
+\begin{split} \begin{bmatrix} 1 & 1 & 1 \\ 9 & 8 & 7 \end{bmatrix} \end{split}
+
+<p>
+一个有效的矩阵是一个至少有一行一列的 <code>int list list</code> ,且每列有相同的行数
+</p>
+
+<p>
+下面这两个矩阵的表示都是无效的
+</p>
+<ul class="org-ul">
+<li><code>[]</code></li>
+<li><code>[[1; 2]; [3]]</code></li>
+</ul>
+<p>
+实现一个函数 <code>is_valid_matrix: int list list -&gt; bool</code> ,它返回输入的矩阵表示是否有效.
+并为该函数编写单元测试.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Stdlib</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_valid_matrix</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+    <span style="color: #f0e68c;">|[[]]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span> 
+    <span style="color: #f0e68c;">|</span>r<span style="color: #f0e68c;">::</span>rows <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">l</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>length r <span style="color: #f5deb3; font-weight: bold;">in</span>
+       <span style="color: #FCCE7B;">List.</span>fold_left <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">acc e</span> <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #f0e68c;">(</span>l<span style="color: #f0e68c;">!=</span>0<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&amp;&amp;</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">List.</span>length e <span style="color: #f0e68c;">=</span> l<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">&amp;&amp;</span> acc<span style="color: #f0e68c;">)</span>  <span style="color: #a991f1;">true</span> rows
+
+<span style="color: #62686E;">(**************************</span><span style="color: #62686E;">UNIT TEST</span><span style="color: #62686E;">****************************)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make_test_case</span><span style="color: #DFDFDF;">  name expected matrix</span> <span style="color: #f0e68c;">=</span>
+  name <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal expected <span style="color: #f0e68c;">(</span>is_valid_matrix matrix<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span>  
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">test_suites</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"is_valid_matrix"</span> <span style="color: #f0e68c;">&gt;:::</span> <span style="color: #f0e68c;">[</span>
+    make_test_case <span style="color: #7bc275;">"empty list"</span> <span style="color: #a991f1;">false</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">;</span>
+    make_test_case <span style="color: #7bc275;">"empty int list"</span> <span style="color: #a991f1;">false</span> <span style="color: #f0e68c;">[[]]</span> <span style="color: #f0e68c;">;</span>
+    make_test_case <span style="color: #7bc275;">"more empty row vectors"</span> <span style="color: #a991f1;">false</span> <span style="color: #f0e68c;">[[];[];[]];</span>
+    make_test_case <span style="color: #7bc275;">"1-dim row vectors"</span>  <span style="color: #a991f1;">true</span>  <span style="color: #f0e68c;">[[</span>1<span style="color: #f0e68c;">];[</span>2<span style="color: #f0e68c;">];[</span>23<span style="color: #f0e68c;">]]</span> <span style="color: #f0e68c;">;</span>
+    make_test_case <span style="color: #7bc275;">"row counts != colument counts"</span>  <span style="color: #a991f1;">false</span> <span style="color: #f0e68c;">[[</span>2<span style="color: #f0e68c;">];[</span>23<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">];[</span>2<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">]];</span>
+    make_test_case <span style="color: #7bc275;">"3*3 matrix"</span> <span style="color: #a991f1;">true</span> <span style="color: #f0e68c;">[[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">];[</span>3<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">];[</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">;</span>6<span style="color: #f0e68c;">]]</span> <span style="color: #f0e68c;">;</span>
+  <span style="color: #f0e68c;">]</span> 
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main test_suites  
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org65f36e6" class="outline-3">
+<h3 id="org65f36e6"><span class="section-number-3">1.16.</span> row vector add</h3>
+<div class="outline-text-3" id="text-1-16">
+<p>
+实现函数 <code>add_row_vectors: int list -&gt; int list -&gt; int list</code> 完成两个向量的按位加法.
+当两个向量的维数不同时的行为是未知的,由实现者自己决定.
+(提示: 使用List.map2 能编写一个只有一行的优雅实现)
+并为此函数编写单元测试.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">OUnit2</span>
+<span style="color: #f5deb3; font-weight: bold;">open </span><span style="color: #FCCE7B;">Stdlib</span>
+
+<span style="color: #62686E;">(*</span>
+<span style="color: #62686E;">let add_row_vectors v1 v2 =</span>
+<span style="color: #62686E;">  if List.length v1 != List.length v2 then failwith "two vectors must have same dim"</span>
+<span style="color: #62686E;">  else </span>
+<span style="color: #62686E;">    let rec impl acc v1 v2 =</span>
+<span style="color: #62686E;">      match (v1,v2) with </span>
+<span style="color: #62686E;">      | (h1::t1,h2::t2) -&gt; impl ((h1 + h2)::acc) t1 t2</span>
+<span style="color: #62686E;">      | _ -&gt; List.rev acc</span>
+<span style="color: #62686E;">    in  impl [] v1 v2</span>
+<span style="color: #62686E;">;;</span>
+<span style="color: #62686E;">*)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">map2</span><span style="color: #DFDFDF;"> op lst1 lst2</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #FCCE7B;">List.</span>length lst1 <span style="color: #f0e68c;">!=</span> <span style="color: #FCCE7B;">List.</span>length lst2 <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span> <span style="color: #C57BDB;">Invalid_argument</span> <span style="color: #7bc275;">"two lists should have same length"</span> <span style="color: #f0e68c;">)</span>
+  <span style="color: #51afef;">else</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">loop</span><span style="color: #DFDFDF;"> acc l1 l2</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>l1<span style="color: #f0e68c;">,</span>l2<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>h1<span style="color: #f0e68c;">::</span>t1<span style="color: #f0e68c;">,</span> h2<span style="color: #f0e68c;">::</span>t2<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> loop <span style="color: #f0e68c;">((</span>op h1 h2<span style="color: #f0e68c;">)::</span>acc<span style="color: #f0e68c;">)</span> t1 t2
+      <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">List.</span>rev acc
+    <span style="color: #f5deb3; font-weight: bold;">in</span> loop <span style="color: #f0e68c;">[]</span> lst1 lst2
+<span style="color: #ff4500;">;;</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">add_row_vectors</span> <span style="color: #f0e68c;">=</span> map2 <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make_test_equal</span><span style="color: #DFDFDF;"> name  expected v1 v2</span> <span style="color: #f0e68c;">=</span>
+  name <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_equal expected  <span style="color: #f0e68c;">(</span>add_row_vectors v1 v2<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">make_test_raise</span><span style="color: #DFDFDF;"> name  v1 v2</span> <span style="color: #f0e68c;">=</span>
+  name <span style="color: #f0e68c;">&gt;::</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> assert_raises <span style="color: #f0e68c;">(</span><span style="color: #C57BDB;">Invalid_argument</span> <span style="color: #7bc275;">"two lists should have same length"</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">-&gt;</span> add_row_vectors v1 v2<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">)</span> 
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">test_add_row_vectors</span> <span style="color: #f0e68c;">=</span> <span style="color: #7bc275;">"add_row_vectors"</span> <span style="color: #f0e68c;">&gt;:::[</span>
+    make_test_equal <span style="color: #7bc275;">"empty vectors"</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">[]</span> <span style="color: #f0e68c;">;</span>
+    make_test_raise <span style="color: #7bc275;">"different length"</span> <span style="color: #f0e68c;">[</span>2<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">[</span>2<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>5<span style="color: #f0e68c;">];</span>
+    make_test_equal <span style="color: #7bc275;">"add 3-dim vectors"</span> <span style="color: #f0e68c;">[</span>4<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">;</span>4<span style="color: #f0e68c;">]</span>  <span style="color: #f0e68c;">[</span>1<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>3<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">[</span>3<span style="color: #f0e68c;">;</span>2<span style="color: #f0e68c;">;</span>1<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">;</span> 
+  <span style="color: #f0e68c;">]</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">_</span> <span style="color: #f0e68c;">=</span> run_test_tt_main test_add_row_vectors 
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org24f31f0" class="outline-3">
+<h3 id="org24f31f0"><span class="section-number-3">1.17.</span> matrix add</h3>
+<div class="outline-text-3" id="text-1-17">
+<p>
+编写函数 <code>add_matrices: int list list -&gt; int list list -&gt; int list list</code>
+若两个矩阵的大小不匹配, 则行为未定义. 
+(提示: 使用List.map2 和上一问实现的函数 能编写一个只有一行的优雅实现)
+并为此函数编写单元测试.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc9651da" class="outline-3">
+<h3 id="orgc9651da"><span class="section-number-3">1.18.</span> matrix multiply</h3>
+<div class="outline-text-3" id="text-1-18">
+<p>
+编写函数 <code>multiply_matrices: int list list -&gt; int list list -&gt; int list list</code>
+若两个矩阵的维数无法匹配, 则行为是未定义的. 
+(提示: 定义两个函数,一个实现矩阵的转置,另一个实现行向量的点积)
+并为此函数编写单元测试.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #7e7e87;">(** matrix.ml *)</span>
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">is_valid_matrix</span>  <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">function</span>
+    <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span>
+    <span style="color: #f0e68c;">|[[]]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #a991f1;">false</span> 
+    <span style="color: #f0e68c;">|</span>r<span style="color: #f0e68c;">::</span>rows <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">l</span> <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>length r <span style="color: #f5deb3; font-weight: bold;">in</span>
+       <span style="color: #FCCE7B;">List.</span>fold_left <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">acc e</span> <span style="color: #f0e68c;">-&gt;</span>  <span style="color: #f0e68c;">(</span>l<span style="color: #f0e68c;">!=</span>0<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">&amp;&amp;</span> <span style="color: #f0e68c;">(</span><span style="color: #FCCE7B;">List.</span>length e <span style="color: #f0e68c;">=</span> l<span style="color: #f0e68c;">)</span>  <span style="color: #f0e68c;">&amp;&amp;</span> acc<span style="color: #f0e68c;">)</span>  <span style="color: #a991f1;">true</span> rows 
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">fold_map</span><span style="color: #DFDFDF;">  op init f lst1 lst2</span>  <span style="color: #f0e68c;">=</span>
+    <span style="color: #51afef;">if</span> <span style="color: #FCCE7B;">List.</span>length lst1 <span style="color: #f0e68c;">!=</span> <span style="color: #FCCE7B;">List.</span>length lst2 <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span> <span style="color: #C57BDB;">Invalid_argument</span> <span style="color: #7bc275;">"two lists should have same length"</span> <span style="color: #f0e68c;">)</span>
+    <span style="color: #51afef;">else</span>
+    <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">loop</span><span style="color: #DFDFDF;"> acc l1 l2</span> <span style="color: #f0e68c;">=</span> <span style="color: #51afef;">match</span> <span style="color: #f0e68c;">(</span>l1<span style="color: #f0e68c;">,</span>l2<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">with</span>
+      <span style="color: #f0e68c;">|</span> <span style="color: #f0e68c;">(</span>h1<span style="color: #f0e68c;">::</span>t1<span style="color: #f0e68c;">,</span> h2<span style="color: #f0e68c;">::</span>t2<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">-&gt;</span> loop <span style="color: #f0e68c;">(</span>op <span style="color: #f0e68c;">(</span>f h1 h2<span style="color: #f0e68c;">)</span> acc<span style="color: #f0e68c;">)</span> t1 t2
+      <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> acc
+    <span style="color: #f5deb3; font-weight: bold;">in</span> loop init lst1 lst2
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">map2</span><span style="color: #DFDFDF;"> f l1 l2</span>  <span style="color: #f0e68c;">=</span><span style="color: #FCCE7B;">List.</span>rev <span style="color: #f0e68c;">(</span>fold_map <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">e acc</span> <span style="color: #f0e68c;">-&gt;</span> e<span style="color: #f0e68c;">::</span>acc<span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">[]</span> f l1 l2<span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">add_row_vectors</span> <span style="color: #f0e68c;">=</span> map2 <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> 
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">add_matrices</span> <span style="color: #f0e68c;">=</span> map2 add_row_vectors <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">dot_product_row_vectors</span> <span style="color: #f0e68c;">=</span> fold_map <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">+</span> <span style="color: #f0e68c;">)</span> 0 <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">*</span> <span style="color: #f0e68c;">)</span> <span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">colu_vector_of_row_vector</span>  <span style="color: #f0e68c;">=</span> <span style="color: #FCCE7B;">List.</span>map <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">e</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #f0e68c;">[</span>e<span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">cons_colu_and_row</span><span style="color: #DFDFDF;"> colu row</span> <span style="color: #f0e68c;">=</span>  map2 <span style="color: #f0e68c;">(</span> <span style="color: #f0e68c;">@</span> <span style="color: #f0e68c;">)</span>  colu <span style="color: #f0e68c;">(</span>colu_vector_of_row_vector row<span style="color: #f0e68c;">)</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">transpose_matrix</span><span style="color: #DFDFDF;"> m</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #51afef;">if</span> <span style="color: #f0e68c;">not(</span>is_valid_matrix m<span style="color: #f0e68c;">)</span> <span style="color: #51afef;">then</span> <span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span><span style="color: #C57BDB;">Invalid_argument</span> <span style="color: #7bc275;">"the input matrix is invalid"</span><span style="color: #f0e68c;">)</span>
+  <span style="color: #51afef;">else</span>
+    <span style="color: #51afef;">match</span> m <span style="color: #51afef;">with</span>
+    <span style="color: #f0e68c;">|</span> h<span style="color: #f0e68c;">::</span>t <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">List.</span>fold_left  cons_colu_and_row  <span style="color: #f0e68c;">(</span>colu_vector_of_row_vector h<span style="color: #f0e68c;">)</span> t
+    <span style="color: #f0e68c;">|</span> _ <span style="color: #f0e68c;">-&gt;</span> <span style="color: #C57BDB;">raise</span> <span style="color: #f0e68c;">(</span><span style="color: #C57BDB;">Invalid_argument</span> <span style="color: #7bc275;">"the input matrix is invalid"</span><span style="color: #f0e68c;">)</span> 
+<span style="color: #ff4500;">;;</span>
+
+<span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #5cEfFF;">multiply_matrices</span><span style="color: #DFDFDF;"> m1 m2</span> <span style="color: #f0e68c;">=</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #DFDFDF;">n</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>transpose_matrix m2<span style="color: #f0e68c;">)</span> <span style="color: #f5deb3; font-weight: bold;">in</span>
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #f5deb3; font-weight: bold;">rec</span> <span style="color: #5cEfFF;">impl</span><span style="color: #DFDFDF;"> acc m1</span> <span style="color: #f0e68c;">=</span> 
+    <span style="color: #51afef;">match</span> m1 <span style="color: #51afef;">with</span>
+    <span style="color: #f0e68c;">|[]</span> <span style="color: #f0e68c;">-&gt;</span> <span style="color: #FCCE7B;">List.</span>rev acc 
+    <span style="color: #f0e68c;">|</span>row<span style="color: #f0e68c;">::</span>rest  <span style="color: #f0e68c;">-&gt;</span>   impl <span style="color: #f0e68c;">((</span><span style="color: #FCCE7B;">List.</span>map  <span style="color: #f0e68c;">(</span><span style="color: #51afef;">fun</span> <span style="color: #DFDFDF;">x</span> <span style="color: #f0e68c;">-&gt;</span> dot_product_row_vectors x row<span style="color: #f0e68c;">)</span> n  <span style="color: #f0e68c;">)::</span>acc<span style="color: #f0e68c;">)</span> rest 
+  <span style="color: #f5deb3; font-weight: bold;">in</span> impl <span style="color: #f0e68c;">[]</span> m1
+<span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

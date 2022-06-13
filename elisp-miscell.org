@@ -3,6 +3,12 @@
 
 #+OPTIONS: num:nil
 
+* [[https://stackoverflow.com/questions/192049/is-it-possible-to-have-an-alias-for-the-function-name-in-lisp][为函数添加别名]]
+
+#+begin_src emacs-lisp
+(defalias 'newname 'oldname)
+#+end_src
+
 
 
 * 在org模式下快速插入代码块

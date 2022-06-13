@@ -4,6 +4,43 @@
 
 
 
+* git
+
+** 设置/取消代理
+
+#+begin_src bash
+# 设置ss
+git config --global http.proxy 'socks5://127.0.0.1:1080'
+
+git config --global https.proxy 'socks5://127.0.0.1:1080'
+
+# 设置代理
+git config --global https.proxy http://127.0.0.1:1080
+
+git config --global https.proxy https://127.0.0.1:1080
+
+# 取消代理
+git config --global --unset http.proxy
+
+git config --global --unset https.proxy
+#+end_src
+
+** clone 子模块
+
+#+begin_src
+git submodule update --init --recursive
+#+end_src
+此命令经常无速度, 可能需要手动clone, 见 =.gitmodules=
+
+
+
+
+** 指定需要克隆的branch
+
+#+begin_src
+git clone  -b fsf-gdb-10.1-with-sim<分支>   https://github.com/riscv-collab/riscv-binutils-gdb.git riscv-gdb<别名>
+#+end_src
+
 
 * du -h 以可读形式显示文件大小 
 

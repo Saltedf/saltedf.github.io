@@ -1,3 +1,397 @@
+#+include: ../../mytheme.setup 
 
 * ch4
 
+**  
+#+begin_src ocaml
+let double x = 2*x
+let square x = x*x
+let twice f x = f (f x)
+let quad = twice double
+let fourth = twice square
+#+end_src
+确定 quad 和forth的类型,
+val quad : int -> int = <fun>
+val fourth : int -> int = <fun>
+
+twice部分应用,仅传入一个double,返回一个函数: 
+val twice : ('a -> 'a) -> 'a -> 'a = <fun>
+
+'a -> 'a = <fun> 
+
+
+** mystery operator 1
+下面这个运算符的作用是?
+#+begin_src ocaml
+let ( $ ) f x = f x 
+#+end_src
+分割了函数和参数部分,并应用f到x上
+#+begin_src ocaml
+# square 2+2 ;;
+- : int = 6
+# square $ 2+2 ;;
+- : int = 16
+#+end_src
+
+** mystery operator 2
+
+#+begin_src ocaml
+let ( @@ ) f g x = x |> g |> f
+#+end_src
+作用是函数复合: =f@@g(x) == f(g(x))= 
+
+
+** repeat
+编写函数repeat满足: repeat f n x 的效果是f应用于x上n次
+例如: =repeat f 3 x  -->  f (f (f x))=
+=repeat f 0 x  -> x=
+#+begin_src ocaml
+  let rec repeat f n x =
+    if n > 0
+    then repeat f (n-1) (f x)
+    else x
+  ;;
+#+end_src
+
+** product
+用 =fold_left/fold_right= 编写函数  ~product_left/product_right~ , 它能计算list中的所有浮点数之积. 规定空list的积为1.0
+#+begin_src ocaml
+
+   let fold_left f init lst =
+    let rec impl acc f = function
+      |[] -> acc
+      |h::t -> impl (f acc h) f t
+    in
+    impl init f lst
+  ;;
+#+end_src
+
+#+begin_src ocaml
+  let product_left flst =
+    fold_left (fun acc f -> acc*.f) 1.0 flst
+  ;;
+#+end_src
+#+begin_src ocaml
+  let product_right flst =
+    List.fold_right (fun acc f -> acc *. f) flst 1.0
+  ;;
+#+end_src
+
+** terse product
+尽量让你的上一问的解答变得简洁.
+提示: 是否能省略 =fun= ,是否能省略 =lst= 参数.
+#+begin_src ocaml
+  let product_left  = fold_left ( *. ) 1.  ;;
+#+end_src
+#+begin_src ocaml
+  let product_right flst = List.fold_right ( *. ) flst 1. ;;
+#+end_src
+
+** =sum_cube_odd= 
+计算 0-n的立方和, 不要自己编写递归函数, 使用 =map, fold, filter, ( -- )operator=
+#+begin_src ocaml
+
+  let sum_cube_odd n =
+    let lst = 0 -- n in
+      fold_left ( + ) 0 (map (fun x -> x*x*x) lst)
+  ;;
+#+end_src
+
+
+** =sum_cube_odd= pipeline
+用 =|>= 重写上一题
+
+#+begin_src ocaml
+ let sum_cube_odd_pipeline  n =
+    let lst = 0 -- n in
+      lst |> map (fun x -> x*x*x) |> fold_left ( + ) 0 
+  ;;
+#+end_src
+
+** exists
+
+编写函数 =exists: ('a -> bool) -> 'a list -> bool= ,
+使得 =exists p [a1; ...; an]= 返回 list中是否至少有一个元素满足谓词p
+即要计算 =(p a1) || (p a2) || ... || (p an)=
+对空list, 此函数返回false
+
+编写三个版本的解答:
++ =exists_rec= , 它是一个递归函数, 且不用到List模块
++ =exists_fold= , 它只能用List模块中的fold函数,并且实现中不能出现 =rec=
++ =exists_lib= , 它使用除 =fold_left= 或 ~fold_right~ 之外的 List 模块函数的任意组合，并且不使用  ~rec~  关键字。
+
+#+begin_src ocaml
+  let rec exists_rec p  = function 
+    |[] -> false 
+    |h::t -> (p h) || exists_rec t
+  ;;
+#+end_src
+#+begin_src ocaml
+  let exists_fold p lst =
+    List.fold_left (fun acc e -> (p e) || acc) false lst  ;;
+#+end_src
+#+begin_src ocaml
+  let exists_lib = List.exists;;
+#+end_src
+
+** account balance
+编写三个版本的函数: =fold_left= , =fold_right= ,直接编写递归函数
+满足: 对一个表示借款的数字list, 从账户余额中扣除这些借款, 并返回剩下的额度
+#+begin_src ocaml
+  let rec account_balance1 acc lst =
+    match (acc , lst) with
+    | (a , _ ) when a <= 0 -> 0
+    | (a , [])  -> a
+    | (a, h::t ) -> account_balance1 (a-h) t
+  ;;
+#+end_src
+#+begin_src ocaml
+  let account_balance2 account lst =
+    List.fold_left (fun acc e -> if acc>e then (acc - e) else 0) account lst
+  ;;
+#+end_src
+
+#+begin_src ocaml
+  let account_balance3 account lst =
+    List.fold_right  (fun e acc  -> if acc>e then (acc - e) else 0) lst account 
+  ;;
+#+end_src
+
+
+
+
+** library uncurried
+
+这是List.nth的uncurried版本: 
+
+#+begin_src ocaml
+let uncurried_nth (lst, n) = List.nth lst n
+#+end_src
+
+为下面的库函数编写uncurried版本:
+
++ =List.append=
+#+begin_src ocaml
+let uncurried_append (h,t) = List.append h t ;;
+#+end_src
+
++ =Char.compare=
+#+begin_src ocaml
+let uncurried_char_compare (c1 , c2) = Char.compare c1 c2 ;;
+#+end_src
+
++ =Stdlib.max=
+#+begin_src ocaml
+let uncurried_stdlib_max (fst,snd) = Stdlib.max fst snd ;;
+#+end_src
+
+
+更统一的写法: 
+#+begin_src ocaml
+  let uncurried_two_args  f2 (fst,snd) =  f2 fst snd  ;;
+
+  uncurried_two_args List.append ;;
+  uncurried_two_args Char.compare ;;
+  uncurried_two_args Stdlib.max ;;
+#+end_src
+
+
+
+** map composition
+将 =List.map f (List.map g lst)= 替换为只需要进行一次 =List.map= 调用的表达式
+#+begin_src ocaml
+  let map_compose f g lst =
+    let ( @@ ) f g x = x |> g |> f  in 
+    List.map (f@@g ) lst
+  ;;
+#+end_src
+
+** more list fun
+
+每次只用 =List.fold / List.map / List.filter= 中的一个编写下面的函数
++ 找出list中那些长度>3的字符串
++ 为list中的每个元素加上 1.0
++ 给定一个字符串的list =strs= ,以及一个字符串 =sep= , 生成一个由 =strs= 中的字符串组成且用 =sep= 分割的长字符串.
+  (确保没有多余的 =sep= )
+
+#+begin_src ocaml
+  let len_greater_then_three strs =
+    List.filter (fun s -> String.length s >3) strs ;;
+#+end_src
+  
+#+begin_src ocaml
+  let add_float_one lst =
+    List.map (fun x -> x +. 1.0) lst ;;
+#+end_src
+
+#+begin_src ocaml
+  let concat_with_sep sep = function 
+    | [] -> ""
+    | h::t -> List.fold_left (fun acc e -> acc ^ sep ^ e) h t 
+  ;;
+#+end_src
+
+  
+** association list keys
+association list 是一种字典的实现, 它是以pair为元素的list.
+编写函数 =keys: ('a * 'b) list -> 'a list= 根据association list返回由不重复的key构成的list
+keys的顺序没有要求.
+尽可能用一行实现该函数,并且其时间和空间复杂度都是线性的.
+(提示: 使用 =List.sort_uniq= )
+
+#+begin_src ocaml
+  let keys dict =
+    dict |> List.map (fun (k,v) -> k) |> List.sort_uniq Stdlib.compare ;;
+#+end_src
+
+
+** valid matrix
+用行向量的形式表示下面的矩阵为 =[[1; 1; 1]; [9; 8; 7]]=
+
+\begin{split} \begin{bmatrix} 1 & 1 & 1 \\ 9 & 8 & 7 \end{bmatrix} \end{split}
+
+一个有效的矩阵是一个至少有一行一列的 =int list list= ,且每列有相同的行数
+
+下面这两个矩阵的表示都是无效的
++ =[]= 
++ =[[1; 2]; [3]]=
+实现一个函数 =is_valid_matrix: int list list -> bool= ,它返回输入的矩阵表示是否有效.
+并为该函数编写单元测试.
+
+#+begin_src ocaml
+  open OUnit2
+  open Stdlib
+
+  let is_valid_matrix  = function
+      |[] -> false
+      |[[]] -> false 
+      |r::rows -> let l = List.length r in
+	 List.fold_left (fun acc e ->  (l!=0) && (List.length e = l)  && acc)  true rows
+	   
+  (**************************UNIT TEST****************************)
+  let make_test_case  name expected matrix =
+    name >:: (fun _ -> assert_equal expected (is_valid_matrix matrix) )  
+
+  let test_suites = "is_valid_matrix" >::: [
+      make_test_case "empty list" false [] ;
+      make_test_case "empty int list" false [[]] ;
+      make_test_case "more empty row vectors" false [[];[];[]];
+      make_test_case "1-dim row vectors"  true  [[1];[2];[23]] ;
+      make_test_case "row counts != colument counts"  false [[2];[23;4];[2;4]];
+      make_test_case "3*3 matrix" true [[1;2;4];[3;4;5];[4;5;6]] ;
+    ] 
+
+  let _ = run_test_tt_main test_suites  
+#+end_src
+
+
+** row vector add
+实现函数 =add_row_vectors: int list -> int list -> int list= 完成两个向量的按位加法.
+当两个向量的维数不同时的行为是未知的,由实现者自己决定.
+(提示: 使用List.map2 能编写一个只有一行的优雅实现)
+并为此函数编写单元测试.
+
+#+begin_src ocaml
+open OUnit2
+open Stdlib
+
+(*
+let add_row_vectors v1 v2 =
+  if List.length v1 != List.length v2 then failwith "two vectors must have same dim"
+  else 
+    let rec impl acc v1 v2 =
+      match (v1,v2) with 
+      | (h1::t1,h2::t2) -> impl ((h1 + h2)::acc) t1 t2
+      | _ -> List.rev acc
+    in  impl [] v1 v2
+;;
+*)
+
+let map2 op lst1 lst2 =
+  if List.length lst1 != List.length lst2 then raise ( Invalid_argument "two lists should have same length" )
+  else
+    let rec loop acc l1 l2 = match (l1,l2) with
+      | (h1::t1, h2::t2) -> loop ((op h1 h2)::acc) t1 t2
+      | _ -> List.rev acc
+    in loop [] lst1 lst2
+;;
+               
+      
+let add_row_vectors = map2 ( + ) ;;
+
+let make_test_equal name  expected v1 v2 =
+  name >:: (fun _ -> assert_equal expected  (add_row_vectors v1 v2) )
+
+let make_test_raise name  v1 v2 =
+  name >:: (fun _ -> assert_raises (Invalid_argument "two lists should have same length") (fun _ -> add_row_vectors v1 v2) ) 
+  
+
+let test_add_row_vectors = "add_row_vectors" >:::[
+    make_test_equal "empty vectors" [] [] [] ;
+    make_test_raise "different length" [2;4] [2;4;5];
+    make_test_equal "add 3-dim vectors" [4;4;4]  [1;2;3] [3;2;1] ; 
+  ]
+
+
+let _ = run_test_tt_main test_add_row_vectors 
+
+#+end_src
+
+** matrix add
+编写函数 =add_matrices: int list list -> int list list -> int list list=
+若两个矩阵的大小不匹配, 则行为未定义. 
+(提示: 使用List.map2 和上一问实现的函数 能编写一个只有一行的优雅实现)
+并为此函数编写单元测试.
+
+** matrix multiply 
+编写函数 =multiply_matrices: int list list -> int list list -> int list list=
+若两个矩阵的维数无法匹配, 则行为是未定义的. 
+(提示: 定义两个函数,一个实现矩阵的转置,另一个实现行向量的点积)
+并为此函数编写单元测试.
+
+#+begin_src ocaml
+  (** matrix.ml *)
+  let is_valid_matrix  = function
+      |[] -> false
+      |[[]] -> false 
+      |r::rows -> let l = List.length r in
+	 List.fold_left (fun acc e ->  (l!=0) && (List.length e = l)  && acc)  true rows 
+
+  let fold_map  op init f lst1 lst2  =
+      if List.length lst1 != List.length lst2 then raise ( Invalid_argument "two lists should have same length" )
+      else
+      let rec loop acc l1 l2 = match (l1,l2) with
+	| (h1::t1, h2::t2) -> loop (op (f h1 h2) acc) t1 t2
+	| _ -> acc
+      in loop init lst1 lst2
+  ;;
+
+  let map2 f l1 l2  =List.rev (fold_map (fun e acc -> e::acc) [] f l1 l2) ;;
+      
+  let add_row_vectors = map2 ( + ) 
+
+  let add_matrices = map2 add_row_vectors ;;
+    
+  let dot_product_row_vectors = fold_map ( + ) 0 ( * ) ;;
+
+  let colu_vector_of_row_vector  = List.map (fun e -> [e] )
+    
+  let cons_colu_and_row colu row =  map2 ( @ )  colu (colu_vector_of_row_vector row)
+    
+  let transpose_matrix m =
+    if not(is_valid_matrix m) then raise (Invalid_argument "the input matrix is invalid")
+    else
+      match m with
+      | h::t -> List.fold_left  cons_colu_and_row  (colu_vector_of_row_vector h) t
+      | _ -> raise (Invalid_argument "the input matrix is invalid") 
+  ;;
+
+  let multiply_matrices m1 m2 =
+    let n = (transpose_matrix m2) in
+    let rec impl acc m1 = 
+      match m1 with
+      |[] -> List.rev acc 
+      |row::rest  ->   impl ((List.map  (fun x -> dot_product_row_vectors x row) n  )::acc) rest 
+    in impl [] m1
+  ;;
+#+end_src
