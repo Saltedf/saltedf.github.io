@@ -1,9 +1,9 @@
-# /home/sun/.opam/cs3110-2021fa/bin/dune exec ./test_list_max_exn.exe
+# dune runtest
 # OCAMLPARAM: unset
 # Shared cache: disabled
-# Workspace root: /home/sun/src/ocaml-book/ch3
+# Workspace root: /home/sun/src/saltedf.github.io/ocaml-book/ch3
 # Auto-detected concurrency: 12
-$ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_939fdd_output
+$ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_3295c3_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -24,14 +24,17 @@ $ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_939fdd_output
 #      map
 #        { "DUNE_OCAML_HARDCODED" : "/home/sun/.opam/cs3110-2021fa/lib"
 #        ; "DUNE_OCAML_STDLIB" : "/home/sun/.opam/cs3110-2021fa/lib/ocaml"
-#        ; "DUNE_SOURCEROOT" : "/home/sun/src/ocaml-book/ch3"
-#        ; "INSIDE_DUNE" : "/home/sun/src/ocaml-book/ch3/_build/default"
+#        ; "DUNE_SOURCEROOT" : "/home/sun/src/saltedf.github.io/ocaml-book/ch3"
+#        ; "INSIDE_DUNE" :
+#            "/home/sun/src/saltedf.github.io/ocaml-book/ch3/_build/default"
 #        ; "OCAMLFIND_IGNORE_DUPS_IN" :
-#            "/home/sun/src/ocaml-book/ch3/_build/install/default/lib"
+#            "/home/sun/src/saltedf.github.io/ocaml-book/ch3/_build/install/default/lib"
 #        ; "OCAMLPATH" :
-#            "/home/sun/src/ocaml-book/ch3/_build/install/default/lib"
+#            "/home/sun/src/saltedf.github.io/ocaml-book/ch3/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
-#            "/home/sun/src/ocaml-book/ch3/_build/install/default/lib/toplevel"
+#            "/home/sun/src/saltedf.github.io/ocaml-book/ch3/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
 #        }
 #  ; findlib_path = [ External "/home/sun/.opam/cs3110-2021fa/lib" ]
 #  ; arch_sixtyfour = true
@@ -108,6 +111,4 @@ $ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_939fdd_output
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamldep.opt -modules -impl test_list_max_exn.ml) > _build/default/.test_list_max_exn.eobjs/test_list_max_exn.ml.d
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .test_list_max_exn.eobjs/byte -I .test_list_max_exn.eobjs/native -I /home/sun/.opam/cs3110-2021fa/lib/ounit2 -I /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced -I /home/sun/.opam/cs3110-2021fa/lib/seq -I /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .test_list_max_exn.eobjs/native/dune__exe__Test_list_max_exn.cmx -c -impl test_list_max_exn.ml)
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o test_list_max_exn.exe /home/sun/.opam/cs3110-2021fa/lib/ocaml/unix.cmxa -I /home/sun/.opam/cs3110-2021fa/lib/ocaml -I /home/sun/.opam/cs3110-2021fa/lib/ocaml /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims/stdlib_shims.cmxa /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced/oUnitAdvanced.cmxa /home/sun/.opam/cs3110-2021fa/lib/ounit2/oUnit.cmxa .test_list_max_exn.eobjs/native/dune__exe.cmx .test_list_max_exn.eobjs/native/dune__exe__Test_list_max_exn.cmx)
+$ (cd _build/default/test && ./ch3.exe)

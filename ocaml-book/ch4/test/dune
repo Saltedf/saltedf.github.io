@@ -1,2 +1,5 @@
 (test
- (name ch4))
+ (name mytest)
+(libraries ounit2 matrix))
+
+ 

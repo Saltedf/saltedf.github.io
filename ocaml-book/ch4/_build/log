@@ -1,9 +1,9 @@
-# /home/sun/.opam/cs3110-2021fa/bin/dune exec ./test_add_row_vectors.exe
+# dune runtest
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /home/sun/src/saltedf.github.io/ocaml-book/ch4
 # Auto-detected concurrency: 12
-$ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_3356c0_output
+$ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_67d02a_output
 # Dune context:
 #  { name = "default"
 #  ; kind = "default"
@@ -33,6 +33,8 @@ $ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_3356c0_output
 #            "/home/sun/src/saltedf.github.io/ocaml-book/ch4/_build/install/default/lib"
 #        ; "OCAMLTOP_INCLUDE_PATH" :
 #            "/home/sun/src/saltedf.github.io/ocaml-book/ch4/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
 #        }
 #  ; findlib_path = [ External "/home/sun/.opam/cs3110-2021fa/lib" ]
 #  ; arch_sixtyfour = true
@@ -109,13 +111,10 @@ $ /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -config > /tmp/dune_3356c0_output
 #      ; windows_unicode = false
 #      }
 #  }
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamldep.opt -modules -impl test_add_row_vectors.ml) > _build/default/.test_add_row_vectors.eobjs/test_add_row_vectors.ml.d
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamldep.opt -modules -impl matrix.ml) > _build/default/.test_add_row_vectors.eobjs/matrix.ml.d
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamldep.opt -modules -intf test_add_row_vectors.mli) > _build/default/.test_add_row_vectors.eobjs/test_add_row_vectors.mli.d
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -I .test_add_row_vectors.eobjs/byte -no-alias-deps -opaque -o .test_add_row_vectors.eobjs/byte/dune__exe.cmo -c -impl .test_add_row_vectors.eobjs/dune__exe.ml-gen)
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .test_add_row_vectors.eobjs/byte -I /home/sun/.opam/cs3110-2021fa/lib/ounit2 -I /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced -I /home/sun/.opam/cs3110-2021fa/lib/seq -I /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims -no-alias-deps -opaque -open Dune__exe -o .test_add_row_vectors.eobjs/byte/dune__exe__Test_add_row_vectors.cmi -c -intf test_add_row_vectors.mli)
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I .test_add_row_vectors.eobjs/byte -I /home/sun/.opam/cs3110-2021fa/lib/ounit2 -I /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced -I /home/sun/.opam/cs3110-2021fa/lib/seq -I /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims -no-alias-deps -opaque -open Dune__exe -o .test_add_row_vectors.eobjs/byte/dune__exe__Matrix.cmo -c -impl matrix.ml)
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I .test_add_row_vectors.eobjs/byte -I .test_add_row_vectors.eobjs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o .test_add_row_vectors.eobjs/native/dune__exe.cmx -c -impl .test_add_row_vectors.eobjs/dune__exe.ml-gen)
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .test_add_row_vectors.eobjs/byte -I .test_add_row_vectors.eobjs/native -I /home/sun/.opam/cs3110-2021fa/lib/ounit2 -I /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced -I /home/sun/.opam/cs3110-2021fa/lib/seq -I /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .test_add_row_vectors.eobjs/native/dune__exe__Matrix.cmx -c -impl matrix.ml)
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I .test_add_row_vectors.eobjs/byte -I .test_add_row_vectors.eobjs/native -I /home/sun/.opam/cs3110-2021fa/lib/ounit2 -I /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced -I /home/sun/.opam/cs3110-2021fa/lib/seq -I /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o .test_add_row_vectors.eobjs/native/dune__exe__Test_add_row_vectors.cmx -c -impl test_add_row_vectors.ml)
-$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o test_add_row_vectors.exe /home/sun/.opam/cs3110-2021fa/lib/ocaml/unix.cmxa -I /home/sun/.opam/cs3110-2021fa/lib/ocaml -I /home/sun/.opam/cs3110-2021fa/lib/ocaml /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims/stdlib_shims.cmxa /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced/oUnitAdvanced.cmxa /home/sun/.opam/cs3110-2021fa/lib/ounit2/oUnit.cmxa .test_add_row_vectors.eobjs/native/dune__exe.cmx .test_add_row_vectors.eobjs/native/dune__exe__Matrix.cmx .test_add_row_vectors.eobjs/native/dune__exe__Test_add_row_vectors.cmx)
+$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlc.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -I test/.mytest.eobjs/byte -I /home/sun/.opam/cs3110-2021fa/lib/ounit2 -I /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced -I /home/sun/.opam/cs3110-2021fa/lib/seq -I /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims -I lib/.matrix.objs/byte -no-alias-deps -opaque -open Dune__exe -o test/.mytest.eobjs/byte/dune__exe__Mytest.cmi -c -intf test/mytest.mli)
+$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I test/.mytest.eobjs/byte -I test/.mytest.eobjs/native -I /home/sun/.opam/cs3110-2021fa/lib/ounit2 -I /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced -I /home/sun/.opam/cs3110-2021fa/lib/seq -I /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims -I lib/.matrix.objs/byte -I lib/.matrix.objs/native -intf-suffix .ml -no-alias-deps -opaque -open Dune__exe -o test/.mytest.eobjs/native/dune__exe__Mytest.cmx -c -impl test/mytest.ml)
+$ (cd _build/default && /home/sun/.opam/cs3110-2021fa/bin/ocamlopt.opt -w @1..3@5..28@30..39@43@46..47@49..57@61..62-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o test/mytest.exe /home/sun/.opam/cs3110-2021fa/lib/ocaml/unix.cmxa -I /home/sun/.opam/cs3110-2021fa/lib/ocaml -I /home/sun/.opam/cs3110-2021fa/lib/ocaml /home/sun/.opam/cs3110-2021fa/lib/stdlib-shims/stdlib_shims.cmxa /home/sun/.opam/cs3110-2021fa/lib/ounit2/advanced/oUnitAdvanced.cmxa /home/sun/.opam/cs3110-2021fa/lib/ounit2/oUnit.cmxa lib/matrix.cmxa test/.mytest.eobjs/native/dune__exe.cmx test/.mytest.eobjs/native/dune__exe__Mytest.cmx)
+$ (cd _build/default/test && ./mytest.exe)
+> ...
+> Ran: 3 tests in: 0.10 seconds.
+> OK

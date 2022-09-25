@@ -1,4 +1,4 @@
-# /home/sun/.opam/cs3110-2021fa/bin/dune init project ch5
+# /home/sun/.opam/cs3110-2021fa/bin/dune init project pc
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Workspace root: /home/sun/src/saltedf.github.io/ocaml-book

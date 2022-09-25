@@ -3710,3 +3710,430 @@ end
 
 
 
+
+
+* 抽象
+
+** 何为抽象?
+作为动词: 它意味着忽略掉一部分信息, 从而将不同的事物能看作是相同的事物.
+作为名词: 它是从上面的过程中产生的函数/module/class ... 
+
+
+** 规范
+
+名词: 抽象的预期行为
+动词: 这是创建这些函数/class/module的行为
+
+*** 规范的受众
+
++ 使用者
+  + 前置条件: 使用前必须满足的条件
+  + 后置条件: 对输出可以进行哪些假设
++ 实现者 
+  + 前置: 调用前可以假设已经满足了哪些条件
+  + 后置: 调用后必须的满足的条件
+
+
+*** 好处
+
++ 局部性: 不用看实现就能理解抽象的含义
++ 可修改: 可以更改实现而不需要修改其使用者的代码
++ 可追责: 在出现问题时能界定是调用者还是实现者犯了错误
+
+
+*** 函数规范的写法
+
+#+begin_src ocaml
+  (** [f x] is ... 函数的功能
+      Example: ... 例子
+      Requires: ... 前置条件
+      Raise: ...  *)
+  val f: t -> u
+#+end_src
+
+
+*** library 规范
+#+begin_src ocaml 
+  val sort :
+    ('a -> 'a -> int) -> 'a list -> 'a list
+ #+end_src
+根据比较函数将list排序为升序. [一句话概述此函数的功能]
+comparison函数必须在比较的两个参数相等时返回0, 当第一个参数更大时返回一个正数, 当第二个参数更大时返回一个负数.例如 =compare= 就是一个合适的比较函数. [前置条件]
+返回的结果list是按照升序排列的. [后置条件]
+=List.sort= 保证使用常量级别的堆空间和log级别的stack空间. [对效率的保证] 
+
+
+*** requires子句 
+若结果不符合预期,则应该责怪使用者
+#+begin_src ocaml
+  (** [hd lst] is the head of [lst].
+      Requires: [lst] is non-empty. *)
+  val hd : 'a list -> 'a 
+#+end_src
+前置条件precondition不必总是需要在代码中进行验证的, 因为有些验证会花费大量的时间(>常数级别) . 在实践中只去检查那些简单的/开销低的前置条件.
+
+*** Returns 子句
+在ocaml的文档中, 不需要显式写出returns子句, 而是被包含第一句中.
+若结果不符合预期, 则应该责怪实现者. 
+#+begin_src ocaml
+  (** [sort lst] contains the same elements as [lst], but sorted in ascending order. *)
+  val sort : int list -> int list
+#+end_src
+
+*** Examples 子句
+
+#+begin_src ocaml
+  (** Examples:
+    - [sort [1;3;2]] is [[1;2;3]].
+    - [sort []] is [[]]. *)
+  val sort : int list -> int list 
+#+end_src
+要列举出包含边界条件的例子.
+
+*** Raises 子句
+这也是一个后置条件, 实现者必须提供此行为.
+#+begin_src ocaml
+  (** [hd lst] is the head of [hd].
+	Requires: [lst] is non-empty.
+	Raises: [Failure "hd"] if [lst] is empty.  *)
+  val hd : 'a list -> 'a 
+#+end_src
+
+
+
+*** 数据抽象
+*数据抽象* 是在某种集合上的一系列运算的规范.
+例如: stacks有push/pop/peek...操作, 而无需指明其值具体是什么
+ocaml中的带有抽象类型的signature就是 *数据抽象* 的例子.
+
+*数据结构* 是数据抽象的一种特殊实现.
+例如 =ListStack= 用 ='a list/(::)= ... 实现了 =Stack= signature.
+因此 struct 是数据结构的例子.
+
+
+*** 例子: Set
+
+数据抽象:
+#+begin_src ocaml
+  module type Set = sig
+    (** ['a t] is the type of a set whose elements have type ['a] *)
+    type 'a t
+    (** [empty] is a empty set *)
+    val empty : 'a t
+    (** [add e s] is a set containing all the elements of [s] and element [e] *)
+    val add : 'a -> 'a t -> 'a t
+    (** [size s] is the number of elements in [s]
+	[size empty] is zero *)
+    val size : 'a t -> int
+      (** [mem e s] is true iff [e] is an element of [s] *)
+    val mem : 'a -> 'a t -> bool
+
+    val union : 'a t -> 'a t -> 'a t
+  end
+#+end_src
+数据结构: 
+#+begin_src ocaml
+  module ListSetImpl = struct
+    (** the list cannot contain duplicates*)
+    type 'a t = 'a list
+    let empty = []
+    let rec add e = function
+      | [] -> [e]
+      | h::t -> if h = e then h::t else h::(add e t)
+
+    let size = List.length
+    let rec mem e = function
+      | [] -> false
+      | h::t -> (h = e) || (mem e t)
+			   
+    let union s1 s2 = s1 @ s2 |> List.sort_uniq Stdlib.compare
+  end
+
+  module ListSet : Set = ListSetImpl ;; 
+#+end_src
+#+begin_src ocaml
+  module ListSetDupsImpl = struct
+    (** the list may contain duplicates*)
+    type 'a t = 'a list 
+    let empty = []
+    let rec add e s= e::s
+    let size s = s |> (List.sort_uniq Stdlib.compare ) |> List.length 
+    let rec mem e = function
+      | [] -> false
+      | h::t -> (h = e) || (mem e t)
+			   
+    let union s1 s2 = s1 @ s2 
+  end
+#+end_src
+
+
+ch6 P1-36
+** 抽象函数 AF 
+
+抽象函数/映射是描述如何将数据的 *有效* 的具体值映射为用户视角中的抽象值.
+
+eg: set的抽象 
+[1;2;2] -> {1,2}
+[1;2] -> {1,2}
+
+抽象函数是文档的一部分,一般写在type的前面. 
+#+begin_src ocaml
+(** AF: .. *) 
+#+end_src
+
+
+抽象函数是头脑中的概念, 是没有实现的. 但java中的 =tostring= 很接近抽象函数的实现. 
+#+begin_src ocaml
+
+  let removedups lst =
+    lst |> List.sort_uniq Stdlib.compare
+
+  let string_of_list string_of_ele = function
+    | [] -> ""  
+    | h::t -> "{ " ^ (List.fold_left (fun acc e -> acc ^ "," ^ (string_of_ele e) ) t (string_of_ele h) ) ^ " }"
+
+#+end_src
+** 不变量 RI
+
+有效意味着这个具体值不能违反不变量.
+例如, Set中, 若不变量为list中不能有重复元素, 那么 [1;2;2] 就不是一个有效的具体值.
+
+不变量在文档中也要写在最前面,
+
+不变量的实现是蕴含在各种操作的实现中的.
+不变量的维持在操作的实现过程中是可以暂时被违反的, 但在操作的输入输出两端, 不变量是必须成立的. (例如, 平衡二叉树, 先插入到合适的位置, 再去维持平衡) 
+*** 实现 
+可以实现一个函数在每个操作的输入和输出位置对不变量进行检查.
+(防御性编程) 
+#+begin_src ocaml 
+  let rep_ok (x : t) : t =
+  if (** check invariants *) then x
+  else failwith "invariants"
+  ;;
+#+end_src
+
+
+
+
+#+begin_src ocaml
+  let removedups lst =
+     lst |> List.sort_uniq Stdlib.compare
+       
+  let rep_ok s =
+    if List.length (removedups s) = List.length s then s
+    else failwith "the set exists dups"
+  ;;
+#+end_src
+在这里, 对不变量的检查的开销是十分巨大的. 会导致操作的效率低下. 
+
+#+begin_src ocaml
+  module ListSetImpl = struct
+    (** the list cannot contain duplicates*)
+    type 'a t = 'a list
+
+    let empty = rep_ok []
+
+    let rec add e s = match ( rep_ok s ) with 
+      | [] -> [e]
+      | h::t -> if h = e then h::t else  rep_ok  (h::(add e t))
+
+    let size s = List.length (rep_ok s)
+
+    let rec mem e s = match (rep_ok s) with 
+      | [] -> false
+      | h::t -> (h = e) || (mem e t)
+
+    let union s1 s2 = (rep_ok s1) @ (rep_ok s2) |> List.sort_uniq Stdlib.compare |> rep_ok
+
+  
+  end
+
+  module ListSet : Set = ListSetImpl ;; 
+#+end_src
+
+应对这种开销问题的方法就是将 =rep_ok= 在不需要debug时替换为 恒等函数
+
+#+begin_src ocaml
+  let rep_ok s = s
+    
+   (* if List.length (removedups s) = List.length s then s
+      else failwith "the set exists dups" *)
+#+end_src
+
+ 
+
+
+交换图: 
+#+begin_src bash 
+      抽象的操作
+      * ----> *
+      ^       ^
+  AF  |       | AF
+      |       |
+      * ----> *
+      实现的操作
+#+end_src
+
+eg: 实现中允许重复set的交换图
+#+begin_src bash 
+	 抽象操作 union {2,3}
+	 
+   {1,2} ----------------> {1,2,3} 
+     ^                        ^
+  AF |                        | AF
+     |                        |
+   [1;2] ----------------> [1;2;2;3]
+
+     具体实现的操作 List.append [2;3] 
+#+end_src
+
+从逻辑上讲, 要得到集合{1,2,3}有两条路径.
+
+一个操作的实现是正确的, 若其对应的 AF 图是可交换的.
+
+op_abs(AF(c)) = AF(op_conc(c)) 
+
+
+** 黑盒测试
+
+在不知道具体实现的情况下.
+测试是基于规范的.
+
+测试不基于实现.
+测试不会因为实现的改变而失去健壮性.
+测试能被reviewer阅读/执行. 
+
+
+*** 边界测试
+
+*** 路径通过测试
+
++ 对每一类输出编写对应的测试
+  eg 返回 bool/variant的/; compare函数(三类)
+  
+
++ 组合不同的前置条件
+  
+eg : requires: x>=0 且 n >= 0
+1. x>0 & n>0
+2. x=0 & n>0
+3. x>0 & n=0
+4. x=0 & n=0
+
++ 分别对抛出异常/不抛出异常编写测试 
+
+
+对生产类型和消费类型的操作混合测试
+
+(empty |> add 1 |> size) == 1?
+
+
+** 白盒测试
+白盒测试要求我们的测试要尽量覆盖到源码的每一行,甚至是每一个表达式.
+
+要对 =if/match/switch ...= 的每个分支进行测试. 若是递归函数, 则要对基本情况和递归调用都进行测试. 当然测试也要将涉及的异常都触发一遍.
+
+
+#+begin_src ocaml 
+  let max3 x y z =
+    if x > y then
+      if x > z then x else z
+    else
+      if y > z then y else z
+  ;;
+#+end_src
+
+为了覆盖这个例子中的四个分支, 要编写如下四个测试: 
+#+begin_src ocaml 
+  max3  3 2 1
+  max3  3 2 4
+  max3  1 2 1
+  max3  1 2 3
+#+end_src
+
+
+有工具来辅助查看白盒测试的覆盖情况. ocaml有 =bisect_ppx= .
+
+
+** 随机测试
+
+生成随机的输入, 观察程序是否会崩溃.
+
+ocaml中有 =QCheck= 支持随机测试. 
+
+#+begin_src ocaml
+  (** 这个函数正常状况下总会返回true,除非leap_year的逻辑有错误/程序崩溃 *)
+  (** 要么输入是闰年(一定能被4整除), 要么不是闰年*)
+  let mult4_or_non_leap_year y =
+     y mod 4 == 0 || not (leap_year y)
+
+  let random_non_4s =
+  QCheck.Test.make ~count:1000 (* 随机测试的次数 *)
+    ~name: "a randomized  test" 
+    QCheck.(1 -- 3000) (* 随机选择的输入范围 *)
+    mult4_or_non_leap_year (* 接受随机输入的函数 *)
+#+end_src
+
+将 =QCheck= 随机测试映射为 =OUnit= 测试: 
+#+begin_src ocaml
+  let qcheck_randomized_tests = List.map QCheck.ounit.to_ounit2_test [random_non_4s; another_qcheck_test; ..]
+#+end_src
+
+将qcheck测试list加入测试套件: 
+#+begin_src ocaml
+  let test_suite = "leap year"  >:: List.flatten [
+      tests;
+      qcheck_randomized_tests; 
+    ]
+#+end_src
+
+
+
+** 调试 Debug
+
+测试发现错误, debug找出错误的原因.
+
+*** 建议
+
+1. 形成一个可证伪的假设(关于为何有bug).
+
+2. 找出一个最简单的能触发bug的输入.
+
+3. 将实验过程记录下来.
+
+4. 采用防御性编程
+   用断言检查前置条件&不变量; 将if/match等分支语句写得完备, 覆盖到每一种情况.
+
+
+** 两端代码的等价性
+后置条件描述了函数输出和用数学/英语描述的涉及输入的输出的等价性.
+
+
+表达式的等价性 (无副作用,无异常)
+
+eg: 31+1 ?= 32
+在语法上, 二者不等价. 但在语义上, 二者是等价的.
+
+两个表达式在语义上等价意味着它们的值是相等的.
+
+
+函数的等价性
+
+eg:
+(fun x -> x+1)
+(fun y -> y+1)
+
+显然在语法上也是不相等的.
+在语义上是相等的, 因为二者作用在同一参数上总能得到相同的结果.
+
+
+
+
+** 程序的停止
+
+
+一个递归函数会停止, 若:
+1. 所有递归调用作用于更小规模的输入, 并且 
+
+2. 基础情况下是可以停止的.
+   

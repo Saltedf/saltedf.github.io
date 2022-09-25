@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-09-12 一 23:05 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>x86-64 汇编</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">x86-64 汇编</h1>
+<div class="org-src-container">
+<pre class="src src-makefile"><span style="color: #DFDFDF;">MYASM</span>=test1
+
+<span style="color: #51afef;">default</span>:
+        as -o $(<span style="color: #DFDFDF;">MYASM</span>).o $(<span style="color: #DFDFDF;">MYASM</span>).s &amp;&amp; ld -o $(<span style="color: #DFDFDF;">MYASM</span>) $(<span style="color: #DFDFDF;">MYASM</span>).o
+        <span style="color: #FCCE7B;">@-</span>./$(<span style="color: #DFDFDF;">MYASM</span>) ; echo $$?  <span style="color: #62686E;"># </span><span style="color: #62686E;">&#29992;-&#24573;&#30053;&#36827;&#31243;&#36864;&#20986;&#30721;!= 0&#30340;&#24773;&#20917;, &#25171;&#21360;&#36864;&#20986;&#30721; .&#29992;@&#19981;&#22238;&#26174;&#36825;&#34892;&#21629;&#20196;</span>
+
+<span style="color: #51afef;">clean</span>:
+        <span style="color: #FCCE7B;">-</span>rm ./*.o
+        <span style="color: #FCCE7B;">-</span>rm $(<span style="color: #DFDFDF;">MYASM</span>) 
+
+<span style="color: #51afef;">.PHONY</span>: default clean
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-asm">        <span style="color: #51afef;">.global</span> _start      <span style="color: #62686E;">;</span><span style="color: #62686E;">&#31243;&#24207;&#20837;&#21475;</span>
+        <span style="color: #51afef;">.text</span>
+<span style="color: #5cEfFF;">_start</span>:
+        <span style="color: #51afef;">mov</span>   $60, <span style="color: #DFDFDF;">%rax</span>     
+        <span style="color: #51afef;">mov</span>   $1, <span style="color: #DFDFDF;">%rdi</span> <span style="color: #62686E;">; </span><span style="color: #62686E;">&#36827;&#31243;&#36864;&#20986;&#30721;</span>
+        <span style="color: #51afef;">add</span> $1, <span style="color: #DFDFDF;">%rdi</span>
+        <span style="color: #51afef;">sub</span> $1, <span style="color: #DFDFDF;">%rdi</span>
+        <span style="color: #51afef;">syscall</span> 
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sh">as -o test1.o test1.s &amp;&amp; ld -o test1 test1.o
+
+./test1 ; <span style="color: #C57BDB;">echo</span> $<span style="color: #DFDFDF;">?</span>  
+</pre>
+</div>
+
+<p>
+运行结果为1 
+</p>
+
+
+<p>
+<code>ld -e foo</code> 可以指定程序的入口标签 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-asm">        <span style="color: #51afef;">.global</span> foo
+        <span style="color: #51afef;">.text</span>
+<span style="color: #5cEfFF;">foo</span>:
+        <span style="color: #51afef;">mov</span> $60, <span style="color: #DFDFDF;">%rax</span>
+        <span style="color: #51afef;">mov</span> $1, <span style="color: #DFDFDF;">%rdi</span>
+        <span style="color: #51afef;">syscall</span> 
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sh">as -o test1.o test1.s &amp;&amp; ld -e foo -o test1 test1.o
+</pre>
+</div>
+
+
+
+<p>
+函数调用
+</p>
+
+
+
+
+
+<div id="org54d1b0f" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_15-18-29.png" alt="screenshot_2022-09-11_15-18-29.png" />
+</p>
+</div>
+
+
+<div id="orgc88f381" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_15-18-39.png" alt="screenshot_2022-09-11_15-18-39.png" />
+</p>
+</div>
+
+
+<p>
+sumstore的三个参数将由调用者提供, 将使用前三个寄存器: 
+x : rdi
+y : rsi
+dest : rdx 
+</p>
+
+
+<p>
+首条指令是将 rbx 保存到stack, 防止被覆盖, 因为rbx是一个callee负责保存的寄存器, 这意味着若一个函数需要覆盖它时需要将其保存起来, 并在此函数返回之前将值恢复. 
+</p>
+
+<p>
+第二条指令将rdx移动到rbx, 即将dest保存到rbx中.
+因为rdx是caller负责保存的寄存器, 并且编译器决定将rdx保存到rbx中,而不是stack.
+变量x y 仍在rdi和rsi 中, 因此当调用plus时,其参数已经准备好了.
+当plus返回后, 返回值存放在rax中.
+因此第四行汇编将返回值存入dest指向的位置. 
+</p>
+
+<p>
+最后两行恢复rbx, 并返回.
+</p>
+
+
+
+
+<p>
+等价的代码: 将rdx保存到stack中. 
+</p>
+
+
+<div id="orgc6a7333" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_15-23-20.png" alt="screenshot_2022-09-11_15-23-20.png" />
+</p>
+</div>
+
+
+<p>
+ <code>movq</code> 中的q表示四字 <code>quad word</code> , 一个字 <code>word</code> 为16位. 四字为64位.
+(x86-64中对word的定义是16位.而其它ISA中可能将word定义为32位) 
+</p>
+
+<p>
+反汇编目标文件: 
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">objdump -d sum &gt; sum.d
+</pre>
+</div>
+
+
+<p>
+x86-64 一共有16个 <b>整数</b> 寄存器
+他们的开头都是 <code>%r</code> .
+</p>
+
+
+
+<div id="orgf3b37ec" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_15-38-15.png" alt="screenshot_2022-09-11_15-38-15.png" />
+</p>
+</div>
+
+<p>
+对应的双字(double word)寄存器(一半):
+一部分是将 <code>%r</code> 替换为 <code>%e</code>. 另一部分是加后缀 <code>d</code>
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">%rbp %rsp ==&gt;  %ebp %esp
+
+%r8 %r15  ==&gt;  %r8d %r15d
+</pre>
+</div>
+
+
+<p>
+movq source , dest
+</p>
+
+<p>
+source 可以是 imm / register / mem
+dest 是 reg / mem
+</p>
+
+<p>
+source和dest不能同时为mem
+</p>
+
+<p>
+有很多表示mem的方式:
+最常见的是寄存器寻址: (%rax) 括号类似于解引用*rax
+</p>
+
+<p>
+位移寻址: 
+movq 8(%rbp), %rdx 
+;; *(%rbp+8)
+</p>
+
+<p>
+一般的寻址形式:
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp">D(base, index, scale) =&gt;  *(base + scale*index + D)
+
+D : 1/2/4&#23383;&#33410; ,&#21363; 8/16/32
+base &#20219;&#20309;&#19968;&#20010;&#25972;&#25968;&#23492;&#23384;&#22120;
+index &#38500;&#20102;rsp&#20043;&#22806;&#30340;15&#20010;&#25972;&#25968;&#23492;&#23384;&#22120;
+scale: 1/2/4/8 
+</pre>
+</div>
+
+<p>
+地址的计算, 然后对这些地址进行解引用才得到最终结果. 
+<img src="org-images/screenshot_2022-09-11_16-07-37.png" alt="screenshot_2022-09-11_16-07-37.png" />
+</p>
+
+
+
+
+
+
+<div id="org9e8c025" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_15-55-00.png" alt="screenshot_2022-09-11_15-55-00.png" />
+</p>
+</div>
+
+
+
+<div id="org478f877" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_15-55-11.png" alt="screenshot_2022-09-11_15-55-11.png" />
+</p>
+</div>
+
+<p>
+编译器分配了rax rdx这两个 caller保存的寄存器, 来保存函数的临时变量.
+caller 保存的寄存器无需保存到stack并从中恢复.
+</p>
+
+
+
+
+<div id="orgc822d66" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_15-59-51.png" alt="screenshot_2022-09-11_15-59-51.png" />
+</p>
+</div>
+
+
+
+
+<p>
+算术&amp;逻辑运算
+</p>
+
+
+<p>
+lea = load effective address
+</p>
+
+<p>
+leaq src , dst
+用于计算地址, 而不进行 "解引用".
+主要目的是生成需要重复使用的地址.
+</p>
+
+<p>
+也可以用作一个紧凑的算术运算: 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FCCE7B;">long</span> <span style="color: #5cEfFF;">m12</span>(<span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">x</span>){
+  <span style="color: #51afef;">return</span> x*12;
+}
+</pre>
+</div>
+<p>
+可以被编译为:
+</p>
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #5cEfFF;">leaq</span>    (<span style="color: #DFDFDF;">%rdi</span>,<span style="color: #DFDFDF;">%rdi</span>,2), <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">; </span><span style="color: #62686E;">rax = x + x*2 = 3*x</span>
+<span style="color: #5cEfFF;">sal</span>     <span style="color: #51afef;">$2</span>, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">; </span><span style="color: #62686E;">rax = rax &lt;&lt; 2 = (3*x)*4     </span>
+</pre>
+</div>
+<p>
+sal为算术左移.
+</p>
+
+
+<p>
+addq src, dest 
+</p>
+
+<p>
+dest = src + dest 
+</p>
+
+<p>
+subq src, dest 
+</p>
+
+<p>
+dest = dest - src
+</p>
+
+
+<p>
+imulq src, dest
+对溢出的结果进行截断.
+</p>
+
+<p>
+salq/shlq src,dest
+</p>
+
+<p>
+dest = dest &lt;&lt; src
+</p>
+
+<p>
+(算术左移和逻辑左移没有区别)
+</p>
+
+<p>
+sarq src , dest
+dest =  dest &gt;&gt;&gt; src 
+算术右移,最高位补1/0取决于原来的dest的最高位(符号位)
+</p>
+
+<p>
+shrq src, dest
+dest = dest &gt;&gt; src
+逻辑右移, 最高位补0
+</p>
+
+<p>
+xorq src,dest
+按位异或. 不同为1, 相同为0
+</p>
+
+<p>
+andq src, dst
+</p>
+
+<p>
+orq src,dst
+</p>
+
+<p>
+单操作数指令
+</p>
+
+<p>
+incq dest
+dest = dest + 1
+</p>
+
+<p>
+decq dest
+dest = dest - 1
+</p>
+
+
+<p>
+negq dest
+取相反数
+dest = -1* dest
+</p>
+
+<p>
+notq dst
+dst = ~dst
+按位取反
+</p>
+
+
+
+<p>
+例 : 
+<img src="org-images/screenshot_2022-09-11_17-30-04.png" alt="screenshot_2022-09-11_17-30-04.png" />
+</p>
+
+
+<div id="orga2defd0" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_17-30-45.png" alt="screenshot_2022-09-11_17-30-45.png" />
+</p>
+</div>
+
+
+
+
+
+<div id="orgf14308d" class="figure">
+<p><img src="org-images/screenshot_2022-09-11_17-56-52.png" alt="screenshot_2022-09-11_17-56-52.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #5cEfFF;">rdi</span> = x
+<span style="color: #5cEfFF;">rsi</span> = y
+<span style="color: #5cEfFF;">rdx</span> = z
+</pre>
+</div>
+
+<p>
+使用 <code>leaq</code> 的好处是不会覆盖掉某些后面还要用的寄存器值.
+</p>
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #5cEfFF;">arith</span>:
+        <span style="color: #51afef;">leaq</span> (<span style="color: #DFDFDF;">%rdi</span>,<span style="color: #DFDFDF;">%rsi</span>), <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">t1 = x+y</span>
+        <span style="color: #51afef;">addq</span> <span style="color: #DFDFDF;">%rdx</span>, <span style="color: #DFDFDF;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">t2 = z+t1</span>
+
+        <span style="color: #62686E;">;; </span><span style="color: #62686E;">t4 = y * 48</span>
+        <span style="color: #62686E;">;; </span><span style="color: #62686E;">48 = 3*16 = 3 * 2^4 = (1+2) * 2^4</span>
+        <span style="color: #51afef;">leaq</span> (<span style="color: #DFDFDF;">%rsi</span>,<span style="color: #DFDFDF;">%rsi</span>,2),<span style="color: #DFDFDF;">%rdx</span>
+        <span style="color: #51afef;">salq</span> $4, <span style="color: #DFDFDF;">%rdx</span>
+
+        <span style="color: #62686E;">;; </span><span style="color: #62686E;">t3 = x+4</span>
+        <span style="color: #62686E;">;; </span><span style="color: #62686E;">t5 = t3 + t4 = x + t4 + 4</span>
+        <span style="color: #51afef;">leaq</span> 4(<span style="color: #DFDFDF;">%rdi</span>,<span style="color: #DFDFDF;">%rdx</span>), <span style="color: #DFDFDF;">%rcx</span>
+
+        <span style="color: #62686E;">;; </span><span style="color: #62686E;">rval = t2 * t5</span>
+        <span style="color: #62686E;">;; </span><span style="color: #62686E;">return rval</span>
+        <span style="color: #51afef;">imulq</span> <span style="color: #DFDFDF;">%rcx</span> <span style="color: #DFDFDF;">%rax</span>
+        <span style="color: #51afef;">ret</span> 
+</pre>
+</div>
+
+<p>
+用位运算实现的abs()
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FCCE7B;">long</span> <span style="color: #5cEfFF;">abs</span>(<span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">v</span>) {
+  <span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">mask</span> = v &gt;&gt; 8 * 8 -1;
+  <span style="color: #51afef;">return</span> (v+mask) ^ mask; 
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #5cEfFF;">movq</span> <span style="color: #51afef;">%rdi</span>, <span style="color: #DFDFDF;">%rdx</span>  
+<span style="color: #5cEfFF;">sarq</span> <span style="color: #51afef;">$63</span>, <span style="color: #DFDFDF;">%rdx</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">mask = v &gt;&gt; 63</span>
+<span style="color: #5cEfFF;">leaq</span> (<span style="color: #DFDFDF;">%rdx</span>,<span style="color: #DFDFDF;">%rdi</span>), <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">v + mask </span>
+<span style="color: #5cEfFF;">xorq</span> <span style="color: #51afef;">%rdx</span>, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">( v + mask ) ^ mask </span>
+<span style="color: #5cEfFF;">ret</span>             
+</pre>
+</div>
+
+
+<p>
+控制流相关指令
+</p>
+
+<p>
+控制流指令会改变 %rip, 即程序计数器.
+</p>
+
+<p>
+一些条件指令依赖于 eflags 寄存器的值. 其中有四个位是重点关注的:
+</p>
+
+<p>
+CF : 无符号溢出
+OF : 有符号溢出
+SF : 有符号数的符号位
+ZF : 是否为零 
+</p>
+
+
+<p>
+一些算术/逻辑指令会隐式地改变这些flags:
+</p>
+
+<p>
+addq src, dest
+</p>
+
+<p>
+CF 若最高位发生进位,则为1 
+ZF 若结果为零,则为1 
+SF 若结果&lt;0, 则为1 
+OF 若两个有符号数的和发生溢出(a&gt;0 b&gt;0 a+b &lt;0 || a&lt;0 b&lt;0 a+b&gt;0)
+</p>
+
+
+<p>
+cmpq src2, src1  
+=&gt;  src1 - src2
+</p>
+
+<p>
+CF: 最高位发生进位
+ZF: src1==src2
+SF: src1-src2 &lt; 0
+OF: (src1&gt;0, -src2&gt;0 =&gt; src1-src2&lt;0) || (src1&lt;0,-src2&lt;0 =&gt; src1-src2&gt;0)
+</p>
+
+
+<p>
+testq src2,src1
+src1&amp;src2
+</p>
+
+<p>
+ZF
+SF
+</p>
+
+<p>
+<code>testq reg, reg</code>
+</p>
+
+<p>
+可以用来判断 <code>reg</code> 的正负(SF ?= 0)
+</p>
+
+
+
+
+<p>
+使用分支的绝对值
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #FCCE7B;">long</span> <span style="color: #5cEfFF;">abs</span>(<span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">v</span>) {
+  <span style="color: #51afef;">return</span> (v&lt;0)? -v : v ;
+}
+</pre>
+</div>
+
+
+<p>
+testq实现abs:
+</p>
+<div class="org-src-container">
+<pre class="src src-asm">
+</pre>
+</div>
+
+
+
+<p>
+条件move指令: cmov?
+</p>
+
+
+
+
+<p>
+用cmovsq实现abs()
+</p>
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #5cEfFF;">movq</span>    <span style="color: #51afef;">%rdi</span>, <span style="color: #DFDFDF;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">%rdi = long v</span>
+<span style="color: #5cEfFF;">negq</span>    <span style="color: #51afef;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">&#30446;&#30340;&#26159;&#35774;&#32622; SF</span>
+<span style="color: #5cEfFF;">cmovsq</span>  <span style="color: #51afef;">%rdi</span>, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">&#26377;&#26465;&#20214;&#30340;mov: &#33509;SF=1&#21017;mov</span>
+<span style="color: #5cEfFF;">retq</span>    
+</pre>
+</div>
+
+<p>
+cmovsq
+</p>
+
+<p>
+c: condition
+s: SF
+q: quad word
+</p>
+
+
+
+<p>
+循环的实现:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c">
+</pre>
+</div>
+
+
+
+
+
+<p>
+用系统调用打印字符串: 
+</p>
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #5cEfFF;">.LC0</span>:
+        <span style="color: #51afef;">.string</span> <span style="color: #7bc275;">"hello\n"</span> 
+
+        <span style="color: #51afef;">.text</span>
+        <span style="color: #51afef;">.global</span> _start
+<span style="color: #5cEfFF;">_start</span>:
+        <span style="color: #51afef;">movq</span> $1,<span style="color: #DFDFDF;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">1&#21495;&#31995;&#32479;&#35843;&#29992;  sys_write</span>
+        <span style="color: #51afef;">movq</span> $1,<span style="color: #DFDFDF;">%rdi</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">fd == stdout == 1 </span>
+        <span style="color: #51afef;">movq</span> $.LC0, <span style="color: #DFDFDF;">%rsi</span> 
+        <span style="color: #51afef;">movq</span> $7, <span style="color: #DFDFDF;">%rdx</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">&#23383;&#31526;&#20018;&#38271;&#24230;(&#21253;&#21547;&#23614;&#38646;) </span>
+        <span style="color: #51afef;">syscall</span>
+
+        <span style="color: #51afef;">movq</span> $60, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">60&#21495;&#31995;&#32479;&#35843;&#29992;, exit</span>
+        <span style="color: #51afef;">movq</span> $0, <span style="color: #DFDFDF;">%rdi</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">(&#21442;&#25968;)&#36864;&#20986;&#30721;&#20026; 0 </span>
+        <span style="color: #51afef;">syscall</span>
+</pre>
+</div>
+
+
+<p>
+合法的栈地址 &gt;= rsp
+因此rsp所指位置是有数据的.
+</p>
+
+
+<ul class="org-ul">
+<li>pushq src</li>
+</ul>
+
+<p>
+rsp - 8字节
+</p>
+
+<ul class="org-ul">
+<li>pop</li>
+</ul>
+
+
+<ul class="org-ul">
+<li><p>
+call label
+</p>
+
+<p>
+push rip &amp;&amp; jump label
+</p></li>
+</ul>
+
+
+<ul class="org-ul">
+<li>retq 
+pop rip</li>
+</ul>
+
+
+
+
+<p>
+函数调用约定:(system V)
+</p>
+
+<ul class="org-ul">
+<li>返回值放在  <code>%rax</code> .长度在 64 - 128 之间的放在 <code>%rdx:%rax</code> 中
+浮点类型的返回值 <code>xmm</code> 
+更大的类型(eg结构体)放在栈中 , 也可以通过rax中存放指针进行返回.</li>
+
+<li>前6个参数 :(长度&lt;4字)</li>
+</ul>
+<p>
+<code>%rdi, %rsi, %rdx, %rcx, %r8, %r9</code>
+</p>
+
+
+<ul class="org-ul">
+<li>剩下的参数/长度大于四字 放在stack中 :</li>
+</ul>
+<p>
+反向入栈: 后面的参数先入栈.
+</p>
+
+
+
+<ul class="org-ul">
+<li>随后call将返回地址rip压入栈</li>
+</ul>
+
+
+<p>
+caller-saved: 在函数中修改后不负责还原, 因此caller调用别的函数之前自己要保存好(存放到stack/callee-saved寄存器)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">%rax, %rcx, %rdx, %rsi, %rdi,
+%r8, %r9, %r10, %11
+</pre>
+</div>
+
+<p>
+callee-saved: 函数中修改后要负责还原
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">%rbx, %rsp, %rbp,
+%r12, %r13, %14, %15
+</pre>
+</div>
+
+
+
+
+
+<div id="orgc3958b4" class="figure">
+<p><img src="org-images/screenshot_2022-09-12_23-05-01.png" alt="screenshot_2022-09-12_23-05-01.png" />
+</p>
+</div>
+</div>
+</body>
+</html>

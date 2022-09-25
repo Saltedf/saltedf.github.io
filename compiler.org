@@ -1,0 +1,442 @@
+#+TITLE: Compiler 
+#+include: mytheme.setup 
+
+* 语义分析 sematic analysis
+在语义分析阶段我们要进行一些上下文相关的分析.
+例:
+1. 检查是否所有标识符在使用之前都有声明.
+2. 类型检查
+
+ 
+   
+** Scope定义 
+
+scope 是规定了标识符在程序中可访问的范围.
+多个scope之间是互不相交的.
+
+例如, 下面有两个作用域, 一个是for loop之内的.另外一个是除了for循环体之外的函数体. 
+#+begin_src  c++
+  void fun(int n) {
+    int a;              // scope 1
+    
+    for(n = 0;n<10;n++){//===
+      int a = n*n;      //  |===>  scope 2 
+      printf("%d\n",a); //===
+    }
+			// scope 1
+  }
+#+end_src
+
+** Static Scope  VS  Dynamic Scope
+
+大多数语言采用静态作用域, 即作用域只依赖程序的文本, 而不是运行时的行为. 
+动态作用域则相反, 作用域依赖于程序运行时的行为.
+
+#+begin_src c++ 
+  void foo(int x) {
+    int a = 3;
+    bar(3);  // 对于动态语言, eg:早期的lisp, 此处将成功打印出3. 
+  }
+
+  void bar(int y){
+    printf("%d", a); // 而对于像C这样的static scope语言, 这里显然无法通过编译. 
+  }
+  
+#+end_src
+
+例, C语言中的标识符绑定被下面的东西引入:
+
++ 函数定义 function definitons
++ struct definitions
++ variable definitions
++ struct中字段的定义.
++ 函数参数的声明
+
+
+虽然大多数标识符满足最近嵌套作用域原则. 但仍有例外:
+
+1. C++ 中的成员函数可以在class之外定义. 但在这些函数的定义中仍然能访问class成员.
+2. C++ 中的向前forward声明, 使得 前面定义的类可以引用定义在后面的类.
+
+
+** 通过在AST上进行递归下降进行语义分析
+在C中,block就是最常见的作用域scope.
+在早期的C中, 一个scope中的变量声明必须全都放在开头,之后才能使用变量.
+AST结构如下: 
+#+begin_src
+  
+          代码块
+       /         \
+ 声明list       语句list
+ /  |  \       /   |   \
+d1  d2  d3    s1   s2  s3 
+  
+#+end_src
+
+而现在的C语言允许声明和普通语句混合:
+
+#+begin_src
+  
+          代码块
+           /       
+      代码块项目list 
+      /    |     \     \ 
+    语句1 声明1  语句2  声明2 .. 
+  
+#+end_src
+
+每当进入一个scope / 代码块 ,就会创建一个用来保存变量声明/定义的上下文context.
+而每当离开一个scope时, 相应的上下文就会被销毁.
+
+这种context是什么?
+
+*** 符号表 symbol table 
+
+之所以叫做符号表,而不是"字符串"表, 是因为这个表的key不单单是一个字符串.
+字符串在计算hash值, 测试相等性, 比较两个字符串的大小上是低效的.(线性时间,因为要遍历每个字符)
+
+因此要创建一个符号类型, 并用它作为key.这样的表叫做符号表. 
+
+每当进入一个新的作用域时, 将当前的符号表复制一份作为当前scope的符号表.并将旧的保存下来. 每当下面遇到一个声明, 将其添加到符号表.
+
+当离开一个scope后, 将保存的符号表恢复为当前符号表.
+
+**** 用符号表实现"环境" 
+
+使用存放scope(符号表)的 *Stack* 
+#+begin_src C++
+  enter_scope(): 创建并push一个新的scope 
+  exit_scope(): 离开pop当前scope
+		 
+  find_symbol(x): 从栈顶的scope中开始寻找符号x
+  add_symbol(x): 将符号x加入当前的(栈顶)scope
+  check_scope(x): 检查x是否在当前(栈顶)scope中存在定义, 用于防止在同一scope发生重定义
+#+end_src
+
+
+例如在C++这样的语言中, 可以先使用一个未定义但已经声明的标识符.(class的forward声明), 将其具体定义写在使用处的后面.
+因此这样的语法无法通过遍历一次AST就能解析完所有的符号使用.因此至少需要两次遍历:
+第一遍, 收集所有scope中的 *声明*
+第二遍, 用符号表来解析使用. 
+
+
+
+
+
+
+* 活动记录 AR
+
+** 概览
+
+高阶函数 -> 嵌套定义的函数 -> 逃逸变量(内存中) -> 静态链访问
+
+#+begin_src ocaml
+      Semant 
+    TRANSLATE    接口 
+    Translate    实现
+  FRAME    TEMP  接口
+  Frame    Temp  实现
+#+end_src
+
+在语义分析阶段之前, 先对AST调用 ~FindEscape~ 将是否为逃逸变量标记好.
+
+
+函数声明:
+
+~Semant.transDec~ -> ~Translate.newlevel~ -> ~Frame.newFrame~
+
+~Frame~ 层不知道静态链的存在, 而上层的 ~Translate~ 负责静态链的分配. 
+
+
+
+
+
+局部变量声明:
+
+~Frame.access~ 代表了变量存放的位置: 内存/寄存器?
+
+~Translate.access~ 比它多了level信息
+
+~Semant + lev~ -> ~Translate.allocLocal lev esc~ -> ~Frame.allocLocal~ 
+==> 返回 access
+
+** 实现思路
+
+函数中可以有局部变量. 每次函数调用都会创建一份其局部变量的实例.
+
+
+Tiger编译器的栈帧
+
+
+栈帧的接口: 
+#+begin_src ocaml
+  module type FRAME = sig
+    type frame
+    type access
+
+    val newFrame: {name:Temp.label,formals:bool list} -> frame
+    val allocLocal: frame -> bool -> access
+      
+    val name: frame -> Temp.label
+    val formals: frame -> access list
+	...
+  end
+#+end_src
+
+特定的目标机器: 
+#+begin_src ocaml
+  module MipsFrame : FRAME = struct
+    ...
+  end
+#+end_src
+
+实现: 
+#+begin_src ocaml
+  module Frame : FRAME = MipsFrame ;; 
+#+end_src
+
+
+创建一个新的栈帧对象:
+#+begin_src ocaml
+  Frame.newFrame { name=g; formals= [true;false;false] };;
+#+end_src
+
+#+begin_src ocaml
+    module MipsFrame: FRAME = struct
+      ...
+      type access = InFrame of int
+		  | InReg of Temp.temp 
+      ...
+    end
+#+end_src
+
+#+begin_src ocaml
+  Frame.allocLocal f true ;;
+  (* 返回一个 Frame.access of InFrame 类型的值 *)
+#+end_src
+
+
+#+begin_src ocaml
+  module FIND_ESCAPE = sig
+    val findEscape: Absyn.exp -> unit
+  end
+
+  module FindEscape : FIND_ESCAPE = struct
+    type depth = int
+    type escEnv = (depth * bool ref) Symbol.table (* symbol --> (嵌套层级深度, 是否为逃逸变量) *)
+	
+    let traverseVar (env:escEnv) (d:depth) (s:Absyn.var) : unit = (* ... *) ;;
+    and traverseExp (env:exvEnv) (d:depth) (s:Absyn.exp) : unit = (* ... *) ;;
+    and traverseDecs (env:exvEnv) (d:depth) (s:Absyn.dec list) : escEnv =  (* ... *) ;;
+
+    let findEscape (prog: Absyn.exp) : unit = (* ... *) ;;
+  end
+#+end_src
+
+当在静态函数嵌套深度为 ~d~ 处发现了一个 *变量声明* / *形参声明*, 例如:
+#+begin_src ocaml
+  VarDec {name=symbol("a"); escape=r; (* ... *)} 
+#+end_src
+
+则将类型为 ~bool ref~ 的值设为 ~false~. 将绑定 ~"a" -> (d,r)~ 加入到环境(~escEnv~)中.
+
+这个新环境被用在和这个变量处于同一作用域中的表达式中. 每当发现了符号 ~a~ 在深度大于 ~d~ 的地方被使用, 就将其绑定中的 ~r~ 设为 ~true~.
+
+
+
+~temp~ 是局部变量的抽象名字. ~label~ 是静态内存地址的抽象名字.
+ 
+模块 ~Temp~ 管理着两个不同名字的集合.
+#+begin_src ocaml
+  module type Temp = sig
+
+    type temp
+    module Table = Map.Make(temp)  (* 其中Table的key是temp类型的 *)
+    val newtemp : unit -> temp
+    val makestring : temp -> string
+
+    type label = Symbol.symbol
+    val newlabel: unit -> label
+    val nemedlabel : string -> label
+
+  end
+#+end_src
+
+
+
+#+begin_src ocaml
+  module type TRANSLATE = sig 
+    type level  
+    type access (** 和Frame.access不同,多了level这一信息. *)
+    val outermost : level
+
+    val newLevel: {parent: level; name:Temp.label; formals: bool list} -> level
+    val allocLocal: level -> bool -> access
+  end
+
+
+  module Translate : TRANSLATE = struct
+    ...
+    type access = level * Frame.access  (* <<=!! *)
+    ...
+  end
+    ;;
+#+end_src
+
+语义分析阶段中的 ~transDec~ 通过调用 ~Translate.newLevel~ 为每个函数声明创建一个新的嵌套层级. 这个函数又调用 ~Frame.newFrame~ 创建了一个新的栈帧. ~Semant~ 将 ~level~ 保存在此函数的 ~FunEntry~ 数据结构中, 使得每遇到一个函数调用时, 可以将被调用函数( ~FunEntry~ )的 ~level~ 字段传回 ~Translate~ 模块.  ~FunEntry~ 也需要函数的机器代码的入口处作为 ~label~ 字段.
+
+#+begin_src ocaml
+  module type Env = sig
+    (** 新版本的VarEntry和FunEntry : *)
+    type enventry =
+	VarEntry of { access:Translate.access; ty:ty }
+      | FunEntry of {
+	  level: Translate.level;
+	  label: Temp.label;
+	  formals: ty list;
+	  result: ty
+	}
+
+	...
+  end
+#+end_src
+
+当 ~Semant~ 处理一个位于层级为 ~lev~ 的局部变量时, 它会调用 ~Translate.allocLocal lev esc~ 在本层级中创建一个变量. 参数 ~esc~ 表示是否是逃逸变量. 其返回结果为 ~Translate.access~, 这是一个抽象数据类型(但不同于 ~Frame.access~, 因为它必须包含关于静态链的信息). 之后, 当变量在一个表达式中被使用时,  ~Semant~ 可以将其 ~access~ 传回 ~Translate~ , 以便于生成访问此变量的机器代码. 与此同时, Semant在值环境中记录着每个 ~VarEntry~ 中 ~access~ .
+
+
+抽象数据类型  ~Translate.access~ 可以被实现为变量的level和其 ~Frame.access~ 的偶对:
+#+begin_src ocaml
+  type access = level * Frame.access
+#+end_src
+使得 ~Translate.allocLocal~ 能调用 ~Frame.allocLocal~, 并且还可以记住变量是位于哪个层级的. 层级信息稍后在计算静态链时要用到, 变量可能从一个不同的层级中被访问. 
+
+
+ ~Frame~ 应该独立于被编译的特定语言.许多语言没有嵌套的函数声明.因此Frame不应包含关于静态链的信息, 这是 ~Translate~ 的责任.
+ ~Translate~ 知道每个栈帧包含着一个静态链. 静态链用寄存器被传给一个函数, 并将其存储到栈帧中.因为静态链表现得如此接近于一个形式参数, 我们将它看成是一个形参. 对于一个有着k个正常参数的函数,令 ~l~ 是标识其参数是否为逃逸变量的bool列表.则:
+ ~l' = true::l~ 是一个新的list. 额外的true标识着静态链这个额外参数是逃逸的. 于是 ~newFrame(label,l')~ 创建了一个包含额外参数和其形参的栈帧. 
+
+例: 函数 ~f(x,y)~ 被嵌套在函数 ~g~ 中.并且g的level被记为 ~lev_g~. 于是 ~Semant.transDec~ 可以调用:
+
+#+begin_src ocaml
+  Translate.newLevel {parent=lev_g;name=f;formals= [false;false] }
+#+end_src
+
+并假设 ~x,y~ 都不是逃逸变量.于是 ~Translate.newLevel~ 为形参的 ~bool~ 列表又加了一个元素:
+#+begin_src ocaml
+  Frame.newFrame { label, [true;false;false] } 
+#+end_src
+
+它会返回一个 ~frame~ . 在这个 ~frame~ 中,有三个栈帧偏移类型的值, 可以通过  ~Frame.formals(frame)~ 来访问. 返回值的首个元素是静态链在栈帧中的偏移量, 其它两个是参数 ~x, y~ 的偏移量.当 ~Semant~ 调用  ~Translate.formals(level)~ 时 , 它会得到这两个偏移量,并将其转换为 ~access~ 类型的值.
+
+对层级保持追踪
+
+每次对 ~Translate.newLevel~ 进行调用, ~Semant~ 必须传递外面这层的 ~level~ 值. 当为Tiger程序的main创建level时, Semant应当传递一个特殊的 ~level~ 值:  ~Transale.outermost~ . 它不是Tiger的main函数的level, 而是包含了main的过程的level.所有库函数位于这个 ~outermost~ 层级.
+
+
+函数 transDec 会为每个函数声明创建一个新的level, 但必须将外围函数的level传给newLevel. 这意味着 transDec 中必须包含了当前level的信息.
+
+实现这点是很容易的, 为transDec增加额外的参数, 代表了当前的level. 并且也为transExp增加一个level参数, 这样当遇到一个函数声明时便可将level传递给 transDec.
+
+transVar 也需要添加一个表示当前level的参数, 因为要通过计算level的差来决定访问几次静态链. 
+
+
+* 中间表示
+
+#+begin_src ocaml
+  module type TREE = sig
+    type exp = Const of int       (* 整数常量 *)
+	     | Name of Temp.label (* 符号常量,对应于汇编中的标签 *)
+	     | Temp of Temp.temp  (* 在抽象机器中的临时量,类似于真正机器中的寄存器 *)
+	     | Binop of binop * exp * exp (* 二元运算 *)
+	     | Mem of exp    (*在地址处长度为Frame.wordSize的内容,在左侧和右侧的用法不同*)
+	     | Call of exp * exp list (*过程调用*)
+	     | Eseq of stm * exp (*stm用于副作用,exp作为结果*)
+
+    and stm = Move of exp * exp 
+	    | Exp of exp
+	    | Jump of exp * Temp.label list
+	    | Cjump of relop * exp * exp * Temp.label * Temp.label
+	    | Seq of stm * stm
+	    | Label of Temp.label
+
+    and binop = Plus | Minus | Mul | Div | And | Or | Xor | Lshift | Rshift | Arshift
+		
+    and relop = Eq | Ne | Lt | Gt | Le | Ge | Ult | Ule | Ugt | Uge
+  end
+#+end_src
+
+语句stm主要负责副作用和控制流
+
++ ~Move(Temp t, e)~ : 对e进行求值, 并将它移动到t中.
++ ~Move(Mem(e1),e2)~ : 对e1求值,得到地址a. 然后对e2进行求值, 将结果存储到以a为开始长度为wordSize的内存中.
++ ~Exp(e)~ 对e求值,并忽略结果.
++ ~Jump(e,labs)~ 将控制流转移至地址e处. 目标e必须是形式为 ~Name(lab)~ 的文本标签,或是可以被计算为一个地址的表达式. 例如 类C语言中的 ~switch(i)~ 语句可能通过在 ~i~ 上做算术来实现. 标签列表 ~labs~ 指定了所有e的可能的求值结果; 这对于之后的数据流分析是必要的. 跳往一个已知的标签可以用 ~Jump(Name l, [l])~ .
++ ~Cjump(o,e1,e2,t,f)~ 对e1,e2分别求值, 得到值 a, b. 然后使用关系运算符 ~o~ 对a,b进行比较. 若结果为true, 则跳到t; 否则跳到f. 使用 Eq, Ne 测试整数的相等性和不等性. 用Lt,Gt,Le,Ge比较有符号整数的大小关系.用Ult,Ugt,Ule,Uge比较无符号整数的大小关系.
++ ~Seq(s1,s2)~ 语句s1 s2组成的序列
++ ~Label(n)~ 定义一个名字常值n为当前机器码的地址. 这类似于汇编中的标签. ~Name(n)~ 的值可以作为jump,call等的目标. 
+
+
+翻译为树
+
+将抽象语法转换为中间表示树是十分直接的, 但仍有许多要处理的情况.
+
+表达式的种类:
+抽象语法树中的exp类型用Tree语言该如何表示呢? 乍一看似乎要用 Tree.exp进行表示. 然而这只对某些种类的表达式是可行的, 即能被计算为一个值的那些表达式. 而对于那些不返回值的表达式(例如某些过程调用或是while表达式) 用Tree.stm来表示它们是更加自然的. 并且对于那些有bool类型值的表达式, 例如a>b, 可能最好的表示方式是作为一个有条件跳转: Tree.stm和用Temp.label表示的目的地的组合成的pair.
+
+因此,我们在 ~Translate~ 增加 ~exp~ 类型, 分别表示这三类表达式: 
+#+begin_src ocaml
+  type exp = Ex of Tree.exp
+	   | Nx of Tree.stm
+	   | Cx of (Temp.label * Temp.label -> Tree.stm)
+#+end_src
+
+
++ ~Ex~ : 代表一个有值的表达式, 用Tree.exp进行表示.
++ ~Nx~ : 代表无值的表达式, 表示为 Tree.stm
++ ~Cx~ : 代表有条件跳转, 被表示为一个函数, 将一对标签映射为一个语句. 若给这个函数传入一个true目的地和一个false目的地, 则它会创建一个语句, 此语句会对某个条件进行求值, 并据此跳转到其中的一个目的地. (此表达式绝不会因为不满足条件而直接向下执行.)
+
+
+
+例如 Tiger表达式 ~a>b | c<d~ 可能被翻译为:
+
+#+begin_src ocaml
+  Cx (
+    fun (t,f) -> Seq (Cjump Gt a b t z, Seq (Label z, Cjump Lt c d t f) )
+  )
+#+end_src
+
+#+begin_src rust 
+  if a>b  {     --+
+      goto t;     |
+  } else {        |--> Cjump Gt a b t z
+      goto z;     |
+  }             --+
+
+  label z :     |--->  Label z 
+  
+  if c<d {      --+
+      goto t;     |
+  } else {        |--> Cjump Lt c d t f
+      goto f;     |
+  }             --+
+#+end_src
+
+
+   
+有时候
+
+
+#+begin_src ocaml
+  module T = Tree
+
+  let unEx ex = match ex with
+    | Ex e -> e 
+    | Cx genstm -> 
+      let r = Temp.newtemp () in
+      let t = Temp.newlabel () in
+      let f = Temp.newlabel () in
+      begin 
+	T.Eseq (T.Seq [] ,T.Temp r)
+      end
+    | Nx s -> T.Eseq s (T.Const 0)
+#+end_src

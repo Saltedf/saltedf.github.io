@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-09-24 六 16:17 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Compiler</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Compiler</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org1d00416">1. 语义分析 sematic analysis</a>
+<ul>
+<li><a href="#org04eabbb">1.1. Scope定义</a></li>
+<li><a href="#org44fe888">1.2. Static Scope  VS  Dynamic Scope</a></li>
+<li><a href="#orga1b9c5a">1.3. 通过在AST上进行递归下降进行语义分析</a>
+<ul>
+<li><a href="#org31ec000">1.3.1. 符号表 symbol table</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org5eb560c">2. 活动记录 AR</a>
+<ul>
+<li><a href="#org022951e">2.1. 概览</a></li>
+<li><a href="#org6455082">2.2. 实现思路</a></li>
+</ul>
+</li>
+<li><a href="#org9509d8a">3. 中间表示</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org1d00416" class="outline-2">
+<h2 id="org1d00416"><span class="section-number-2">1.</span> 语义分析 sematic analysis</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+在语义分析阶段我们要进行一些上下文相关的分析.
+例:
+</p>
+<ol class="org-ol">
+<li>检查是否所有标识符在使用之前都有声明.</li>
+<li>类型检查</li>
+</ol>
+</div>
+
+
+
+<div id="outline-container-org04eabbb" class="outline-3">
+<h3 id="org04eabbb"><span class="section-number-3">1.1.</span> Scope定义</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+scope 是规定了标识符在程序中可访问的范围.
+多个scope之间是互不相交的.
+</p>
+
+<p>
+例如, 下面有两个作用域, 一个是for loop之内的.另外一个是除了for循环体之外的函数体. 
+</p>
+<div class="org-src-container">
+<pre class="src src-c++"><span style="color: #35CDAF;">void</span> <span style="color: #D9DAA2;">fun</span>(<span style="color: #35CDAF;">int</span> <span style="color: #85DDFF;">n</span>) {
+  <span style="color: #35CDAF;">int</span> <span style="color: #85DDFF;">a</span>;              <span style="color: #579C4C;">// </span><span style="color: #579C4C;">scope 1</span>
+
+  <span style="color: #339CDB;">for</span>(n = 0;n&lt;10;n++){<span style="color: #579C4C;">//</span><span style="color: #579C4C;">===</span>
+    <span style="color: #35CDAF;">int</span> <span style="color: #85DDFF;">a</span> = n*n;      <span style="color: #579C4C;">//  </span><span style="color: #579C4C;">|===&gt;  scope 2 </span>
+    printf(<span style="color: #DB8E73;">"%d\n"</span>,a); <span style="color: #579C4C;">//</span><span style="color: #579C4C;">===</span>
+  }
+                      <span style="color: #579C4C;">// </span><span style="color: #579C4C;">scope 1</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org44fe888" class="outline-3">
+<h3 id="org44fe888"><span class="section-number-3">1.2.</span> Static Scope  VS  Dynamic Scope</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+大多数语言采用静态作用域, 即作用域只依赖程序的文本, 而不是运行时的行为. 
+动态作用域则相反, 作用域依赖于程序运行时的行为.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c++"><span style="color: #35CDAF;">void</span> <span style="color: #D9DAA2;">foo</span>(<span style="color: #35CDAF;">int</span> <span style="color: #85DDFF;">x</span>) {
+  <span style="color: #35CDAF;">int</span> <span style="color: #85DDFF;">a</span> = 3;
+  bar(3);  <span style="color: #579C4C;">// </span><span style="color: #579C4C;">&#23545;&#20110;&#21160;&#24577;&#35821;&#35328;, eg:&#26089;&#26399;&#30340;lisp, &#27492;&#22788;&#23558;&#25104;&#21151;&#25171;&#21360;&#20986;3. </span>
+}
+
+<span style="color: #35CDAF;">void</span> <span style="color: #D9DAA2;">bar</span>(<span style="color: #35CDAF;">int</span> <span style="color: #85DDFF;">y</span>){
+  printf(<span style="color: #DB8E73;">"%d"</span>, a); <span style="color: #579C4C;">// </span><span style="color: #579C4C;">&#32780;&#23545;&#20110;&#20687;C&#36825;&#26679;&#30340;static scope&#35821;&#35328;, &#36825;&#37324;&#26174;&#28982;&#26080;&#27861;&#36890;&#36807;&#32534;&#35793;. </span>
+}
+
+</pre>
+</div>
+
+<p>
+例, C语言中的标识符绑定被下面的东西引入:
+</p>
+
+<ul class="org-ul">
+<li>函数定义 function definitons</li>
+<li>struct definitions</li>
+<li>variable definitions</li>
+<li>struct中字段的定义.</li>
+<li>函数参数的声明</li>
+</ul>
+
+
+<p>
+虽然大多数标识符满足最近嵌套作用域原则. 但仍有例外:
+</p>
+
+<ol class="org-ol">
+<li>C++ 中的成员函数可以在class之外定义. 但在这些函数的定义中仍然能访问class成员.</li>
+<li>C++ 中的向前forward声明, 使得 前面定义的类可以引用定义在后面的类.</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-orga1b9c5a" class="outline-3">
+<h3 id="orga1b9c5a"><span class="section-number-3">1.3.</span> 通过在AST上进行递归下降进行语义分析</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+在C中,block就是最常见的作用域scope.
+在早期的C中, 一个scope中的变量声明必须全都放在开头,之后才能使用变量.
+AST结构如下: 
+</p>
+<pre class="example">
+
+	  代码块
+       /         \
+ 声明list       语句list
+ /  |  \       /   |   \
+d1  d2  d3    s1   s2  s3 
+
+</pre>
+
+<p>
+而现在的C语言允许声明和普通语句混合:
+</p>
+
+<pre class="example">
+
+      代码块
+       /       
+  代码块项目list 
+  /    |     \     \ 
+语句1 声明1  语句2  声明2 .. 
+
+</pre>
+
+<p>
+每当进入一个scope / 代码块 ,就会创建一个用来保存变量声明/定义的上下文context.
+而每当离开一个scope时, 相应的上下文就会被销毁.
+</p>
+
+<p>
+这种context是什么?
+</p>
+</div>
+
+<div id="outline-container-org31ec000" class="outline-4">
+<h4 id="org31ec000"><span class="section-number-4">1.3.1.</span> 符号表 symbol table</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<p>
+之所以叫做符号表,而不是"字符串"表, 是因为这个表的key不单单是一个字符串.
+字符串在计算hash值, 测试相等性, 比较两个字符串的大小上是低效的.(线性时间,因为要遍历每个字符)
+</p>
+
+<p>
+因此要创建一个符号类型, 并用它作为key.这样的表叫做符号表. 
+</p>
+
+<p>
+每当进入一个新的作用域时, 将当前的符号表复制一份作为当前scope的符号表.并将旧的保存下来. 每当下面遇到一个声明, 将其添加到符号表.
+</p>
+
+<p>
+当离开一个scope后, 将保存的符号表恢复为当前符号表.
+</p>
+</div>
+
+<ol class="org-ol">
+<li><a id="org7a4d648"></a>用符号表实现"环境"<br />
+<div class="outline-text-5" id="text-1-3-1-1">
+<p>
+使用存放scope(符号表)的 <b>Stack</b> 
+</p>
+<div class="org-src-container">
+<pre class="src src-C++"><span style="color: #D9DAA2;">enter_scope</span>(): <span style="color: #35CDAF;">&#21019;&#24314;&#24182;push&#19968;&#20010;&#26032;&#30340;scope</span> 
+<span style="color: #D9DAA2;">exit_scope</span>(): <span style="color: #35CDAF;">&#31163;&#24320;pop&#24403;&#21069;scope</span>
+
+<span style="color: #D9DAA2;">find_symbol</span>(x): <span style="color: #35CDAF;">&#20174;&#26632;&#39030;&#30340;scope&#20013;&#24320;&#22987;&#23547;&#25214;&#31526;&#21495;x</span>
+<span style="color: #D9DAA2;">add_symbol</span>(x): &#23558;&#31526;&#21495;x&#21152;&#20837;&#24403;&#21069;&#30340;(&#26632;&#39030;)<span style="color: #35CDAF;">scope</span>
+<span style="color: #D9DAA2;">check_scope</span>(x): &#26816;&#26597;x&#26159;&#21542;&#22312;&#24403;&#21069;(&#26632;&#39030;)scope&#20013;&#23384;&#22312;&#23450;&#20041;, &#29992;&#20110;&#38450;&#27490;&#22312;&#21516;&#19968;scope&#21457;&#29983;&#37325;&#23450;&#20041;
+</pre>
+</div>
+
+
+<p>
+例如在C++这样的语言中, 可以先使用一个未定义但已经声明的标识符.(class的forward声明), 将其具体定义写在使用处的后面.
+因此这样的语法无法通过遍历一次AST就能解析完所有的符号使用.因此至少需要两次遍历:
+第一遍, 收集所有scope中的 <b>声明</b>
+第二遍, 用符号表来解析使用. 
+</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div id="outline-container-org5eb560c" class="outline-2">
+<h2 id="org5eb560c"><span class="section-number-2">2.</span> 活动记录 AR</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org022951e" class="outline-3">
+<h3 id="org022951e"><span class="section-number-3">2.1.</span> 概览</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+高阶函数 -&gt; 嵌套定义的函数 -&gt; 逃逸变量(内存中) -&gt; 静态链访问
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml">    <span style="color: #d4d4d4; background-color: #1e1e1e;">Semant</span> 
+  <span style="color: #d4d4d4; background-color: #1e1e1e;">TRANSLATE</span>    &#25509;&#21475; 
+  <span style="color: #d4d4d4; background-color: #1e1e1e;">Translate</span>    &#23454;&#29616;
+<span style="color: #d4d4d4; background-color: #1e1e1e;">FRAME</span>    <span style="color: #d4d4d4; background-color: #1e1e1e;">TEMP</span>  &#25509;&#21475;
+<span style="color: #d4d4d4; background-color: #1e1e1e;">Frame</span>    <span style="color: #d4d4d4; background-color: #1e1e1e;">Temp</span>  &#23454;&#29616;
+</pre>
+</div>
+
+<p>
+在语义分析阶段之前, 先对AST调用 <code>FindEscape</code> 将是否为逃逸变量标记好.
+</p>
+
+
+<p>
+函数声明:
+</p>
+
+<p>
+<code>Semant.transDec</code> -&gt; <code>Translate.newlevel</code> -&gt; <code>Frame.newFrame</code>
+</p>
+
+<p>
+<code>Frame</code> 层不知道静态链的存在, 而上层的 <code>Translate</code> 负责静态链的分配. 
+</p>
+
+
+
+
+
+<p>
+局部变量声明:
+</p>
+
+<p>
+<code>Frame.access</code> 代表了变量存放的位置: 内存/寄存器?
+</p>
+
+<p>
+<code>Translate.access</code> 比它多了level信息
+</p>
+
+<p>
+<code>Semant + lev</code> -&gt; <code>Translate.allocLocal lev esc</code> -&gt; <code>Frame.allocLocal</code> 
+==&gt; 返回 access
+</p>
+</div>
+</div>
+
+<div id="outline-container-org6455082" class="outline-3">
+<h3 id="org6455082"><span class="section-number-3">2.2.</span> 实现思路</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+函数中可以有局部变量. 每次函数调用都会创建一份其局部变量的实例.
+</p>
+
+
+<p>
+Tiger编译器的栈帧
+</p>
+
+
+<p>
+栈帧的接口: 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">FRAME</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">frame</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">access</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">newFrame</span><span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">{</span>name<span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">Temp.</span>label<span style="color: #f0e68c;">,</span>formals<span style="color: #f0e68c;">:</span>bool list<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> frame
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">allocLocal</span><span style="color: #f0e68c;">:</span> frame <span style="color: #f0e68c;">-&gt;</span> bool <span style="color: #f0e68c;">-&gt;</span> access
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">name</span><span style="color: #f0e68c;">:</span> frame <span style="color: #f0e68c;">-&gt;</span> <span style="color: #35CDAF;">Temp.</span>label
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">formals</span><span style="color: #f0e68c;">:</span> frame <span style="color: #f0e68c;">-&gt;</span> access list
+      <span style="color: #f0e68c;">...</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+特定的目标机器: 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #35CDAF;">MipsFrame</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">FRAME</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f0e68c;">...</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+实现: 
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #35CDAF;">Frame</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">FRAME</span> <span style="color: #f0e68c;">=</span> <span style="color: #35CDAF;">MipsFrame</span> <span style="color: #ff4500;">;;</span> 
+</pre>
+</div>
+
+
+<p>
+创建一个新的栈帧对象:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #35CDAF;">Frame.</span>newFrame <span style="color: #f0e68c;">{</span> name<span style="color: #f0e68c;">=</span>g<span style="color: #f0e68c;">;</span> formals<span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[</span><span style="color: #339CDB;">true</span><span style="color: #f0e68c;">;</span><span style="color: #339CDB;">false</span><span style="color: #f0e68c;">;</span><span style="color: #339CDB;">false</span><span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">}</span><span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #35CDAF;">MipsFrame</span><span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">FRAME</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f0e68c;">...</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">access</span> <span style="color: #f0e68c;">=</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">InFrame</span> <span style="color: #339CDB;">of</span> int
+              <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">InReg</span> <span style="color: #339CDB;">of</span> <span style="color: #35CDAF;">Temp.</span>temp 
+  <span style="color: #f0e68c;">...</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #35CDAF;">Frame.</span>allocLocal f <span style="color: #339CDB;">true</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #579C4C;">(* </span><span style="color: #579C4C;">&#36820;&#22238;&#19968;&#20010; Frame.access of InFrame &#31867;&#22411;&#30340;&#20540;</span><span style="color: #579C4C;"> *)</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #35CDAF;">FIND_ESCAPE</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">findEscape</span><span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">Absyn.</span>exp <span style="color: #f0e68c;">-&gt;</span> unit
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #35CDAF;">FindEscape</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">FIND_ESCAPE</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">depth</span> <span style="color: #f0e68c;">=</span> int
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">escEnv</span> <span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">(</span>depth <span style="color: #f0e68c;">*</span> bool <span style="color: #C586C0;">ref</span><span style="color: #f0e68c;">)</span> <span style="color: #35CDAF;">Symbol.</span>table <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">symbol --&gt; (&#23884;&#22871;&#23618;&#32423;&#28145;&#24230;, &#26159;&#21542;&#20026;&#36867;&#36920;&#21464;&#37327;)</span><span style="color: #579C4C;"> *)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #D9DAA2;">traverseVar</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">env</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">escEnv</span><span style="color: #f0e68c;">)</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">d</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">depth</span><span style="color: #f0e68c;">)</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">s</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">Absyn.</span><span style="color: #35CDAF;">var</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">unit</span> <span style="color: #f0e68c;">=</span> <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">...</span><span style="color: #579C4C;"> *)</span> <span style="color: #ff4500;">;;</span>
+  <span style="color: #f5deb3; font-weight: bold;">and</span> <span style="color: #D9DAA2;">traverseExp</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">env</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">exvEnv</span><span style="color: #f0e68c;">)</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">d</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">depth</span><span style="color: #f0e68c;">)</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">s</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">Absyn.</span><span style="color: #35CDAF;">exp</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">unit</span> <span style="color: #f0e68c;">=</span> <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">...</span><span style="color: #579C4C;"> *)</span> <span style="color: #ff4500;">;;</span>
+  <span style="color: #f5deb3; font-weight: bold;">and</span> <span style="color: #D9DAA2;">traverseDecs</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">env</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">exvEnv</span><span style="color: #f0e68c;">)</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">d</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">depth</span><span style="color: #f0e68c;">)</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">s</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">Absyn.</span><span style="color: #35CDAF;">dec list</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">escEnv</span> <span style="color: #f0e68c;">=</span>  <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">...</span><span style="color: #579C4C;"> *)</span> <span style="color: #ff4500;">;;</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">let</span> <span style="color: #D9DAA2;">findEscape</span><span style="color: #85DDFF;"> </span><span style="color: #f0e68c;">(</span><span style="color: #85DDFF;">prog</span><span style="color: #f0e68c;">:</span><span style="color: #35CDAF;"> </span><span style="color: #35CDAF;">Absyn.</span><span style="color: #35CDAF;">exp</span><span style="color: #f0e68c;">)</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">unit</span> <span style="color: #f0e68c;">=</span> <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">...</span><span style="color: #579C4C;"> *)</span> <span style="color: #ff4500;">;;</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+当在静态函数嵌套深度为 <code>d</code> 处发现了一个 <b>变量声明</b> / <b>形参声明</b>, 例如:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #d4d4d4; background-color: #1e1e1e;">VarDec</span> <span style="color: #f0e68c;">{</span>name<span style="color: #f0e68c;">=</span>symbol<span style="color: #f0e68c;">(</span><span style="color: #DB8E73;">"a"</span><span style="color: #f0e68c;">);</span> escape<span style="color: #f0e68c;">=</span>r<span style="color: #f0e68c;">;</span> <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">...</span><span style="color: #579C4C;"> *)</span><span style="color: #f0e68c;">}</span> 
+</pre>
+</div>
+
+<p>
+则将类型为 <code>bool ref</code> 的值设为 <code>false</code>. 将绑定 <code>"a" -&gt; (d,r)</code> 加入到环境(<code>escEnv</code>)中.
+</p>
+
+<p>
+这个新环境被用在和这个变量处于同一作用域中的表达式中. 每当发现了符号 <code>a</code> 在深度大于 <code>d</code> 的地方被使用, 就将其绑定中的 <code>r</code> 设为 <code>true</code>.
+</p>
+
+
+
+<p>
+<code>temp</code> 是局部变量的抽象名字. <code>label</code> 是静态内存地址的抽象名字.
+</p>
+
+<p>
+模块 <code>Temp</code> 管理着两个不同名字的集合.
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">Temp</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">temp</span>
+  <span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #35CDAF;">Table</span> <span style="color: #f0e68c;">=</span> <span style="color: #35CDAF;">Map.Make</span><span style="color: #f0e68c;">(</span>temp<span style="color: #f0e68c;">)</span>  <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">&#20854;&#20013;Table&#30340;key&#26159;temp&#31867;&#22411;&#30340;</span><span style="color: #579C4C;"> *)</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">newtemp</span> <span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">-&gt;</span> temp
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">makestring</span> <span style="color: #f0e68c;">:</span> temp <span style="color: #f0e68c;">-&gt;</span> string
+
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">label</span> <span style="color: #f0e68c;">=</span> <span style="color: #35CDAF;">Symbol.</span>symbol
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">newlabel</span><span style="color: #f0e68c;">:</span> unit <span style="color: #f0e68c;">-&gt;</span> label
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">nemedlabel</span> <span style="color: #f0e68c;">:</span> string <span style="color: #f0e68c;">-&gt;</span> label
+
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">TRANSLATE</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span> 
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">level</span>  
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">access</span> <span style="color: #777778;">(** &#21644;Frame.access&#19981;&#21516;,&#22810;&#20102;level&#36825;&#19968;&#20449;&#24687;. *)</span>
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">outermost</span> <span style="color: #f0e68c;">:</span> level
+
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">newLevel</span><span style="color: #f0e68c;">:</span> <span style="color: #f0e68c;">{</span>parent<span style="color: #f0e68c;">:</span> level<span style="color: #f0e68c;">;</span> name<span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">Temp.</span>label<span style="color: #f0e68c;">;</span> formals<span style="color: #f0e68c;">:</span> bool list<span style="color: #f0e68c;">}</span> <span style="color: #f0e68c;">-&gt;</span> level
+  <span style="color: #f5deb3; font-weight: bold;">val</span> <span style="color: #D9DAA2;">allocLocal</span><span style="color: #f0e68c;">:</span> level <span style="color: #f0e68c;">-&gt;</span> bool <span style="color: #f0e68c;">-&gt;</span> access
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+
+
+<span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #35CDAF;">Translate</span> <span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">TRANSLATE</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">struct</span>
+  <span style="color: #f0e68c;">...</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">access</span> <span style="color: #f0e68c;">=</span> level <span style="color: #f0e68c;">*</span> <span style="color: #35CDAF;">Frame.</span>access  <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">&lt;&lt;=!!</span><span style="color: #579C4C;"> *)</span>
+  <span style="color: #f0e68c;">...</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+  <span style="color: #ff4500;">;;</span>
+</pre>
+</div>
+
+<p>
+语义分析阶段中的 <code>transDec</code> 通过调用 <code>Translate.newLevel</code> 为每个函数声明创建一个新的嵌套层级. 这个函数又调用 <code>Frame.newFrame</code> 创建了一个新的栈帧. <code>Semant</code> 将 <code>level</code> 保存在此函数的 <code>FunEntry</code> 数据结构中, 使得每遇到一个函数调用时, 可以将被调用函数( <code>FunEntry</code> )的 <code>level</code> 字段传回 <code>Translate</code> 模块.  <code>FunEntry</code> 也需要函数的机器代码的入口处作为 <code>label</code> 字段.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">Env</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #777778;">(** &#26032;&#29256;&#26412;&#30340;VarEntry&#21644;FunEntry : *)</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">enventry</span> <span style="color: #f0e68c;">=</span>
+      <span style="color: #d4d4d4; background-color: #1e1e1e;">VarEntry</span> <span style="color: #339CDB;">of</span> <span style="color: #f0e68c;">{</span> access<span style="color: #f0e68c;">:</span><span style="color: #35CDAF;">Translate.</span>access<span style="color: #f0e68c;">;</span> ty<span style="color: #f0e68c;">:</span>ty <span style="color: #f0e68c;">}</span>
+    <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">FunEntry</span> <span style="color: #339CDB;">of</span> <span style="color: #f0e68c;">{</span>
+        level<span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">Translate.</span>level<span style="color: #f0e68c;">;</span>
+        label<span style="color: #f0e68c;">:</span> <span style="color: #35CDAF;">Temp.</span>label<span style="color: #f0e68c;">;</span>
+        formals<span style="color: #f0e68c;">:</span> ty list<span style="color: #f0e68c;">;</span>
+        result<span style="color: #f0e68c;">:</span> ty
+      <span style="color: #f0e68c;">}</span>
+
+      <span style="color: #f0e68c;">...</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+当 <code>Semant</code> 处理一个位于层级为 <code>lev</code> 的局部变量时, 它会调用 <code>Translate.allocLocal lev esc</code> 在本层级中创建一个变量. 参数 <code>esc</code> 表示是否是逃逸变量. 其返回结果为 <code>Translate.access</code>, 这是一个抽象数据类型(但不同于 <code>Frame.access</code>, 因为它必须包含关于静态链的信息). 之后, 当变量在一个表达式中被使用时,  <code>Semant</code> 可以将其 <code>access</code> 传回 <code>Translate</code> , 以便于生成访问此变量的机器代码. 与此同时, Semant在值环境中记录着每个 <code>VarEntry</code> 中 <code>access</code> .
+</p>
+
+
+<p>
+抽象数据类型  <code>Translate.access</code> 可以被实现为变量的level和其 <code>Frame.access</code> 的偶对:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">access</span> <span style="color: #f0e68c;">=</span> level <span style="color: #f0e68c;">*</span> <span style="color: #35CDAF;">Frame.</span>access
+</pre>
+</div>
+<p>
+使得 <code>Translate.allocLocal</code> 能调用 <code>Frame.allocLocal</code>, 并且还可以记住变量是位于哪个层级的. 层级信息稍后在计算静态链时要用到, 变量可能从一个不同的层级中被访问. 
+</p>
+
+
+<p>
+<code>Frame</code> 应该独立于被编译的特定语言.许多语言没有嵌套的函数声明.因此Frame不应包含关于静态链的信息, 这是 <code>Translate</code> 的责任.
+<code>Translate</code> 知道每个栈帧包含着一个静态链. 静态链用寄存器被传给一个函数, 并将其存储到栈帧中.因为静态链表现得如此接近于一个形式参数, 我们将它看成是一个形参. 对于一个有着k个正常参数的函数,令 <code>l</code> 是标识其参数是否为逃逸变量的bool列表.则:
+<code>l' = true::l</code> 是一个新的list. 额外的true标识着静态链这个额外参数是逃逸的. 于是 <code>newFrame(label,l')</code> 创建了一个包含额外参数和其形参的栈帧. 
+</p>
+
+<p>
+例: 函数 <code>f(x,y)</code> 被嵌套在函数 <code>g</code> 中.并且g的level被记为 <code>lev_g</code>. 于是 <code>Semant.transDec</code> 可以调用:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #35CDAF;">Translate.</span>newLevel <span style="color: #f0e68c;">{</span>parent<span style="color: #f0e68c;">=</span>lev_g<span style="color: #f0e68c;">;</span>name<span style="color: #f0e68c;">=</span>f<span style="color: #f0e68c;">;</span>formals<span style="color: #f0e68c;">=</span> <span style="color: #f0e68c;">[</span><span style="color: #339CDB;">false</span><span style="color: #f0e68c;">;</span><span style="color: #339CDB;">false</span><span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">}</span>
+</pre>
+</div>
+
+<p>
+并假设 <code>x,y</code> 都不是逃逸变量.于是 <code>Translate.newLevel</code> 为形参的 <code>bool</code> 列表又加了一个元素:
+</p>
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #35CDAF;">Frame.</span>newFrame <span style="color: #f0e68c;">{</span> label<span style="color: #f0e68c;">,</span> <span style="color: #f0e68c;">[</span><span style="color: #339CDB;">true</span><span style="color: #f0e68c;">;</span><span style="color: #339CDB;">false</span><span style="color: #f0e68c;">;</span><span style="color: #339CDB;">false</span><span style="color: #f0e68c;">]</span> <span style="color: #f0e68c;">}</span> 
+</pre>
+</div>
+
+<p>
+它会返回一个 <code>frame</code> . 在这个 <code>frame</code> 中,有三个栈帧偏移类型的值, 可以通过  <code>Frame.formals(frame)</code> 来访问. 返回值的首个元素是静态链在栈帧中的偏移量, 其它两个是参数 <code>x, y</code> 的偏移量.当 <code>Semant</code> 调用  <code>Translate.formals(level)</code> 时 , 它会得到这两个偏移量,并将其转换为 <code>access</code> 类型的值.
+</p>
+
+<p>
+对层级保持追踪
+</p>
+
+<p>
+每次对 <code>Translate.newLevel</code> 进行调用, <code>Semant</code> 必须传递外面这层的 <code>level</code> 值. 当为Tiger程序的main创建level时, Semant应当传递一个特殊的 <code>level</code> 值:  <code>Transale.outermost</code> . 它不是Tiger的main函数的level, 而是包含了main的过程的level.所有库函数位于这个 <code>outermost</code> 层级.
+</p>
+
+
+<p>
+函数 transDec 会为每个函数声明创建一个新的level, 但必须将外围函数的level传给newLevel. 这意味着 transDec 中必须包含了当前level的信息.
+</p>
+
+<p>
+实现这点是很容易的, 为transDec增加额外的参数, 代表了当前的level. 并且也为transExp增加一个level参数, 这样当遇到一个函数声明时便可将level传递给 transDec.
+</p>
+
+<p>
+transVar 也需要添加一个表示当前level的参数, 因为要通过计算level的差来决定访问几次静态链. 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9509d8a" class="outline-2">
+<h2 id="org9509d8a"><span class="section-number-2">3.</span> 中间表示</h2>
+<div class="outline-text-2" id="text-3">
+<div class="org-src-container">
+<pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">TREE</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>
+  <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #35CDAF;">exp</span> <span style="color: #f0e68c;">=</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Const</span> <span style="color: #339CDB;">of</span> int       <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">&#25972;&#25968;&#24120;&#37327;</span><span style="color: #579C4C;"> *)</span>
+           <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Name</span> <span style="color: #339CDB;">of</span> <span style="color: #35CDAF;">Temp.</span>label <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">&#31526;&#21495;&#24120;&#37327;,&#23545;&#24212;&#20110;&#27719;&#32534;&#20013;&#30340;&#26631;&#31614;</span><span style="color: #579C4C;"> *)</span>
+           <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Temp</span> <span style="color: #339CDB;">of</span> <span style="color: #35CDAF;">Temp.</span>temp  <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">&#22312;&#25277;&#35937;&#26426;&#22120;&#20013;&#30340;&#20020;&#26102;&#37327;,&#31867;&#20284;&#20110;&#30495;&#27491;&#26426;&#22120;&#20013;&#30340;&#23492;&#23384;&#22120;</span><span style="color: #579C4C;"> *)</span>
+           <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Binop</span> <span style="color: #339CDB;">of</span> binop <span style="color: #f0e68c;">*</span> exp <span style="color: #f0e68c;">*</span> exp <span style="color: #579C4C;">(* </span><span style="color: #579C4C;">&#20108;&#20803;&#36816;&#31639;</span><span style="color: #579C4C;"> *)</span>
+           <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Mem</span> <span style="color: #339CDB;">of</span> exp    <span style="color: #579C4C;">(*</span><span style="color: #579C4C;">&#22312;&#22320;&#22336;&#22788;&#38271;&#24230;&#20026;Frame.wordSize&#30340;&#20869;&#23481;,&#22312;&#24038;&#20391;&#21644;&#21491;&#20391;&#30340;&#29992;&#27861;&#19981;&#21516;</span><span style="color: #579C4C;">*)</span>
+           <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Call</span> <span style="color: #339CDB;">of</span> exp <span style="color: #f0e68c;">*</span> exp list <span style="color: #579C4C;">(*</span><span style="color: #579C4C;">&#36807;&#31243;&#35843;&#29992;</span><span style="color: #579C4C;">*)</span>
+           <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Eseq</span> <span style="color: #339CDB;">of</span> stm <span style="color: #f0e68c;">*</span> exp <span style="color: #579C4C;">(*</span><span style="color: #579C4C;">stm&#29992;&#20110;&#21103;&#20316;&#29992;,exp&#20316;&#20026;&#32467;&#26524;</span><span style="color: #579C4C;">*)</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">and</span> <span style="color: #85DDFF;">stm</span> <span style="color: #f0e68c;">=</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Move</span> <span style="color: #339CDB;">of</span> exp <span style="color: #f0e68c;">*</span> exp 
+          <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Exp</span> <span style="color: #339CDB;">of</span> exp
+          <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Jump</span> <span style="color: #339CDB;">of</span> exp <span style="color: #f0e68c;">*</span> <span style="color: #35CDAF;">Temp.</span>label list
+          <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Cjump</span> <span style="color: #339CDB;">of</span> relop <span style="color: #f0e68c;">*</span> exp <span style="color: #f0e68c;">*</span> exp <span style="color: #f0e68c;">*</span> <span style="color: #35CDAF;">Temp.</span>label <span style="color: #f0e68c;">*</span> <span style="color: #35CDAF;">Temp.</span>label
+          <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Seq</span> <span style="color: #339CDB;">of</span> stm <span style="color: #f0e68c;">*</span> stm
+          <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Label</span> <span style="color: #339CDB;">of</span> <span style="color: #35CDAF;">Temp.</span>label
+
+  <span style="color: #f5deb3; font-weight: bold;">and</span> <span style="color: #85DDFF;">binop</span> <span style="color: #f0e68c;">=</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Plus</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Minus</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Mul</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Div</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">And</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Or</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Xor</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Lshift</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Rshift</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Arshift</span>
+
+  <span style="color: #f5deb3; font-weight: bold;">and</span> <span style="color: #85DDFF;">relop</span> <span style="color: #f0e68c;">=</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Eq</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Ne</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Lt</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Gt</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Le</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Ge</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Ult</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Ule</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Ugt</span> <span style="color: #f0e68c;">|</span> <span style="color: #d4d4d4; background-color: #1e1e1e;">Uge</span>
+<span style="color: #f5deb3; font-weight: bold;">end</span>
+</pre>
+</div>
+
+<p>
+语句stm主要负责副作用和控制流
+</p>
+
+<ul class="org-ul">
+<li><code>Move(Temp t, e)</code> : 对e进行求值, 并将它移动到t中.</li>
+<li><code>Move(Mem(e1),e2)</code> : 对e1求值,得到地址a. 然后对e2进行求值, 将结果存储到以a为开始长度为wordSize的内存中.</li>
+<li><code>Exp(e)</code> 对e求值,并忽略结果.</li>
+<li><code>Jump(e,labs)</code> 将控制流转移至地址e处. 目标e必须是形式为 <code>Name(lab)</code> 的文本标签,或是可以被计算为一个地址的表达式. 例如 类C语言中的 <code>switch(i)</code> 语句可能通过在 <code>i</code> 上做算术来实现. 标签列表 <code>labs</code> 指定了所有e的可能的求值结果; 这对于之后的数据流分析是必要的. 跳往一个已知的标签可以用 <code>Jump(Name l, [l])</code> .</li>
+<li><code>Cjump(o,e1,e2,t,f)</code> 对e1,e2分别求值, 得到值 a, b. 然后使用关系运算符 <code>o</code> 对a,b进行比较. 若结果为true, 则跳到t; 否则跳到f. 使用 Eq, Ne 测试整数的相等性和不等性. 用Lt,Gt,Le,Ge比较有符号整数的大小关系.用Ult,Ugt,Ule,Uge比较无符号整数的大小关系.</li>
+<li><code>Seq(s1,s2)</code> 语句s1 s2组成的序列</li>
+<li><code>Label(n)</code> 定义一个名字常值n为当前机器码的地址. 这类似于汇编中的标签. <code>Name(n)</code> 的值可以作为jump,call等的目标.</li>
+</ul>
+</div>
+</div>
+</div>
+</body>
+</html>

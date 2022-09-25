@@ -168,6 +168,31 @@ $ ldd ./build/udpclient
 #+end_src
 
 
+* [[https://github.com/agentzh/code2ebook/][code2html]] 的使用
+
+先进入项目根目录: 
+
+1. 代码转html
+
+#+begin_src sh
+src2html.pl --tab-width 4 --color --cross-reference \
+            --navigator --line-numbers . <项目名>
+#+end_src
+
+
+2. html合成pdf
+#+begin_src sh
+ebook-convert html_out/index.html llvm_release_1.pdf \
+        --use-profile-size \
+        --paper-size a3 \
+        --pdf-default-font-size 13 \
+        --pdf-mono-font-size 13 \
+        --margin-left 5 --margin-right 5 \
+        --margin-top 5 --margin-bottom 5 \
+        --page-breaks-before='/'  
+#+end_src
+
+
 * wget 保存整个网站
 
 https://github.com/lujun9972/linux-document/blob/master/examples/10%20wget%20command%20examples.org
@@ -213,11 +238,16 @@ sudo apt-get update
 
 * 在ArchLinux中安装deb
 
+
+** debtap
+
+** dpkg 
 #+begin_src sh 
   yay -Sy dpkg
   
   dpkg -i  xxx.deb
 #+end_src
+
 
 * ssh 
 ** 重启ssh服务
