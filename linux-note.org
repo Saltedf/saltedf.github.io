@@ -42,6 +42,15 @@ git clone  -b fsf-gdb-10.1-with-sim<分支>   https://github.com/riscv-collab/ri
 #+end_src
 
 
+* docker
+
+恢复容器的运行 :  
+#+begin_src bash
+  sudo docker start `sudo docker ps -a -q`
+  sudo docker attach `sudo docker ps -aq`
+#+end_src
+
+
 * du -h 以可读形式显示文件大小 
 
 #+begin_src sh
