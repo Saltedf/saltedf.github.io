@@ -1,7 +1,35 @@
 #+TITLE: linux命令杂记
 #+OPTIONS: toc:t num:t minitoc:t
 #+include: mytheme.setup 
+#+startup: content
 
+
+* shell
+
+** 忽略错误继续执行
+#+begin_src bash
+set +e 
+#+end_src
+恢复默认:
+#+begin_src sh
+set -e
+#+end_src
+
+
+** 退出 exit n
+
+** 判断文件是否存在
+#+begin_src sh
+  if [ -f $1 ]
+  then
+
+  else
+
+  fi
+#+end_src
+
+
+n* git
 
 
 * git
@@ -42,6 +70,11 @@ git clone  -b fsf-gdb-10.1-with-sim<分支>   https://github.com/riscv-collab/ri
 #+end_src
 
 
+* grep -i 忽略大小写
+
+
+* fc-list 显示已安装字体
+
 * docker
 
 恢复容器的运行 :  
@@ -50,6 +83,7 @@ git clone  -b fsf-gdb-10.1-with-sim<分支>   https://github.com/riscv-collab/ri
   sudo docker attach `sudo docker ps -aq`
 #+end_src
 
+* tar fvx XXX
 
 * du -h 以可读形式显示文件大小 
 
@@ -256,6 +290,97 @@ sudo apt-get update
   
   dpkg -i  xxx.deb
 #+end_src
+
+
+* ~Xterm~ 配置文件
+#+begin_src sh
+  cat ~/.Xresources
+#+end_src
+
+修改后使配置生效: 
+#+begin_src sh
+  xrdb  ~/.Xresources
+  # or: 
+  xrdb -merge ~/.Xresources 
+#+end_src
+最后重启xterm.
+
+#+begin_src xml
+
+  ! font and locale
+  xterm.locale: true
+  xterm.utf8: true
+  xterm*utf8Title: true
+  xterm*fontMenu*fontdefault*Label: Default
+  ! 斜体在最后添加`:italic`
+  xterm*faceName: Sarasa Mono SC:antialias=true:style=Book
+  xterm*faceSize: 15
+  xterm*faceNameDoublesize: Sarasa Mono SC  ! Noto Sans CJK SC
+  xterm*renderFont: true
+  xterm*xftAntialias: true
+  xterm*cjk_width: true
+
+  ! 窗口设置
+  ! 窗口大小及位置
+  xterm*geometry: 80x25
+  xterm*dynamicColors: true
+  xterm*saveLines: 2048
+  xterm*scrollKey: true
+  xterm*scrollTtyOutput: false
+  xterm*scrollBar: true
+  xterm*rightScrollBar: true
+  xterm*jumpScroll: true
+  xterm*multiScroll: true
+  xterm*toolBar: false
+  xterm*Scrollbar*thickness: 10
+  xterm*Scrollbar*background: black
+  xterm*Scrollbar*foreground: gray90
+  xterm*background: rgb:1a/1a/1a
+  xterm*foreground: rgb:d6/d6/d6
+  xterm*cursorColor: rgb:d6/d6/d6
+
+  ! 提供xterm-256color类型支持
+  ! 如果修改后，没有得到正确的结果，说明你可能需要安装ncurses-term包来提供xterm-256color类型支持
+  xterm*termName: xterm-256color
+
+  ! 启用 Sixel 图形支持
+  xterm*decTerminalID: vt340
+
+  ! 配置选择文本自动复制到剪贴板
+  ! https://askubuntu.com/questions/237942/how-does-copy-paste-work-with-xterm
+  xterm*selectToClipboard: true
+
+  ! 启用“Ctrl+v”来复制
+  xterm*VT100.Translations: #override \
+  <Btn1Up>: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0) \n\
+  Ctrl <KeyPress> V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER0)
+
+  ! 解决Alt键不好使
+  xterm*eightBitInput: false
+  xterm*altSendsEscape: true
+
+  ! 配置主题
+  ! -- Tango color scheme
+  xterm*color0: #2e3436
+  xterm*color1: #cc0000
+  xterm*color2: #4e9a06
+  xterm*color3: #c4a000
+  xterm*color4: #3465a4
+  xterm*color5: #75507b
+  xterm*color6: #0b939b
+  xterm*color7: #d3d7cf
+  xterm*color8: #555753
+  xterm*color9: #ef2929
+  xterm*color10: #8ae234
+  xterm*color11: #fce94f
+  xterm*color12: #729fcf
+  xterm*color13: #ad7fa8
+  xterm*color14: #00f5e9
+  xterm*color15: #eeeeec
+
+#+end_src
+
+
 
 
 * ssh 
@@ -631,7 +756,7 @@ info watchpoints
 *** 切换栈帧
 up/down: 上一层栈帧/下一层栈帧
 
-frame N 切换到指定栈帧中
+~frame N~ / ~f N~ 切换到指定栈帧中
 
 
 ** 调试已经运行的程序
@@ -697,6 +822,195 @@ reverse-XXX
 * [[./cmake-learning.org][CMake]] 
 
 
+* cgroup v2
 
+
+查看cgroup 版本:
+#+begin_src sh
+cat /proc/mounts | grep cgroup
+#+end_src
+
+
+
+cgroup2(伪)文件系统位于:
+#+begin_src sh
+/sys/fs/cgroup
+#+end_src
+
+其文件系统类型是 ~cgroup2~
+其接口是通过文件系统来提供的.
+
+
+
+
+
+
+
+** 组成
+control groups 由两个部分组成:
+
+1. 一组进程
+2. 控制器(subsystem), 对进程组进行控制.
+
+control group: 一组进程出于资源管理的目的被绑在一起.这组进程共享同一个内存分配或者cpu
+
+
+** 功能
++ 限制组的资源使用
+  限制某个组的cpu可用百分比/ 可用内存的百分比
+
++ 调整组的资源分配优先级
+  例如网络带宽
+
++ 测量资源使用情况
+
++ 冻结一个组
+  通过不给这个组CPU时间, 并且在之后可以恢复他们.
+
+
+
+
+** 接口
+
+mkdir/rmdir 创建cgroups
+
+每个子目录包含了被自动创建出的文件.一些文件是用来管理cgroup自身的.(eg哪些进程属于这个cgroup)
+另一些是和特定的控制器相关的.
+
+
+
+
+** eg: pids控制器
+
+#+begin_src bash
+  sudo bash
+  cd /sys/fs/cgroup
+#+end_src
+
+#+begin_src sh
+  cat cgroup.controllers
+
+  cpuset cpu io memory hugetlb pids rdma misc
+#+end_src
+
+
+#+begin_src zsh
+  cat cgroup.subtree_control
+  
+  cpuset cpu io memory pids
+#+end_src
+
+创建一个cgroup
+#+begin_src zsh
+  mkdir mygrp
+#+end_src
+
+
+将当前shell进程移入这个组:
+#+begin_src zsh
+echo $$ > mygrp/cgroup.procs
+#+end_src
+
+#+begin_src zsh
+  cat cgroup.procs
+
+  106480
+  106851
+#+end_src
+一个pid是bash, 另一个是bash的子进程 cat.
+fork创建出的子进程自动和父进程同属一个cgroup.
+
+
+
+
+查看当前进程所在的cgroup信息:
+
+#+begin_src zsh
+cat /proc/$$/cgroup
+
+0::/mygrp
+#+end_src
+
+
+查看当前cgroup中有几个进程:
+#+begin_src sh
+  cat mygrp/pids.current
+
+  2
+#+end_src
+
+查看最大容许的进程数量
+#+begin_src sh
+  cat mygrp/pids.max
+
+  max # 代表没有限制
+#+end_src
+
+echo 5 > mygrp/pids.max
+#+begin_src sh
+  echo 4 >  mygrp/pids.max 
+  cat mygrp/pids.max
+
+  4
+#+end_src
+
+
+然后通过这个shell创建多个sleep进程, 可以观察到无法创建出更多进程了.
+
+#+begin_src sh
+  for j in $(seq 1 5); do sleep 60 & done
+
+  [1] 109424
+  [2] 109425
+  [3] 109426
+  bash: fork: retry: Resource temporarily unavailable
+  bash: fork: retry: Resource temporarily unavailable
+  bash: fork: retry: Resource temporarily unavailable
+  bash: fork: retry: Resource temporarily unavailable
+  bash: fork: Resource temporarily unavailable
+#+end_src
+
+** 删除cgroup
+
+无法直接rmdir非空的(有进程)cgroup.
+
+先将shell进程移动到父cgroup中
+
+#+begin_src sh
+echo $$ > /sys/fs/cgroup/cgroup.procs 
+#+end_src
+然后查看mygrp中的进程个数:
+#+begin_src sh
+  cat /sys/fs/cgroup/mygrp/pids.current
+
+  0
+#+end_src
+为零, 可见顺利将shell移出了mygrp. 
+
+
+此时可以用rmdir成功删除之前创建的cgroup.
+(那些被内核自动创建出来的文件无需删除,也无法被删除)
+
+
+** 控制器概览
+
+*** cpu
+ 限制并测量cpu的使用. 有两种模式, 可以混合使用:
+  - 比例权重(默认) 
+  - 带宽控制模式 
+
+
+权重模式只在发生cpu争用时才会施加限制:
+
+#+attr_html: :width 500px
+[[file:org-images/2023-03-21_16-03-41_screenshot.png]]
+
+
+带宽模式即使在没有其它组的进程时也会严格施加限制:
+
+#+attr_html: :width 500px
+[[file:org-images/2023-03-21_16-06-41_screenshot.png]]
+
+*** cpuset: 控制cpu和内存亲和度
 
 

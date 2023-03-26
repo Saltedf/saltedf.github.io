@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-12-16 五 20:59 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Org Mode</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">Org Mode</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org461683b">1. 简介</a>
+<ul>
+<li><a href="#orge50a8a2">1.1. org文件header</a></li>
+<li><a href="#orgb33473f">1.2. 设置时间 <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-12-16 五 23:00&gt;&#x2013;&lt;2022-12-16 五 23:40&gt;</span></span></a>
+<ul>
+<li><a href="#orgcdbb39a">1.2.1. 开始时间&amp;截止时间</a></li>
+</ul>
+</li>
+<li><a href="#org12abff5">1.3. gtd简介</a>
+<ul>
+<li><a href="#org1de0c5a">1.3.1. 任务分类流程</a></li>
+</ul>
+</li>
+<li><a href="#org43b1720">1.4. 设置tag</a></li>
+<li><a href="#orgb4191c9">1.5. agenda</a></li>
+<li><a href="#org1d4422d">1.6. 归档 archieve</a></li>
+<li><a href="#orgc000d9a">1.7. 动态生成图片</a></li>
+</ul>
+</li>
+<li><a href="#org3938150">2. Example</a>
+<ul>
+<li><a href="#org101e999">2.1. inbox</a>
+<ul>
+<li><a href="#orge2bc967">2.1.1. 读rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#orga3ea90b">2.1.2. 看cranelift源码&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_compiler">@compiler</span></span></a></li>
+</ul>
+</li>
+<li><a href="#orgd9e0688">2.2. mytask <span class="timestamp-wrapper"><span class="timestamp">[2020-11-01 日]</span></span></a></li>
+<li><a href="#org1764f15">2.3. mytask2 <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-12-16 五 19:00&gt;</span></span></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org461683b" class="outline-2">
+<h2 id="org461683b"><span class="section-number-2">1.</span> 简介</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+<code>desktop-save-mode</code> 
+</p>
+
+<p>
+<code>shift + 方向键</code> or <code>C-c C-t</code>: 切换 <code>todo/done</code>
+</p>
+
+<p>
+<code>shift+tab</code> 全文折叠
+</p>
+</div>
+
+
+<div id="outline-container-orge50a8a2" class="outline-3">
+<h3 id="orge50a8a2"><span class="section-number-3">1.1.</span> org文件header</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+<code>C-c C-c</code> 使配置生效
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org"><span style="color: #83898d;">#+STARTUP: indent  &#26174;&#31034;&#32553;&#36827;,</span>
+<span style="color: #83898d;">#+STARTUP: content  &#40664;&#35748;&#19981;&#26174;&#31034;&#26631;&#39064;&#19979;&#30340;&#20869;&#23481;</span>
+<span style="color: #83898d;">#+STARTUP: showall &#23637;&#24320;&#25152;&#26377;&#20869;&#23481;(&#19981;&#21253;&#21547;drawer)</span>
+<span style="color: #83898d;">#+STARTUP: showeverything &#23637;&#24320;&#25152;&#26377;, &#21253;&#25324;drawer</span>
+<span style="color: #83898d;">#+STARTUP: logdone &#33258;&#21160;&#28155;&#21152;CLOSE (&#23436;&#25104;&#26102;&#38388;)</span>
+           ;;(setq org-log-done 'time)
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-org"><span style="color: #83898d;">#+TAGS: @rust(r)  @compiler(c)</span>
+<span style="color: #83898d;">#+TODO: TODO(t) SCH(s) WAIT(w) | DONE(d) CANCELED(c) </span>
+</pre>
+</div>
+
+<p>
+this is a drawer
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-orgb33473f" class="outline-3">
+<h3 id="orgb33473f"><span class="section-number-3">1.2.</span> 设置时间 <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-12-16 五 23:00&gt;&#x2013;&lt;2022-12-16 五 23:40&gt;</span></span></h3>
+<div class="outline-text-3" id="text-1-2">
+<ul class="org-ul">
+<li><code>C-c .</code>  在日历中设置激活时间 尖括号(在agenda中显示)</li>
+<li>静态时间(方括号) <code>[2020-11-01 日]</code> 输入日期后 <code>C-c C-c</code> 自动补充星期.(文本, 不显示在agenda中)</li>
+<li>在日期上按 <code>C-c .</code> 可修改时间.  +1,  18, 07-18 &#x2026;.</li>
+<li>时间区间(长): <code>&lt;2022-12-16 五 23:00&gt;--&lt;2023-12-01 五&gt;</code> 两次 <code>C-c .</code></li>
+<li>小时区间 : <code>&lt;2022-12-16 五 23:00-23:40&gt;</code></li>
+<li>用 <code>C-c C-c</code> 来格式化时间</li>
+</ul>
+</div>
+
+<div id="outline-container-orgcdbb39a" class="outline-4">
+<h4 id="orgcdbb39a"><span class="section-number-4">1.2.1.</span> 开始时间&amp;截止时间</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<ol class="org-ol">
+<li><p>
+预计开始时间schedule: <code>C-c C-s</code>
+</p>
+
+<p>
+<code>SCHEDULED: &lt;2022-12-16 五 21:00&gt;</code>
+</p></li>
+
+<li><p>
+最后期限deadline: <code>C-c C-d</code>
+</p>
+
+<p>
+<code>DEADLINE: &lt;2022-12-16 五 23:00&gt;</code>
+</p></li>
+</ol>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org12abff5" class="outline-3">
+<h3 id="org12abff5"><span class="section-number-3">1.3.</span> gtd简介</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+<div id="outline-container-org1de0c5a" class="outline-4">
+<h4 id="org1de0c5a"><span class="section-number-4">1.3.1.</span> 任务分类流程</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<ol class="org-ol">
+<li>是否可执行?
+<ul class="org-ul">
+<li>否则: 
+<ul class="org-ul">
+<li>Trash: 不做了</li>
+<li>Someday/maybe: 暂时做不了, 没法做</li>
+<li>reference: 参考/收藏..</li>
+</ul></li>
+</ul></li>
+
+<li>是否可一口气完成(非项目)
+<ul class="org-ul">
+<li>否则将其作为项目进行管理: "plan project" (将其拆分为若干一步可执行的小任务)</li>
+</ul></li>
+</ol>
+
+
+<ol class="org-ol">
+<li>所需时间是否超过两分钟?
+<ul class="org-ul">
+<li>不超过就马上开始!</li>
+</ul></li>
+
+<li>是否一定要亲自去做?
+<ul class="org-ul">
+<li>否则加入到 "waiting for" 清单</li>
+<li>新增一个交付任务</li>
+</ul></li>
+
+<li>是否要在特定日期来做?
+<ul class="org-ul">
+<li>若是, 则记录到日历中</li>
+<li>否则, 加入到 "context task" (执行清单?) ,设置schedule</li>
+</ul></li>
+</ol>
+
+<p>
+inbox/next-step/project/someday-maybe/wait-for/日历
+</p>
+
+<p>
+回顾: 重设时间, 删除任务, 及时更新清单!!!
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org43b1720" class="outline-3">
+<h3 id="org43b1720"><span class="section-number-3">1.4.</span> 设置tag</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+<code>C-c C-c</code> 进行快速设置.
+</p>
+
+
+
+<div id="org5f17186" class="figure">
+<p><img src="org-images/screenshot_2022-12-16_15-26-24.png" alt="screenshot_2022-12-16_15-26-24.png" width="320px" />
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+<div id="outline-container-orgb4191c9" class="outline-3">
+<h3 id="orgb4191c9"><span class="section-number-3">1.5.</span> agenda</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+<code>C-c [</code> 将当前文件加入到agenda搜寻路径.
+一般将 <code>C-c a</code> 设为
+<code>org-agenda:</code>
+</p>
+
+<ul class="org-ul">
+<li><code>a</code> 本周/今日计划
+<ul class="org-ul">
+<li>空格/tab: 显示详情</li>
+<li>t: 切换状态</li>
+<li>g: 刷新</li>
+<li>s: save</li>
+</ul></li>
+</ul>
+
+<p>
+<code>+ t</code> 所有todo事项
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org1d4422d" class="outline-3">
+<h3 id="org1d4422d"><span class="section-number-3">1.6.</span> 归档 archieve</h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+<code>C-c $</code>
+</p>
+
+<p>
+将条目移动到同名文件加后缀archieve的另一文件中.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc000d9a" class="outline-3">
+<h3 id="orgc000d9a"><span class="section-number-3">1.7.</span> 动态生成图片</h3>
+<div class="outline-text-3" id="text-1-7">
+
+<div id="orgdd22763" class="figure">
+<p><img src="./org-images/temp1.svg" alt="temp1.svg" class="org-svg" />
+</p>
+</div>
+
+
+
+
+<div id="org0069bd3" class="figure">
+<p><img src="./org-images/temp2.svg" alt="temp2.svg" class="org-svg" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org3938150" class="outline-2">
+<h2 id="org3938150"><span class="section-number-2">2.</span> Example</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org101e999" class="outline-3">
+<h3 id="org101e999"><span class="section-number-3">2.1.</span> inbox</h3>
+<div class="outline-text-3" id="text-2-1">
+</div>
+<div id="outline-container-orge2bc967" class="outline-4">
+<h4 id="orge2bc967"><span class="section-number-4">2.1.1.</span> 读rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h4>
+</div>
+
+<div id="outline-container-orga3ea90b" class="outline-4">
+<h4 id="orga3ea90b"><span class="section-number-4">2.1.2.</span> 看cranelift源码&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_compiler">@compiler</span></span></h4>
+</div>
+</div>
+
+<div id="outline-container-orgd9e0688" class="outline-3">
+<h3 id="orgd9e0688"><span class="section-number-3">2.2.</span> mytask <span class="timestamp-wrapper"><span class="timestamp">[2020-11-01 日]</span></span></h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+hello mytask
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1764f15" class="outline-3">
+<h3 id="org1764f15"><span class="section-number-3">2.3.</span> mytask2 <span class="timestamp-wrapper"><span class="timestamp">&lt;2022-12-16 五 19:00&gt;</span></span></h3>
+<div class="outline-text-3" id="text-2-3">
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

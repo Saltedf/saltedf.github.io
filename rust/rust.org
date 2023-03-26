@@ -1,8 +1,33 @@
 #+title: the rust book 
 #+include: ../mytheme.setup
-
+#+startup: overview 
 
  [[./rust-cli.org][RUST CLI]] 
+
+
+* Unsafe
+
+将值"偷"出来, 用垃圾值给原位置占位
+#+begin_src rust
+  let value = mem::replace(&mut node.value, V::default());
+  // value 是我们想要取出来(拿走所有权)的值
+#+end_src
+
+
+
+申请并泄漏内存(不会自动drop)
+#+begin_src rust
+let ptr : NonNull<_> = Box::leak(Box::new(...)).into();
+#+end_src
+
+? mem::forget()
+
+回收Box::leak()的内存
+#+begin_src rust
+  let value : Box<T> = Box::from_raw(NonNull::as_ptr())
+  drop(value)
+#+end_src
+
 
  
 * cargo
@@ -61,6 +86,12 @@ cargo install cargo-expand
 
 
 
+
+* 常用的宏
+
+line!()
+column!()
+file!()
 
 * 数据类型
 
@@ -1720,6 +1751,73 @@ panic = 'abort'
 4. 存在无效的值/格式  
 
 
+* 闭包
+
+** 函数和闭包的关系:
+函数的类型是 ~fn(xx) -> yy~ 的形式, 它实现了 特质 Fn/FnMut/FnOnce.
+而闭包本质上是实现了 Trait: Fn(x)->y / FnMut / FnOnce 的一个 *结构体* 类型, 因此无法写出其准确类型, 只能用trait对象的写法来"约束"其类型:
+eg: ~&dyn Fn(T) -> S~
+eg: ~Box<dyn Fn(T) -> S>~
+
+** 闭包的两种写法
+主要区别是是否加了 ~move~ !
+move的作用是把闭包中以 *借用方式使用* 的变量的 *所有权* 转移到闭包中. 
+要注意的是, 即便没有move, 在闭包中直接以拥有所有权的方式使用闭包时, 也会发生所有权的转移, move只会影响那些以借用方式被使用的变量.
+
+#+begin_src rust
+    let vec = vec![12,23,4];
+    let ticket = | |{ vec;0 };  // FnOnce()
+    //println!("{:?}",vec); //vec 已经被moved, 不能再使用
+    ticket();
+    // 因此这种闭包只能被调用一次!!  FnOnce()
+    // ticket(); // ERR!! 使用了被moved的值.
+#+end_src
+
+#+begin_src rust
+    let vec = vec![12,23,4];
+    let ticket = | |{ &vec;0 }; // Fn()
+    println!("{:?}",vec); // vec只是在闭包中被不可变借用
+    ticket();
+    ticket(); // 可以反复调用. Fn()
+#+end_src
+
+#+begin_src rust
+    let vec = vec![12,23,4];
+    let ticket = move | |{ &vec;0 }; // Fn()
+    //println!("{:?}",vec); //vec 已经被moved, 不能再使用
+    ticket();
+    ticket(); // 可以反复被调用. Fn(), 不会消耗闭包对象(结构体)
+#+end_src
+
+Trait ~FnOnce~ 不是由是否有 所有权的转移 来区分的. 只要闭包中包含了 *不用move*,以转移所有权的方式捕获的变量, 它必须是FnOnce类型.
+FnOnce中只有消耗闭包的函数调用.(可见下一小节中的两个例子)
+
+Trait ~Fn~ 适用于那些闭包中仅仅以不可变借用方式使用了外部变量. Fn 有借用闭包进行函数调用的方法, 同样也具备了FnMut和FnOnce的调用方式.
+Trait ~FnMut~ 适用于那些闭包中以可变借用方式使用了外部变量, 但没有发生所有权的转移! FnMut 有以可变借用进行函数调用的方式, 同样也具备了FnOnce的调用方式.
+
+** 闭包作为返回值
+
+1. 只能返回堆上分配的闭包 Box<dyn FnXX() -> ()>. 不能是栈上的.
+2. 若闭包内有 *引用* 捕获的外部变量, 则要加上move.
+
+#+begin_src rust
+fn make_closure(x: i32) -> Box<dyn Fn(i32) -> i32> {  // Fn即可!
+    let s = String::new();
+    let f = move |a| { s.parse::<i32>().unwrap() +a}; // s在闭包内被借用
+    Box::new(f)
+}
+#+end_src
+
+#+begin_src rust
+fn make_closure(x: i32) -> Box<dyn FnOnce(i32) -> i32> { // 必须用FnOnce!! 因为有所有权捕获的变量!
+    let s = String::new();
+    let will_be_moved = "abc".to_string();
+    let f = move |a| { will_be_moved; s.parse::<i32>().unwrap() + a}; // 所有权捕获 + 借用捕获
+    Box::new(f)
+}
+#+end_src
+
+
 * 包和模块
 
 + Module:一个文件可以是一个模块, 也可以一个文件中有多个模块
@@ -2234,7 +2332,7 @@ X进制: ~#x~ / ~#X~ / ~#b~ /  ~#o~
 
 &str的前X个字符
 #+begin_src rust
-    println!("{:.3}", "zxcvbnm"); //   zxc
+  println!("{:.3}", "zxcvbnm"); //   zxc
 #+end_src
 
 
@@ -2290,7 +2388,9 @@ X进制: ~#x~ / ~#X~ / ~#b~ /  ~#o~
 
 * [x]智能指针
 
-离开作用域后自动被drop 
+
+离开作用域后自动被drop
+Automatically call drop() after exiting the scope. 
 
 ** ~Box<T>~ 
 
@@ -2398,7 +2498,7 @@ X进制: ~#x~ / ~#X~ / ~#b~ /  ~#o~
 ~s.into_boxed_str~ : 拿走 ~String~ 的所有权, 并返回一个 ~Box<str>~
 
 
-** 解引用 Deref 
+** 解引用 ~Deref~  
 
 rust中能用 ~*~ 进行解引用的类型是引用. 因此, 为了让各种智能指针也能使用解引用, 需要将其转为引用类型, trait ~Deref~ 提供了这个方法, 并且不需要手动调用:
 
@@ -2448,7 +2548,7 @@ rust中能用 ~*~ 进行解引用的类型是引用. 因此, 为了让各种智�
 + 多重引用转常规一层引用
 
 
-** Drop
+** ~Drop~ 
 
 Drop 有两种:
 
@@ -2689,20 +2789,35 @@ Drop 有两种:
 ** Rc+RefC
 
 
+
+* 时间
+
+
+** 计算时间差
+#+begin_src rust
+  let start = Instant::now();
+
+  Instant::now().sub(start);
+#+end_src
+
+
+
 * 多线程
 
 多线程的问题:
 1. 竞态条件 (争抢)
-2. 死锁 (过于谦让)
+2. 死锁 
+
+#+attr_html: :width 320px
+[[file:org-images/2023-03-03_15-39-33_screenshot.png]]
 
 何时需要线程
 
 当大部分任务处于阻塞状态时, 可以创建更多线程.这样可以将阻塞的线程换下来. 
 
-
 ** 基本线程管理
 
-*** 创建线程
+*** 创建线程 spawn()
 
 **** 创建线程并运行 ~spawn()~ 
 
@@ -2746,7 +2861,47 @@ spawn()意为生出,生产.
 
 
 
+
+*** 获得某个线程的信息 id(), name()
+
+1. 在当前线程内调用 thread::current().id() .name()
+
+2. 在持有其句柄的情况: handle.thread().id()/.name()
+
+*** 阻塞线程 park()/unpark()
+
+暂停当前线程, 只能由这个线程本身调用 thread::park() 来进行.
+
+而恢复一个线程,需要持有其JoinHandle的另一个线程来调用 ~h.thread().unpark()~.
+
+#+begin_src rust
+  let handle = thread::spawn(||{
+      thread::park(); // 阻塞线程
+      println!("hello!");
+  });
+  
+  println!("world");
+
+  handle.thread() // 获得线程对象
+    .unpark(); // 恢复线程的执行
+#+end_src
+
+调用park() 后, 线程仍有可能被"假唤醒", 需要额外检测是否真的满足唤醒条件!
+#+begin_src rust
+  while !满足条件 {
+      thread::park();
+  }
+#+end_src
+
+
 *** 线程休眠 sleep()
+
+
+*** 主动放弃当前时间片 yield_now()
+
+不是阻塞线程! 而是线程主动放弃CPU. 该线程下次仍会被正常调度.
+
+较少使用, 主要用在重复轮询. 应该考虑优先使用channel/mutex/Condvar. 
 
 
 *** 等待子线程 join()
@@ -2792,6 +2947,8 @@ main thread: 4
 
 
 *** 线程的结束
+
+**** 正常
 rust不提供直接kill线程的接口.
 线程的运行结果分为两种:
 + 自动结束: 代码执行完毕 
@@ -2799,24 +2956,26 @@ rust不提供直接kill线程的接口.
   + 阻塞等待事件
   + 死循环,不阻塞 
 
+**** 线程panic
+主线程panic时会使得其他线程也被终止, 而子线程panic()会进行正常的资源清理, 并且在其他线程中能访问其panic消息
 
 
-
-*** 线程局部变量 ~thread_local!{}~ 
+*** 线程局部变量 ~thread_local!{ }~ 
 
 **** 使用原因:
+
 0. 最大的作用是将那些代码逻辑依赖 *全局变量* 的 *非* 线程安全函数在不进行大改动(即不修改接口)的情况下,改写为线程安全的版本. 
 1. 创建线程的闭包不能创建 ~static~ 变量
 2.  ~thread_loacl~ 变量适用于那些初始化成本高耗时长的数据(远大于拷贝数据的成本)  
 
 **** 要点: 
-+ 被包裹的变量必须是 *静态static* 的. 不能用mut修饰(可以用 ~RefCell~)
++ 被thread_local!包裹的变量必须是 *静态static* 的. 不能用mut修饰(可以用 ~RefCell~)
 + 每个线程有独立的值, 数据不共享.
 + 用 ~.with(|val| {..})~ 的方式取得值. 
-+ 线程局部变量可以放在结构体的 ~impl~ 中, 通过 ~MyStruct::FOO~ 的方式来指定它.
++ 线程局部变量可以放在结构体的 ~impl{ }~ 中, 通过 ~MyStruct::FOO~ 的方式来指定它.
 + 它的引用类型为 ~&'static LocalKey<XX>~
   
-
+eg1:
 #+begin_src rust
   thread_local! {
       static LOCAL: u32 = 100;  // <<===!!
@@ -2835,19 +2994,665 @@ rust不提供直接kill线程的接口.
       job.join().unwrap();
   }
 #+end_src
+
+
+eg2: "可变"的 thread_loacl
+#+begin_src rust
+thread_local! {
+    static FOO : RefCell<u32> = RefCell::new(1);
+}
+
+#[test]
+fn thread_local() {
+    use std::cell::RefCell;
+    // 在主线程中修改自己的那个FOO:
+    FOO.with(|f| {
+        *f.borrow_mut() = 123;
+    });
+
+    // 在子线程中读取FOO, 并修改
+    let child = thread::spawn(|| {
+        FOO.with(|f| {
+            eprintln!("child: {}", *f.borrow());
+            *f.borrow_mut() = 0;
+        })
+    });
+
+    child.join().expect("join()");
+
+    // 在父线程中查看
+    FOO.with(|f| {
+        eprintln!("main: {}", *f.borrow());
+}
+#+end_src
+
+
+
 第三方的 ~thread_local~ , 支持汇总各个线程局部变量的值. 
 https://github.com/Amanieu/thread_local-rs
+
+
+** 线程间的数据共享&通信
+(对通信来讲, 更倾向于使用Channel的方式,而不是Arc+Mutex)
+
+*** [共享内存] Arc + Mutex(data)
+
+#+begin_src rust
+  data.clone() // -> 通过Arc克隆指针, 获得一部分所有权
+      .lock() // -> 阻塞式尝试加锁 Result
+      .unwrap() // -> MutexGraud 指针, 可修改数据
+#+end_src
+
+try_lock() 非阻塞, 试图加锁. 
+     
+#+begin_src rust
+#[test]
+fn thread_barrier() {
+    use std::sync::Arc;
+    use std::sync::Barrier;
+    use std::thread;
+
+    let mut handles = Vec::with_capacity(6);
+
+    // 创建 barrier:
+    // 1. Arc + Barrier
+    // 2. 指定使用此barrier的线程数
+    let barrier = Arc::new(Barrier::new(6));
+
+    for _ in 0..6 {
+        let b = barrier.clone();
+        handles.push(thread::spawn(move || {
+            println!("before barrier");
+            b.wait();
+            println!("after barrier");
+        }));
+    }
+    for h in handles {
+        h.join().unwrap();
+    }
+}
+
+    });
+}
+
+
+
+// 通过共享内存来进行线程的通信
+
+#[test]
+fn single_producer_single_consumer() {
+    use std::sync::mpsc;
+    use std::thread;
+
+    let (s, r) = mpsc::channel();
+
+    thread::spawn(move || {
+        s.send(233).unwrap();
+    });
+    // recv() 会阻塞线程. 直到受到信息/通道关闭
+    // (因此这里main线程不用join子线程 )
+    eprintln!("main receive: {}", r.recv().unwrap());
+}
+
+// 用不阻塞的try_recv():
+// 返回值有三类
+// main try receive: Err(Empty) 未收到消息
+// main try receive: Ok("233")
+// main try receive: Err(Disconnected) 管道已断开
+#[test]
+fn single_producer_single_consumer_nonblock() {
+    use std::sync::mpsc;
+    use std::thread;
+
+    let (p, c) = mpsc::channel();
+
+    let child = thread::spawn(move || {
+        p.send("233").unwrap();
+    });
+
+    // child.join().unwrap();
+
+    loop {
+        let res = c.try_recv();
+        eprintln!("main try receive: {:?}", res);
+        if res == Err(mpsc::TryRecvError::Disconnected) {
+            break;
+        }
+    }
+}
+
+// send 会根据是否实现Copy来选择拷贝被发送的数据,还是move被发送的数据 (和clone无关)
+#[test]
+fn send_move_or_copy() {
+    use std::sync::mpsc;
+    use std::thread;
+
+    let (tx, rx) = mpsc::channel();
+
+    let child = thread::spawn(move || {
+        let s = String::from("hello world");
+        tx.send(s).expect("send error");
+        // s已经被move: 	eprintln!("{}", s);
+    });
+
+    let r = rx.recv().unwrap();
+    println!("Got : {}", r);
+}
+
+// 可用for res in rx { }
+// 从 receive端连续接收数据, 无需手动 .recv()
+// 当发送者被drop/通道关闭后 for 循环终止
+#[test]
+fn receive_from_channel_continuously() {
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    let (tx, rx) = mpsc::channel();
+    thread::spawn(move || {
+        let vals = vec![
+            String::from("how"),
+            String::from("are"),
+            String::from("you"),
+            String::from(" ?"),
+        ];
+        for val in vals {
+            tx.send(val).unwrap();
+            thread::sleep(Duration::from_secs(1));
+        }
+    });
+
+    for recv in rx {
+        println!("got: {}", recv);
+    }
+}
+
+// 多个发送者,
+// 仍用channel() 创建通道
+// 不同之处在于要clone()出多个发送者
+// 当所有发送者都被drop后, recv才会接收到错误信息, 从而跳出循环
+// 下面的代码会多创建出一个sender, 因此 下面的for不会自然停止.
+// 除非 手动将tx drop掉
+
+#[test]
+fn multiple_producers() {
+    use std::sync::mpsc;
+    use std::thread;
+
+    let (tx, rx) = mpsc::channel();
+
+    let mut handles = Vec::with_capacity(2);
+    for i in 0..2 {
+        // 创建线程前先clone出发送端.
+        let sender = tx.clone();
+
+        let child = thread::spawn(move || {
+            sender
+                .send(format!("this msg is from thread {}", i))
+                .unwrap();
+        });
+        handles.push(child);
+    }
+
+    drop(tx);
+    for res in rx {
+        eprintln!("got: {}", res);
+    }
+}
+
+// channel() 是异步发送的管道. 无论对段是否接收到消息, 发送端会立刻完成send()方法.
+// sync_channel() 创建出的是同步发送的通道, send()直到接收端成功接收到信息后才会返回.
+#[test]
+fn sync_channel_without_buffer() {
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    let (tx, rx) = mpsc::sync_channel(0);
+
+    let handle = thread::spawn(move || {
+        tx.send("fuck").unwrap(); // 阻塞 !
+        eprintln!("完成发送!")
+    });
+
+    thread::sleep(Duration::from_secs(5));
+    eprintln!("got: {}", rx.recv().unwrap());
+
+    handle.join().unwrap();
+}
+
+// sync_channel(N) 接收一个参数作为缓冲区的大小, 当缓冲区满时, send()会发生阻塞.否则send() 将立刻返回.
+
+#[test]
+fn sync_channel_with_buffer() {
+    use std::sync::mpsc;
+    use std::thread;
+    use std::time::Duration;
+
+    let (tx, rx) = mpsc::sync_channel(1);
+
+    let handle = thread::spawn(move || {
+        tx.send("fuck").unwrap(); // 被成功接收
+        eprintln!("Send the first message.");
+        tx.send("you").unwrap(); // 被存入通道的buffer
+        eprintln!("Send the second message.");
+        tx.send(" !").unwrap(); // buffer已满且对端未接收, 会阻塞在此处 !
+        eprintln!("Send the third message.");
+    });
+
+    eprintln!("got :{}", rx.recv().unwrap());
+    handle.join().unwrap();
+}
+// 所有发送者被drop或者所有接收者被drop后，通道会自动关闭 !!
+
+// 读写mutex之前都要先lock()
+//Arc + mutex 是多线程中的 Rc<RefCell> , 提供了内部字段的可变性
+#[test]
+fn useing_mutex_as_smart_pointer() {
+    use std::sync::{Arc, Mutex};
+    use std::thread;
+    // 全局计数器
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let cnt = counter.clone();
+        let child = thread::spawn(move || {
+            let mut guard = cnt.lock().unwrap();
+	    // mut 的指针. MutexGuard 实现了 Deref 和 DerefMut, 用来返回Mutex<T>对象的&T和&mut T. 
+            *guard += 1; 
+        });
+        handles.push(child);
+    }
+
+    for h in handles {
+        h.join().unwrap();
+    }
+    eprintln!("counter: {}", *counter.lock().unwrap());
+}
+
+// 锁mutex vs  消息传递(channel)
+// 1.读写前都要获得锁. lock()在拿不到锁时会发生阻塞!!
+// 2.需要及时释放锁. (否则可能死锁)
+// 3.比起channel会少了很多额外的内存拷贝(但使用起来麻烦)
+
+// RwLock读写锁
+// 支持并发读.
+// 开销比mutex更大, 仅仅在对读到的数据的操作开销 >> 加/解 读写锁 的开销 时才考虑使用.
+// 否则 用mutex完成读后解锁效率会更高.
+
+#[test]
+fn read_and_write_lock() {
+    use std::sync::Arc;
+    use std::sync::RwLock;
+
+    let lock = Arc::new(RwLock::new(233));
+
+    let lock_child = lock.clone();
+    let child = thread::spawn(move || {
+        let res = lock_child.read().unwrap();
+        eprintln!("child read {}", *res);
+        drop(res); // !!!! 释放读锁, 否则下面的write()会阻塞.
+
+        let mut ptr = lock_child.write().unwrap();
+        *ptr += 1;
+        drop(ptr); // 释放写锁
+
+        let res2 = lock_child.read().unwrap();
+        eprintln!("child after writing {}", *res2);
+    });
+
+    child.join().unwrap();
+
+    eprintln!("main {}", *lock.read().unwrap());
+}
+
+// 用条件变量来控制mutex何时尝试加锁, 避免忙等待(一直尝试获得锁)
+// Arc + mutex
+// Arc + Condvar
+#[test] // 交替打印
+fn alternate_printing() { 
+    use std::sync::{Arc, Condvar, Mutex};
+    use std::thread;
+
+    #[derive(Clone, Debug)]
+    enum Next {
+        Child,
+        Main,
+    }
+
+    let next = Arc::new(Mutex::new(Next::Main));
+    let cond = Arc::new(Condvar::new());
+
+    let next2 = next.clone();
+    let cond2 = cond.clone();
+
+    let handle = thread::spawn(move || {
+        let mut lock = next2.lock().unwrap();
+        let mut next_flag = (*lock).clone();
+        drop(lock);
+
+        for i in 1..=3 {
+            while let Next::Main = next_flag {
+                next_flag = (*cond2.wait(next2.lock().unwrap())
+			     .unwrap()).clone();
+            } // next_flag 为 Next::Child 时跳出 while-loop
+	    
+	    eprintln!("child:\t{}", i);
+	    
+            next_flag= Next::Main;
+	    *next2.lock().unwrap() = next_flag.clone();// 下一个进行打印的是main线程
+        }
+    });
+
+    for i in 1..=3 {
+	eprintln!("main:\t{}", i);
+	
+        let mut next_flag = next.lock().unwrap();
+        *next_flag = Next::Child; // 下一个进行打印的是child线程
+	drop(next_flag);
+	
+        cond.notify_one();
+	thread::sleep(Duration::from_secs(1));
+	//睡一秒, 给child线程提供上锁的机会. 
+    }
+    handle.join().unwrap();
+}
+
+
+// tokio中的信号量
+use std::sync::Arc;
+use tokio::sync::Semaphore; 
+
+// 创建 5 个任务
+// 前3个被立即创建. 信号量用完,且没有释放.
+// 等待5秒后, 剩下两个任务才被创建出来. 
+
+#[tokio::main]
+async fn main() {
+    let semaphore = Arc::new(Semaphore::new(3));// 信号量的容量为3
+
+    let mut join_handles = Vec::new();
+
+    for i in 0..5 {
+	let permit  = semaphore.clone().acquire_owned().await.unwrap();// 申请占用一个信号量
+	// 当信号量的容量用光后 会阻塞. 
+
+	let handle = tokio::spawn(async move {
+		//do something
+		eprintln!("thread {}",i);
+		thread::sleep(Duration::from_secs(5));
+		drop(permit);// 释放信号量 
+	});
+	join_handles.push(handle);
+    }
+    
+    for h in join_handles {
+	h.await.unwrap();
+    }
+}
+
+#+end_src
+
+
+
+
+*** [消息传递] Channel
+
+Rust标准库中的Channel是mpsc的,即: 多生产者, 单消费者.
+
+生产者即为"发送端transmission", 分成两类, 异步发送 ~Sender~, 同步发送 ~SyncSender~.
+~Sender~ 的发送缓冲区可看成是无限大的, 不会阻塞.
+~SyncSender~ 的发送缓冲区是有限的, 当缓冲区满了以后发送会阻塞.
+
+消费者即为"接收端receiving", 类型为 ~Receiver~. 没有数据到来之前会阻塞.
+
+
+**** 创建管道 channel()
+(tx, rx) = channel();
+**** 向管道发送数据 send()
+tx.send().unwrap();
+**** 接受管道中的数据 recv()
+while let Ok(_) = rx.recv(){
+
+}
+**** 断开管道 drop()
+
+drop()掉所有发送者,或者drop掉接收者.
+
+所有的Sender或者唯一的Receiver若有一方被drop, 则管道会断开, send()/recv() 会返回Err(). 
+管道断开后不可重连.
+
+
+** Send&Sync
+Send, Sync都是Marker Trait, 这意味着它没有相关的方法.
+
+*** 动机
+
+创建线程的 *闭包* 可能会通过所有权转移/借用的方式来捕获外部变量, 然而, 这样盲目的捕获可能会导致线程安全问题.
+
+
+**** data race
+
+当这三个条件成立时, 会发生 data race : 
+1. 当一个进程中的两个或多个线程同时访问相同的内存位置，
+2. 并且至少有 *一个* 访问是用于 *写入* 的，
+3. 这些线程不使用任何独占锁来控制对该内存的访问. 
+
+data race发生时,访问的顺序是不确定的，并且计算的结果可能取决于访问共享内存的顺序。有些数据竞争可能是良性的(例如，当内存访问被用于忙等待时) ，但是许多数据竞争是程序中的 bug。
+
+*** 定义
+
+允许被闭包通过 *转移所有权* 进行变量捕获的类型,要用 ~Send~ 进行标记.
+允许被闭包通过 *不可变借用* 进行变量捕获的类型,要用 ~Sync~ 进行标记.
+
+
+*** Send
+
+Send 是auto的, 这意味着编译器会尽量为每个类型自动实现此trait.
+大多数类型都是Send的, 可以在线程间转移此种类型的变量的所有权.
+
+典型的不能是Send的例子有:  ~Rc~, ~MutexGuard~.
+
+操作系统要求加锁的线程和释放锁的线程要是同一个. 通常来说, 若一个对象使用了线程局部变量, 那么这个对象的类型通常不是Send的.
+
+否则当它在另一个线程中被drop时, 会drop该线程的线程局部变量, 而不是原来线程对应的线程局部变量.
+
+
+先实现一个Rc: 
+#+begin_src rust
+use std::ops::Deref;
+
+pub struct Rc<T> {
+
+    inner: *mut Inner<T>,
+}
+
+struct Inner<T> {
+    count: usize,
+    value: T,
+}
+
+impl<T> Rc<T> {
+    pub fn new(val : T) -> Self{
+	Self{
+	    inner: Box::into_raw(Box::new(
+		Inner{
+		    count: 0,
+		    value: val,
+		}
+	    ))
+	}
+    }
+}
+
+impl<T> Clone for Rc<T> {
+    
+    fn clone(&self) -> Self {
+	unsafe{&mut *self.inner}.count += 1;
+	Self {
+	    inner: self.inner
+	}
+    }
+
+}
+
+
+impl<T> Drop for Rc<T> {
+    fn drop(&mut self) {
+	let count = &mut unsafe{&mut *self.inner }.count;
+	if *count == 1 {
+	    let _ = unsafe {Box::from_raw(self.inner) } ;
+	}else {
+	    *count -=1;
+	}
+    }
+}
+
+
+impl<T> Deref for Rc<T> {
+
+    type Target = T;
+    
+    fn deref(&self) -> &Self::Target {
+	&mut unsafe{&mut *self.inner}.value
+    }
+}
+
+#+end_src
+
+
+Rc不能是Send的根本原因在于, 一旦能跨线程转移其所有权, 就会出现多个线程同时drop()此对象, 但多个Rc的clone/drop可能会并发读写同一内存位置, 这导致了data race.
+
+#+begin_src rust
+  fn main() {
+      let x = Rc::new(1);
+      let y = x .clone();
+
+      std::thread::spawn(move || {
+	  let aa  = y; // ERROR!!!
+      });/// y在此处drop()
+
+      /// x在此处drop()
+  }
+#+end_src
+
+
+*** Sync
+
+类型T是Sync 当且仅当 &T 是Send的.
+即, 这种类型可以在线程间共享其 *不可变引用*.
+
+不能实现Sync的类型也很特殊, 按理来说, 多线程之间只要没有并发修改同一内存 的能力,就肯定可以保证线程安全, 而&T不可变引用本身不能使用drop(&mut)这类会导致并发修改函数.(没所有权, 也不是&mut)
+
+~Rc~ 也不是Sync的.因为clone(&self)会导致并发读+写 
+
+但是有一类对象更特殊,可以Send但不能是Sync: ~Cell/RefCell~, 因为它们只需要&T就能实现对值的修改.并且这种修改是非线程安全的.
+
+因此它们是不能实现Sync的.
+
+(UnsafeCell 允许通过不可变引用来修改某些东西.)
+
+
+Q: https://zhuanlan.zhihu.com/p/64699643
+
+A: 简单来讲就是因为读写锁允许在仅读时可以"不持有锁", 而读操作会获取到受保护数据的不可变引用&T . 对于RefCell(使用了UnsafeCell)这种类型不满足Sync的值, 允许通过&self这种方法来修改值, 因此读写锁要求保护的数据的类型自身必须满足Sync. 而Mutex的读/写共享内存操作都需要线程已经"持有锁", 因此就算要保护的数据的类型不是Sync的(仅通过不可变引用就能修改值), 也因为"无论读写都要先持有锁"这个规则, 使得不会发生data race
+
+*** 默认行为 
+
+&T 仅对 T:Sync实现Send;
+&mut T仅在T:Send时实现Send. 因为可以对&mut T调用replace来取出T类型,为保证T是线程安全的类型, T必须是Send.
+
+*mut T 和 *const T 默认不实现Send&Sync.
   
 
-** 线程间的共享数据: 条件竞争/互斥锁
 
+ 
+不使用 impl ! 来禁止自动实现 Send/ Sync: 
+
+#+attr_html: :width 320px
+[[file:org-images/screenshot_2022-12-26_23-30-04.png]]
+ 
 
 ** 同步
 
-*** 条件变量
+*** 条件变量 Condvar
 
-条件变量 + Mutex , 可以使得线程在条件不满足前保持挂起. 
+~"锁" = Arc + ( Mutex(值) + Condvar )~, 可以使得线程在条件不满足前保持挂起状态.
+#+begin_src rust
+  use std::sync::{Arc, Condvar, Mutex};
+  use std::thread;
 
+  #[test]
+  fn condvar_mutex() {
+      let lock = Arc::new((Mutex::new(false), Condvar::new()));
+
+      let lock2 = lock.clone();
+
+      thread::spawn(move || {
+	  let (ref lk, ref cond) = *lock2;
+	  let mut pdata= lk.lock().expect("lock"); // 子线程取得锁
+	  eprintln!("start changing!!!");
+	  ,*pdata = true;
+	  cond.notify_one(); // 修改后通知在同一条件变量上等待的其它一个线程
+      });
+
+
+      let (ref lk, ref cond) = *lock;
+      // Mutex ===lock()===> MutexGuard:被锁保护的值
+      //                     [用lock()获得锁后的产物,可读可写]
+      let mut pdata = lk.lock().unwrap();
+
+      // wait释放锁并陷入阻塞
+      // wait(MutexGuard) ==> 解锁并阻塞
+      while *pdata != true {
+	  // 用循环验证值是否以及满足条件?
+	  pdata = cond.wait(pdata).unwrap(); //收到通知后, 加锁,并返回当前值
+	  // 必须比较新获得的值是否满足条件, 不满足则再次用wait释放锁并进入阻塞.
+      }
+
+      eprintln!("finished {:?}", started);
+  }
+
+#+end_src
+
+
+
+*** 多个线程仅执行一次的代码片段 ~Once~
+
+*经常用于初始化全局变量!*
+
+要点: 
+ 1. ~static mut~ 变量的读写要用 ~unsafe{}~.
+ 2. ~Once~ 对象是只会执行一次的代码片段.使用 ~call_once~ 来执行代码.
+ 3. ~static + Once~ 用于多个线程间共享.(全局变量只能这么写)
+#+begin_src rust
+use std::sync::Once;
+static mut VAL: usize = 0;
+static INIT: Once = Once::new();
+
+#[test]
+fn call_once_func() {
+    use std::thread;
+
+    let child1 = thread::spawn(|| {
+        INIT.call_once(|| unsafe {
+            VAL = 1;
+        })
+    });
+
+    let child2 = thread::spawn(|| {
+        INIT.call_once(|| unsafe {
+            VAL = 2;
+        })
+    });
+
+    child1.join().unwrap();
+    child2.join().unwrap();
+
+    eprintln!("VAL = {}", unsafe { VAL });
+}
+#+end_src
 
 
 
@@ -2899,6 +3704,78 @@ after barrier: thread<4> go!
 
 ** 内存模型&原子操作
 
+
+Atomic比起Mutex有更好的性能, 支持并发 *读*.
+并且无需mut修饰, 也具有 *内部可变性* .
+Atomic常常作为全局static变量使用. 作为局部变量时要用Arc进行包裹. 
+
+
+Atomic的部分使用场景:
++ 无锁(lock free)数据结构
++ 全局变量，例如全局自增 ID(Arc/static)
++ 跨线程计数器，例如可以用于统计指标.
+
+
+#+begin_src rust
+  const N_TIMES : u64 = 10000000;
+  const N_THREADS :usize = 10 ;
+  /// 原子变量: static
+  static R :AtomicU64  = AtomicU64::new(0); 
+  /// 创建一个线程, 它对原子变量进行n次加一操作 
+  fn add_n_times(n: u64 ) -> JoinHandle<()> {
+      thread::spawn(move || {
+	  for _ in 0..n {
+	      R.fetch_add(1,Ordering::Relaxed);// 写入原子变量
+	  }
+      })
+  }
+
+  #[test]
+  fn atomic_global_variable() {
+      use std::time::Instant;
+
+      let s = Instant::now(); /// 记录开始时间
+      let mut threads = Vec::with_capacity(N_THREADS);
+
+      for _ in 0..N_THREADS {
+	  threads.push(add_n_times(N_TIMES));
+      }
+
+      for t in threads {
+	  t.join().unwrap();
+      }
+
+      assert_eq!(N_TIMES*N_THREADS as u64, R.load(Ordering::Relaxed));// 读取原子变量
+      println!("{:?}",Instant::now().sub(s)); /// 计算出花费时间
+  }
+#+end_src
+
+
+*** 在自旋中 hint::spin_loop()
+告知CPU正在自旋等待条件满足, 并且等待实际不会太长.
+
+#+begin_src rust
+let live = Arc::new(AtomicBool::new(false));
+
+// In a background thread we'll eventually set the value
+let bg_work = {
+    let live = live.clone();
+    thread::spawn(move || {
+        // Do some work, then make the value live
+        do_some_work();
+        live.store(true, Ordering::Release);
+    })
+};
+
+// Back on our current thread, we wait for the value to be set
+while !live.load(Ordering::Acquire) {
+    // The spin loop is a hint to the CPU that we're waiting, but probably
+    // not for very long
+    hint::spin_loop();
+}
+#+end_src
+
+
 ** 基于锁的数据结构
 
 ** 无锁数据结构
@@ -2914,8 +3791,248 @@ after barrier: thread<4> go!
 
 * 异步编程 
 
+** IO操作
+Read
+Write
+ -> io::Result<T>
+
+*** 创建输入/输出源
+
+File::open()?
+File::create()
+
+*** 读取输入源 Read
+
+**** 返回 Result<实际读取的字节数>
++ ~.read(&mut [u8])~ 最长读取 ~[u8;N]~ 的长度N.
++ ~.read_to_end(&mut Vec<u8>)~: 将输入源中的所有内容读到Vec中. 
++ ~.read_to_string(&mut String)~: 将输入源中的所有内容读到一个String中.
+
+**** 返回 Result<()>
+
++ ~.read_exact(&mut [u8])~: 要么恰好读取 [u8;N] 这么长, 要么返回Err.(因此它不返回实际读到的字节数!) 读取失败时不会填充buf!
+#+begin_src rust
+  Err(Error { kind: UnexpectedEof, message: "failed to fill whole buffer" })
+#+end_src
+
+**** 返回字节流 Bytes
+~.bytes()~: 可以调用.next()返回下个字节, 遇到结尾返回 ~None~!!
+
+**** .chain()
+串联成一个新的输入源(: Read)
+#+begin_src rust
+  let f1 = "hello".as_bytes();
+  let f2 = "world".as_bytes();
+
+  let mut handle = f1.chain(f2);
+  let mut buffer = String::new();
+
+  // read the value into a String. We could use any Read method here,
+  // this is just one example.
+  handle.read_to_string(&mut buffer)?;
+  println!("{}",buffer); 
+#+end_src
+输出: 
+#+begin_src rust
+helloworld
+#+end_src
+**** .take() 
+取原输入源的最多N个字节作为新的输入源.
+#+begin_src rust
+  let f = File::open("foo.txt")?;
+      // read at most five bytes
+  let mut handle = f.take(5);
+  
+  let mut buffer = [0; 5];
+  handle.read(&mut buffer)?;
+#+end_src
+
+**** read_vectored(&mut [IoSliceMut])
+
+https://baike.baidu.com/item/iovec
+用一次系统调用将内容读取到多个buf中
+
+~IoSliceMut~ 类似于对 ~&mut [u8]~ 的包装.
+#+begin_src rust
+  #![feature(io_slice_advance)] // nightly 
+  use std::io::{IoSliceMut,Read};
+  use std::ops::Deref;
+
+  fn main() {
+      let mut s = "hello".as_bytes();
+
+      let mut buf1 = [0; 2];
+      let mut buf2 = [0; 2];
+      let mut buf3 = [0; 2];
+
+      let mut bufs = &mut [
+	  IoSliceMut::new(&mut buf1),
+	  IoSliceMut::new(&mut buf2),
+	  IoSliceMut::new(&mut buf3),
+      ][..];
+
+      println!( "{:?}", s.read_vectored(bufs) );
+      
+      println!("{:?}",buf1);
+      println!("{:?}",buf2);
+      println!("{:?}",buf3);
+  }
+#+end_src
+输出: 
+#+begin_src rust
+Ok(5)
+[104, 101]
+[108, 108]
+[111, 0]
+#+end_src
+
+**** 实现从String中read()
+要用 as_bytes() 将string转为字节数组.
+
+
+*** 写入输出源 Write
+
+write(&[u8]) 仅仅写入内部的buf
+
+flush() -> Result<()>
+
+write_all(&[u8]) -> Result<()> 将buf中的全部字节写入,因此它也不返回字节数.
+
+write_fmt()  == write!()
 
 * 网络编程 
+
+** web server
+
+
+1. 监听地址 ~TcpListener::bind("")~
+2. 尝试获得一个连接 ~listener.incoming()~
+#+begin_src rust
+use std::net::*;
+
+fn main() {
+    // 监听指定地址
+    // bind可能会失败,如无权限监听<1024的端口.或端口已经被占用.
+    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+
+    // incoming() 返回一个迭代器. 遍历"连接的尝试"
+    // 一个流代表了一个客户端-服务端直接打开的连接. 
+    for stream in listener.incoming() {
+	let s = stream.unwrap();
+	println!("connection established.");
+    }
+}
+
+#+end_src
+
+3. 从流中读取数据到buffer ~stream.read(&mut [a;N] )~
+
+~from_utf8_lossy()~ 将字节数组转为字符串.
+#+begin_src rust
+fn main() {
+    // 监听指定地址
+    // bind可能会失败,如无权限监听<1024的端口.或端口已经被占用.
+    let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
+
+    // incoming() 返回一个迭代器. 遍历"连接的尝试"
+    // 一个流代表了一个客户端-服务端直接打开的连接. 
+    for stream in listener.incoming() {
+	let s = stream.unwrap();
+	handle_connection(s);
+    }
+}
+
+
+fn handle_connection(mut s:TcpStream) {
+    let mut buf = [0;1024];
+
+    s.read(&mut buf).unwrap();
+    println!(">>request:\n{}",String::from_utf8_lossy(&buf));
+}
+
+#+end_src
+
+#+begin_src
+方法 URI HTTP/1.1 \r\n
+头部 \r\n
+body
+#+end_src
+
+get请求没有 body, 从Host:开始的都是header.
+#+begin_src
+>>request:
+GET / HTTP/1.1
+Host: 127.0.0.1:7878
+Connection: keep-alive
+Cache-Control: max-age=0
+sec-ch-ua: "Not?A_Brand";v="8", "Chromium";v="108", "Google Chrome";v="108"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "Linux"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7
+
+#+end_src
+
+http响应格式:
+
+#+begin_src
+HTTP/1.1  状态码 描述短语 \r\n
+headers \r\n
+body \r\n
+#+end_src
+
+#+begin_src
+HTTP/1.1 200 OK\r\n\r\n
+#+end_src
+
+4. 发送数据 ~stream.write()~ 和 ~stream.flush()~
+
+flush()会等待并阻塞当前程序知道所有字节都已经成功写入连接. 
+
+#+begin_src rust
+  fn handle_connection(mut s:TcpStream) {
+      let mut buf = [0;1024];
+      s.read(&mut buf).unwrap();
+
+      let response = "HTTP/1.1 200 OK\r\n\r\n" ;
+      s.write(response.as_bytes()).unwrap();
+      s.flush().unwrap();
+  }
+
+#+end_src
+
+
+
+#+begin_src rust
+  fn handle_connection_html(mut s:TcpStream) {
+      let mut buf = [0;1024];
+      s.read(&mut buf).unwrap();
+    
+      let get = b"GET / HTTP/1.1";
+      let (file,res) = if buf.starts_with(get) {
+	  ("hello.html","HTTP/1.1 200 OK")
+      }else {
+	  ("404.html","HTTP/1.1 404 NOT FOUND")
+      };
+    
+      let contents = fs::read_to_string(file).unwrap();
+      let response = format!("{}\r\nContent-Length: {}\r\n\r\n{}" ,
+			     res,
+			     contents.len(),
+			     contents
+      );
+	
+      s.write(response.as_bytes()).unwrap();
+      s.flush().unwrap();
+  }
+#+end_src
 
 
 * linux 系统编程
@@ -2944,6 +4061,247 @@ after barrier: thread<4> go!
 *** 消息队列
 
 
-** socket: tcp/udp
+** socket: tcp/udp 
 
+
+
+
+
+
+
+* other
+ To avoid borrowing `self` for the whole loop,
+#+begin_src rust
+  let mut preds =
+      mem::replace(self.predecessors_mut(dest_block), PredBlockSmallVec::new());
+
+  for &mut PredBlock {
+      block: ref mut pred_block,
+      branch: ref mut last_inst,
+  } in &mut preds
+  {
+      /// loop 
+  }
+
+  /// ....
+  *self.predecessors_mut(dest_block) = preds;
+#+end_src
+
+
+
+尽量不要使用引用作为字段.
+即便要用也保证仅有一两个生命周期注解, 否则会导致此struct太过复杂, 之后必将出现问题.
+
+不要用引用实现自引用结构, 即: 其中的引用字段指向此结构中的其它字段.
+
+解决方案有三类:
+
+0. 将引用字段写成一个新的结构, 并真正own要指向的字段, 再让原结构包含这个新结构
+1. Rc/Weak, Arc...
+2. Pin 
+
+
+*** 有内部可变性的类型: Cell/RefCell/Mutex/Atomic
+
+*** Into<...>
+
+    // into().raw()
+    pub fn update<P:Into<Vector2f>>(&mut self,mouse_pos: P ) {
+
+    }
+*** 某对象有多个使用者 
+某对象有多个使用者 : (且不用clone()时)
+长存活期的借用 vs 切分一个对象的所有权为多份
+
+&'static T / static ref _ : T
+VS
+Arc<T> / Rc<T>
+
+
+Box::leak() 使得一个堆中变量是静态生存期的.
+
+
+
+*** 不能直接写:  dyn A + B
+
+
+#+attr_html: :width 320px
+[[file:org-images/screenshot_2022-12-26_23-20-21.png]]
+
+
+
+
+*** 实现了Copy的类型 其成员函数的入参是self类型
+
+
+
+*** 协程实现
+
+#+begin_src rust
+fn main() {
+    let mut scheduler = Scheduler::new();
+
+    let mut coroutines = Vec::new();
+
+    let mut counter = 0;
+    coroutines.push(Coroutine::new(move || loop {
+        println!("Counter: {}", counter);
+        counter += 1;
+    }));
+
+    let mut ticks = 0;
+    coroutines.push(Coroutine::new(move || loop {
+        if ticks == 10 {
+            println!("Ticks: {}", ticks);
+            break;
+        }
+        ticks += 1;
+    }));
+
+    for coroutine in coroutines {
+        scheduler.add_coroutine(coroutine);
+    }
+
+    scheduler.run();
+}
+#+end_src
+
+#+begin_src rust
+#![feature(asm)]
+#![feature(ptr_write)]
+
+use std::ptr;
+
+struct Context {
+    rsp: *mut usize,
+    stack: Vec<usize>,
+}
+
+impl Context {
+    fn new(size: usize) -> Context {
+        let mut stack = Vec::with_capacity(size);
+        stack.resize(size, 0);
+        let sp = unsafe { stack.as_mut_ptr().add(size) };
+        Context { rsp: sp, stack }
+    }
+}
+
+unsafe fn switch(context: &mut Context, new_rsp: *mut usize) {
+    asm!(
+        "mov [rdi], rsp",
+        "mov rsp, rsi",
+        "ret",
+        in("rdi") &mut context.rsp,
+        in("rsi") new_rsp,
+    )
+}
+
+#[derive(Debug, PartialEq)]
+enum State {
+    Ready,
+    Running,
+    Blocked,
+}
+
+struct Coroutine {
+    context: Context,
+    state: State,
+    f: Option<fn()>,
+}
+
+impl Coroutine {
+    fn new(f: fn()) -> Coroutine {
+        Coroutine {
+            context: Context::new(1024),
+            state: State::Ready,
+            f: Some(f),
+        }
+    }
+
+    fn run(&mut self) {
+        match self.f {
+            Some(f) => {
+                self.state = State::Running;
+                f();
+                self.state = State::Blocked;
+            }
+            None => {}
+        }
+    }
+
+    fn is_ready(&self) -> bool {
+        self.state == State::Ready
+    }
+
+    fn is_blocked(&self) -> bool {
+        self.state == State::Blocked
+    }
+
+    fn set_blocked(&mut self) {
+        self.state = State::Blocked;
+    }
+
+    fn set_ready(&mut self) {
+        self.state = State::Ready;
+    }
+}
+
+struct Scheduler {
+    coroutines: Vec<Coroutine>,
+    current: usize,
+}
+
+impl Scheduler {
+    fn new() -> Scheduler {
+        Scheduler {
+            coroutines: Vec::new(),
+            current: 0,
+        }
+    }
+
+    fn add_coroutine(&mut self, coroutine: Coroutine) {
+        self.coroutines.push(coroutine);
+    }
+
+    fn next_coroutine(&mut self) -> Option<&mut Coroutine> {
+        for i in 0..self.coroutines.len() {
+            self.current += 1;
+            self.current %= self.coroutines.len();
+            let coroutine = &mut self.coroutines[self.current];
+            if coroutine.is_ready() {
+                return Some(coroutine);
+            }
+        }
+        None
+    }
+
+    fn run(&mut self) {
+        loop {
+            match self.next_coroutine() {
+                Some(mut coroutine) => {
+                    let f_ptr = coroutine.f.unwrap() as *const ();
+                    let f_ptr = f_ptr as *const usize;
+                    let f_ptr = *f_ptr;
+
+                    unsafe {
+                        let sp = coroutine.context.rsp.sub(1);
+                        ptr::write(sp, f_ptr);
+                        switch(&mut coroutine.context, sp);
+                    }
+                }
+                None => break,
+            }
+        }
+    }
+}
+
+
+#+end_src
+上面的实现中保存了所有通用寄存器的值吗?
+
+在协程的实现中，我们只保存了 rsp、rbp 和 rdi 寄存器的值。
+这是因为在 x86_64 架构中，函数调用约定规定了 rdi、rsi、rdx、rcx、r8 和 r9 这几个寄存器用于函数参数的传递。因此，保存这些寄存器的值可以保证函数参数不会在协程切换时丢失。
+
+通用寄存器 rax、rbx、rcx、rdx、rsi、rdi、rsp、rbp、r8、r9、r10、r11、r12、r13、r14 和 r15 都可以被用来保存临时变量和函数调用时的状态。
+在上面的实现中，我们只保存了 rsp、rbp 和 rdi 寄存器的值，而其他的通用寄存器的值并没有被保存。这是因为在实际的使用中，协程通常只需要保存函数参数和一些必要的状态，而不需要保存所有的通用寄存器。当然，在特定的应用场景中，也可以根据需要保存其他的寄存器的值。
 

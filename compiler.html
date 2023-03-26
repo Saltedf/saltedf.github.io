@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-10-26 三 15:58 -->
+<!-- 2022-10-27 四 16:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Compiler</title>
@@ -27,40 +27,40 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgd2efe8e">1. 语义分析 sematic analysis</a>
+<li><a href="#org14dbf26">1. 语义分析 sematic analysis</a>
 <ul>
-<li><a href="#org7b7fd25">1.1. Scope定义</a></li>
-<li><a href="#org244f2b9">1.2. Static Scope  VS  Dynamic Scope</a></li>
-<li><a href="#org8e6bffa">1.3. 通过在AST上进行递归下降进行语义分析</a>
+<li><a href="#org86c1cee">1.1. Scope定义</a></li>
+<li><a href="#org572d151">1.2. Static Scope  VS  Dynamic Scope</a></li>
+<li><a href="#org43ad8cd">1.3. 通过在AST上进行递归下降进行语义分析</a>
 <ul>
-<li><a href="#org6d01bf3">1.3.1. 符号表 symbol table</a></li>
+<li><a href="#orgfa6bb53">1.3.1. 符号表 symbol table</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org7ffdd66">2. 活动记录 AR</a>
+<li><a href="#org8694893">2. 活动记录 AR</a>
 <ul>
-<li><a href="#org2fd6e22">2.1. 理论动机</a>
+<li><a href="#org03a26aa">2.1. 理论动机</a>
 <ul>
-<li><a href="#org9f523aa">2.1.1. frame指针</a></li>
-<li><a href="#org9efb88e">2.1.2. 保存寄存器</a></li>
-<li><a href="#orga02b39d">2.1.3. 优化参数传递</a></li>
-<li><a href="#org29d8e45">2.1.4. 返回地址</a></li>
-<li><a href="#org945538d">2.1.5. 驻留frame中的变量</a></li>
-<li><a href="#orgca1787f">2.1.6. 静态链</a></li>
+<li><a href="#orgc0c642e">2.1.1. frame指针</a></li>
+<li><a href="#org3a2092c">2.1.2. 保存寄存器</a></li>
+<li><a href="#orgaa6166b">2.1.3. 优化参数传递</a></li>
+<li><a href="#orgb387314">2.1.4. 返回地址</a></li>
+<li><a href="#org95417e4">2.1.5. 驻留frame中的变量</a></li>
+<li><a href="#org1a98671">2.1.6. 静态链</a></li>
 </ul>
 </li>
-<li><a href="#org44e2b7b">2.2. frame概览</a></li>
-<li><a href="#orgdd524a7">2.3. 实现思路</a></li>
+<li><a href="#orgc8a245b">2.2. frame概览</a></li>
+<li><a href="#org4373966">2.3. 实现思路</a></li>
 </ul>
 </li>
-<li><a href="#org887bd34">3. 中间表示</a></li>
+<li><a href="#org60142c5">3. 中间表示</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgd2efe8e" class="outline-2">
-<h2 id="orgd2efe8e"><span class="section-number-2">1.</span> 语义分析 sematic analysis</h2>
+<div id="outline-container-org14dbf26" class="outline-2">
+<h2 id="org14dbf26"><span class="section-number-2">1.</span> 语义分析 sematic analysis</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 在语义分析阶段我们要进行一些上下文相关的分析.
@@ -74,8 +74,8 @@
 
 
 
-<div id="outline-container-org7b7fd25" class="outline-3">
-<h3 id="org7b7fd25"><span class="section-number-3">1.1.</span> Scope定义</h3>
+<div id="outline-container-org86c1cee" class="outline-3">
+<h3 id="org86c1cee"><span class="section-number-3">1.1.</span> Scope定义</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 scope 是规定了标识符在程序中可访问的范围.
@@ -100,8 +100,9 @@ scope 是规定了标识符在程序中可访问的范围.
 </div>
 </div>
 
-<div id="outline-container-org244f2b9" class="outline-3">
-<h3 id="org244f2b9"><span class="section-number-3">1.2.</span> Static Scope  VS  Dynamic Scope</h3>
+
+<div id="outline-container-org572d151" class="outline-3">
+<h3 id="org572d151"><span class="section-number-3">1.2.</span> Static Scope  VS  Dynamic Scope</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 大多数语言采用静态作用域, 即作用域只依赖程序的文本, 而不是运行时的行为. 
@@ -146,8 +147,8 @@ scope 是规定了标识符在程序中可访问的范围.
 </div>
 
 
-<div id="outline-container-org8e6bffa" class="outline-3">
-<h3 id="org8e6bffa"><span class="section-number-3">1.3.</span> 通过在AST上进行递归下降进行语义分析</h3>
+<div id="outline-container-org43ad8cd" class="outline-3">
+<h3 id="org43ad8cd"><span class="section-number-3">1.3.</span> 通过在AST上进行递归下降进行语义分析</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 在C中,block就是最常见的作用域scope.
@@ -188,8 +189,9 @@ d1  d2  d3    s1   s2  s3
 </p>
 </div>
 
-<div id="outline-container-org6d01bf3" class="outline-4">
-<h4 id="org6d01bf3"><span class="section-number-4">1.3.1.</span> 符号表 symbol table</h4>
+
+<div id="outline-container-orgfa6bb53" class="outline-4">
+<h4 id="orgfa6bb53"><span class="section-number-4">1.3.1.</span> 符号表 symbol table</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <p>
 之所以叫做符号表,而不是"字符串"表, 是因为这个表的key不单单是一个字符串.
@@ -209,8 +211,9 @@ d1  d2  d3    s1   s2  s3
 </p>
 </div>
 
+
 <ol class="org-ol">
-<li><a id="org0e25420"></a>用符号表实现"环境"<br />
+<li><a id="orgfd96251"></a>用符号表实现"环境"<br />
 <div class="outline-text-5" id="text-1-3-1-1">
 <p>
 使用存放scope(符号表)的 <b>Stack</b> 
@@ -244,12 +247,12 @@ d1  d2  d3    s1   s2  s3
 
 
 
-<div id="outline-container-org7ffdd66" class="outline-2">
-<h2 id="org7ffdd66"><span class="section-number-2">2.</span> 活动记录 AR</h2>
+<div id="outline-container-org8694893" class="outline-2">
+<h2 id="org8694893"><span class="section-number-2">2.</span> 活动记录 AR</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org2fd6e22" class="outline-3">
-<h3 id="org2fd6e22"><span class="section-number-3">2.1.</span> 理论动机</h3>
+<div id="outline-container-org03a26aa" class="outline-3">
+<h3 id="org03a26aa"><span class="section-number-3">2.1.</span> 理论动机</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 所谓函数是一段代码, 位于代码段, 是只读的.
@@ -301,12 +304,68 @@ d1  d2  d3    s1   s2  s3
 <p>
 某些局部变量不放在寄存器中, 而是存放于stack中, 这些被占用的寄存器可能会与该函数调用的其他函数相冲突. 因此需要将其保存栈中.
 </p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">foo</span>(<span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">x</span> , <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">y</span>)
+{
+  <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">temp</span> = x + 1;
+  <span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #7590db;">temp2</span> = x - y ;
+  <span style="color: #4f97d7; font-weight: bold;">return</span> temp * temp2 ;
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #bc6ec5; font-weight: bold;">foo</span>:                                    # -O0
+        <span style="color: #4f97d7; font-weight: bold;">pushq</span>   <span style="color: #7590db;">%rbp</span>            # &#20445;&#23384;&#24103;&#25351;&#38024; 
+        <span style="color: #4f97d7; font-weight: bold;">movq</span>    <span style="color: #7590db;">%rsp</span>, <span style="color: #7590db;">%rbp</span>      # 
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    <span style="color: #7590db;">%edi</span>, -4(<span style="color: #7590db;">%rbp</span>)  # x
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    <span style="color: #7590db;">%esi</span>, -8(<span style="color: #7590db;">%rbp</span>)  # y
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    -4(<span style="color: #7590db;">%rbp</span>), <span style="color: #7590db;">%eax</span>  # x
+        <span style="color: #4f97d7; font-weight: bold;">addl</span>    $1, <span style="color: #7590db;">%eax</span>        # x+1 
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    <span style="color: #7590db;">%eax</span>, -12(<span style="color: #7590db;">%rbp</span>) # x+1 -&gt; temp 
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    -4(<span style="color: #7590db;">%rbp</span>), <span style="color: #7590db;">%eax</span>  # x
+        <span style="color: #4f97d7; font-weight: bold;">subl</span>    -8(<span style="color: #7590db;">%rbp</span>), <span style="color: #7590db;">%eax</span>  # x - y 
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    <span style="color: #7590db;">%eax</span>, -16(<span style="color: #7590db;">%rbp</span>) # x - y -&gt; temp2  
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    -12(<span style="color: #7590db;">%rbp</span>), <span style="color: #7590db;">%eax</span> # temp
+        <span style="color: #4f97d7; font-weight: bold;">imull</span>   -16(<span style="color: #7590db;">%rbp</span>), <span style="color: #7590db;">%eax</span> # temp * temp2 -&gt; return value 
+        <span style="color: #4f97d7; font-weight: bold;">popq</span>    <span style="color: #7590db;">%rbp</span>            # &#24674;&#22797; &#24103;&#25351;&#38024; 
+        <span style="color: #4f97d7; font-weight: bold;">retq</span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ce537a; font-weight: bold;">int</span> <span style="color: #bc6ec5; font-weight: bold;">main</span>() {
+    foo(3,7);
+    <span style="color: #4f97d7; font-weight: bold;">return</span> 0;
+}
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-asm"><span style="color: #bc6ec5; font-weight: bold;">main</span>:                                   # @main
+        <span style="color: #4f97d7; font-weight: bold;">pushq</span>   <span style="color: #7590db;">%rbp</span>
+        <span style="color: #4f97d7; font-weight: bold;">movq</span>    <span style="color: #7590db;">%rsp</span>, <span style="color: #7590db;">%rbp</span> 
+        <span style="color: #4f97d7; font-weight: bold;">subq</span>    $16, <span style="color: #7590db;">%rsp</span>       # &#20026;foo&#20998;&#37197;&#26632;&#24103;16 = 4*4&#23383;&#33410;
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    $0, -4(<span style="color: #7590db;">%rbp</span>)    # 
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    $3, <span style="color: #7590db;">%edi</span> 
+        <span style="color: #4f97d7; font-weight: bold;">movl</span>    $7, <span style="color: #7590db;">%esi</span>
+        <span style="color: #4f97d7; font-weight: bold;">callq</span>   foo
+        <span style="color: #4f97d7; font-weight: bold;">xorl</span>    <span style="color: #7590db;">%eax</span>, <span style="color: #7590db;">%eax</span>
+        <span style="color: #4f97d7; font-weight: bold;">addq</span>    $16, <span style="color: #7590db;">%rsp</span>
+        <span style="color: #4f97d7; font-weight: bold;">popq</span>    <span style="color: #7590db;">%rbp</span>
+        <span style="color: #4f97d7; font-weight: bold;">retq</span>
+</pre>
+</div>
+
+<p>
+调用者负责分配栈帧空间,被调者自己负责调整
+&lt;iframe width="800px" height="200px" src="<a href="https://godbolt.org/e#g">https://godbolt.org/e#g</a>:!((g:!((g:!((h:codeEditor,i:(filename:'1',fontScale:14,fontUsePx:'0',j:1,lang:__<sub>c,selection</sub>:(endColumn:19,endLineNumber:31,positionColumn:19,positionLineNumber:31,selectionStartColumn:19,selectionStartLineNumber:31,startColumn:19,startLineNumber:31),source:'%0Aint+foo(int+x+,+int+y)%7B%0A++++//char+a+%3D+0%3B%0A++++int+temp+%3D+x+%2B+1%3B%0A++++int+temp2+%3D+x+-<del>y+%3B%0A+++%0A++++return+temp+*+temp2+%3B%0A%0A%7D%0A%0A/*+Type+your+code+here,+or+load+an+example.+*/%0Aint+square()+_<sub>attribute</sub>_<sub>((noinline))</sub>%7B%0A++++char+aa+%3D</del>!'a!'+%3B%0A++++long+long+le+%3D+0%3B%0A++++long+long+hi+%3D+12%3B%0A++++long+long+le1+%3D+0%3B%0A++++long+long+hi1+%3D+12%3B%0A+++++++long+long+le2+%3D+0%3B%0A++++long+long+hi2+%3D+12%3B%0A++//foo(3,7)%3B%0A++++return+le+%2B+hi%3B%0A%7D%0Astruct+foo+%7B%0A++++int+i%3B%0A++++long+long+l%3B%0A++++long+long+ll%3B%0A%0A%7D%3B%0Aint+main()+%7B%0A++++struct+foo+myfoo%3B%0A++++myfoo.i+%3D+100%3B%0A++++//square()%3B%0A++++return+0%3B%0A%7D'),l:'5',n:'0',o:'C+source+%231',t:'0')),k:45.67398119122257,l:'4',n:'0',o:'',s:0,t:'0'),(g:!((h:compiler,i:(compiler:cclang1500,deviceViewOpen:'1',filters:(b:'0',binary:'1',commentOnly:'0',demangle:'0',directives:'0',execute:'0',intel:'1',libraryCode:'1',trim:'1'),flagsViewOpen:'1',fontScale:14,fontUsePx:'0',j:1,lang:__<sub>c,libs</sub>:!(),options:'-O0',selection:(endColumn:32,endLineNumber:34,positionColumn:32,positionLineNumber:34,selectionStartColumn:32,selectionStartLineNumber:34,startColumn:32,startLineNumber:34),source:1),l:'5',n:'0',o:'+x86-64+clang+15.0.0+(Editor+%231)',t:'0')),k:54.326018808777434,l:'4',n:'0',o:'',s:0,t:'0')),l:'2',n:'0',o:'',t:'0')),version:4"&gt;&lt;/iframe&gt;
+</p>
 </div>
 
 
-
-<div id="outline-container-org9f523aa" class="outline-4">
-<h4 id="org9f523aa"><span class="section-number-4">2.1.1.</span> frame指针</h4>
+<div id="outline-container-orgc0c642e" class="outline-4">
+<h4 id="orgc0c642e"><span class="section-number-4">2.1.1.</span> frame指针</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <p>
 frame指针的存在通常是为了变长的函数frame.
@@ -350,8 +409,8 @@ frame指针的存在通常是为了变长的函数frame.
 
 
 
-<div id="outline-container-org9efb88e" class="outline-4">
-<h4 id="org9efb88e"><span class="section-number-4">2.1.2.</span> 保存寄存器</h4>
+<div id="outline-container-org3a2092c" class="outline-4">
+<h4 id="org3a2092c"><span class="section-number-4">2.1.2.</span> 保存寄存器</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <p>
 同一寄存器可能会被不同函数使用, 例如 f调用g,而它们都使用了1号寄存器来存放入参.
@@ -382,8 +441,8 @@ frame指针的存在通常是为了变长的函数frame.
 
 
 
-<div id="outline-container-orga02b39d" class="outline-4">
-<h4 id="orga02b39d"><span class="section-number-4">2.1.3.</span> 优化参数传递</h4>
+<div id="outline-container-orgaa6166b" class="outline-4">
+<h4 id="orgaa6166b"><span class="section-number-4">2.1.3.</span> 优化参数传递</h4>
 <div class="outline-text-4" id="text-2-1-3">
 <p>
 就像上节中举的例子, f(x)调用g(x)会发生寄存器的冲突, 因此最简单的方案是保存&amp;恢复冲突的寄存器.
@@ -442,8 +501,8 @@ frame指针的存在通常是为了变长的函数frame.
 
 
 
-<div id="outline-container-org29d8e45" class="outline-4">
-<h4 id="org29d8e45"><span class="section-number-4">2.1.4.</span> 返回地址</h4>
+<div id="outline-container-orgb387314" class="outline-4">
+<h4 id="orgb387314"><span class="section-number-4">2.1.4.</span> 返回地址</h4>
 <div class="outline-text-4" id="text-2-1-4">
 <p>
 返回地址由call保存到指定寄存器中,
@@ -457,8 +516,8 @@ frame指针的存在通常是为了变长的函数frame.
 </div>
 
 
-<div id="outline-container-org945538d" class="outline-4">
-<h4 id="org945538d"><span class="section-number-4">2.1.5.</span> 驻留frame中的变量</h4>
+<div id="outline-container-org95417e4" class="outline-4">
+<h4 id="org95417e4"><span class="section-number-4">2.1.5.</span> 驻留frame中的变量</h4>
 <div class="outline-text-4" id="text-2-1-5">
 <p>
 对于局部变量和中间结果, 应该优先将他们存入寄存器. 只有迫不得已时才存入栈中.
@@ -494,8 +553,8 @@ frame指针的存在通常是为了变长的函数frame.
 
 
 
-<div id="outline-container-orgca1787f" class="outline-4">
-<h4 id="orgca1787f"><span class="section-number-4">2.1.6.</span> 静态链</h4>
+<div id="outline-container-org1a98671" class="outline-4">
+<h4 id="org1a98671"><span class="section-number-4">2.1.6.</span> 静态链</h4>
 <div class="outline-text-4" id="text-2-1-6">
 <p>
 静态链主要是为了支持嵌套的函数定义.
@@ -525,8 +584,8 @@ frame指针的存在通常是为了变长的函数frame.
 </div>
 
 
-<div id="outline-container-org44e2b7b" class="outline-3">
-<h3 id="org44e2b7b"><span class="section-number-3">2.2.</span> frame概览</h3>
+<div id="outline-container-orgc8a245b" class="outline-3">
+<h3 id="orgc8a245b"><span class="section-number-3">2.2.</span> frame概览</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 高阶函数 -&gt; 嵌套定义的函数 -&gt; 逃逸变量(内存中) -&gt; 静态链访问
@@ -583,8 +642,8 @@ frame指针的存在通常是为了变长的函数frame.
 
 
 
-<div id="outline-container-orgdd524a7" class="outline-3">
-<h3 id="orgdd524a7"><span class="section-number-3">2.3.</span> 实现思路</h3>
+<div id="outline-container-org4373966" class="outline-3">
+<h3 id="org4373966"><span class="section-number-3">2.3.</span> 实现思路</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 函数中可以有局部变量. 每次函数调用都会创建一份其局部变量的实例.
@@ -829,8 +888,8 @@ transVar 也需要添加一个表示当前level的参数, 因为要通过计算l
 </div>
 
 
-<div id="outline-container-org887bd34" class="outline-2">
-<h2 id="org887bd34"><span class="section-number-2">3.</span> 中间表示</h2>
+<div id="outline-container-org60142c5" class="outline-2">
+<h2 id="org60142c5"><span class="section-number-2">3.</span> 中间表示</h2>
 <div class="outline-text-2" id="text-3">
 <div class="org-src-container">
 <pre class="src src-ocaml"><span style="color: #f5deb3; font-weight: bold;">module</span> <span style="color: #f5deb3; font-weight: bold;">type</span> <span style="color: #ce537a; font-weight: bold;">TREE</span> <span style="color: #f0e68c;">=</span> <span style="color: #f5deb3; font-weight: bold;">sig</span>

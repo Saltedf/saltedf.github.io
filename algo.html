@@ -1,0 +1,887 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-03-24 Fri 11:07 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>算法</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">算法</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org3c947c5">1. 基础算法</a>
+<ul>
+<li><a href="#org13560a4">1.1. 排序</a>
+<ul>
+<li><a href="#org0454e60">1.1.1. 快排 -&gt; 基于分治思想</a></li>
+<li><a href="#orgdf048cb">1.1.2. 归并</a></li>
+</ul>
+</li>
+<li><a href="#orgeb22d04">1.2. 二分</a>
+<ul>
+<li><a href="#org949bfc5">1.2.1. 整数二分</a></li>
+<li><a href="#org6ac0d5c">1.2.2. 浮点数二分</a></li>
+</ul>
+</li>
+<li><a href="#org0d207f2">1.3. 大整数(高精度)</a>
+<ul>
+<li><a href="#orgdfd2dc6">1.3.1. 实现</a></li>
+<li><a href="#org6b1f565">1.3.2. 大整数相加减</a></li>
+<li><a href="#org489bc44">1.3.3. 大整数 乘/除以 小整数</a></li>
+</ul>
+</li>
+<li><a href="#org4d180f8">1.4. 前缀和 &amp; 差分</a>
+<ul>
+<li><a href="#orgff431ec">1.4.1. 计算前缀和</a></li>
+<li><a href="#org36474c4">1.4.2. 前缀和的应用: 求区间和</a></li>
+<li><a href="#org1f58bc8">1.4.3. 二维前缀和</a></li>
+<li><a href="#org30d0f96">1.4.4. 二维前缀和的计算</a></li>
+</ul>
+</li>
+<li><a href="#orgf63e0a0">1.5. 双指针</a></li>
+<li><a href="#org3cb71e2">1.6. 位运算</a></li>
+<li><a href="#orgbab3895">1.7. 离散化</a></li>
+<li><a href="#orgf33adf5">1.8. 区间合并</a></li>
+</ul>
+</li>
+<li><a href="#org1b90711">2. 基本数据结构</a></li>
+<li><a href="#org4ad42d2">3. 搜索&amp;图论</a></li>
+<li><a href="#orgcddb4ac">4. 数学</a></li>
+<li><a href="#org26694c2">5. 动态规划</a></li>
+<li><a href="#orgaf609e6">6. 贪心算法</a></li>
+</ul>
+</div>
+</div>
+<p>
+<a href="file:///home/sun/src/rust-learning/data-structure/">代码</a>
+</p>
+
+<p>
+1.理解算法
+</p>
+
+<p>
+2.记忆算法流程/思想
+</p>
+
+<p>
+3.模板题: 快速默写(调试通过)
+n
+4.提高熟练度: 重写一道模板题 3-5 次
+</p>
+
+<div id="outline-container-org3c947c5" class="outline-2">
+<h2 id="org3c947c5"><span class="section-number-2">1.</span> 基础算法</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org13560a4" class="outline-3">
+<h3 id="org13560a4"><span class="section-number-3">1.1.</span> 排序</h3>
+<div class="outline-text-3" id="text-1-1">
+</div>
+<div id="outline-container-org0454e60" class="outline-4">
+<h4 id="org0454e60"><span class="section-number-4">1.1.1.</span> 快排 -&gt; 基于分治思想</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<ol class="org-ol">
+<li>确定分界点
+<ul class="org-ul">
+<li>左边界 q[l]</li>
+<li>中间 q[(l+r)/2]</li>
+<li>右边界 q[r]</li>
+<li>随机选取</li>
+</ul></li>
+
+<li>[难点] 调整区间: 让&lt;= x 的在左边, &gt;=x在右边. 
+(==x的无所谓在左/右)</li>
+</ol>
+
+
+
+<ol class="org-ol">
+<li>递归处理左右两个区间</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;iostream&gt;</span>
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">n</span> ;
+<span style="color: #51afef;">const</span> <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">N</span> = 1e6 + 10; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">+10 &#38450;&#27490;&#20986;&#29616;&#36793;&#30028;&#38382;&#39064;</span>
+<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">q</span>[N];
+
+<span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">quick_sort</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">q</span>[], <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">left</span>,<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">right</span>) {
+
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">x</span> = q[left];
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">i</span> = left-1;
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">j</span> = right+1;
+
+  <span style="color: #51afef;">while</span>(i&lt;j){
+    <span style="color: #51afef;">do</span>{++i;}<span style="color: #51afef;">while</span>(q[i]&gt;x);
+    <span style="color: #51afef;">do</span>{--j;}<span style="color: #51afef;">while</span>(q[j]&lt;x);
+    <span style="color: #51afef;">if</span>(i&lt;j){swap(q[i],q[j]);}
+  }
+
+  quick_sort(q,left,j);
+  quick_sort(q,j+1,right);
+}
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #c678dd;">quick_sort</span>(<span style="color: #dcaeea;">arr</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> [<span style="color: #ECBE7B;">i32</span>]){
+    <span style="color: #51afef;">if</span> arr.len()&lt;=1 {<span style="color: #51afef;">return</span>; } <span style="color: #5B6268;">// </span><span style="color: #5B6268;">[2]</span>
+
+    <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">mid</span> = (0 + arr.len()-1) &gt;&gt; 1;
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">i</span>: <span style="color: #ECBE7B;">i32</span> = -1;
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">j</span>:<span style="color: #ECBE7B;">i32</span> = arr.len() <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">i32</span> ;
+
+    <span style="color: #51afef;">while</span> i &lt; j {
+
+        <span style="color: #51afef;">loop</span>{
+            i+=1;
+            <span style="color: #51afef;">if</span> arr[i <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>] &gt;= arr[mid] { <span style="color: #51afef;">break</span>;} <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#26377;&#31561;&#21495;&#26159;&#20026;&#20102;&#23613;&#26089;&#36864;&#20986;, &#38450;&#27490;&#25968;&#32452;&#19979;&#26631;i/j&#36234;&#30028;!!</span>
+        }
+
+        <span style="color: #51afef;">loop</span>{
+            j-=1;
+            <span style="color: #51afef;">if</span> arr[j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>] &lt;=  arr[mid] { <span style="color: #51afef;">break</span>;}
+        }
+
+        <span style="color: #51afef;">if</span> i &lt; j {
+            arr.swap(i <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>,j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>);
+        }
+    }
+
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">[2,2]  i = 1, j = 0</span>
+    quick_sort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> arr[..=j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>]);     <span style="color: #5B6268;">// </span><span style="color: #5B6268;">0..=0 [2]</span>
+    quick_sort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> arr[(j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>+1)..]);  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">1..   [2]</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgdf048cb" class="outline-4">
+<h4 id="orgdf048cb"><span class="section-number-4">1.1.2.</span> 归并</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<ol class="org-ol">
+<li>确定分界点</li>
+
+<li>先对左右两侧分别进行递归(排序)</li>
+</ol>
+
+<p>
+3.[难点] 归并左右两个已经排序的区间
+</p>
+
+<p>
+<b>双指针算法</b> : 分别指向左右两个区间的开头, 然后比较指针, 输出较小的,并后移.直到一个指针到末尾. 
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #c678dd;">merge_sort</span>(<span style="color: #dcaeea;">a</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> [<span style="color: #ECBE7B;">i32</span>]){
+        <span style="color: #51afef;">if</span> a.len() &lt;= 1 { <span style="color: #51afef;">return</span> ; }
+        <span style="color: #51afef; font-weight: bold;">assert!</span>(a.len() != 0);
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">len</span> = a.len();
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">mid</span> = len/2;
+        <span style="color: #51afef; font-weight: bold;">debug_assert!</span>(mid&gt;=1);
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">left</span> = mid -1; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&gt;=0</span>
+        merge_sort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> a[0..=left]);
+        merge_sort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> a[mid..len]);
+
+        <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#24402;&#24182;</span>
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">tmp</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[0;len];
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">i</span> = 0;
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">j</span> = mid;
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">k</span> = 0;
+
+        <span style="color: #51afef;">while</span> i &lt; mid &amp;&amp; j &lt; len {
+            <span style="color: #51afef;">if</span> a[i] &lt;= a[j] {
+                tmp[k] = a[i];
+                i+=1; k+=1;
+            }<span style="color: #51afef;">else</span> {
+                tmp[k] = a[j];
+                j+=1;k+=1;
+            }
+        }
+        <span style="color: #51afef;">while</span> i &lt; mid { tmp[k] = a[i] ; i+=1;k+=1;}
+        <span style="color: #51afef;">while</span> j &lt; len { tmp[k] = a[j] ; j+=1;k+=1;}
+
+        <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 0..len {
+            a[i] = tmp[i];
+        }
+    }
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgeb22d04" class="outline-3">
+<h3 id="orgeb22d04"><span class="section-number-3">1.2.</span> 二分</h3>
+<div class="outline-text-3" id="text-1-2">
+</div>
+<div id="outline-container-org949bfc5" class="outline-4">
+<h4 id="org949bfc5"><span class="section-number-4">1.2.1.</span> 整数二分</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+整数除法会导致边界问题, 原则是: <b>调整为右边区间时要将mid点右移(+1)</b>.
+</p>
+
+<p>
+<code>[l,r]</code> 中选一个中点mid, 来将区间划分为左右两部分, 选择答案所在区间, 然后将下一次要查找的区间更新为"左半边"/"右半边".
+</p>
+
+<ul class="org-ul">
+<li>将区间更新为左半边需要调整的是原有的变量\(r = mid\). 此时 \(mid = \frac{l+r}{2}\) .</li>
+
+<li>将区间更新为右半边需要调整的是原有的变量\(l = mid\). 此时 \(mid = \frac{1+l+r}{2}\) .
+也就是要让选择的中间点稍微再往右移动一点, 否则将会导致 <code>[0,-1]</code> 出现(下标越界), 或者反复对 <code>[0,1]</code> 进行操作(死循环/无限递归)</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">bsearch1</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">l</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">r</span>){
+  <span style="color: #51afef;">while</span>( l&lt;r ){
+    <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">mid</span> = l + r &gt;&gt; 1; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">(l+r)/2</span>
+    <span style="color: #51afef;">if</span>(check(mid)) 
+      r = mid;
+    <span style="color: #51afef;">else</span>
+      l = mid+1;
+  }
+  <span style="color: #51afef;">return</span> l; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">l == r</span>
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">bsearch2</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">l</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">r</span>){
+  <span style="color: #51afef;">while</span>(l&lt;r) {
+    <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">mid</span> = 1+l+r &gt;&gt; 1; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">(1+l+r)/2</span>
+    <span style="color: #51afef;">if</span>(check(mid))
+      l = mid;
+    <span style="color: #51afef;">else</span>
+      r = mid -1;
+  }
+  <span style="color: #51afef;">return</span> l; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">l == r</span>
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org6ac0d5c" class="outline-4">
+<h4 id="org6ac0d5c"><span class="section-number-4">1.2.2.</span> 浮点数二分</h4>
+<div class="outline-text-4" id="text-1-2-2">
+<p>
+没有边界问题.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">  <span style="color: #ECBE7B;">double</span> <span style="color: #c678dd;">sqrt</span>(<span style="color: #ECBE7B;">double</span> <span style="color: #dcaeea;">n</span> ) {
+  <span style="color: #ECBE7B;">double</span> <span style="color: #dcaeea;">l</span> = 0;
+  <span style="color: #ECBE7B;">double</span> <span style="color: #dcaeea;">r</span> = n;
+  <span style="color: #51afef;">if</span>(n&lt;1) <span style="color: #5B6268;">// </span><span style="color: #5B6268;">eg: n=0.01, res=0.1</span>
+    r = 1;
+  <span style="color: #ECBE7B;">double</span> <span style="color: #dcaeea;">mid</span> = (l+r) / 2.0;
+
+  <span style="color: #51afef;">while</span>(r - l &gt; 1e-8){
+    mid = (l+r)/2.0;
+    <span style="color: #51afef;">if</span>( mid*mid &gt; n )
+      r = mid;
+    <span style="color: #51afef;">else</span>
+      l = mid ;
+  }
+  <span style="color: #51afef;">return</span> l;
+}
+
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span>(){
+  <span style="color: #ECBE7B;">double</span> <span style="color: #dcaeea;">x</span>{};
+  <span style="color: #a9a1e1;">std</span>::scanf(<span style="color: #98be65;">"%lf"</span>,&amp;x);
+
+  <span style="color: #ECBE7B;">double</span> <span style="color: #dcaeea;">res</span> = sqrt(x);
+  <span style="color: #a9a1e1;">std</span>::printf(<span style="color: #98be65;">"%lf"</span>,res);
+
+  <span style="color: #51afef;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org0d207f2" class="outline-3">
+<h3 id="org0d207f2"><span class="section-number-3">1.3.</span> 大整数(高精度)</h3>
+<div class="outline-text-3" id="text-1-3">
+</div>
+<div id="outline-container-orgdfd2dc6" class="outline-4">
+<h4 id="orgdfd2dc6"><span class="section-number-4">1.3.1.</span> 实现</h4>
+<div class="outline-text-4" id="text-1-3-1">
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef; font-weight: bold;">#[derive(Debug, Clone, Copy, PartialEq, Eq)]</span>
+<span style="color: #51afef;">enum</span> <span style="color: #ECBE7B;">BigIntSign</span> {
+    <span style="color: #ECBE7B;">Plus</span>,
+    <span style="color: #ECBE7B;">Minus</span>,
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">BigIntSign</span> {
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">reverse</span>(<span style="color: #51afef;">self</span>) -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #51afef;">match</span> <span style="color: #51afef;">self</span> {
+            <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Plus</span> =&gt; <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Minus</span>,
+            <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Minus</span> =&gt; <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Plus</span>,
+        }
+    }
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">Display</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">BigIntSign</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">fmt</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">f</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> <span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">fmt</span>::<span style="color: #ECBE7B;">Formatter</span>&lt;'<span style="color: #dcaeea;">_</span>&gt;) -&gt; <span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">fmt</span>::<span style="color: #ECBE7B;">Result</span> {
+        <span style="color: #51afef;">match</span> <span style="color: #51afef;">self</span> {
+            <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Plus</span> =&gt; <span style="color: #c678dd;">write!</span>(f, <span style="color: #98be65;">"+"</span>),
+            <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Minus</span> =&gt; <span style="color: #c678dd;">write!</span>(f, <span style="color: #98be65;">"-"</span>),
+        }
+    }
+}
+
+<span style="color: #51afef; font-weight: bold;">#[derive(Debug)]</span>
+<span style="color: #51afef;">struct</span> <span style="color: #ECBE7B;">BigInt</span> {
+    <span style="color: #dcaeea;">inner</span>: <span style="color: #ECBE7B;">Vec</span>&lt;<span style="color: #ECBE7B;">u8</span>&gt;, <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#20302;&#20301;&#22312;Vec&#24320;&#22836;!</span>
+    <span style="color: #dcaeea;">sign</span>: <span style="color: #ECBE7B;">BigIntSign</span>,
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">Display</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">BigInt</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">fmt</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">f</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> <span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">fmt</span>::<span style="color: #ECBE7B;">Formatter</span>&lt;'<span style="color: #dcaeea;">_</span>&gt;) -&gt; <span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">fmt</span>::<span style="color: #ECBE7B;">Result</span> {
+        <span style="color: #51afef;">let</span> <span style="color: #ECBE7B;">str</span>: <span style="color: #ECBE7B;">String</span> = <span style="color: #51afef;">self</span>.to_string();
+        <span style="color: #c678dd;">write!</span>(f, <span style="color: #98be65;">"</span><span style="color: #98be65; font-style: italic;">{}</span><span style="color: #98be65;">"</span>, <span style="color: #ECBE7B;">str</span>)
+    }
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">BigInt</span> {
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">new</span>(<span style="color: #dcaeea;">s</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">str</span>) -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">inner</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[];
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">sign</span> = <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Plus</span>;
+        <span style="color: #51afef;">for</span> (i, c) <span style="color: #51afef;">in</span> s.char_indices().rev() {
+            <span style="color: #51afef;">if</span> c == <span style="color: #98be65;">'-'</span> &amp;&amp; i == 0 {
+                sign = <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Minus</span>;
+            } <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> c != <span style="color: #98be65;">'+'</span> &amp;&amp; c != <span style="color: #98be65;">'-'</span> {
+                <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">n</span>: <span style="color: #ECBE7B;">u8</span> = c.to_string().parse().unwrap();
+                inner.push(n);
+            }
+        }
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #ECBE7B;">Self</span> { inner, sign };
+        res.remove_zero();
+        res
+    }
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">len</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>) -&gt; <span style="color: #ECBE7B;">usize</span> {
+        <span style="color: #51afef;">self</span>.inner.len()
+    }
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">to_string</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>) -&gt; <span style="color: #ECBE7B;">String</span> {
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> =if <span style="color: #51afef;">self</span>.sign == <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Minus</span> {
+            <span style="color: #98be65;">"-"</span>.to_string()
+        } <span style="color: #51afef;">else</span> {
+            <span style="color: #98be65;">""</span>.to_string()
+        };
+        <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">n</span> <span style="color: #51afef;">in</span> <span style="color: #51afef;">self</span>.inner.iter().rev(){
+            res.push_str(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span>n.to_string());
+        }
+        res
+    }
+
+    <span style="color: #83898d;">/// &#31227;&#38500;&#21069;&#23548;&#38646;</span>
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">remove_zero</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> <span style="color: #51afef;">self</span>) {
+        <span style="color: #51afef;">while</span> <span style="color: #51afef;">self</span>.inner.len() &gt; 1 &amp;&amp; *<span style="color: #51afef;">self</span>.inner.last().unwrap() == 0 {
+            <span style="color: #51afef;">self</span>.inner.pop();
+        }
+    }
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">add</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">other</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">Self</span>) -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.sign != other.sign {
+            <span style="color: #51afef;">return</span> <span style="color: #51afef;">self</span>.sub(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span>other.neg());
+        }
+        <span style="color: #51afef; font-weight: bold;">debug_assert_eq!</span>(<span style="color: #51afef;">self</span>.sign, other.sign);
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[];
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">max_len</span> = <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.len() &gt; other.len() {
+            <span style="color: #51afef;">self</span>.len()
+        } <span style="color: #51afef;">else</span> {
+            other.len()
+        };
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">overflow</span> = <span style="color: #51afef;">false</span>;
+
+        <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 0..max_len {
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">a</span> = <span style="color: #51afef;">self</span>.inner.get(i).copied().unwrap_or(0);
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">b</span> = other.inner.get(i).copied().unwrap_or(0);
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">c</span> = a + b + <span style="color: #51afef;">if</span> overflow { 1 } <span style="color: #51afef;">else</span> { 0 };
+            overflow = c &gt;= 10;
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">c</span> = c % 10;
+            res.push(c);
+        }
+
+        <span style="color: #51afef;">if</span> overflow {
+            <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#26368;&#39640;&#20301;&#26159;&#21542;&#36827;1</span>
+            res.push(1);
+        }
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #ECBE7B;">Self</span> {
+            <span style="color: #dcaeea;">inner</span>: res,
+            <span style="color: #dcaeea;">sign</span>: <span style="color: #51afef;">self</span>.sign,
+        };
+        res.remove_zero();
+        res
+    }
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">abs</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>) -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #ECBE7B;">Self</span> {
+            <span style="color: #dcaeea;">inner</span>: <span style="color: #51afef;">self</span>.inner.clone(),
+            <span style="color: #dcaeea;">sign</span>: <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Plus</span>,
+        }
+    }
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">neg</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>) -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #ECBE7B;">Self</span> {
+            <span style="color: #dcaeea;">inner</span>: <span style="color: #51afef;">self</span>.inner.clone(),
+            <span style="color: #dcaeea;">sign</span>: <span style="color: #51afef;">self</span>.sign.reverse(),
+        }
+    }
+
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">sub</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">other</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">Self</span>) -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.sign != other.sign {
+            <span style="color: #51afef;">return</span> <span style="color: #51afef;">self</span>.add(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span>other.neg());
+        }
+        <span style="color: #51afef; font-weight: bold;">debug_assert_eq!</span>(<span style="color: #51afef;">self</span>.sign, other.sign);
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">s</span> = <span style="color: #51afef;">self</span>.abs();
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">other</span> = other.abs();
+        <span style="color: #51afef;">if</span> s &lt; other {
+            <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = other.sub(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span>s);
+            <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.sign == <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Plus</span> {
+                res.sign = <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Minus</span>;
+            }
+            <span style="color: #51afef;">return</span> res;
+        }
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[];
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">max_len</span> = <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.len() &gt; other.len() {
+            <span style="color: #51afef;">self</span>.len()
+        } <span style="color: #51afef;">else</span> {
+            other.len()
+        };
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">carry</span> = <span style="color: #51afef;">false</span>;
+
+        <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 0..max_len {
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">a</span> = <span style="color: #51afef;">self</span>.inner.get(i).copied().unwrap_or(0) - <span style="color: #51afef;">if</span> carry { 1 } <span style="color: #51afef;">else</span> { 0 };
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">b</span> = other.inner.get(i).copied().unwrap_or(0);
+            carry = a &lt; b;
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">c</span> = <span style="color: #51afef;">if</span> a &lt; b { 10 + a - b } <span style="color: #51afef;">else</span> { a - b };
+
+            res.push(c);
+        }
+
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">sign</span> = <span style="color: #51afef;">if</span> res.len() == 1 &amp;&amp; res[0] == 0 {
+            <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Plus</span>
+        } <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.sign == <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Minus</span> {
+            <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Minus</span>
+        } <span style="color: #51afef;">else</span> {
+            <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Plus</span>
+        };
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #ECBE7B;">Self</span> { <span style="color: #dcaeea;">inner</span>: res, sign };
+        res.remove_zero();
+        res
+    }
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">mul</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">other</span>: <span style="color: #ECBE7B;">i128</span>) -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #51afef;">if</span> other == 0 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Self</span>::default();
+        }
+
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">sign</span> = <span style="color: #51afef;">if</span> other &gt; 0 {
+            <span style="color: #51afef;">self</span>.sign
+        } <span style="color: #51afef;">else</span> {
+            <span style="color: #51afef;">self</span>.sign.reverse()
+        };
+
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">other</span> = other.abs();
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[];
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">overflow</span>: <span style="color: #ECBE7B;">u8</span> = 0;
+
+        <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 0..<span style="color: #51afef;">self</span>.len() {
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">a</span> = overflow <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">i128</span> + (<span style="color: #51afef;">self</span>.inner[i] <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">i128</span>) * other;
+            res.push((a % 10) <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">u8</span>);
+            overflow = (a / 10) <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">u8</span>;
+        }
+
+        <span style="color: #51afef;">if</span> overflow != 0 {
+            res.push(overflow);
+        }
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #ECBE7B;">Self</span> { <span style="color: #dcaeea;">inner</span>: res, sign };
+        res.remove_zero();
+        res
+    }
+
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">div</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">other</span>: <span style="color: #ECBE7B;">i128</span>) -&gt; <span style="color: #ECBE7B;">Option</span>&lt;<span style="color: #ECBE7B;">Self</span>&gt; {
+        <span style="color: #51afef;">if</span> other == 0 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">None</span>;
+        }
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">sign</span> = <span style="color: #51afef;">if</span> other &gt; 0 {
+            <span style="color: #51afef;">self</span>.sign
+        } <span style="color: #51afef;">else</span> {
+            <span style="color: #51afef;">self</span>.sign.reverse()
+        };
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">inner</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[];
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">other</span> = other.abs();
+
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">r</span>: <span style="color: #ECBE7B;">i128</span> = 0;
+        <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> (0..<span style="color: #51afef;">self</span>.inner.len()).rev() {
+            <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">divide</span> = r * 10 + <span style="color: #51afef;">self</span>.inner[i] <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">i128</span>;
+            inner.push((divide / other) <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">u8</span>);
+            r = divide % other;
+        }
+
+        inner.reverse();
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #ECBE7B;">Self</span> { inner, sign };
+        res.remove_zero();
+        <span style="color: #ECBE7B;">Some</span>(res)
+    }
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">Default</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">BigInt</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">default</span>() -&gt; <span style="color: #ECBE7B;">Self</span> {
+        <span style="color: #ECBE7B;">Self</span> {
+            <span style="color: #dcaeea;">inner</span>: <span style="color: #51afef; font-weight: bold;">vec!</span>[0; 1],
+            <span style="color: #dcaeea;">sign</span>: <span style="color: #ECBE7B;">BigIntSign</span>::<span style="color: #ECBE7B;">Plus</span>,
+        }
+    }
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">PartialEq</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">BigInt</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">eq</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">other</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">Self</span>) -&gt; <span style="color: #ECBE7B;">bool</span> {
+        <span style="color: #51afef;">return</span> <span style="color: #51afef;">self</span>.sign == other.sign &amp;&amp; <span style="color: #51afef;">self</span>.inner == other.inner;
+    }
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">Eq</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">BigInt</span> {}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">PartialOrd</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">BigInt</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">partial_cmp</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">other</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">Self</span>) -&gt; <span style="color: #ECBE7B;">Option</span>&lt;<span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">cmp</span>::<span style="color: #ECBE7B;">Ordering</span>&gt; {
+        <span style="color: #51afef;">use</span> <span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">cmp</span>::<span style="color: #ECBE7B;">Ordering</span>::*;
+        <span style="color: #51afef;">use</span> <span style="color: #ECBE7B;">BigIntSign</span>::*;
+
+        <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.sign == <span style="color: #ECBE7B;">Plus</span> &amp;&amp; other.sign == <span style="color: #ECBE7B;">Minus</span> {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Some</span>(<span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">cmp</span>::<span style="color: #ECBE7B;">Ordering</span>::<span style="color: #ECBE7B;">Greater</span>);
+        } <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> other.sign == <span style="color: #ECBE7B;">Plus</span> &amp;&amp; <span style="color: #51afef;">self</span>.sign == <span style="color: #ECBE7B;">Minus</span> {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Some</span>(<span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">cmp</span>::<span style="color: #ECBE7B;">Ordering</span>::<span style="color: #ECBE7B;">Less</span>);
+        } <span style="color: #51afef;">else</span> {
+            <span style="color: #51afef; font-weight: bold;">debug_assert_eq!</span>(<span style="color: #51afef;">self</span>.sign, other.sign);
+
+            <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">cmp_abs</span> = <span style="color: #ECBE7B;">Equal</span>;
+            <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.inner.len() &gt; other.inner.len() {
+                cmp_abs = <span style="color: #ECBE7B;">Greater</span>;
+            } <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.inner.len() &lt; other.inner.len() {
+                cmp_abs = <span style="color: #ECBE7B;">Less</span>;
+            } <span style="color: #51afef;">else</span> {
+                <span style="color: #51afef; font-weight: bold;">debug_assert_eq!</span>(<span style="color: #51afef;">self</span>.inner.len(), other.inner.len());
+                <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">end</span> = <span style="color: #51afef;">self</span>.inner.len() - 1;
+                <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> (0..=end).rev() {
+                    <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.inner[i] &gt; other.inner[i] {
+                        cmp_abs = <span style="color: #ECBE7B;">Greater</span>;
+                        <span style="color: #51afef;">break</span>;
+                    } <span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.inner[i] &lt; other.inner[i] {
+                        cmp_abs = <span style="color: #ECBE7B;">Less</span>;
+                        <span style="color: #51afef;">break</span>;
+                    }
+                }
+            }
+            <span style="color: #51afef;">if</span> <span style="color: #51afef;">self</span>.sign == <span style="color: #ECBE7B;">Minus</span> {
+                cmp_abs.reverse();
+            }
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Some</span>(cmp_abs);
+        }
+    }
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">Ord</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">BigInt</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">cmp</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">other</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">Self</span>) -&gt; <span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">cmp</span>::<span style="color: #ECBE7B;">Ordering</span> {
+        <span style="color: #51afef;">self</span>.partial_cmp(other).expect(<span style="color: #98be65;">"cannot cmp!"</span>)
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6b1f565" class="outline-4">
+<h4 id="org6b1f565"><span class="section-number-4">1.3.2.</span> 大整数相加减</h4>
+</div>
+
+
+
+
+
+
+<div id="outline-container-org489bc44" class="outline-4">
+<h4 id="org489bc44"><span class="section-number-4">1.3.3.</span> 大整数 乘/除以 小整数</h4>
+<div class="outline-text-4" id="text-1-3-3">
+<p>
+这里的小整数数指的是基础类型中的整数, int, uint &#x2026;
+</p>
+</div>
+
+<ol class="org-ol">
+<li><a id="org69e5311"></a>乘法<br />
+<div class="outline-text-5" id="text-1-3-3-1">
+<p>
+乘法是用小整数分别和大整数的每一位相乘:
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">vector</span>&lt;<span style="color: #ECBE7B;">int</span>&gt; <span style="color: #c678dd;">mul</span>(<span style="color: #ECBE7B;">vector</span>&lt;<span style="color: #ECBE7B;">int</span>&gt;&amp; <span style="color: #dcaeea;">A</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">b</span>) {
+  <span style="color: #ECBE7B;">vector</span>&lt;<span style="color: #ECBE7B;">int</span>&gt; <span style="color: #dcaeea;">res</span>;
+
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">overflow</span> = 0;
+  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#32467;&#26524;res&#30340;&#20301;&#25968;&#26377;&#21487;&#33021;&#36229;&#36807;A, &#22240;&#27492;&#35201;&#32771;&#34385;&#26159;&#21542;&#21152;&#19978;&#20102;&#26368;&#39640;&#20301;&#21521;&#21069;&#30340;&#36827;&#20301;</span>
+  <span style="color: #51afef;">for</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">i</span>= 0; i&lt;A.size()||overflow != 0; i++) {
+    <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">t</span> = overflow; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#21069;&#19968;&#20301;&#30340;&#36827;&#20301;</span>
+    <span style="color: #51afef;">if</span>(i&lt;A.size())   t += A[i] * b;
+
+    overflow = t/10; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#26356;&#26032;&#36827;&#20301;</span>
+    res.push_back(t % 10); <span style="color: #5B6268;">//</span><span style="color: #5B6268;">&#24403;&#21069;&#20301;&#30340;&#35745;&#31639;&#32467;&#26524;&#30340;&#20010;&#20301;</span>
+  }
+
+  <span style="color: #51afef;">while</span>(res.size()&gt;1 &amp;&amp; res.back()==0 )  res.pop_back(); <span style="color: #5B6268;">//</span><span style="color: #5B6268;">&#21435;&#38500;&#21069;&#23548;&#38646;.</span>
+  <span style="color: #51afef;">return</span> res;
+}
+</pre>
+</div>
+</div>
+</li>
+
+
+<li><a id="orge09b0c4"></a>除法<br />
+<div class="outline-text-5" id="text-1-3-3-2">
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #5B6268;">// </span><span style="color: #5B6268;">r&#34920;&#31034;&#36820;&#22238;&#30340;&#20313;&#25968;.</span>
+<span style="color: #ECBE7B;">vector</span>&lt;<span style="color: #ECBE7B;">int</span>&gt; <span style="color: #c678dd;">div</span>(<span style="color: #ECBE7B;">vector</span>&lt;<span style="color: #ECBE7B;">int</span>&gt;&amp; <span style="color: #dcaeea;">A</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">b</span>, <span style="color: #ECBE7B;">int</span> &amp;<span style="color: #dcaeea;">remainder</span>) {
+  <span style="color: #ECBE7B;">vector</span>&lt;<span style="color: #ECBE7B;">int</span>&gt; <span style="color: #dcaeea;">res</span>;
+
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">r</span> = 0; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#39640;&#20301;&#38500;&#27861;&#30340;&#20313;&#25968;</span>
+  <span style="color: #51afef;">for</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">i</span> = A.size()-1; i&gt;=0; i--){
+    <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">a</span> = r*10 + A[i]; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#39640;&#20301;&#30340;&#20313;&#25968;*10 &#21152;&#19978; &#20302;&#19968;&#20301; == &#26032;&#30340;&#34987;&#38500;&#25968;</span>
+    <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">c</span> = a / b; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#32467;&#26524;res&#30340;&#26576;&#19968;&#20301;</span>
+    res.push_back(c);<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#31245;&#21518;&#38656;&#35201;&#21453;&#36716;res.</span>
+
+    r = (a % b); <span style="color: #5B6268;">//</span><span style="color: #5B6268;">&#23558;&#24403;&#21069;&#19968;&#20301;&#30340;&#38500;&#27861;&#20313;&#25968;&#35760;&#24405;&#19979;&#26469;.</span>
+  }
+
+  remainder = r;<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#23558;&#20010;&#20301;&#38500;&#27861;&#30340;&#20313;&#25968;&#35760;&#24405;&#19979;&#26469;.</span>
+  <span style="color: #a9a1e1;">std</span>::reverse(res.begin(),res.end());<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#21453;&#36716;res</span>
+  <span style="color: #5B6268;">//</span><span style="color: #5B6268;">&#21435;&#25481;&#21069;&#23548;&#38646;:</span>
+  <span style="color: #51afef;">while</span>(res.size()&gt;1 &amp;&amp; res.back()==0 )  res.pop_back();
+  <span style="color: #51afef;">return</span> res;
+}
+</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+
+
+<div id="outline-container-org4d180f8" class="outline-3">
+<h3 id="org4d180f8"><span class="section-number-3">1.4.</span> 前缀和 &amp; 差分</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+互为逆运算
+</p>
+
+<p>
+前缀和:
+\(S_k = S_{k-1}+a_k\)
+</p>
+
+<p>
+\[S_i = a_0 + a_1 + a_2 + a_3 + \dots + a_i\]
+</p>
+
+<p>
+\[S_{-1} = 0\]
+</p>
+</div>
+
+<div id="outline-container-orgff431ec" class="outline-4">
+<h4 id="orgff431ec"><span class="section-number-4">1.4.1.</span> 计算前缀和</h4>
+<div class="outline-text-4" id="text-1-4-1">
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">s</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[];
+s.push(a[0]); <span style="color: #5B6268;">//</span><span style="color: #5B6268;">s[0]</span>
+<span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 1..a.len() {
+    s[i] = s[i-1] + a[i];
+}
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org36474c4" class="outline-4">
+<h4 id="org36474c4"><span class="section-number-4">1.4.2.</span> 前缀和的应用: 求区间和</h4>
+<div class="outline-text-4" id="text-1-4-2">
+<p>
+<code>[l!=0, r]</code> 的和:  \(S_r - S_{l-1}\)
+</p>
+
+<p>
+<code>[0, r]</code> 的和: \(S_r - 0\)
+</p>
+
+<p>
+\[S_r = a_0+ a_1+a_2+\dots+a_{l-1}+ a_{l}+\dots+a_r\]
+</p>
+
+<p>
+\[S_{l-1} = a_0 + a_1+a_2+ \dots +a_{l-1}\] 
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org1f58bc8" class="outline-4">
+<h4 id="org1f58bc8"><span class="section-number-4">1.4.3.</span> 二维前缀和</h4>
+<div class="outline-text-4" id="text-1-4-3">
+<p>
+\(S_{ij}\) 表示以 \(a_{00}\) 为矩形左上角,\(S_{ij}\) 为矩形右下角的区域中的 \(a_{ij}\) 元素之和
+</p>
+
+<p>
+如何求出中间的一个矩形中的元素之和?
+</p>
+
+<p>
+\[
+S = S_{x_2 y_2} - S_{x_2, y_1-1} - S_{x_1-1, y_2} + S_{x_1-1,y_1-1}
+\]
+</p>
+
+<p>
+<code>S[i][j]</code> 的任意一个下标 <code>&lt;0</code> 时, 令 <code>S[i][j] = 0</code>.
+</p>
+
+
+<div id="org27d7ab8" class="figure">
+<p><img src="org-images/2023-03-21_13-23-27_screenshot.png" alt="2023-03-21_13-23-27_screenshot.png" width="320px" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org30d0f96" class="outline-4">
+<h4 id="org30d0f96"><span class="section-number-4">1.4.4.</span> 二维前缀和的计算</h4>
+<div class="outline-text-4" id="text-1-4-4">
+<p>
+\[
+S_{i,j} = S_{i-1,j} + S_{i,j-1} - S_{i-1,j-1} + a_{i,j}
+\]
+</p>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgf63e0a0" class="outline-3">
+<h3 id="orgf63e0a0"><span class="section-number-3">1.5.</span> 双指针</h3>
+</div>
+
+<div id="outline-container-org3cb71e2" class="outline-3">
+<h3 id="org3cb71e2"><span class="section-number-3">1.6.</span> 位运算</h3>
+</div>
+
+<div id="outline-container-orgbab3895" class="outline-3">
+<h3 id="orgbab3895"><span class="section-number-3">1.7.</span> 离散化</h3>
+</div>
+
+<div id="outline-container-orgf33adf5" class="outline-3">
+<h3 id="orgf33adf5"><span class="section-number-3">1.8.</span> 区间合并</h3>
+</div>
+</div>
+
+
+<div id="outline-container-org1b90711" class="outline-2">
+<h2 id="org1b90711"><span class="section-number-2">2.</span> 基本数据结构</h2>
+</div>
+
+<div id="outline-container-org4ad42d2" class="outline-2">
+<h2 id="org4ad42d2"><span class="section-number-2">3.</span> 搜索&amp;图论</h2>
+</div>
+
+<div id="outline-container-orgcddb4ac" class="outline-2">
+<h2 id="orgcddb4ac"><span class="section-number-2">4.</span> 数学</h2>
+</div>
+
+<div id="outline-container-org26694c2" class="outline-2">
+<h2 id="org26694c2"><span class="section-number-2">5.</span> 动态规划</h2>
+</div>
+
+<div id="outline-container-orgaf609e6" class="outline-2">
+<h2 id="orgaf609e6"><span class="section-number-2">6.</span> 贪心算法</h2>
+</div>
+</div>
+</body>
+</html>

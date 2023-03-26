@@ -1,0 +1,512 @@
+#+title: todo-list
+#+include: mytheme.setup 
+#+startup: indent overview logdone
+#+todo: TODO(t) SCH(s) WAIT(w) DOING(i) | DONE(d) CANCELED(c) 
+#+TAGS: @rust(r)  @compiler(c) @emacs(e) @system(s) @cpp(x)
+
+sch: 日程, 指定时间的
+
+1. 尽量最少设置截止日期
+2. 估计工作时长 
+3. 设定优先级
+4. 设置tag
+
+* inbox
+(明确细化任务, 以动词开头)
+
+** C即时通讯 in Rust
+** java DataBase书 in rust
+** rust写预定系统 
+** sylar服务器 in Rust
+** 陈硕 muduo in Rust
+** rust lecture
+https://www.youtube.com/@zackologlu7018/streams
+** 整理 the rust book 的todo list
+** Self Referential Structs in Rust                                  :@rust:
+https://arunanshub.hashnode.dev/series/selfref-structs-rust
+** Build your own block_on()                                         :@rust:
+** Build your own executor                                           :@rust:
+** Green Threads Explained in 200 lines of rust                      :@rust:
+https://cfsamson.gitbook.io/green-threads-explained-in-200-lines-of-rust/
+** Futures Explained in 200 Lines of Rust                            :@rust:
+https://cfsamson.github.io/books-futures-explained/introduction.html
+** rust数据结构                                                      :@rust:
+** 学习 gtd 书 
+
+
+* *next-action*
+(一口气能做完)
+
+** TODO 整理多线程代码                                               :@rust:
+DEADLINE: <2022-12-30 五 23:50>
+*** 抄一遍到笔记上. 
+** TODO [#C] 学习[[https://www.funtoo.org/Linux_Fundamentals,_Part_1][linux basic]]
+:PROPERTIES:
+:Effort:   1:30
+:END:
+** TODO [#C] 看emacs region这篇文 
+:PROPERTIES:
+:Effort:   35
+:END:
+http://xahlee.info/emacs/emacs/emacs_region.html
+** TODO [#B] 整理 compiler 计划
+网课+书
+** TODO [#C] 看cpp atomic videos
+
+
+
+* *project* 
+(长期,多步完成)
+~alt+上/下~
+
+** DOING [#A] 完成Eoc课程                                        :@compiler:
+*** DONE L1
+CLOSED: [2022-12-27 二 00:59]
+**** DONE 看视频
+CLOSED: [2022-12-25 日 21:09] DEADLINE: <2022-12-25 日 23:00>
+**** DONE 做简单的听课笔记
+CLOSED: [2022-12-25 日 21:09] DEADLINE: <2022-12-25 日 23:00>
+
+*** DONE L2
+CLOSED: [2022-12-27 二 00:59]
+**** DONE 看视频
+CLOSED: [2022-12-27 二 00:58] DEADLINE: <2022-12-26 一 22:40> SCHEDULED: <2022-12-26 一 21:00>
+:PROPERTIES:
+:Effort:   1:40
+:END:
+**** DONE 做简单的听课笔记
+CLOSED: [2022-12-27 二 00:58] DEADLINE: <2022-12-26 一 22:40> SCHEDULED: <2022-12-26 一 21:00>
+**** 做lab
+
+*** DONE L3
+CLOSED: [2022-12-29 四 16:13] DEADLINE: <2022-12-29 四 15:30>
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** DONE L4
+CLOSED: [2023-01-13 五 10:04]
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** DONE L5
+CLOSED: [2023-01-13 五 10:04]
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** DONE L6
+CLOSED: [2023-01-13 五 10:04]
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** DONE L7
+CLOSED: [2023-01-13 五 11:43]
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L8
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L9
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L10
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L11
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L12
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L13
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L14
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L15
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L16
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L17
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L18
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L19
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L20
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L21
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L22
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L23
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L24
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L25
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L26
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L27
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L28
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+*** TODO L29
+**** 看视频
+**** 做简单的听课笔记
+**** 看讲义
+**** 做lab
+
+
+
+** DOING [#A] Unity Pokemon
+
+*** p1-p3
+
+*** p4-p6
+
+*** p7-p9
+
+*** p10-p12
+
+*** p13-p15
+
+*** p16-p18
+
+*** p19-p21
+
+*** p22-p24
+
+*** p25-27
+
+*** p28-30
+
+*** p31-33
+
+** DOING [#A] rust语言圣经                                           :@rust:
+*** DONE 多线程
+DEADLINE: <2022-12-29 四 21:00>
+:PROPERTIES:
+:Effort:   2:00
+:END:
+:LOGBOOK:
+CLOCK: [2022-12-25 日 12:18]--[2022-12-25 日 12:53] =>  0:35
+:END:
+**** DONE send&sync视频                                            :@rust:
+CLOSED: [2022-12-26 一 23:32] DEADLINE: <2022-12-26 一 17:00> SCHEDULED: <2022-12-26 一 14:00-14:30>
+:PROPERTIES:
+:Effort:   2:30
+:END:
+**** DONE http服务器(rustbook)
+CLOSED: [2022-12-29 四 14:40]
+
+*** TODO 全局变量
+SCHEDULED: <2022-12-29 四 19:00> DEADLINE: <2022-12-29 四 21:00>
+:PROPERTIES:
+:Effort:   2:00
+:END:
+*** 错误处理 
+
+*** unsafe 
+
+*** Macro
+
+*** async/await
+
+*** tokio
+
+*** 难点攻关 
+
+*** 自动化测试
+
+*** cargo
+
+*** 实现链表
+
+*** 征服编译错误 
+
+** DOING [#A] 分析cranelift源码                            :@rust:@compiler:
+
+** DOING [#A] [[https://www.youtube.com/playlist?list=PLde1J4XOn2z0i6fc39dI6OWjEoNuaFglI][印度compiler课程]] :@compiler:
+*** L18 machine independent opts
+*** L19 basic block, cfg
+*** L20 local optimizition
+*** L21 ssa
+*** L22 dataflow examples
+*** L23 liveness
+*** L24 available
+*** L25 llvm101
+*** L26 runtime
+*** L27 code gen
+*** L29 local reg alloc
+*** L30 global reg alloc
+
+** DOING [#B] 抄个sfml rpg
+
+*** DONE sfml rpg 11--13节
+CLOSED: [2022-12-18 日 09:23] DEADLINE: <2022-12-17 六 23:00>
+:PROPERTIES:
+:Effort:   2:30
+:END:
+:LOGBOOK:
+CLOCK: [2022-12-17 六 22:49]--[2022-12-18 日 00:07] =>  1:18
+CLOCK: [2022-12-17 六 21:42]--[2022-12-17 六 22:17] =>  0:35
+CLOCK: [2022-12-17 六 20:57]--[2022-12-17 六 21:32] =>  0:35
+:END:
+*** DONE sfml rpg 14--16节
+CLOSED: [2022-12-26 一 18:00] DEADLINE: <2022-12-26 一 13:30>
+:PROPERTIES:
+:Effort:   2:30
+:END:
+
+*** DONE sfml rpg 17--19节
+CLOSED: [2022-12-28 三 13:52] DEADLINE: <2022-12-27 二 23:00>
+:PROPERTIES:
+:Effort:   2:30
+:END:
+
+*** TODO sfml rpg 20--22节
+SCHEDULED: <2022-12-29 四 21:00> DEADLINE: <2022-12-29 四 23:50>
+:PROPERTIES:
+:Effort:   2:30
+:END:
+
+*** TODO sfml rpg 23--25节
+:PROPERTIES:
+:Effort:   2:30
+:END:
+*** TODO sfml rpg 26--28节
+:PROPERTIES:
+:Effort:   2:30
+:END:
+*** TODO sfml rpg 29--31节
+:PROPERTIES:
+:Effort:   2:30
+:END:
+*** TODO sfml rpg 32--34节
+:PROPERTIES:
+:Effort:   2:30
+:END:
+*** TODO sfml rpg 35--37节
+:PROPERTIES:
+:Effort:   2:30
+:END:
+
+** TODO CSEP 501 (EAC)                                           :@compiler:
+
+** TODO [#A] 北大编译课                                          :@compiler:
+
+** [#A] Rust 秘典（死灵书）                                          :@rust:
+
+** [#A] 学习EAC书的内容                                          :@compiler:
+
+** [#B] 阅读async book                                               :@rust:
+https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html
+
+** 韩国编译课程                                            :@rust:@compiler:
+
+** TODO DC 888                                                   :@compiler:
+
+** TODO CSE 231 advanced compiler                           :@compiler:@cpp:
+** TODO [#C] ece459                                          :@rust:@system:
+** TODO [#B] cs110L                                          :@rust:@system:
+** [#C] 完成过程宏的几个实验                                         :@rust:
+** [#B] 学习elisp                                                   :@emacs:
+http://smacs.github.io/elisp/12-buffer.html
+http://xahlee.info/emacs/emacs/emacs_region.html
+https://www.jianshu.com/p/bba1e3149b2b
+https://www.jianshu.com/p/65b271c1dabf
+
+** compilerai课程                                                :@compiler:
+
+** [#C] [[https://www.youtube.com/playlist?list=PLv8Ddw9K0JPg1BEO-RS-0MYs423cvLVtj][Vulkan Game Engine Series]]
+
+
+
+
+** [#C] mydocker                                                   :@system:
+
+** [#C] 每天看一小节陈正康单词课
+
+
+** Python Cookbook
+https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html
+
+** 看完mini perl
+
+
+
+* /appointment/
+(特定时间才能开始做的)
+
+
+
+* /waiting-for/
+
+
+* /ref/
+** llvm                                                          :@compiler:
+https://zhqli.com/post/1634083200
+
+** https://vmm.dev/en/rust/                                          :@rust:
+*** spinlock
+*** data structures
+
+** build a os                                                      :@system:
+https://xiayingp.gitbook.io/build_a_os/lock/locking-in-xv6
+
+** emacs文章                                                        :@emacs:
+https://segmentfault.com/a/1190000039828140
+https://www.jianshu.com/p/65b271c1dabf
+https://www.jianshu.com/p/bba1e3149b2b
+
+** org mode gtd                                                     :@emacs:
+https://devalot.com/articles/2008/07/project-planning
+** learn C++                                                          :@cpp:
+https://www.learncpp.com/cpp-tutorial/dependencies/
+** 读懂 Rust 的Arc                                                   :@rust:
+https://qiita.com/qnighy/items/b3b728adf5e4a3f1a841#%E6%9C%AC%E7%A8%BF%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%88%E3%83%9F%E3%83%83%E3%82%AF%E6%93%8D%E4%BD%9C%E3%81%AE%E5%9B%B3%E7%A4%BA
+** A Guide to Porting C/C++ to Rust                             :@rust:@cpp:
+https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/
+** rust cookbook                                                     :@rust:
+https://rustwiki.org/zh-CN/rust-cookbook/intro.html
+** cs110L lab                                                :@rust:@system:
+https://lza852.com/posts/2021-10-19-cs110l-proj2/
+** opengl modern
+https://learnopengl.com/
+** C programming + basic makefile
+https://www.youtube.com/watch?v=5wzmEKjNqiU&list=PLnpfWqvEvRCchcCM-373x2630drhtdWEw
+** React源码
+https://kasong.gitee.io/just-react/
+
+** 职业编曲课
+https://space.bilibili.com/27365679/video?tid=0&page=1&keyword=&order=click
+* completed
+~C-c C-w~
+** DONE 配置org的番茄钟在界面上显示时间
+CLOSED: [2022-12-17 六 14:56]
+:LOGBOOK:
+CLOCK: [2022-12-17 六 14:24]--[2022-12-17 六 14:49] =>  0:25
+CLOCK: [2022-12-17 六 14:16]--[2022-12-17 六 14:24] =>  0:08
+:END:
+
+** DONE [#B] 看rust atomic video
+CLOSED: [2022-12-19 一 11:10] DEADLINE: <2022-12-19 一 12:00> SCHEDULED: <2022-12-18 日 10:00>
+:PROPERTIES:
+:Effort:   2:00
+:END:
+:LOGBOOK:
+CLOCK: [2022-12-19 一 10:15]--[2022-12-19 一 11:11] =>  0:56
+CLOCK: [2022-12-18 日 20:53]--[2022-12-18 日 21:28] =>  0:35
+CLOCK: [2022-12-18 日 13:47]--[2022-12-18 日 14:22] =>  0:35
+CLOCK: [2022-12-18 日 10:36]--[2022-12-18 日 11:11] =>  0:35
+CLOCK: [2022-12-18 日 09:44]--[2022-12-18 日 10:19] =>  0:35
+CLOCK: [2022-12-17 六 15:20]--[2022-12-17 六 15:55] =>  0:35
+:END:
+
+** DONE [#C] Emacs Lisp: Get User Input
+CLOSED: [2022-12-29 四 16:15]
+:PROPERTIES:
+:Effort:   45
+:END:
+http://xahlee.info/emacs/emacs/elisp_idioms_prompting_input.html
+
+* Daily Review
+
+#+BEGIN: clocktable :maxlevel 5 :scope agenda-with-archives :block today :fileskip0 t :indent t
+#+CAPTION: Clock summary at [2022-12-29 四 16:16], for 星期四, 十二月 29, 2022.
+| File | Headline       | Time |
+|------+----------------+------|
+|      | ALL *Total time* | *0:00* |
+#+END
+
+
+* Weekly Review
+
+#+BEGIN: clocktable :maxlevel 5 :scope agenda-with-archives :block thisweek :fileskip0 t :indent t
+#+CAPTION: Clock summary at [2022-12-29 四 16:16], for week 2022-W52.
+| File | Headline       | Time |
+|------+----------------+------|
+|      | ALL *Total time* | *0:00* |
+#+END
+
+
+
+* Monthly Review
+
+#+BEGIN: clocktable :maxlevel 5 :scope agenda-with-archives :block thismonth :fileskip0 t :indent t
+#+CAPTION: Clock summary at [2022-12-25 日 11:55], for 十二月 2022.
+| File     | Headline                            | Time |      |      |
+|----------+-------------------------------------+------+------+------|
+|          | ALL *Total time*                      | *6:52* |      |      |
+|----------+-------------------------------------+------+------+------|
+| todo.org | *File time*                           | *6:52* |      |      |
+|          | *project*                             | 2:28 |      |      |
+|          | \_  抄个sfml rpg                    |      | 2:28 |      |
+|          | \_    sfml rpg 11--13节             |      |      | 2:28 |
+|          | completed                           | 4:24 |      |      |
+|          | \_  配置org的番茄钟在界面上显示时间 |      | 0:33 |      |
+|          | \_  看rust atomic video             |      | 3:51 |      |
+#+END

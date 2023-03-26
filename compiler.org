@@ -168,6 +168,113 @@ d1  d2  d3    s1   s2  s3
 
 某些局部变量不放在寄存器中, 而是存放于stack中, 这些被占用的寄存器可能会与该函数调用的其他函数相冲突. 因此需要将其保存栈中.
 
+#+begin_src c
+  int foo(int x , int y)
+  {
+    int temp = x + 1;
+    int temp2 = x - y ;
+    return temp * temp2 ;
+  }
+#+end_src
+
+#+begin_src asm
+foo:                                    # -O0
+        pushq   %rbp            # 保存帧指针 
+        movq    %rsp, %rbp      # 
+        movl    %edi, -4(%rbp)  # x
+        movl    %esi, -8(%rbp)  # y
+        movl    -4(%rbp), %eax  # x
+        addl    $1, %eax        # x+1 
+        movl    %eax, -12(%rbp) # x+1 -> temp 
+        movl    -4(%rbp), %eax  # x
+        subl    -8(%rbp), %eax  # x - y 
+        movl    %eax, -16(%rbp) # x - y -> temp2  
+        movl    -12(%rbp), %eax # temp
+        imull   -16(%rbp), %eax # temp * temp2 -> return value 
+        popq    %rbp            # 恢复 帧指针 
+        retq
+#+end_src
+
+#+begin_src c
+
+int foo(int x , int y){
+  //char a = 0;
+  int temp = x + 1;
+  int temp2 = x - y ;
+  return temp * temp2 ;
+}
+
+/* Type your code here, or load an example. */
+int  __attribute__((noinline)) square() {
+  char aa = 'a' ;
+  long long le = 0;
+  long long hi = 12;
+  long long le1 = 0;
+  long long hi1 = 12;
+  long long le2 = 0;
+  long long hi2 = 12;
+  //foo(3,7); 使得 square()  是否为叶子过程 
+  return le + hi;
+}
+struct foo { // > 16 字节, 在栈中要为其分配 32 字节. rsp -= 32  
+  int i;
+  long long l;
+  long long ll;
+};
+
+int main() {
+  struct foo myfoo;
+  myfoo.i = 100;
+  //square(); 使得 square()  是否为叶子过程 
+  return 0;
+}
+
+// rsp 增长 按16字节对齐.
+
+// 叶子过程可以不为其分配栈帧, 可直接使用 rbp - N 处的内存. 栈顶之外的128 字节都可以使用. 
+#+end_src
+
+#+begin_src asm 
+  foo:                                    # @foo
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movl    %edi, -4(%rbp)
+        movl    %esi, -8(%rbp)
+        movl    -4(%rbp), %eax
+        addl    $1, %eax
+        movl    %eax, -12(%rbp)
+        movl    -4(%rbp), %eax
+        subl    -8(%rbp), %eax
+        movl    %eax, -16(%rbp)
+        movl    -12(%rbp), %eax
+        imull   -16(%rbp), %eax
+        popq    %rbp
+        retq
+square:                                 # @square
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movb    $97, -1(%rbp)
+        movq    $0, -16(%rbp)
+        movq    $12, -24(%rbp)
+        movq    $0, -32(%rbp)
+        movq    $12, -40(%rbp)
+        movq    $0, -48(%rbp)
+        movq    $12, -56(%rbp)
+        movq    -16(%rbp), %rax
+        addq    -24(%rbp), %rax
+        popq    %rbp
+        retq
+main:                                   # @main
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movl    $0, -4(%rbp)
+        movl    $100, -32(%rbp)
+        xorl    %eax, %eax
+        popq    %rbp
+        retq
+#+end_src
+
+
 
 
 *** frame指针
@@ -352,6 +459,8 @@ frame指针的存在通常是为了变长的函数frame.
 Tiger编译器的栈帧
 
 
+
+
 栈帧的接口: 
 #+begin_src ocaml
   module type FRAME = sig
@@ -366,6 +475,37 @@ Tiger编译器的栈帧
 	...
   end
 #+end_src
+
+#+begin_src ocaml 
+    module type FRAME =  sig
+      type register = string
+      val RV: Temp.temp (*p. 168*)
+      val FP: Temp.temp (*p. 155*)
+      val registers: register list
+      val tempMap: register Temp.Table.table
+      val wordSize: int (*p. 155*)
+      val externalCall: string * Tree.exp list -> Tree.exp (*p. 165*)
+
+      type frame (*p. 134*)
+      val newFrame: {name: Temp, label, formals: int} -> frame * int list  (*p. 135*)
+      val formals: frame -> access list (*p. 135*)
+      val name: frame -> Temp.label (*p. 134*)
+      val allocLocal: frame -> int (*p. 137*)
+      val string: Tree.label * string -> string (*p. 262*)
+      (* (L3,"hello") ==> "L3: .ascii "hello" \n" *)
+      val procEntryExitl: frame * Tree.stm -> Tree.stm (*p. 261*)
+      val procEntryExit2: frame * Assem.instr list -> Assem.instr list  (*p. 208*)
+      val procEntryExit3 : frame * Assem.instr list -> (*p. 261*)
+	{prolog: string, body: Assem.instr list, epilog: string}
+
+      type frag = PROC of { body: Tree.stm, frame: frame}  (*p. 169*)
+		| STRING of Temp.label * string
+    end
+#+end_src
+
+
+
+
 
 特定的目标机器: 
 #+begin_src ocaml
@@ -526,6 +666,9 @@ transVar 也需要添加一个表示当前level的参数, 因为要通过计算l
 
 * 中间表示
 
+
+
+
 #+begin_src ocaml
   module type TREE = sig
     type exp = Const of int       (* 整数常量 *)
@@ -538,8 +681,8 @@ transVar 也需要添加一个表示当前level的参数, 因为要通过计算l
 
     and stm = Move of exp * exp 
 	    | Exp of exp
-	    | Jump of exp * Temp.label list
-	    | Cjump of relop * exp * exp * Temp.label * Temp.label
+	    | Jump of exp * Temp.label list (* 类似于 switch *)
+	    | Cjump of relop * exp * exp * Temp.label * Temp.label (* 类似于if-else *)
 	    | Seq of stm * stm
 	    | Label of Temp.label
 
@@ -564,7 +707,14 @@ transVar 也需要添加一个表示当前level的参数, 因为要通过计算l
 
 将抽象语法转换为中间表示树是十分直接的, 但仍有许多要处理的情况.
 
+
+
 表达式的种类:
+
+返回一个值的表达式.
+不返回(有意义)值的表示式(while/返回值为空的过程调用)
+bool表达式:
+
 抽象语法树中的exp类型用Tree语言该如何表示呢? 乍一看似乎要用 Tree.exp进行表示. 然而这只对某些种类的表达式是可行的, 即能被计算为一个值的那些表达式. 而对于那些不返回值的表达式(例如某些过程调用或是while表达式) 用Tree.stm来表示它们是更加自然的. 并且对于那些有bool类型值的表达式, 例如a>b, 可能最好的表示方式是作为一个有条件跳转: Tree.stm和用Temp.label表示的目的地的组合成的pair.
 
 因此,我们在 ~Translate~ 增加 ~exp~ 类型, 分别表示这三类表达式: 
@@ -590,24 +740,36 @@ transVar 也需要添加一个表示当前level的参数, 因为要通过计算l
 #+end_src
 
 #+begin_src rust 
-  if a>b  {     --+
-      goto t;     |
-  } else {        |--> Cjump Gt a b t z
-      goto z;     |
-  }             --+
+   if a>b  {     --+
+       goto t;     |
+   } else {        |--> Cjump Gt a b t z
+       goto z;     |
+   }             --+
 
-  label z :     |--->  Label z 
-  
-  if c<d {      --+
-      goto t;     |
-  } else {        |--> Cjump Lt c d t f
-      goto f;     |
-  }             --+
+   label z :     |--->  Label z 
+
+   if c<d {      --+
+       goto t;     |
+   } else {        |--> Cjump Lt c d t f
+       goto f;     |
+   }             --+
+
+
+  //??  label t:
+
+  //??  label f: 
 #+end_src
 
 
-   
-有时候
+#+begin_src ocaml
+  unEx : exp -> Tree.exp
+
+  unNx : exp -> Tree.stm
+		  
+  unCx : exp -> (Temp.Label -> Temp.Label -> Tree.stm) 
+#+end_src
+
+这三种逆转构造函数中的每个能作用在Translate.exp的三种类型上, 就像下面实现的unEx.
 
 
 #+begin_src ocaml
@@ -620,11 +782,74 @@ transVar 也需要添加一个表示当前level的参数, 因为要通过计算l
       let t = Temp.newlabel () in
       let f = Temp.newlabel () in
       begin 
-	T.Eseq (T.Seq [] ,T.Temp r)
+	T.Eseq (
+	  T.Seq(T.Move (T.Temp r,T.Const 1) ,
+		T.Seq (genstm t f,
+		       T.Seq(T.label f,
+			     T.Seq(T.Move(T.Temp r,T.Const 0) ,
+				   T.Label t
+				  )))) ,
+	  T.Temp r)
       end
     | Nx s -> T.Eseq s (T.Const 0)
+#+end_src
+
+~unEx~ 为bool表达式生成的 ~Tree.exp~ 类似于: 
+
+#+begin_src rust
+  r <- 1
+  genstm t f  // 何时跳转到t和f的语句
+label f :
+  r <- 0
+label t :
+  r
 #+end_src
 
 
 
 
+ 
+
+
+
+#+begin_src ocaml 
+    module type FRAME =  sig
+
+      type register = string
+
+      val RV: Temp.temp (*p.168*)
+      val FP: Temp.temp (*p.155*)
+      val registers: register list
+      val tempMap: register Temp.Table.table
+      val wordSize: int (*p.155*)
+      val externalCall: string * Tree.exp list -> Tree.exp (*p.165*)
+
+      type frame (*p.134*)
+  (** val newFrame: {name: Temp.label, formals: int} -> frame * int list  (*p.135*)  *)
+      val newFrame: {name: Temp.label, formals: bool list} -> frame
+      val formals: frame -> access list (*p.135*)
+      val name: frame -> Temp.label (*p.134*)
+  (** val allocLocal: frame -> int (*p.137*) *)
+      val allocLocal: frame -> bool -> access
+      val string: Tree.label * string -> string (*p.262*)
+      (* (L3,"hello") ==> "L3: .ascii "hello" \n" *)
+
+      val procEntryExitl: frame * Tree.stm -> Tree.stm (*p.261*)
+      val procEntryExit2: frame * Assem.instr list -> Assem.instr list  (*p.208*)
+      val procEntryExit3: frame * Assem.instr list -> {prolog: string, body: Assem.instr list, epilog: string} (*p.261*)
+
+      type frag = PROC of { body: Tree.stm, frame: frame}  (*p.169*)
+		| STRING of Temp.label * string
+		     
+    end
+#+end_src
+
+
+#+begin_src ocaml
+  module type TRANSLATE = sig
+    (* ... *)
+    val procEntryExit  : {level: level, body: exp} -> unit
+    module Frame: FRAME
+    val getResult  : unit -> Frame.frag list
+  end
+#+end_src

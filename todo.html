@@ -1,0 +1,1204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2022-12-30 五 11:11 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>todo-list</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">todo-list</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org2ddb097">1. inbox</a>
+<ul>
+<li><a href="#orgfde1484">1.1. 整理 the rust book 的todo list</a></li>
+<li><a href="#org4374b12">1.2. Self Referential Structs in Rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#org83faf6a">1.3. Build your own block<sub>on</sub>()&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#orgb8bc1e8">1.4. Build your own executor&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#orgf7b97af">1.5. Green Threads Explained in 200 lines of rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#org06ec817">1.6. Futures Explained in 200 Lines of Rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#orgd34705a">1.7. rust数据结构&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#org7d7023b">1.8. 学习 gtd 书</a></li>
+</ul>
+</li>
+<li><a href="#orgb8f579e">2. <b>next-action</b></a>
+<ul>
+<li><a href="#orgc4777c5">2.1. <span class="todo TODO">TODO</span> 整理多线程代码&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a>
+<ul>
+<li><a href="#org9415c89">2.1.1. 抄一遍到笔记上.</a></li>
+</ul>
+</li>
+<li><a href="#orgd60b74c">2.2. <span class="todo TODO">TODO</span> 学习linux basic</a></li>
+<li><a href="#orged6bffe">2.3. <span class="todo TODO">TODO</span> 看emacs region这篇文</a></li>
+<li><a href="#orgaac68cd">2.4. <span class="todo TODO">TODO</span> 整理 compiler 计划</a></li>
+<li><a href="#org84e0b6c">2.5. <span class="todo TODO">TODO</span> 看cpp atomic videos</a></li>
+</ul>
+</li>
+<li><a href="#org980a94d">3. <b>project</b></a>
+<ul>
+<li><a href="#org6ba24f8">3.1. <span class="todo DOING">DOING</span> 完成Eoc课程&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a>
+<ul>
+<li><a href="#orgbcd7e37">3.1.1. <span class="done DONE">DONE</span> L1</a></li>
+<li><a href="#org148e232">3.1.2. <span class="done DONE">DONE</span> L2</a></li>
+<li><a href="#org4d85708">3.1.3. <span class="done DONE">DONE</span> L3</a></li>
+<li><a href="#orgb2d54e5">3.1.4. <span class="todo TODO">TODO</span> L4</a></li>
+<li><a href="#org3026e3b">3.1.5. <span class="todo TODO">TODO</span> L5</a></li>
+<li><a href="#org0c21c8d">3.1.6. <span class="todo TODO">TODO</span> L6</a></li>
+<li><a href="#org7bff680">3.1.7. <span class="todo TODO">TODO</span> L7</a></li>
+<li><a href="#org4d4e7a2">3.1.8. <span class="todo TODO">TODO</span> L8</a></li>
+<li><a href="#org91835fc">3.1.9. <span class="todo TODO">TODO</span> L9</a></li>
+<li><a href="#orgf27f8ef">3.1.10. <span class="todo TODO">TODO</span> L10</a></li>
+<li><a href="#org4be7dec">3.1.11. <span class="todo TODO">TODO</span> L11</a></li>
+<li><a href="#orgeae3474">3.1.12. <span class="todo TODO">TODO</span> L12</a></li>
+<li><a href="#org0306354">3.1.13. <span class="todo TODO">TODO</span> L13</a></li>
+<li><a href="#org649db00">3.1.14. <span class="todo TODO">TODO</span> L14</a></li>
+<li><a href="#orgc649aaa">3.1.15. <span class="todo TODO">TODO</span> L15</a></li>
+<li><a href="#orge8b52ee">3.1.16. <span class="todo TODO">TODO</span> L16</a></li>
+<li><a href="#org9a9f215">3.1.17. <span class="todo TODO">TODO</span> L17</a></li>
+<li><a href="#orgc2f1419">3.1.18. <span class="todo TODO">TODO</span> L18</a></li>
+<li><a href="#org91dcc75">3.1.19. <span class="todo TODO">TODO</span> L19</a></li>
+<li><a href="#orge3d9f92">3.1.20. <span class="todo TODO">TODO</span> L20</a></li>
+<li><a href="#org61ebb76">3.1.21. <span class="todo TODO">TODO</span> L21</a></li>
+<li><a href="#org63d6121">3.1.22. <span class="todo TODO">TODO</span> L22</a></li>
+<li><a href="#org4caa845">3.1.23. <span class="todo TODO">TODO</span> L23</a></li>
+<li><a href="#orgf2e1a55">3.1.24. <span class="todo TODO">TODO</span> L24</a></li>
+<li><a href="#orgdd26706">3.1.25. <span class="todo TODO">TODO</span> L25</a></li>
+<li><a href="#org7f54e76">3.1.26. <span class="todo TODO">TODO</span> L26</a></li>
+<li><a href="#org97b6c03">3.1.27. <span class="todo TODO">TODO</span> L27</a></li>
+<li><a href="#org2e6a253">3.1.28. <span class="todo TODO">TODO</span> L28</a></li>
+<li><a href="#orgb661264">3.1.29. <span class="todo TODO">TODO</span> L29</a></li>
+</ul>
+</li>
+<li><a href="#orged0b9d0">3.2. <span class="todo DOING">DOING</span> rust语言圣经&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a>
+<ul>
+<li><a href="#orgfe750dd">3.2.1. <span class="done DONE">DONE</span> 多线程</a></li>
+<li><a href="#org91825ad">3.2.2. <span class="todo TODO">TODO</span> 全局变量</a></li>
+<li><a href="#org71b29a1">3.2.3. 错误处理</a></li>
+<li><a href="#org4fff9f5">3.2.4. unsafe</a></li>
+<li><a href="#org7f8aef4">3.2.5. Macro</a></li>
+<li><a href="#org772a466">3.2.6. async/await</a></li>
+<li><a href="#org9123db0">3.2.7. tokio</a></li>
+<li><a href="#org5eba183">3.2.8. 难点攻关</a></li>
+<li><a href="#org6947553">3.2.9. 自动化测试</a></li>
+<li><a href="#orgf596f34">3.2.10. cargo</a></li>
+<li><a href="#org878f170">3.2.11. 实现链表</a></li>
+<li><a href="#orgbc4dacf">3.2.12. 征服编译错误</a></li>
+</ul>
+</li>
+<li><a href="#orgd5ebece">3.3. <span class="todo DOING">DOING</span> 分析cranelift源码&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#org5ba7d9e">3.4. <span class="todo DOING">DOING</span> 印度compiler课程&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a>
+<ul>
+<li><a href="#org79414a0">3.4.1. L18 machine independent opts</a></li>
+<li><a href="#org948178d">3.4.2. L19 basic block, cfg</a></li>
+<li><a href="#org692349c">3.4.3. L20 local optimizition</a></li>
+<li><a href="#orgdb9b977">3.4.4. L21 ssa</a></li>
+<li><a href="#org9e72b41">3.4.5. L22 dataflow examples</a></li>
+<li><a href="#orgf0341f2">3.4.6. L23 liveness</a></li>
+<li><a href="#org7e05a33">3.4.7. L24 available</a></li>
+<li><a href="#org5fc53a6">3.4.8. L25 llvm101</a></li>
+<li><a href="#org2cc66ba">3.4.9. L26 runtime</a></li>
+<li><a href="#org6ebf11f">3.4.10. L27 code gen</a></li>
+<li><a href="#org928b263">3.4.11. L29 local reg alloc</a></li>
+<li><a href="#org780c2aa">3.4.12. L30 global reg alloc</a></li>
+</ul>
+</li>
+<li><a href="#org096f8ea">3.5. <span class="todo DOING">DOING</span> 抄个sfml rpg</a>
+<ul>
+<li><a href="#orgf488224">3.5.1. <span class="done DONE">DONE</span> sfml rpg 11&#x2013;13节</a></li>
+<li><a href="#org86289f7">3.5.2. <span class="done DONE">DONE</span> sfml rpg 14&#x2013;16节</a></li>
+<li><a href="#org57d40f6">3.5.3. <span class="done DONE">DONE</span> sfml rpg 17&#x2013;19节</a></li>
+<li><a href="#org270d4f5">3.5.4. <span class="todo TODO">TODO</span> sfml rpg 20&#x2013;22节</a></li>
+<li><a href="#org7d2e1aa">3.5.5. <span class="todo TODO">TODO</span> sfml rpg 23&#x2013;25节</a></li>
+<li><a href="#orgc7f952e">3.5.6. <span class="todo TODO">TODO</span> sfml rpg 26&#x2013;28节</a></li>
+<li><a href="#org862c467">3.5.7. <span class="todo TODO">TODO</span> sfml rpg 29&#x2013;31节</a></li>
+<li><a href="#org3566f4e">3.5.8. <span class="todo TODO">TODO</span> sfml rpg 32&#x2013;34节</a></li>
+<li><a href="#org0ad6e38">3.5.9. <span class="todo TODO">TODO</span> sfml rpg 35&#x2013;37节</a></li>
+</ul>
+</li>
+<li><a href="#org2057869">3.6. <span class="todo TODO">TODO</span> CSEP 501 (EAC)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#org81d20a5">3.7. <span class="todo TODO">TODO</span> 北大编译课&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#orgfa94aac">3.8. Rust 秘典（死灵书）&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#orga670570">3.9. 学习EAC书的内容&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#org682b7f2">3.10. 阅读async book&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#orgae5b529">3.11. 韩国编译课程&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#orge263edb">3.12. <span class="todo TODO">TODO</span> DC 888&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#org560fd7d">3.13. <span class="todo TODO">TODO</span> CSE 231 advanced compiler&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span>&#xa0;<span class="_cpp">@cpp</span></span></a></li>
+<li><a href="#org3e6b2b2">3.14. <span class="todo TODO">TODO</span> ece459&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_system">@system</span></span></a></li>
+<li><a href="#orgfe58517">3.15. <span class="todo TODO">TODO</span> cs110L&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_system">@system</span></span></a></li>
+<li><a href="#org9131831">3.16. 完成过程宏的几个实验&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#org1e16890">3.17. 学习elisp&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_emacs">@emacs</span></span></a></li>
+<li><a href="#orgef8dab9">3.18. compilerai课程&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#org150d05b">3.19. Vulkan Game Engine Series</a></li>
+<li><a href="#org0ac0d79">3.20. mydocker&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_system">@system</span></span></a></li>
+<li><a href="#org1625a6d">3.21. 每天看一小节陈正康单词课</a></li>
+<li><a href="#org31f5ea3">3.22. Python Cookbook</a></li>
+<li><a href="#org2550ce4">3.23. 看完mini perl</a></li>
+</ul>
+</li>
+<li><a href="#orgc481c10">4. <i>appointment</i></a></li>
+<li><a href="#orgb2b49c2">5. <i>waiting-for</i></a></li>
+<li><a href="#org2f096e1">6. <i>ref</i></a>
+<ul>
+<li><a href="#org04db5d7">6.1. llvm&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></a></li>
+<li><a href="#org9dce388">6.2. https://vmm.dev/en/rust/&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a>
+<ul>
+<li><a href="#org851d7bd">6.2.1. spinlock</a></li>
+<li><a href="#orgac4ac83">6.2.2. data structures</a></li>
+</ul>
+</li>
+<li><a href="#orgdf45311">6.3. build a os&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_system">@system</span></span></a></li>
+<li><a href="#org1596874">6.4. emacs文章&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_emacs">@emacs</span></span></a></li>
+<li><a href="#org734f341">6.5. org mode gtd&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_emacs">@emacs</span></span></a></li>
+<li><a href="#orgc259ade">6.6. learn C++&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_cpp">@cpp</span></span></a></li>
+<li><a href="#orgf92db42">6.7. 读懂 Rust 的Arc&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#org076590e">6.8. A Guide to Porting C/C++ to Rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_cpp">@cpp</span></span></a></li>
+<li><a href="#org342c788">6.9. rust cookbook&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></a></li>
+<li><a href="#org0732cf0">6.10. cs110L lab&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_system">@system</span></span></a></li>
+</ul>
+</li>
+<li><a href="#org02e38f5">7. completed</a>
+<ul>
+<li><a href="#org45fe800">7.1. <span class="done DONE">DONE</span> 配置org的番茄钟在界面上显示时间</a></li>
+<li><a href="#org4564849">7.2. <span class="done DONE">DONE</span> 看rust atomic video</a></li>
+<li><a href="#org0e34be9">7.3. <span class="done DONE">DONE</span> Emacs Lisp: Get User Input</a></li>
+</ul>
+</li>
+<li><a href="#org3493882">8. Daily Review</a></li>
+<li><a href="#org1a6f907">9. Weekly Review</a></li>
+<li><a href="#org0498ce5">10. Monthly Review</a></li>
+</ul>
+</div>
+</div>
+<p>
+sch: 日程, 指定时间的
+</p>
+
+<ol class="org-ol">
+<li>尽量最少设置截止日期</li>
+<li>估计工作时长</li>
+<li>设定优先级</li>
+<li>设置tag</li>
+</ol>
+
+<div id="outline-container-org2ddb097" class="outline-2">
+<h2 id="org2ddb097"><span class="section-number-2">1.</span> inbox</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+(明确细化任务, 以动词开头)
+</p>
+</div>
+
+<div id="outline-container-orgfde1484" class="outline-3">
+<h3 id="orgfde1484"><span class="section-number-3">1.1.</span> 整理 the rust book 的todo list</h3>
+</div>
+<div id="outline-container-org4374b12" class="outline-3">
+<h3 id="org4374b12"><span class="section-number-3">1.2.</span> Self Referential Structs in Rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+<a href="https://arunanshub.hashnode.dev/series/selfref-structs-rust">https://arunanshub.hashnode.dev/series/selfref-structs-rust</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org83faf6a" class="outline-3">
+<h3 id="org83faf6a"><span class="section-number-3">1.3.</span> Build your own block<sub>on</sub>()&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+</div>
+<div id="outline-container-orgb8bc1e8" class="outline-3">
+<h3 id="orgb8bc1e8"><span class="section-number-3">1.4.</span> Build your own executor&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+</div>
+<div id="outline-container-orgf7b97af" class="outline-3">
+<h3 id="orgf7b97af"><span class="section-number-3">1.5.</span> Green Threads Explained in 200 lines of rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+<a href="https://cfsamson.gitbook.io/green-threads-explained-in-200-lines-of-rust/">https://cfsamson.gitbook.io/green-threads-explained-in-200-lines-of-rust/</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org06ec817" class="outline-3">
+<h3 id="org06ec817"><span class="section-number-3">1.6.</span> Futures Explained in 200 Lines of Rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-1-6">
+<p>
+<a href="https://cfsamson.github.io/books-futures-explained/introduction.html">https://cfsamson.github.io/books-futures-explained/introduction.html</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgd34705a" class="outline-3">
+<h3 id="orgd34705a"><span class="section-number-3">1.7.</span> rust数据结构&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+</div>
+<div id="outline-container-org7d7023b" class="outline-3">
+<h3 id="org7d7023b"><span class="section-number-3">1.8.</span> 学习 gtd 书</h3>
+</div>
+</div>
+
+
+<div id="outline-container-orgb8f579e" class="outline-2">
+<h2 id="orgb8f579e"><span class="section-number-2">2.</span> <b>next-action</b></h2>
+<div class="outline-text-2" id="text-2">
+<p>
+(一口气能做完)
+</p>
+</div>
+
+<div id="outline-container-orgc4777c5" class="outline-3">
+<h3 id="orgc4777c5"><span class="section-number-3">2.1.</span> <span class="todo TODO">TODO</span> 整理多线程代码&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-2-1">
+</div>
+<div id="outline-container-org9415c89" class="outline-4">
+<h4 id="org9415c89"><span class="section-number-4">2.1.1.</span> 抄一遍到笔记上.</h4>
+</div>
+</div>
+<div id="outline-container-orgd60b74c" class="outline-3">
+<h3 id="orgd60b74c"><span class="section-number-3">2.2.</span> <span class="todo TODO">TODO</span> 学习<a href="https://www.funtoo.org/Linux_Fundamentals,_Part_1">linux basic</a></h3>
+<div class="outline-text-3" id="text-2-2">
+</div>
+</div>
+<div id="outline-container-orged6bffe" class="outline-3">
+<h3 id="orged6bffe"><span class="section-number-3">2.3.</span> <span class="todo TODO">TODO</span> 看emacs region这篇文</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+<a href="http://xahlee.info/emacs/emacs/emacs_region.html">http://xahlee.info/emacs/emacs/emacs_region.html</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgaac68cd" class="outline-3">
+<h3 id="orgaac68cd"><span class="section-number-3">2.4.</span> <span class="todo TODO">TODO</span> 整理 compiler 计划</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+网课+书
+</p>
+</div>
+</div>
+<div id="outline-container-org84e0b6c" class="outline-3">
+<h3 id="org84e0b6c"><span class="section-number-3">2.5.</span> <span class="todo TODO">TODO</span> 看cpp atomic videos</h3>
+</div>
+</div>
+
+
+
+<div id="outline-container-org980a94d" class="outline-2">
+<h2 id="org980a94d"><span class="section-number-2">3.</span> <b>project</b></h2>
+<div class="outline-text-2" id="text-3">
+<p>
+(长期,多步完成)
+<code>alt+上/下</code>
+</p>
+</div>
+
+<div id="outline-container-org6ba24f8" class="outline-3">
+<h3 id="org6ba24f8"><span class="section-number-3">3.1.</span> <span class="todo DOING">DOING</span> 完成Eoc课程&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+<div class="outline-text-3" id="text-3-1">
+</div>
+<div id="outline-container-orgbcd7e37" class="outline-4">
+<h4 id="orgbcd7e37"><span class="section-number-4">3.1.1.</span> <span class="done DONE">DONE</span> L1</h4>
+<div class="outline-text-4" id="text-3-1-1">
+</div>
+<ol class="org-ol">
+<li><a id="org6d53f0b"></a><span class="done DONE">DONE</span> 看视频<br />
+<div class="outline-text-5" id="text-3-1-1-1">
+</div>
+</li>
+<li><a id="org067dfb1"></a><span class="done DONE">DONE</span> 做简单的听课笔记<br />
+<div class="outline-text-5" id="text-3-1-1-2">
+</div>
+</li>
+</ol>
+</div>
+
+<div id="outline-container-org148e232" class="outline-4">
+<h4 id="org148e232"><span class="section-number-4">3.1.2.</span> <span class="done DONE">DONE</span> L2</h4>
+<div class="outline-text-4" id="text-3-1-2">
+</div>
+<ol class="org-ol">
+<li><a id="orgb69d11d"></a><span class="done DONE">DONE</span> 看视频<br />
+<div class="outline-text-5" id="text-3-1-2-1">
+</div>
+</li>
+<li><a id="org187ace9"></a><span class="done DONE">DONE</span> 做简单的听课笔记<br />
+<div class="outline-text-5" id="text-3-1-2-2">
+</div>
+</li>
+<li><a id="orgaa77246"></a>做lab<br /></li>
+</ol>
+</div>
+
+<div id="outline-container-org4d85708" class="outline-4">
+<h4 id="org4d85708"><span class="section-number-4">3.1.3.</span> <span class="done DONE">DONE</span> L3</h4>
+<div class="outline-text-4" id="text-3-1-3">
+</div>
+<ol class="org-ol">
+<li><a id="org1143fa7"></a>看视频<br /></li>
+<li><a id="orgd49c531"></a>做简单的听课笔记<br /></li>
+<li><a id="org786020e"></a>看讲义<br /></li>
+<li><a id="orgd9b8f9d"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgb2d54e5" class="outline-4">
+<h4 id="orgb2d54e5"><span class="section-number-4">3.1.4.</span> <span class="todo TODO">TODO</span> L4</h4>
+<div class="outline-text-4" id="text-3-1-4">
+</div>
+<ol class="org-ol">
+<li><a id="org8ef8d44"></a>看视频<br /></li>
+<li><a id="orgcc1e220"></a>做简单的听课笔记<br /></li>
+<li><a id="orgb066267"></a>看讲义<br /></li>
+<li><a id="org70c92fa"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org3026e3b" class="outline-4">
+<h4 id="org3026e3b"><span class="section-number-4">3.1.5.</span> <span class="todo TODO">TODO</span> L5</h4>
+<div class="outline-text-4" id="text-3-1-5">
+</div>
+<ol class="org-ol">
+<li><a id="org59e2353"></a>看视频<br /></li>
+<li><a id="orgd334563"></a>做简单的听课笔记<br /></li>
+<li><a id="orga95eb31"></a>看讲义<br /></li>
+<li><a id="org706c8c5"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org0c21c8d" class="outline-4">
+<h4 id="org0c21c8d"><span class="section-number-4">3.1.6.</span> <span class="todo TODO">TODO</span> L6</h4>
+<div class="outline-text-4" id="text-3-1-6">
+</div>
+<ol class="org-ol">
+<li><a id="org809d584"></a>看视频<br /></li>
+<li><a id="org65adebc"></a>做简单的听课笔记<br /></li>
+<li><a id="orgde95470"></a>看讲义<br /></li>
+<li><a id="orgf5d9623"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org7bff680" class="outline-4">
+<h4 id="org7bff680"><span class="section-number-4">3.1.7.</span> <span class="todo TODO">TODO</span> L7</h4>
+<div class="outline-text-4" id="text-3-1-7">
+</div>
+<ol class="org-ol">
+<li><a id="org45a232c"></a>看视频<br /></li>
+<li><a id="org078ffcc"></a>做简单的听课笔记<br /></li>
+<li><a id="org8e129c5"></a>看讲义<br /></li>
+<li><a id="org14a6e51"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org4d4e7a2" class="outline-4">
+<h4 id="org4d4e7a2"><span class="section-number-4">3.1.8.</span> <span class="todo TODO">TODO</span> L8</h4>
+<div class="outline-text-4" id="text-3-1-8">
+</div>
+<ol class="org-ol">
+<li><a id="org397478a"></a>看视频<br /></li>
+<li><a id="org6fd5c42"></a>做简单的听课笔记<br /></li>
+<li><a id="orgf11bf2e"></a>看讲义<br /></li>
+<li><a id="orgad7ce6e"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org91835fc" class="outline-4">
+<h4 id="org91835fc"><span class="section-number-4">3.1.9.</span> <span class="todo TODO">TODO</span> L9</h4>
+<div class="outline-text-4" id="text-3-1-9">
+</div>
+<ol class="org-ol">
+<li><a id="org4433bca"></a>看视频<br /></li>
+<li><a id="orgcc30ea9"></a>做简单的听课笔记<br /></li>
+<li><a id="org917856b"></a>看讲义<br /></li>
+<li><a id="orgdf07e12"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgf27f8ef" class="outline-4">
+<h4 id="orgf27f8ef"><span class="section-number-4">3.1.10.</span> <span class="todo TODO">TODO</span> L10</h4>
+<div class="outline-text-4" id="text-3-1-10">
+</div>
+<ol class="org-ol">
+<li><a id="org01455b2"></a>看视频<br /></li>
+<li><a id="orgc230a5f"></a>做简单的听课笔记<br /></li>
+<li><a id="orgdccd32d"></a>看讲义<br /></li>
+<li><a id="org722441a"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org4be7dec" class="outline-4">
+<h4 id="org4be7dec"><span class="section-number-4">3.1.11.</span> <span class="todo TODO">TODO</span> L11</h4>
+<div class="outline-text-4" id="text-3-1-11">
+</div>
+<ol class="org-ol">
+<li><a id="org0c55b59"></a>看视频<br /></li>
+<li><a id="org141f06d"></a>做简单的听课笔记<br /></li>
+<li><a id="orgb4acc69"></a>看讲义<br /></li>
+<li><a id="org35e7ff7"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgeae3474" class="outline-4">
+<h4 id="orgeae3474"><span class="section-number-4">3.1.12.</span> <span class="todo TODO">TODO</span> L12</h4>
+<div class="outline-text-4" id="text-3-1-12">
+</div>
+<ol class="org-ol">
+<li><a id="org534fb6b"></a>看视频<br /></li>
+<li><a id="org4db85e4"></a>做简单的听课笔记<br /></li>
+<li><a id="orga1ad60d"></a>看讲义<br /></li>
+<li><a id="org10af26a"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org0306354" class="outline-4">
+<h4 id="org0306354"><span class="section-number-4">3.1.13.</span> <span class="todo TODO">TODO</span> L13</h4>
+<div class="outline-text-4" id="text-3-1-13">
+</div>
+<ol class="org-ol">
+<li><a id="org1a803a3"></a>看视频<br /></li>
+<li><a id="org9d53b5e"></a>做简单的听课笔记<br /></li>
+<li><a id="org3fa9f95"></a>看讲义<br /></li>
+<li><a id="org77338dc"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org649db00" class="outline-4">
+<h4 id="org649db00"><span class="section-number-4">3.1.14.</span> <span class="todo TODO">TODO</span> L14</h4>
+<div class="outline-text-4" id="text-3-1-14">
+</div>
+<ol class="org-ol">
+<li><a id="org4019909"></a>看视频<br /></li>
+<li><a id="orga0b9433"></a>做简单的听课笔记<br /></li>
+<li><a id="org3b7314c"></a>看讲义<br /></li>
+<li><a id="org197623c"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgc649aaa" class="outline-4">
+<h4 id="orgc649aaa"><span class="section-number-4">3.1.15.</span> <span class="todo TODO">TODO</span> L15</h4>
+<div class="outline-text-4" id="text-3-1-15">
+</div>
+<ol class="org-ol">
+<li><a id="orgb5f0e52"></a>看视频<br /></li>
+<li><a id="orgc0281ce"></a>做简单的听课笔记<br /></li>
+<li><a id="org8b04626"></a>看讲义<br /></li>
+<li><a id="orgbff8b63"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orge8b52ee" class="outline-4">
+<h4 id="orge8b52ee"><span class="section-number-4">3.1.16.</span> <span class="todo TODO">TODO</span> L16</h4>
+<div class="outline-text-4" id="text-3-1-16">
+</div>
+<ol class="org-ol">
+<li><a id="org3a69702"></a>看视频<br /></li>
+<li><a id="orgeac8b5e"></a>做简单的听课笔记<br /></li>
+<li><a id="org6bba66b"></a>看讲义<br /></li>
+<li><a id="orgdd432d9"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org9a9f215" class="outline-4">
+<h4 id="org9a9f215"><span class="section-number-4">3.1.17.</span> <span class="todo TODO">TODO</span> L17</h4>
+<div class="outline-text-4" id="text-3-1-17">
+</div>
+<ol class="org-ol">
+<li><a id="org67b08dc"></a>看视频<br /></li>
+<li><a id="org759cae9"></a>做简单的听课笔记<br /></li>
+<li><a id="org7c35034"></a>看讲义<br /></li>
+<li><a id="orgfa15da1"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgc2f1419" class="outline-4">
+<h4 id="orgc2f1419"><span class="section-number-4">3.1.18.</span> <span class="todo TODO">TODO</span> L18</h4>
+<div class="outline-text-4" id="text-3-1-18">
+</div>
+<ol class="org-ol">
+<li><a id="org8f3f7a1"></a>看视频<br /></li>
+<li><a id="org45c2a0a"></a>做简单的听课笔记<br /></li>
+<li><a id="org5c9709b"></a>看讲义<br /></li>
+<li><a id="orga43234b"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org91dcc75" class="outline-4">
+<h4 id="org91dcc75"><span class="section-number-4">3.1.19.</span> <span class="todo TODO">TODO</span> L19</h4>
+<div class="outline-text-4" id="text-3-1-19">
+</div>
+<ol class="org-ol">
+<li><a id="org07c5237"></a>看视频<br /></li>
+<li><a id="org31e13a5"></a>做简单的听课笔记<br /></li>
+<li><a id="org00b7d58"></a>看讲义<br /></li>
+<li><a id="org6e2c11f"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orge3d9f92" class="outline-4">
+<h4 id="orge3d9f92"><span class="section-number-4">3.1.20.</span> <span class="todo TODO">TODO</span> L20</h4>
+<div class="outline-text-4" id="text-3-1-20">
+</div>
+<ol class="org-ol">
+<li><a id="org8de5b0a"></a>看视频<br /></li>
+<li><a id="org5795cb7"></a>做简单的听课笔记<br /></li>
+<li><a id="org7e1f9fc"></a>看讲义<br /></li>
+<li><a id="orge6dec1d"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org61ebb76" class="outline-4">
+<h4 id="org61ebb76"><span class="section-number-4">3.1.21.</span> <span class="todo TODO">TODO</span> L21</h4>
+<div class="outline-text-4" id="text-3-1-21">
+</div>
+<ol class="org-ol">
+<li><a id="orgcb80313"></a>看视频<br /></li>
+<li><a id="org97dbea2"></a>做简单的听课笔记<br /></li>
+<li><a id="org3d8a41d"></a>看讲义<br /></li>
+<li><a id="org3201b26"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org63d6121" class="outline-4">
+<h4 id="org63d6121"><span class="section-number-4">3.1.22.</span> <span class="todo TODO">TODO</span> L22</h4>
+<div class="outline-text-4" id="text-3-1-22">
+</div>
+<ol class="org-ol">
+<li><a id="orgebac55f"></a>看视频<br /></li>
+<li><a id="orge7da636"></a>做简单的听课笔记<br /></li>
+<li><a id="org847b447"></a>看讲义<br /></li>
+<li><a id="orgdba803d"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org4caa845" class="outline-4">
+<h4 id="org4caa845"><span class="section-number-4">3.1.23.</span> <span class="todo TODO">TODO</span> L23</h4>
+<div class="outline-text-4" id="text-3-1-23">
+</div>
+<ol class="org-ol">
+<li><a id="org781cb91"></a>看视频<br /></li>
+<li><a id="org6f8300d"></a>做简单的听课笔记<br /></li>
+<li><a id="orgb90edb7"></a>看讲义<br /></li>
+<li><a id="org0303787"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgf2e1a55" class="outline-4">
+<h4 id="orgf2e1a55"><span class="section-number-4">3.1.24.</span> <span class="todo TODO">TODO</span> L24</h4>
+<div class="outline-text-4" id="text-3-1-24">
+</div>
+<ol class="org-ol">
+<li><a id="org45cd494"></a>看视频<br /></li>
+<li><a id="orgc3a7f1c"></a>做简单的听课笔记<br /></li>
+<li><a id="org3d3cc71"></a>看讲义<br /></li>
+<li><a id="org28b807d"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgdd26706" class="outline-4">
+<h4 id="orgdd26706"><span class="section-number-4">3.1.25.</span> <span class="todo TODO">TODO</span> L25</h4>
+<div class="outline-text-4" id="text-3-1-25">
+</div>
+<ol class="org-ol">
+<li><a id="org9edb18c"></a>看视频<br /></li>
+<li><a id="org60e45b4"></a>做简单的听课笔记<br /></li>
+<li><a id="orgd30808e"></a>看讲义<br /></li>
+<li><a id="org7a9f679"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org7f54e76" class="outline-4">
+<h4 id="org7f54e76"><span class="section-number-4">3.1.26.</span> <span class="todo TODO">TODO</span> L26</h4>
+<div class="outline-text-4" id="text-3-1-26">
+</div>
+<ol class="org-ol">
+<li><a id="orgb53fc2c"></a>看视频<br /></li>
+<li><a id="org1a6d7ec"></a>做简单的听课笔记<br /></li>
+<li><a id="org4c99394"></a>看讲义<br /></li>
+<li><a id="orga807b40"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org97b6c03" class="outline-4">
+<h4 id="org97b6c03"><span class="section-number-4">3.1.27.</span> <span class="todo TODO">TODO</span> L27</h4>
+<div class="outline-text-4" id="text-3-1-27">
+</div>
+<ol class="org-ol">
+<li><a id="orgbd6ca01"></a>看视频<br /></li>
+<li><a id="org6a785ca"></a>做简单的听课笔记<br /></li>
+<li><a id="orgb315fab"></a>看讲义<br /></li>
+<li><a id="org709480d"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-org2e6a253" class="outline-4">
+<h4 id="org2e6a253"><span class="section-number-4">3.1.28.</span> <span class="todo TODO">TODO</span> L28</h4>
+<div class="outline-text-4" id="text-3-1-28">
+</div>
+<ol class="org-ol">
+<li><a id="org3d4ee26"></a>看视频<br /></li>
+<li><a id="org6ad2341"></a>做简单的听课笔记<br /></li>
+<li><a id="orgbe15fc5"></a>看讲义<br /></li>
+<li><a id="orgf98b11a"></a>做lab<br /></li>
+</ol>
+</div>
+<div id="outline-container-orgb661264" class="outline-4">
+<h4 id="orgb661264"><span class="section-number-4">3.1.29.</span> <span class="todo TODO">TODO</span> L29</h4>
+<div class="outline-text-4" id="text-3-1-29">
+</div>
+<ol class="org-ol">
+<li><a id="org3e292b4"></a>看视频<br /></li>
+<li><a id="org3ad4082"></a>做简单的听课笔记<br /></li>
+<li><a id="orgd2c166c"></a>看讲义<br /></li>
+<li><a id="org3da6ee8"></a>做lab<br /></li>
+</ol>
+</div>
+</div>
+
+
+
+<div id="outline-container-orged0b9d0" class="outline-3">
+<h3 id="orged0b9d0"><span class="section-number-3">3.2.</span> <span class="todo DOING">DOING</span> rust语言圣经&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-3-2">
+</div>
+<div id="outline-container-orgfe750dd" class="outline-4">
+<h4 id="orgfe750dd"><span class="section-number-4">3.2.1.</span> <span class="done DONE">DONE</span> 多线程</h4>
+<div class="outline-text-4" id="text-3-2-1">
+</div>
+<ol class="org-ol">
+<li><a id="orgd6dc54b"></a><span class="done DONE">DONE</span> send&amp;sync视频&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span><br />
+<div class="outline-text-5" id="text-3-2-1-1">
+</div>
+</li>
+<li><a id="org664d56e"></a><span class="done DONE">DONE</span> http服务器(rustbook)<br />
+<div class="outline-text-5" id="text-3-2-1-2">
+</div>
+</li>
+</ol>
+</div>
+
+<div id="outline-container-org91825ad" class="outline-4">
+<h4 id="org91825ad"><span class="section-number-4">3.2.2.</span> <span class="todo TODO">TODO</span> 全局变量</h4>
+<div class="outline-text-4" id="text-3-2-2">
+</div>
+</div>
+<div id="outline-container-org71b29a1" class="outline-4">
+<h4 id="org71b29a1"><span class="section-number-4">3.2.3.</span> 错误处理</h4>
+</div>
+
+<div id="outline-container-org4fff9f5" class="outline-4">
+<h4 id="org4fff9f5"><span class="section-number-4">3.2.4.</span> unsafe</h4>
+</div>
+
+<div id="outline-container-org7f8aef4" class="outline-4">
+<h4 id="org7f8aef4"><span class="section-number-4">3.2.5.</span> Macro</h4>
+</div>
+
+<div id="outline-container-org772a466" class="outline-4">
+<h4 id="org772a466"><span class="section-number-4">3.2.6.</span> async/await</h4>
+</div>
+
+<div id="outline-container-org9123db0" class="outline-4">
+<h4 id="org9123db0"><span class="section-number-4">3.2.7.</span> tokio</h4>
+</div>
+
+<div id="outline-container-org5eba183" class="outline-4">
+<h4 id="org5eba183"><span class="section-number-4">3.2.8.</span> 难点攻关</h4>
+</div>
+
+<div id="outline-container-org6947553" class="outline-4">
+<h4 id="org6947553"><span class="section-number-4">3.2.9.</span> 自动化测试</h4>
+</div>
+
+<div id="outline-container-orgf596f34" class="outline-4">
+<h4 id="orgf596f34"><span class="section-number-4">3.2.10.</span> cargo</h4>
+</div>
+
+<div id="outline-container-org878f170" class="outline-4">
+<h4 id="org878f170"><span class="section-number-4">3.2.11.</span> 实现链表</h4>
+</div>
+
+<div id="outline-container-orgbc4dacf" class="outline-4">
+<h4 id="orgbc4dacf"><span class="section-number-4">3.2.12.</span> 征服编译错误</h4>
+</div>
+</div>
+
+<div id="outline-container-orgd5ebece" class="outline-3">
+<h3 id="orgd5ebece"><span class="section-number-3">3.3.</span> <span class="todo DOING">DOING</span> 分析cranelift源码&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_compiler">@compiler</span></span></h3>
+</div>
+
+<div id="outline-container-org5ba7d9e" class="outline-3">
+<h3 id="org5ba7d9e"><span class="section-number-3">3.4.</span> <span class="todo DOING">DOING</span> <a href="https://www.youtube.com/playlist?list=PLde1J4XOn2z0i6fc39dI6OWjEoNuaFglI">印度compiler课程</a>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+<div class="outline-text-3" id="text-3-4">
+</div>
+<div id="outline-container-org79414a0" class="outline-4">
+<h4 id="org79414a0"><span class="section-number-4">3.4.1.</span> L18 machine independent opts</h4>
+</div>
+<div id="outline-container-org948178d" class="outline-4">
+<h4 id="org948178d"><span class="section-number-4">3.4.2.</span> L19 basic block, cfg</h4>
+</div>
+<div id="outline-container-org692349c" class="outline-4">
+<h4 id="org692349c"><span class="section-number-4">3.4.3.</span> L20 local optimizition</h4>
+</div>
+<div id="outline-container-orgdb9b977" class="outline-4">
+<h4 id="orgdb9b977"><span class="section-number-4">3.4.4.</span> L21 ssa</h4>
+</div>
+<div id="outline-container-org9e72b41" class="outline-4">
+<h4 id="org9e72b41"><span class="section-number-4">3.4.5.</span> L22 dataflow examples</h4>
+</div>
+<div id="outline-container-orgf0341f2" class="outline-4">
+<h4 id="orgf0341f2"><span class="section-number-4">3.4.6.</span> L23 liveness</h4>
+</div>
+<div id="outline-container-org7e05a33" class="outline-4">
+<h4 id="org7e05a33"><span class="section-number-4">3.4.7.</span> L24 available</h4>
+</div>
+<div id="outline-container-org5fc53a6" class="outline-4">
+<h4 id="org5fc53a6"><span class="section-number-4">3.4.8.</span> L25 llvm101</h4>
+</div>
+<div id="outline-container-org2cc66ba" class="outline-4">
+<h4 id="org2cc66ba"><span class="section-number-4">3.4.9.</span> L26 runtime</h4>
+</div>
+<div id="outline-container-org6ebf11f" class="outline-4">
+<h4 id="org6ebf11f"><span class="section-number-4">3.4.10.</span> L27 code gen</h4>
+</div>
+<div id="outline-container-org928b263" class="outline-4">
+<h4 id="org928b263"><span class="section-number-4">3.4.11.</span> L29 local reg alloc</h4>
+</div>
+<div id="outline-container-org780c2aa" class="outline-4">
+<h4 id="org780c2aa"><span class="section-number-4">3.4.12.</span> L30 global reg alloc</h4>
+</div>
+</div>
+
+<div id="outline-container-org096f8ea" class="outline-3">
+<h3 id="org096f8ea"><span class="section-number-3">3.5.</span> <span class="todo DOING">DOING</span> 抄个sfml rpg</h3>
+<div class="outline-text-3" id="text-3-5">
+</div>
+<div id="outline-container-orgf488224" class="outline-4">
+<h4 id="orgf488224"><span class="section-number-4">3.5.1.</span> <span class="done DONE">DONE</span> sfml rpg 11&#x2013;13节</h4>
+<div class="outline-text-4" id="text-3-5-1">
+</div>
+</div>
+<div id="outline-container-org86289f7" class="outline-4">
+<h4 id="org86289f7"><span class="section-number-4">3.5.2.</span> <span class="done DONE">DONE</span> sfml rpg 14&#x2013;16节</h4>
+<div class="outline-text-4" id="text-3-5-2">
+</div>
+</div>
+
+<div id="outline-container-org57d40f6" class="outline-4">
+<h4 id="org57d40f6"><span class="section-number-4">3.5.3.</span> <span class="done DONE">DONE</span> sfml rpg 17&#x2013;19节</h4>
+<div class="outline-text-4" id="text-3-5-3">
+</div>
+</div>
+
+<div id="outline-container-org270d4f5" class="outline-4">
+<h4 id="org270d4f5"><span class="section-number-4">3.5.4.</span> <span class="todo TODO">TODO</span> sfml rpg 20&#x2013;22节</h4>
+<div class="outline-text-4" id="text-3-5-4">
+</div>
+</div>
+
+<div id="outline-container-org7d2e1aa" class="outline-4">
+<h4 id="org7d2e1aa"><span class="section-number-4">3.5.5.</span> <span class="todo TODO">TODO</span> sfml rpg 23&#x2013;25节</h4>
+<div class="outline-text-4" id="text-3-5-5">
+</div>
+</div>
+<div id="outline-container-orgc7f952e" class="outline-4">
+<h4 id="orgc7f952e"><span class="section-number-4">3.5.6.</span> <span class="todo TODO">TODO</span> sfml rpg 26&#x2013;28节</h4>
+<div class="outline-text-4" id="text-3-5-6">
+</div>
+</div>
+<div id="outline-container-org862c467" class="outline-4">
+<h4 id="org862c467"><span class="section-number-4">3.5.7.</span> <span class="todo TODO">TODO</span> sfml rpg 29&#x2013;31节</h4>
+<div class="outline-text-4" id="text-3-5-7">
+</div>
+</div>
+<div id="outline-container-org3566f4e" class="outline-4">
+<h4 id="org3566f4e"><span class="section-number-4">3.5.8.</span> <span class="todo TODO">TODO</span> sfml rpg 32&#x2013;34节</h4>
+<div class="outline-text-4" id="text-3-5-8">
+</div>
+</div>
+<div id="outline-container-org0ad6e38" class="outline-4">
+<h4 id="org0ad6e38"><span class="section-number-4">3.5.9.</span> <span class="todo TODO">TODO</span> sfml rpg 35&#x2013;37节</h4>
+<div class="outline-text-4" id="text-3-5-9">
+</div>
+</div>
+</div>
+
+<div id="outline-container-org2057869" class="outline-3">
+<h3 id="org2057869"><span class="section-number-3">3.6.</span> <span class="todo TODO">TODO</span> CSEP 501 (EAC)&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+</div>
+
+<div id="outline-container-org81d20a5" class="outline-3">
+<h3 id="org81d20a5"><span class="section-number-3">3.7.</span> <span class="todo TODO">TODO</span> 北大编译课&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+</div>
+
+<div id="outline-container-orgfa94aac" class="outline-3">
+<h3 id="orgfa94aac"><span class="section-number-3">3.8.</span> Rust 秘典（死灵书）&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+</div>
+
+<div id="outline-container-orga670570" class="outline-3">
+<h3 id="orga670570"><span class="section-number-3">3.9.</span> 学习EAC书的内容&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+</div>
+
+<div id="outline-container-org682b7f2" class="outline-3">
+<h3 id="org682b7f2"><span class="section-number-3">3.10.</span> 阅读async book&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-3-10">
+<p>
+<a href="https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html">https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgae5b529" class="outline-3">
+<h3 id="orgae5b529"><span class="section-number-3">3.11.</span> 韩国编译课程&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_compiler">@compiler</span></span></h3>
+</div>
+
+<div id="outline-container-orge263edb" class="outline-3">
+<h3 id="orge263edb"><span class="section-number-3">3.12.</span> <span class="todo TODO">TODO</span> DC 888&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+</div>
+
+<div id="outline-container-org560fd7d" class="outline-3">
+<h3 id="org560fd7d"><span class="section-number-3">3.13.</span> <span class="todo TODO">TODO</span> CSE 231 advanced compiler&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span>&#xa0;<span class="_cpp">@cpp</span></span></h3>
+</div>
+<div id="outline-container-org3e6b2b2" class="outline-3">
+<h3 id="org3e6b2b2"><span class="section-number-3">3.14.</span> <span class="todo TODO">TODO</span> ece459&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_system">@system</span></span></h3>
+</div>
+<div id="outline-container-orgfe58517" class="outline-3">
+<h3 id="orgfe58517"><span class="section-number-3">3.15.</span> <span class="todo TODO">TODO</span> cs110L&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_system">@system</span></span></h3>
+</div>
+<div id="outline-container-org9131831" class="outline-3">
+<h3 id="org9131831"><span class="section-number-3">3.16.</span> 完成过程宏的几个实验&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+</div>
+<div id="outline-container-org1e16890" class="outline-3">
+<h3 id="org1e16890"><span class="section-number-3">3.17.</span> 学习elisp&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_emacs">@emacs</span></span></h3>
+<div class="outline-text-3" id="text-3-17">
+<p>
+<a href="http://smacs.github.io/elisp/12-buffer.html">http://smacs.github.io/elisp/12-buffer.html</a>
+<a href="http://xahlee.info/emacs/emacs/emacs_region.html">http://xahlee.info/emacs/emacs/emacs_region.html</a>
+<a href="https://www.jianshu.com/p/bba1e3149b2b">https://www.jianshu.com/p/bba1e3149b2b</a>
+<a href="https://www.jianshu.com/p/65b271c1dabf">https://www.jianshu.com/p/65b271c1dabf</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgef8dab9" class="outline-3">
+<h3 id="orgef8dab9"><span class="section-number-3">3.18.</span> compilerai课程&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+</div>
+
+<div id="outline-container-org150d05b" class="outline-3">
+<h3 id="org150d05b"><span class="section-number-3">3.19.</span> <a href="https://www.youtube.com/playlist?list=PLv8Ddw9K0JPg1BEO-RS-0MYs423cvLVtj">Vulkan Game Engine Series</a></h3>
+</div>
+
+
+
+
+<div id="outline-container-org0ac0d79" class="outline-3">
+<h3 id="org0ac0d79"><span class="section-number-3">3.20.</span> mydocker&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_system">@system</span></span></h3>
+</div>
+
+<div id="outline-container-org1625a6d" class="outline-3">
+<h3 id="org1625a6d"><span class="section-number-3">3.21.</span> 每天看一小节陈正康单词课</h3>
+</div>
+
+
+<div id="outline-container-org31f5ea3" class="outline-3">
+<h3 id="org31f5ea3"><span class="section-number-3">3.22.</span> Python Cookbook</h3>
+<div class="outline-text-3" id="text-3-22">
+<p>
+<a href="https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html">https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org2550ce4" class="outline-3">
+<h3 id="org2550ce4"><span class="section-number-3">3.23.</span> 看完mini perl</h3>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc481c10" class="outline-2">
+<h2 id="orgc481c10"><span class="section-number-2">4.</span> <i>appointment</i></h2>
+<div class="outline-text-2" id="text-4">
+<p>
+(特定时间才能开始做的)
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgb2b49c2" class="outline-2">
+<h2 id="orgb2b49c2"><span class="section-number-2">5.</span> <i>waiting-for</i></h2>
+</div>
+
+
+<div id="outline-container-org2f096e1" class="outline-2">
+<h2 id="org2f096e1"><span class="section-number-2">6.</span> <i>ref</i></h2>
+<div class="outline-text-2" id="text-6">
+</div>
+<div id="outline-container-org04db5d7" class="outline-3">
+<h3 id="org04db5d7"><span class="section-number-3">6.1.</span> llvm&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_compiler">@compiler</span></span></h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+<a href="https://zhqli.com/post/1634083200">https://zhqli.com/post/1634083200</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9dce388" class="outline-3">
+<h3 id="org9dce388"><span class="section-number-3">6.2.</span> <a href="https://vmm.dev/en/rust/">https://vmm.dev/en/rust/</a>&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-6-2">
+</div>
+<div id="outline-container-org851d7bd" class="outline-4">
+<h4 id="org851d7bd"><span class="section-number-4">6.2.1.</span> spinlock</h4>
+</div>
+<div id="outline-container-orgac4ac83" class="outline-4">
+<h4 id="orgac4ac83"><span class="section-number-4">6.2.2.</span> data structures</h4>
+</div>
+</div>
+
+<div id="outline-container-orgdf45311" class="outline-3">
+<h3 id="orgdf45311"><span class="section-number-3">6.3.</span> build a os&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_system">@system</span></span></h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+<a href="https://xiayingp.gitbook.io/build_a_os/lock/locking-in-xv6">https://xiayingp.gitbook.io/build_a_os/lock/locking-in-xv6</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org1596874" class="outline-3">
+<h3 id="org1596874"><span class="section-number-3">6.4.</span> emacs文章&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_emacs">@emacs</span></span></h3>
+<div class="outline-text-3" id="text-6-4">
+<p>
+<a href="https://segmentfault.com/a/1190000039828140">https://segmentfault.com/a/1190000039828140</a>
+<a href="https://www.jianshu.com/p/65b271c1dabf">https://www.jianshu.com/p/65b271c1dabf</a>
+<a href="https://www.jianshu.com/p/bba1e3149b2b">https://www.jianshu.com/p/bba1e3149b2b</a>
+</p>
+</div>
+</div>
+
+<div id="outline-container-org734f341" class="outline-3">
+<h3 id="org734f341"><span class="section-number-3">6.5.</span> org mode gtd&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_emacs">@emacs</span></span></h3>
+<div class="outline-text-3" id="text-6-5">
+<p>
+<a href="https://devalot.com/articles/2008/07/project-planning">https://devalot.com/articles/2008/07/project-planning</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgc259ade" class="outline-3">
+<h3 id="orgc259ade"><span class="section-number-3">6.6.</span> learn C++&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_cpp">@cpp</span></span></h3>
+<div class="outline-text-3" id="text-6-6">
+<p>
+<a href="https://www.learncpp.com/cpp-tutorial/dependencies/">https://www.learncpp.com/cpp-tutorial/dependencies/</a>
+</p>
+</div>
+</div>
+<div id="outline-container-orgf92db42" class="outline-3">
+<h3 id="orgf92db42"><span class="section-number-3">6.7.</span> 读懂 Rust 的Arc&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-6-7">
+<p>
+<a href="https://qiita.com/qnighy/items/b3b728adf5e4a3f1a841#%E6%9C%AC%E7%A8%BF%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%88%E3%83%9F%E3%83%83%E3%82%AF%E6%93%8D%E4%BD%9C%E3%81%AE%E5%9B%B3%E7%A4%BA">https://qiita.com/qnighy/items/b3b728adf5e4a3f1a841#%E6%9C%AC%E7%A8%BF%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%88%E3%83%9F%E3%83%83%E3%82%AF%E6%93%8D%E4%BD%9C%E3%81%AE%E5%9B%B3%E7%A4%BA</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org076590e" class="outline-3">
+<h3 id="org076590e"><span class="section-number-3">6.8.</span> A Guide to Porting C/C++ to Rust&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_cpp">@cpp</span></span></h3>
+<div class="outline-text-3" id="text-6-8">
+<p>
+<a href="https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/">https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org342c788" class="outline-3">
+<h3 id="org342c788"><span class="section-number-3">6.9.</span> rust cookbook&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span></span></h3>
+<div class="outline-text-3" id="text-6-9">
+<p>
+<a href="https://rustwiki.org/zh-CN/rust-cookbook/intro.html">https://rustwiki.org/zh-CN/rust-cookbook/intro.html</a>
+</p>
+</div>
+</div>
+<div id="outline-container-org0732cf0" class="outline-3">
+<h3 id="org0732cf0"><span class="section-number-3">6.10.</span> cs110L lab&#xa0;&#xa0;&#xa0;<span class="tag"><span class="_rust">@rust</span>&#xa0;<span class="_system">@system</span></span></h3>
+<div class="outline-text-3" id="text-6-10">
+<p>
+<a href="https://lza852.com/posts/2021-10-19-cs110l-proj2/">https://lza852.com/posts/2021-10-19-cs110l-proj2/</a>
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org02e38f5" class="outline-2">
+<h2 id="org02e38f5"><span class="section-number-2">7.</span> completed</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+<code>C-c C-w</code>
+</p>
+</div>
+<div id="outline-container-org45fe800" class="outline-3">
+<h3 id="org45fe800"><span class="section-number-3">7.1.</span> <span class="done DONE">DONE</span> 配置org的番茄钟在界面上显示时间</h3>
+<div class="outline-text-3" id="text-7-1">
+</div>
+</div>
+
+<div id="outline-container-org4564849" class="outline-3">
+<h3 id="org4564849"><span class="section-number-3">7.2.</span> <span class="done DONE">DONE</span> 看rust atomic video</h3>
+<div class="outline-text-3" id="text-7-2">
+</div>
+</div>
+
+<div id="outline-container-org0e34be9" class="outline-3">
+<h3 id="org0e34be9"><span class="section-number-3">7.3.</span> <span class="done DONE">DONE</span> Emacs Lisp: Get User Input</h3>
+<div class="outline-text-3" id="text-7-3">
+<p>
+<a href="http://xahlee.info/emacs/emacs/elisp_idioms_prompting_input.html">http://xahlee.info/emacs/emacs/elisp_idioms_prompting_input.html</a>
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3493882" class="outline-2">
+<h2 id="org3493882"><span class="section-number-2">8.</span> Daily Review</h2>
+<div class="outline-text-2" id="text-8">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> Clock summary at <span class="timestamp-wrapper"><span class="timestamp">[2022-12-29 四 16:16]</span></span>, for 星期四, 十二月 29, 2022.</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">File</th>
+<th scope="col" class="org-left">Headline</th>
+<th scope="col" class="org-left">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">ALL <b>Total time</b></td>
+<td class="org-left"><b>0:00</b></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+<div id="outline-container-org1a6f907" class="outline-2">
+<h2 id="org1a6f907"><span class="section-number-2">9.</span> Weekly Review</h2>
+<div class="outline-text-2" id="text-9">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> Clock summary at <span class="timestamp-wrapper"><span class="timestamp">[2022-12-29 四 16:16]</span></span>, for week 2022-W52.</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">File</th>
+<th scope="col" class="org-left">Headline</th>
+<th scope="col" class="org-left">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">ALL <b>Total time</b></td>
+<td class="org-left"><b>0:00</b></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+<div id="outline-container-org0498ce5" class="outline-2">
+<h2 id="org0498ce5"><span class="section-number-2">10.</span> Monthly Review</h2>
+<div class="outline-text-2" id="text-10">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> Clock summary at <span class="timestamp-wrapper"><span class="timestamp">[2022-12-25 日 11:55]</span></span>, for 十二月 2022.</caption>
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">File</th>
+<th scope="col" class="org-left">Headline</th>
+<th scope="col" class="org-right">Time</th>
+<th scope="col" class="org-right">&#xa0;</th>
+<th scope="col" class="org-left">&#xa0;</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">ALL <b>Total time</b></td>
+<td class="org-right"><b>6:52</b></td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left">todo.org</td>
+<td class="org-left"><b>File time</b></td>
+<td class="org-right"><b>6:52</b></td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left"><b>project</b></td>
+<td class="org-right">2:28</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&ensp;&ensp;抄个sfml rpg</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">2:28</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&ensp;&ensp;&ensp;&ensp;sfml rpg 11&#x2013;13节</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">2:28</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">completed</td>
+<td class="org-right">4:24</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&ensp;&ensp;配置org的番茄钟在界面上显示时间</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">0:33</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&ensp;&ensp;看rust atomic video</td>
+<td class="org-right">&#xa0;</td>
+<td class="org-right">3:51</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</body>
+</html>
