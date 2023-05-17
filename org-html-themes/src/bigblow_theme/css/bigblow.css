@@ -650,10 +650,13 @@ p.verse {
     font-style: italic;
 }
 
+/* 普通代码块 */
 .example {
-    background-color: #DDFADE;
-    border: 1px solid #9EC49F;
-    color: #333333;
+   /* background-color: #DDFADE;*/
+    background-color: #242730;
+    border: 1px solid #00000000;
+   /* 文字颜色: */
+   color: #fef7dd; 
 }
 
 .alert {

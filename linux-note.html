@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-03-21 二 16:04 -->
+<!-- 2023-05-11 四 20:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>linux命令杂记</title>
@@ -27,134 +27,151 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org1c1c4e1">1. shell</a>
+<li><a href="#org3766660">1. fd (find)</a></li>
+<li><a href="#orgb4bf943">2. shell</a>
 <ul>
-<li><a href="#orgfffa8e8">1.1. 忽略错误继续执行</a></li>
-<li><a href="#org3aa0a56">1.2. 退出 exit n</a></li>
-<li><a href="#org705a9bd">1.3. 判断文件是否存在</a></li>
+<li><a href="#org9a43d6b">2.1. 忽略错误继续执行</a></li>
+<li><a href="#org2a0730a">2.2. 退出 exit n</a></li>
+<li><a href="#org5ce42c2">2.3. 判断文件是否存在</a></li>
 </ul>
 </li>
-<li><a href="#orgb411180">2. git</a>
+<li><a href="#org6e72e86">3. git</a>
 <ul>
-<li><a href="#org37e74ba">2.1. 设置/取消代理</a></li>
-<li><a href="#org779ae55">2.2. clone 子模块</a></li>
-<li><a href="#org42b656f">2.3. 指定需要克隆的branch</a></li>
+<li><a href="#org06b67fa">3.1. 设置/取消代理</a></li>
+<li><a href="#org0882232">3.2. clone 子模块</a></li>
+<li><a href="#org71dae92">3.3. 指定需要克隆的branch</a></li>
 </ul>
 </li>
-<li><a href="#org7fd983c">3. grep -i 忽略大小写</a></li>
-<li><a href="#orgf786649">4. fc-list 显示已安装字体</a></li>
-<li><a href="#orgfe1ac29">5. docker</a></li>
-<li><a href="#org1d52cdc">6. tar fvx XXX</a></li>
-<li><a href="#orgc27ec24">7. du -h 以可读形式显示文件大小</a>
+<li><a href="#org0d47efc">4. grep -i 忽略大小写</a></li>
+<li><a href="#orgb6f1276">5. fc-list 显示已安装字体</a></li>
+<li><a href="#org41720d1">6. docker</a></li>
+<li><a href="#orga5047f5">7. tar fvx XXX</a></li>
+<li><a href="#orgfede6a4">8. du -h 以可读形式显示文件大小</a>
 <ul>
-<li><a href="#orgae4b55d">7.1. 查看目录下的大文件</a></li>
+<li><a href="#orgd6203f7">8.1. 查看目录下的大文件</a></li>
 </ul>
 </li>
-<li><a href="#org8a228b2">8. test命令</a></li>
-<li><a href="#org0d9e76a">9. bash脚本的编写</a>
+<li><a href="#org0cc1a86">9. test命令</a></li>
+<li><a href="#org836492d">10. bash脚本的编写</a>
 <ul>
-<li><a href="#org789a477">9.1. <code>set -e</code> 遇到错误就停止</a></li>
+<li><a href="#org976a87f">10.1. <code>set -e</code> 遇到错误就停止</a></li>
 </ul>
 </li>
-<li><a href="#org080c7d6">10. pstree 查看进程树</a></li>
-<li><a href="#org2513a89">11. strace 追踪程序的系统调用</a></li>
-<li><a href="#org0d3ed80">12. objdump -D 显示可执行文件/库文件的反汇编</a></li>
-<li><a href="#org4912158">13. ldd 显示链接信息</a></li>
-<li><a href="#orga3521d5">14. code2html 的使用</a></li>
-<li><a href="#org1287416">15. wget 保存整个网站</a></li>
-<li><a href="#org3fd131a">16. 配置apt软件源</a></li>
-<li><a href="#orgd7fbfb2">17. 在ArchLinux中安装deb</a>
+<li><a href="#org774f89f">11. pstree 查看进程树</a></li>
+<li><a href="#org562155e">12. strace 追踪程序的系统调用</a></li>
+<li><a href="#orgcd31302">13. objdump -D 显示可执行文件/库文件的反汇编</a></li>
+<li><a href="#orgab42851">14. ldd 显示链接信息</a></li>
+<li><a href="#org5dec9e4">15. code2html 的使用</a></li>
+<li><a href="#org5feaf7b">16. wget 保存整个网站</a></li>
+<li><a href="#org1ed9d66">17. 配置apt软件源</a></li>
+<li><a href="#org26c06e7">18. 在ArchLinux中安装deb</a>
 <ul>
-<li><a href="#org1c3ea84">17.1. debtap</a></li>
-<li><a href="#org6f27533">17.2. dpkg</a></li>
+<li><a href="#org5f89a47">18.1. debtap</a></li>
+<li><a href="#org6d3030d">18.2. dpkg</a></li>
 </ul>
 </li>
-<li><a href="#orgcc5ac5a">18. <code>Xterm</code> 配置文件</a></li>
-<li><a href="#org3fd0b41">19. ssh</a>
+<li><a href="#orgb00c1f6">19. <code>Xterm</code> 配置文件</a></li>
+<li><a href="#org10cf1d4">20. ssh</a>
 <ul>
-<li><a href="#org3677f6b">19.1. 重启ssh服务</a></li>
-<li><a href="#orgd16ae4e">19.2. 查看ssh服务是否启动</a></li>
+<li><a href="#org250ee66">20.1. 重启ssh服务</a></li>
+<li><a href="#org448d5de">20.2. 查看ssh服务是否启动</a></li>
 </ul>
 </li>
-<li><a href="#orgf09b681">20. 递归改变文件owner</a></li>
-<li><a href="#orgae34754">21. 汇编文件(.s)的结构</a></li>
-<li><a href="#orgb86aac6">22. makefile</a>
+<li><a href="#orgde6aa5a">21. 递归改变文件owner</a></li>
+<li><a href="#org6874d1e">22. 汇编文件(.s)的结构</a></li>
+<li><a href="#orgbac7cc4">23. makefile</a>
 <ul>
-<li><a href="#orge5b466a">22.1. 定义变量</a></li>
-<li><a href="#org9ebd731">22.2. 伪目标 .PHONY</a></li>
-<li><a href="#org0398cb4">22.3. 为整个项目添加宏定义</a></li>
-<li><a href="#org48b440f">22.4. 为目标链接上库</a></li>
-<li><a href="#orgd8af1fd">22.5. 通配符</a></li>
-<li><a href="#orgd1ca302">22.6. 函数调用</a>
+<li><a href="#org135ccae">23.1. 定义变量</a></li>
+<li><a href="#orga60ea87">23.2. 伪目标 .PHONY</a></li>
+<li><a href="#org92d112d">23.3. 为整个项目添加宏定义</a></li>
+<li><a href="#orgabd670f">23.4. 为目标链接上库</a></li>
+<li><a href="#org641d9ca">23.5. 通配符</a></li>
+<li><a href="#org564dca4">23.6. 函数调用</a>
 <ul>
-<li><a href="#org9782d90">22.6.1. 当前目录下某一类型的所有文件形成的列表</a></li>
-<li><a href="#orgbc04bf2">22.6.2. 将列表中的所有匹配项替换为指定形式</a></li>
+<li><a href="#orgd48dc2c">23.6.1. 当前目录下某一类型的所有文件形成的列表</a></li>
+<li><a href="#orgd539509">23.6.2. 将列表中的所有匹配项替换为指定形式</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org8e8f75f">23. GDB</a>
+<li><a href="#org73834d2">24. GDB</a>
 <ul>
-<li><a href="#org6bdac2c">23.1. 为可执行文件设置环境变量</a></li>
-<li><a href="#org904c97c">23.2. 为可执行程序传参</a></li>
-<li><a href="#org6f9b256">23.3. 显示某文件源代码</a></li>
-<li><a href="#orge35cc75">23.4. 添加断点</a></li>
-<li><a href="#orge1f7124">23.5. 查看断点</a></li>
-<li><a href="#org9a0fbaa">23.6. 禁用断点</a></li>
-<li><a href="#org8b00c68">23.7. 重新启用断点</a></li>
-<li><a href="#orgdcb11ae">23.8. 删除断点</a></li>
-<li><a href="#orgfac9d38">23.9. 保存断点到文件</a></li>
-<li><a href="#org8c98d8b">23.10. 单步跳过 next</a></li>
-<li><a href="#org2332190">23.11. 继续执行, 直至遇到断点</a></li>
-<li><a href="#org61ea8cb">23.12. 运行到某处,忽略期间的断点</a></li>
-<li><a href="#orgd0dd894">23.13. 进入到函数内部</a></li>
-<li><a href="#org5fad8ff">23.14. 从函数中跳出并暂停</a></li>
-<li><a href="#org7860e9a">23.15. 强制从函数中返回特定值</a></li>
-<li><a href="#orgec11e48">23.16. 跳转到指定位置继续执行</a></li>
-<li><a href="#org7287720">23.17. 显示当前所有的局部变量</a></li>
-<li><a href="#org635e0ac">23.18. 变量/表达式相关</a>
+<li><a href="#org75a7a21">24.1. 为可执行文件设置环境变量</a></li>
+<li><a href="#org3ca96c9">24.2. 为可执行程序传参</a></li>
+<li><a href="#orgab5d8cb">24.3. 显示某文件源代码</a></li>
+<li><a href="#org01cc234">24.4. 添加断点</a></li>
+<li><a href="#org1f5b8a2">24.5. 查看断点</a></li>
+<li><a href="#org43a5966">24.6. 禁用断点</a></li>
+<li><a href="#orgda59d2e">24.7. 重新启用断点</a></li>
+<li><a href="#orga2c7a8d">24.8. 删除断点</a></li>
+<li><a href="#org3c7a344">24.9. 保存断点到文件</a></li>
+<li><a href="#org6a09d2a">24.10. 单步跳过 next</a></li>
+<li><a href="#orgebfa63a">24.11. 继续执行, 直至遇到断点</a></li>
+<li><a href="#orgfa7780c">24.12. 运行到某处,忽略期间的断点</a></li>
+<li><a href="#orgab7ec9c">24.13. 进入到函数内部</a></li>
+<li><a href="#org386d8b5">24.14. 从函数中跳出并暂停</a></li>
+<li><a href="#orgde7f3c0">24.15. 强制从函数中返回特定值</a></li>
+<li><a href="#org992d939">24.16. 跳转到指定位置继续执行</a></li>
+<li><a href="#orgdc966cc">24.17. 显示当前所有的局部变量</a></li>
+<li><a href="#org2bf9a09">24.18. 变量/表达式相关</a>
 <ul>
-<li><a href="#orgaf5022a">23.18.1. 打印变量/表达式</a></li>
-<li><a href="#org26a3084">23.18.2. 自动显示变量值</a></li>
-<li><a href="#org1653b8a">23.18.3. 取消对变量的自动显示</a></li>
-<li><a href="#org224a284">23.18.4. 显示变量/表达式类型</a></li>
-<li><a href="#orgd7fde66">23.18.5. 修改变量的值</a></li>
-<li><a href="#orga068dbe">23.18.6. 监视某变量的值</a></li>
+<li><a href="#orgaac24c6">24.18.1. 打印变量/表达式</a></li>
+<li><a href="#orgca13cf7">24.18.2. 自动显示变量值</a></li>
+<li><a href="#org9206474">24.18.3. 取消对变量的自动显示</a></li>
+<li><a href="#org5fd3c66">24.18.4. 显示变量/表达式类型</a></li>
+<li><a href="#org124b2c1">24.18.5. 修改变量的值</a></li>
+<li><a href="#orgdbe4131">24.18.6. 监视某变量的值</a></li>
 </ul>
 </li>
-<li><a href="#orgfa11243">23.19. 栈相关</a>
+<li><a href="#org2a4793c">24.19. 栈相关</a>
 <ul>
-<li><a href="#orgb8ba640">23.19.1. 显示堆栈信息: bt</a></li>
-<li><a href="#org3753355">23.19.2. 切换栈帧</a></li>
+<li><a href="#org9668619">24.19.1. 显示堆栈信息: bt</a></li>
+<li><a href="#org28f9c96">24.19.2. 切换栈帧</a></li>
 </ul>
 </li>
-<li><a href="#org9528063">23.20. 调试已经运行的程序</a></li>
-<li><a href="#org579664f">23.21. 检查点</a>
+<li><a href="#org1692ab0">24.20. 调试已经运行的程序</a></li>
+<li><a href="#org412df64">24.21. 检查点</a>
 <ul>
-<li><a href="#org3bb89e4">23.21.1. 在当前位置添加checkpoint</a></li>
-<li><a href="#orgc516574">23.21.2. 查看所有checkpoints</a></li>
-<li><a href="#org458c8da">23.21.3. 删除指定checkpoint</a></li>
+<li><a href="#orge503029">24.21.1. 在当前位置添加checkpoint</a></li>
+<li><a href="#org34e985e">24.21.2. 查看所有checkpoints</a></li>
+<li><a href="#orge0c02b0">24.21.3. 删除指定checkpoint</a></li>
 </ul>
 </li>
-<li><a href="#orgc206e3c">23.22. 线程</a>
+<li><a href="#org1565b8c">24.22. 线程</a>
 <ul>
-<li><a href="#org423ecb1">23.22.1. 显示所有线程</a></li>
-<li><a href="#org841a37d">23.22.2. 切换到指定线程</a></li>
+<li><a href="#orgc2bbfbb">24.22.1. 显示所有线程</a></li>
+<li><a href="#org63623b1">24.22.2. 切换到指定线程</a></li>
 </ul>
 </li>
-<li><a href="#org682c982">23.23. 以指定格式显示某地址处的内容</a></li>
-<li><a href="#org6a828be">23.24. 反向运行</a></li>
+<li><a href="#orgd887d01">24.23. 以指定格式显示某地址处的内容</a></li>
+<li><a href="#org40faf3e">24.24. 反向运行</a></li>
 </ul>
 </li>
-<li><a href="#org361cfd0">24. CMake</a></li>
-<li><a href="#orgd3b0e1c">25. cgroup v2</a>
+<li><a href="#org0e48f95">25. valgrind</a>
 <ul>
-<li><a href="#orgbd4672b">25.1. 组成</a></li>
-<li><a href="#org312e7c6">25.2. 功能</a></li>
-<li><a href="#orgffdf9b8">25.3. 接口</a></li>
-<li><a href="#org89c0fc0">25.4. eg: pids控制器</a></li>
-<li><a href="#org95cd4c2">25.5. 删除cgroup</a></li>
-<li><a href="#org673ddde">25.6. 控制器概览</a></li>
+<li><a href="#org0f47e0e">25.1. 无法使用, 报错</a></li>
+</ul>
+</li>
+<li><a href="#org441336a">26. CMake</a></li>
+<li><a href="#orgef9a14f">27. clangd 配置</a>
+<ul>
+<li><a href="#orgc9e1410">27.1. 配置纯C项目</a></li>
+<li><a href="#org1d3fe76">27.2. 配置C++项目</a></li>
+</ul>
+</li>
+<li><a href="#org6cd262a">28. cgroup v2</a>
+<ul>
+<li><a href="#org77d20c2">28.1. 组成</a></li>
+<li><a href="#org469b329">28.2. 功能</a></li>
+<li><a href="#org294aeac">28.3. 接口</a></li>
+<li><a href="#org31eaef4">28.4. eg: pids控制器</a></li>
+<li><a href="#orge5f34e4">28.5. 删除cgroup</a></li>
+<li><a href="#orgf7f8d2b">28.6. 控制器概览</a>
+<ul>
+<li><a href="#org0fb2c19">28.6.1. cpu</a></li>
+<li><a href="#orgfda2e86">28.6.2. cpuset: 控制cpu和内存亲和度</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -162,13 +179,47 @@
 </div>
 
 
-<div id="outline-container-org1c1c4e1" class="outline-2">
-<h2 id="org1c1c4e1"><span class="section-number-2">1.</span> shell</h2>
+
+<div id="outline-container-org3766660" class="outline-2">
+<h2 id="org3766660"><span class="section-number-2">1.</span> fd (find)</h2>
 <div class="outline-text-2" id="text-1">
+<p>
+在当前目录下的所有文件中寻找某字符串: 
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">fd . --type f <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#25991;&#20214;&#31867;&#22411; f, d ..</span>
+     --exec grep --color=always -nH  -e rust  <span style="color: #98be65;">\{\}</span>  <span style="color: #5B6268;"># </span><span style="color: #5B6268;">-exec &#23545;&#27599;&#20010;&#26597;&#25214;&#20986;&#26469;&#30340;&#25991;&#20214;&#36335;&#24452;&#25191;&#34892;&#21629;&#20196;</span>
+   <span style="color: #5B6268;">#  </span><span style="color: #5B6268;">&#20854;&#20013;{}&#20195;&#34920;&#36335;&#24452;, \{\} &#26159;&#20026;&#20102;&#38450;&#27490;&#27495;&#20041;</span>
+</pre>
 </div>
-<div id="outline-container-orgfffa8e8" class="outline-3">
-<h3 id="orgfffa8e8"><span class="section-number-3">1.1.</span> 忽略错误继续执行</h3>
-<div class="outline-text-3" id="text-1-1">
+
+<div class="org-src-container">
+<pre class="src src-sh">find -type f -exec grep --color=always -nH -e hello <span style="color: #98be65;">\{\}</span> +  <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#23545;&#20110;find &#30340;-exec&#23376;&#21629;&#20196;, {}&#21518;&#38754;&#38656;&#35201;&#25509;&#19978;&#21152;&#21495;+ !!</span>
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-sh">grep --color=always -nH -i -e hello &lt;FILE&gt;
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">-n &#34892;&#21495;</span>
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">-H &#25991;&#20214;&#21517;</span>
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">-e &#27491;&#21017;&#34920;&#36798;&#24335;</span>
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">-i &#24573;&#30053;&#22823;&#23567;&#20889;</span>
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">--color=always &#32473;&#26597;&#35810;&#32467;&#26524;&#19978;&#33394;</span>
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">--null &#22312;&#25991;&#20214;&#21517;&#21518;&#38754;&#21152;&#19978;&#23614;&#38646;.</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgb4bf943" class="outline-2">
+<h2 id="orgb4bf943"><span class="section-number-2">2.</span> shell</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org9a43d6b" class="outline-3">
+<h3 id="org9a43d6b"><span class="section-number-3">2.1.</span> 忽略错误继续执行</h3>
+<div class="outline-text-3" id="text-2-1">
 <div class="org-src-container">
 <pre class="src src-bash"><span style="color: #c678dd;">set</span> +e 
 </pre>
@@ -184,13 +235,13 @@
 </div>
 
 
-<div id="outline-container-org3aa0a56" class="outline-3">
-<h3 id="org3aa0a56"><span class="section-number-3">1.2.</span> 退出 exit n</h3>
+<div id="outline-container-org2a0730a" class="outline-3">
+<h3 id="org2a0730a"><span class="section-number-3">2.2.</span> 退出 exit n</h3>
 </div>
 
-<div id="outline-container-org705a9bd" class="outline-3">
-<h3 id="org705a9bd"><span class="section-number-3">1.3.</span> 判断文件是否存在</h3>
-<div class="outline-text-3" id="text-1-3">
+<div id="outline-container-org5ce42c2" class="outline-3">
+<h3 id="org5ce42c2"><span class="section-number-3">2.3.</span> 判断文件是否存在</h3>
+<div class="outline-text-3" id="text-2-3">
 <div class="org-src-container">
 <pre class="src src-sh"><span style="color: #51afef;">if</span> [ -f $<span style="color: #dcaeea;">1</span> ]
 <span style="color: #51afef;">then</span>
@@ -210,13 +261,13 @@ n* git
 </div>
 
 
-<div id="outline-container-orgb411180" class="outline-2">
-<h2 id="orgb411180"><span class="section-number-2">2.</span> git</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-org6e72e86" class="outline-2">
+<h2 id="org6e72e86"><span class="section-number-2">3.</span> git</h2>
+<div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org37e74ba" class="outline-3">
-<h3 id="org37e74ba"><span class="section-number-3">2.1.</span> 设置/取消代理</h3>
-<div class="outline-text-3" id="text-2-1">
+<div id="outline-container-org06b67fa" class="outline-3">
+<h3 id="org06b67fa"><span class="section-number-3">3.1.</span> 设置/取消代理</h3>
+<div class="outline-text-3" id="text-3-1">
 <div class="org-src-container">
 <pre class="src src-bash"><span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#35774;&#32622;ss</span>
 git config --global http.proxy <span style="color: #98be65;">'socks5://127.0.0.1:1080'</span>
@@ -237,9 +288,9 @@ git config --global --unset https.proxy
 </div>
 </div>
 
-<div id="outline-container-org779ae55" class="outline-3">
-<h3 id="org779ae55"><span class="section-number-3">2.2.</span> clone 子模块</h3>
-<div class="outline-text-3" id="text-2-2">
+<div id="outline-container-org0882232" class="outline-3">
+<h3 id="org0882232"><span class="section-number-3">3.2.</span> clone 子模块</h3>
+<div class="outline-text-3" id="text-3-2">
 <pre class="example">
 git submodule update --init --recursive
 </pre>
@@ -252,9 +303,9 @@ git submodule update --init --recursive
 
 
 
-<div id="outline-container-org42b656f" class="outline-3">
-<h3 id="org42b656f"><span class="section-number-3">2.3.</span> 指定需要克隆的branch</h3>
-<div class="outline-text-3" id="text-2-3">
+<div id="outline-container-org71dae92" class="outline-3">
+<h3 id="org71dae92"><span class="section-number-3">3.3.</span> 指定需要克隆的branch</h3>
+<div class="outline-text-3" id="text-3-3">
 <pre class="example">
 git clone  -b fsf-gdb-10.1-with-sim&lt;分支&gt;   https://github.com/riscv-collab/riscv-binutils-gdb.git riscv-gdb&lt;别名&gt;
 </pre>
@@ -263,18 +314,18 @@ git clone  -b fsf-gdb-10.1-with-sim&lt;分支&gt;   https://github.com/riscv-col
 </div>
 
 
-<div id="outline-container-org7fd983c" class="outline-2">
-<h2 id="org7fd983c"><span class="section-number-2">3.</span> grep -i 忽略大小写</h2>
+<div id="outline-container-org0d47efc" class="outline-2">
+<h2 id="org0d47efc"><span class="section-number-2">4.</span> grep -i 忽略大小写</h2>
 </div>
 
 
-<div id="outline-container-orgf786649" class="outline-2">
-<h2 id="orgf786649"><span class="section-number-2">4.</span> fc-list 显示已安装字体</h2>
+<div id="outline-container-orgb6f1276" class="outline-2">
+<h2 id="orgb6f1276"><span class="section-number-2">5.</span> fc-list 显示已安装字体</h2>
 </div>
 
-<div id="outline-container-orgfe1ac29" class="outline-2">
-<h2 id="orgfe1ac29"><span class="section-number-2">5.</span> docker</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-org41720d1" class="outline-2">
+<h2 id="org41720d1"><span class="section-number-2">6.</span> docker</h2>
+<div class="outline-text-2" id="text-6">
 <p>
 恢复容器的运行 :  
 </p>
@@ -286,13 +337,13 @@ sudo docker attach <span style="color: #51afef; font-weight: bold;">`sudo docker
 </div>
 </div>
 
-<div id="outline-container-org1d52cdc" class="outline-2">
-<h2 id="org1d52cdc"><span class="section-number-2">6.</span> tar fvx XXX</h2>
+<div id="outline-container-orga5047f5" class="outline-2">
+<h2 id="orga5047f5"><span class="section-number-2">7.</span> tar fvx XXX</h2>
 </div>
 
-<div id="outline-container-orgc27ec24" class="outline-2">
-<h2 id="orgc27ec24"><span class="section-number-2">7.</span> du -h 以可读形式显示文件大小</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-orgfede6a4" class="outline-2">
+<h2 id="orgfede6a4"><span class="section-number-2">8.</span> du -h 以可读形式显示文件大小</h2>
+<div class="outline-text-2" id="text-8">
 <div class="org-src-container">
 <pre class="src src-sh">$ du -h linux-note.org 
 
@@ -301,9 +352,9 @@ sudo docker attach <span style="color: #51afef; font-weight: bold;">`sudo docker
 </div>
 </div>
 
-<div id="outline-container-orgae4b55d" class="outline-3">
-<h3 id="orgae4b55d"><span class="section-number-3">7.1.</span> 查看目录下的大文件</h3>
-<div class="outline-text-3" id="text-7-1">
+<div id="outline-container-orgd6203f7" class="outline-3">
+<h3 id="orgd6203f7"><span class="section-number-3">8.1.</span> 查看目录下的大文件</h3>
+<div class="outline-text-3" id="text-8-1">
 <pre class="example">
 du -sh .* * | grep G
 </pre>
@@ -313,9 +364,9 @@ du -sh .* * | grep G
 
 
 
-<div id="outline-container-org8a228b2" class="outline-2">
-<h2 id="org8a228b2"><span class="section-number-2">8.</span> test命令</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-org0cc1a86" class="outline-2">
+<h2 id="org0cc1a86"><span class="section-number-2">9.</span> test命令</h2>
+<div class="outline-text-2" id="text-9">
 <div class="org-src-container">
 <pre class="src src-sh">test <span style="color: #51afef; font-weight: bold;">`&#21629;&#20196;`</span> = <span style="color: #98be65;">'str'</span> 
 test <span style="color: #51afef; font-weight: bold;">`&#21629;&#20196;`</span> = <span style="color: #98be65;">'string'</span> -a <span style="color: #51afef; font-weight: bold;">`&#21629;&#20196;`</span> = <span style="color: #98be65;">'string'</span>
@@ -337,13 +388,13 @@ test <span style="color: #51afef; font-weight: bold;">`uname -s`</span> = <span 
 
 
 
-<div id="outline-container-org0d9e76a" class="outline-2">
-<h2 id="org0d9e76a"><span class="section-number-2">9.</span> bash脚本的编写</h2>
-<div class="outline-text-2" id="text-9">
+<div id="outline-container-org836492d" class="outline-2">
+<h2 id="org836492d"><span class="section-number-2">10.</span> bash脚本的编写</h2>
+<div class="outline-text-2" id="text-10">
 </div>
-<div id="outline-container-org789a477" class="outline-3">
-<h3 id="org789a477"><span class="section-number-3">9.1.</span> <code>set -e</code> 遇到错误就停止</h3>
-<div class="outline-text-3" id="text-9-1">
+<div id="outline-container-org976a87f" class="outline-3">
+<h3 id="org976a87f"><span class="section-number-3">10.1.</span> <code>set -e</code> 遇到错误就停止</h3>
+<div class="outline-text-3" id="text-10-1">
 <p>
 bash脚本默认行为是忽略错误,继续运行.
 在脚本开头设置set -e就会使得: 只要有命令返回值!=0整个脚本的运行就会终止
@@ -352,9 +403,9 @@ bash脚本默认行为是忽略错误,继续运行.
 </div>
 </div>
 
-<div id="outline-container-org080c7d6" class="outline-2">
-<h2 id="org080c7d6"><span class="section-number-2">10.</span> pstree 查看进程树</h2>
-<div class="outline-text-2" id="text-10">
+<div id="outline-container-org774f89f" class="outline-2">
+<h2 id="org774f89f"><span class="section-number-2">11.</span> pstree 查看进程树</h2>
+<div class="outline-text-2" id="text-11">
 <p>
 <code>pstree -ap | grep mysql/redis ...</code>
 </p>
@@ -374,9 +425,9 @@ sun@Salted-PC:saltedf.github.io [main] $ pstree -ap | grep emacs
 </div>
 
 
-<div id="outline-container-org2513a89" class="outline-2">
-<h2 id="org2513a89"><span class="section-number-2">11.</span> strace 追踪程序的系统调用</h2>
-<div class="outline-text-2" id="text-11">
+<div id="outline-container-org562155e" class="outline-2">
+<h2 id="org562155e"><span class="section-number-2">12.</span> strace 追踪程序的系统调用</h2>
+<div class="outline-text-2" id="text-12">
 <p>
 用于debug和理解程序的流程.
 </p>
@@ -445,9 +496,9 @@ strace -c -p &lt;PID&gt;
 </div>
 
 
-<div id="outline-container-org0d3ed80" class="outline-2">
-<h2 id="org0d3ed80"><span class="section-number-2">12.</span> objdump -D 显示可执行文件/库文件的反汇编</h2>
-<div class="outline-text-2" id="text-12">
+<div id="outline-container-orgcd31302" class="outline-2">
+<h2 id="orgcd31302"><span class="section-number-2">13.</span> objdump -D 显示可执行文件/库文件的反汇编</h2>
+<div class="outline-text-2" id="text-13">
 <div class="org-src-container">
 <pre class="src src-bash">objdump -D XXX | less 
 </pre>
@@ -459,9 +510,9 @@ strace -c -p &lt;PID&gt;
 </div>
 
 
-<div id="outline-container-org4912158" class="outline-2">
-<h2 id="org4912158"><span class="section-number-2">13.</span> ldd 显示链接信息</h2>
-<div class="outline-text-2" id="text-13">
+<div id="outline-container-orgab42851" class="outline-2">
+<h2 id="orgab42851"><span class="section-number-2">14.</span> ldd 显示链接信息</h2>
+<div class="outline-text-2" id="text-14">
 <div class="org-src-container">
 <pre class="src src-sh">$ ldd ./build/udpclient 
 
@@ -477,9 +528,9 @@ strace -c -p &lt;PID&gt;
 </div>
 
 
-<div id="outline-container-orga3521d5" class="outline-2">
-<h2 id="orga3521d5"><span class="section-number-2">14.</span> <a href="https://github.com/agentzh/code2ebook/">code2html</a> 的使用</h2>
-<div class="outline-text-2" id="text-14">
+<div id="outline-container-org5dec9e4" class="outline-2">
+<h2 id="org5dec9e4"><span class="section-number-2">15.</span> <a href="https://github.com/agentzh/code2ebook/">code2html</a> 的使用</h2>
+<div class="outline-text-2" id="text-15">
 <p>
 先进入项目根目录: 
 </p>
@@ -513,9 +564,9 @@ strace -c -p &lt;PID&gt;
 </div>
 
 
-<div id="outline-container-org1287416" class="outline-2">
-<h2 id="org1287416"><span class="section-number-2">15.</span> wget 保存整个网站</h2>
-<div class="outline-text-2" id="text-15">
+<div id="outline-container-org5feaf7b" class="outline-2">
+<h2 id="org5feaf7b"><span class="section-number-2">16.</span> wget 保存整个网站</h2>
+<div class="outline-text-2" id="text-16">
 <p>
 <a href="https://github.com/lujun9972/linux-document/blob/master/examples/10%20wget%20command%20examples.org">https://github.com/lujun9972/linux-document/blob/master/examples/10%20wget%20command%20examples.org</a>
 </p>
@@ -554,9 +605,9 @@ wget --mirror --convert-links -r -D "www.seas.upenn.edu,www.cis.upenn.edu"  -A.p
 
 
 
-<div id="outline-container-org3fd131a" class="outline-2">
-<h2 id="org3fd131a"><span class="section-number-2">16.</span> 配置apt软件源</h2>
-<div class="outline-text-2" id="text-16">
+<div id="outline-container-org1ed9d66" class="outline-2">
+<h2 id="org1ed9d66"><span class="section-number-2">17.</span> 配置apt软件源</h2>
+<div class="outline-text-2" id="text-17">
 <div class="org-src-container">
 <pre class="src src-bash">sudo vim /etc/apt/source.list
 
@@ -570,17 +621,17 @@ sudo apt-get update
 
 
 
-<div id="outline-container-orgd7fbfb2" class="outline-2">
-<h2 id="orgd7fbfb2"><span class="section-number-2">17.</span> 在ArchLinux中安装deb</h2>
-<div class="outline-text-2" id="text-17">
+<div id="outline-container-org26c06e7" class="outline-2">
+<h2 id="org26c06e7"><span class="section-number-2">18.</span> 在ArchLinux中安装deb</h2>
+<div class="outline-text-2" id="text-18">
 </div>
-<div id="outline-container-org1c3ea84" class="outline-3">
-<h3 id="org1c3ea84"><span class="section-number-3">17.1.</span> debtap</h3>
+<div id="outline-container-org5f89a47" class="outline-3">
+<h3 id="org5f89a47"><span class="section-number-3">18.1.</span> debtap</h3>
 </div>
 
-<div id="outline-container-org6f27533" class="outline-3">
-<h3 id="org6f27533"><span class="section-number-3">17.2.</span> dpkg</h3>
-<div class="outline-text-3" id="text-17-2">
+<div id="outline-container-org6d3030d" class="outline-3">
+<h3 id="org6d3030d"><span class="section-number-3">18.2.</span> dpkg</h3>
+<div class="outline-text-3" id="text-18-2">
 <div class="org-src-container">
 <pre class="src src-sh">yay -Sy dpkg
 
@@ -592,9 +643,9 @@ dpkg -i  xxx.deb
 </div>
 
 
-<div id="outline-container-orgcc5ac5a" class="outline-2">
-<h2 id="orgcc5ac5a"><span class="section-number-2">18.</span> <code>Xterm</code> 配置文件</h2>
-<div class="outline-text-2" id="text-18">
+<div id="outline-container-orgb00c1f6" class="outline-2">
+<h2 id="orgb00c1f6"><span class="section-number-2">19.</span> <code>Xterm</code> 配置文件</h2>
+<div class="outline-text-2" id="text-19">
 <div class="org-src-container">
 <pre class="src src-sh">cat ~/.Xresources
 </pre>
@@ -694,13 +745,13 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-org3fd0b41" class="outline-2">
-<h2 id="org3fd0b41"><span class="section-number-2">19.</span> ssh</h2>
-<div class="outline-text-2" id="text-19">
+<div id="outline-container-org10cf1d4" class="outline-2">
+<h2 id="org10cf1d4"><span class="section-number-2">20.</span> ssh</h2>
+<div class="outline-text-2" id="text-20">
 </div>
-<div id="outline-container-org3677f6b" class="outline-3">
-<h3 id="org3677f6b"><span class="section-number-3">19.1.</span> 重启ssh服务</h3>
-<div class="outline-text-3" id="text-19-1">
+<div id="outline-container-org250ee66" class="outline-3">
+<h3 id="org250ee66"><span class="section-number-3">20.1.</span> 重启ssh服务</h3>
+<div class="outline-text-3" id="text-20-1">
 <div class="org-src-container">
 <pre class="src src-bash">sudo service ssh restart
 </pre>
@@ -713,9 +764,9 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-orgd16ae4e" class="outline-3">
-<h3 id="orgd16ae4e"><span class="section-number-3">19.2.</span> 查看ssh服务是否启动</h3>
-<div class="outline-text-3" id="text-19-2">
+<div id="outline-container-org448d5de" class="outline-3">
+<h3 id="org448d5de"><span class="section-number-3">20.2.</span> 查看ssh服务是否启动</h3>
+<div class="outline-text-3" id="text-20-2">
 <div class="org-src-container">
 <pre class="src src-bash">sudo lsof -i :22 
 </pre>
@@ -728,9 +779,9 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-orgf09b681" class="outline-2">
-<h2 id="orgf09b681"><span class="section-number-2">20.</span> 递归改变文件owner</h2>
-<div class="outline-text-2" id="text-20">
+<div id="outline-container-orgde6aa5a" class="outline-2">
+<h2 id="orgde6aa5a"><span class="section-number-2">21.</span> 递归改变文件owner</h2>
+<div class="outline-text-2" id="text-21">
 <div class="org-src-container">
 <pre class="src src-bash">chown -R sun:sun ./dir
 </pre>
@@ -741,9 +792,9 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-orgae34754" class="outline-2">
-<h2 id="orgae34754"><span class="section-number-2">21.</span> 汇编文件(.s)的结构</h2>
-<div class="outline-text-2" id="text-21">
+<div id="outline-container-org6874d1e" class="outline-2">
+<h2 id="org6874d1e"><span class="section-number-2">22.</span> 汇编文件(.s)的结构</h2>
+<div class="outline-text-2" id="text-22">
 <pre class="example">
 .text: 代码段
 .data: 常量 字符串 初始化的全局变量
@@ -763,13 +814,13 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-orgb86aac6" class="outline-2">
-<h2 id="orgb86aac6"><span class="section-number-2">22.</span> makefile</h2>
-<div class="outline-text-2" id="text-22">
+<div id="outline-container-orgbac7cc4" class="outline-2">
+<h2 id="orgbac7cc4"><span class="section-number-2">23.</span> makefile</h2>
+<div class="outline-text-2" id="text-23">
 </div>
-<div id="outline-container-orge5b466a" class="outline-3">
-<h3 id="orge5b466a"><span class="section-number-3">22.1.</span> 定义变量</h3>
-<div class="outline-text-3" id="text-22-1">
+<div id="outline-container-org135ccae" class="outline-3">
+<h3 id="org135ccae"><span class="section-number-3">23.1.</span> 定义变量</h3>
+<div class="outline-text-3" id="text-23-1">
 <div class="org-src-container">
 <pre class="src src-makefile"><span style="color: #dcaeea;">CC</span> := gcc <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#23450;&#20041;&#24120;&#37327;, &#21518;&#32493;&#19981;&#33021;&#29992;+=</span>
 <span style="color: #dcaeea;">OBJS</span> = hello.o world.o <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#23450;&#20041;&#21464;&#37327;, &#21518;&#32493;&#21487;&#20197;&#29992;+=&#22686;&#21152;</span>
@@ -783,9 +834,9 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-org9ebd731" class="outline-3">
-<h3 id="org9ebd731"><span class="section-number-3">22.2.</span> 伪目标 .PHONY</h3>
-<div class="outline-text-3" id="text-22-2">
+<div id="outline-container-orga60ea87" class="outline-3">
+<h3 id="orga60ea87"><span class="section-number-3">23.2.</span> 伪目标 .PHONY</h3>
+<div class="outline-text-3" id="text-23-2">
 <p>
 通常是指那些不生成文件的. 只负责执行某些命令的.
 </p>
@@ -808,9 +859,9 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-org0398cb4" class="outline-3">
-<h3 id="org0398cb4"><span class="section-number-3">22.3.</span> 为整个项目添加宏定义</h3>
-<div class="outline-text-3" id="text-22-3">
+<div id="outline-container-org92d112d" class="outline-3">
+<h3 id="org92d112d"><span class="section-number-3">23.3.</span> 为整个项目添加宏定义</h3>
+<div class="outline-text-3" id="text-23-3">
 <div class="org-src-container">
 <pre class="src src-makefile">
 <span style="color: #dcaeea;">DEFS</span> = -D_DEBUG -D_POSIX_SOURCE
@@ -827,9 +878,9 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-org48b440f" class="outline-3">
-<h3 id="org48b440f"><span class="section-number-3">22.4.</span> 为目标链接上库</h3>
-<div class="outline-text-3" id="text-22-4">
+<div id="outline-container-orgabd670f" class="outline-3">
+<h3 id="orgabd670f"><span class="section-number-3">23.4.</span> 为目标链接上库</h3>
+<div class="outline-text-3" id="text-23-4">
 <div class="org-src-container">
 <pre class="src src-makefile"><span style="color: #dcaeea;">LIBS</span> = -lpthread -lqt
 
@@ -843,9 +894,9 @@ xterm*color15: #eeeeec
 
 
 
-<div id="outline-container-orgd8af1fd" class="outline-3">
-<h3 id="orgd8af1fd"><span class="section-number-3">22.5.</span> 通配符</h3>
-<div class="outline-text-3" id="text-22-5">
+<div id="outline-container-org641d9ca" class="outline-3">
+<h3 id="org641d9ca"><span class="section-number-3">23.5.</span> 通配符</h3>
+<div class="outline-text-3" id="text-23-5">
 <div class="org-src-container">
 <pre class="src src-bash">* &#25152;&#26377;
 % :&#20219;&#24847;&#19968;&#20010;&#25991;&#20214;
@@ -885,9 +936,9 @@ $&lt; &#39318;&#20010;&#20381;&#36182;&#39033;
 
 
 
-<div id="outline-container-orgd1ca302" class="outline-3">
-<h3 id="orgd1ca302"><span class="section-number-3">22.6.</span> 函数调用</h3>
-<div class="outline-text-3" id="text-22-6">
+<div id="outline-container-org564dca4" class="outline-3">
+<h3 id="org564dca4"><span class="section-number-3">23.6.</span> 函数调用</h3>
+<div class="outline-text-3" id="text-23-6">
 <div class="org-src-container">
 <pre class="src src-makefile">$(<span style="color: #dcaeea;">my_func</span> arg1,arg2,arg3)
 </pre>
@@ -896,9 +947,9 @@ $&lt; &#39318;&#20010;&#20381;&#36182;&#39033;
 
 
 
-<div id="outline-container-org9782d90" class="outline-4">
-<h4 id="org9782d90"><span class="section-number-4">22.6.1.</span> 当前目录下某一类型的所有文件形成的列表</h4>
-<div class="outline-text-4" id="text-22-6-1">
+<div id="outline-container-orgd48dc2c" class="outline-4">
+<h4 id="orgd48dc2c"><span class="section-number-4">23.6.1.</span> 当前目录下某一类型的所有文件形成的列表</h4>
+<div class="outline-text-4" id="text-23-6-1">
 <div class="org-src-container">
 <pre class="src src-makefile"><span style="color: #dcaeea;">SRC</span> = $(<span style="color: #dcaeea;">wildcard</span> *.c)  ==&gt; hello.c world.c fuck.c  
 </pre>
@@ -910,9 +961,9 @@ $&lt; &#39318;&#20010;&#20381;&#36182;&#39033;
 
 
 
-<div id="outline-container-orgbc04bf2" class="outline-4">
-<h4 id="orgbc04bf2"><span class="section-number-4">22.6.2.</span> 将列表中的所有匹配项替换为指定形式</h4>
-<div class="outline-text-4" id="text-22-6-2">
+<div id="outline-container-orgd539509" class="outline-4">
+<h4 id="orgd539509"><span class="section-number-4">23.6.2.</span> 将列表中的所有匹配项替换为指定形式</h4>
+<div class="outline-text-4" id="text-23-6-2">
 <div class="org-src-container">
 <pre class="src src-makefile"><span style="color: #dcaeea;">OBJS</span> = $(<span style="color: #dcaeea;">patsubset</span> %.c,%.o,${<span style="color: #dcaeea;">SRC</span>} ) 
 
@@ -931,17 +982,17 @@ $&lt; &#39318;&#20010;&#20381;&#36182;&#39033;
 
 
 
-<div id="outline-container-org8e8f75f" class="outline-2">
-<h2 id="org8e8f75f"><span class="section-number-2">23.</span> GDB</h2>
-<div class="outline-text-2" id="text-23">
+<div id="outline-container-org73834d2" class="outline-2">
+<h2 id="org73834d2"><span class="section-number-2">24.</span> GDB</h2>
+<div class="outline-text-2" id="text-24">
 <p>
 gef/cgdb/emacs gdb-many-windows
 </p>
 </div>
 
-<div id="outline-container-org6bdac2c" class="outline-3">
-<h3 id="org6bdac2c"><span class="section-number-3">23.1.</span> 为可执行文件设置环境变量</h3>
-<div class="outline-text-3" id="text-23-1">
+<div id="outline-container-org75a7a21" class="outline-3">
+<h3 id="org75a7a21"><span class="section-number-3">24.1.</span> 为可执行文件设置环境变量</h3>
+<div class="outline-text-3" id="text-24-1">
 <p>
 set environment FOO = XX 
 unset environment FOO
@@ -949,9 +1000,9 @@ unset environment FOO
 </div>
 </div>
 
-<div id="outline-container-org904c97c" class="outline-3">
-<h3 id="org904c97c"><span class="section-number-3">23.2.</span> 为可执行程序传参</h3>
-<div class="outline-text-3" id="text-23-2">
+<div id="outline-container-org3ca96c9" class="outline-3">
+<h3 id="org3ca96c9"><span class="section-number-3">24.2.</span> 为可执行程序传参</h3>
+<div class="outline-text-3" id="text-24-2">
 <ul class="org-ul">
 <li>进入gdb shell后:</li>
 </ul>
@@ -981,9 +1032,9 @@ unset environment FOO
 
 
 
-<div id="outline-container-org6f9b256" class="outline-3">
-<h3 id="org6f9b256"><span class="section-number-3">23.3.</span> 显示某文件源代码</h3>
-<div class="outline-text-3" id="text-23-3">
+<div id="outline-container-orgab5d8cb" class="outline-3">
+<h3 id="orgab5d8cb"><span class="section-number-3">24.3.</span> 显示某文件源代码</h3>
+<div class="outline-text-3" id="text-24-3">
 <div class="org-src-container">
 <pre class="src src-bash">l / list &lt;&#20989;&#25968;&gt; 
 </pre>
@@ -1005,9 +1056,9 @@ list myfile.cc:1
 
 
 
-<div id="outline-container-orge35cc75" class="outline-3">
-<h3 id="orge35cc75"><span class="section-number-3">23.4.</span> 添加断点</h3>
-<div class="outline-text-3" id="text-23-4">
+<div id="outline-container-org01cc234" class="outline-3">
+<h3 id="org01cc234"><span class="section-number-3">24.4.</span> 添加断点</h3>
+<div class="outline-text-3" id="text-24-4">
 <p>
 用break可以添加断点, 既能在指定行上添加, 也能为指定函数添加断点.(经常用在一行中有多个函数时)
 </p>
@@ -1021,9 +1072,9 @@ break myfunc
 </div>
 </div>
 
-<div id="outline-container-orge1f7124" class="outline-3">
-<h3 id="orge1f7124"><span class="section-number-3">23.5.</span> 查看断点</h3>
-<div class="outline-text-3" id="text-23-5">
+<div id="outline-container-org1f5b8a2" class="outline-3">
+<h3 id="org1f5b8a2"><span class="section-number-3">24.5.</span> 查看断点</h3>
+<div class="outline-text-3" id="text-24-5">
 <p>
 显示了断点是否被禁用, 以及断点打在何处. 每个断点都有一个ID, 对断点的操作都基于此ID
 </p>
@@ -1036,9 +1087,9 @@ Num     Type           Disp Enb Address            What
 </div>
 </div>
 
-<div id="outline-container-org9a0fbaa" class="outline-3">
-<h3 id="org9a0fbaa"><span class="section-number-3">23.6.</span> 禁用断点</h3>
-<div class="outline-text-3" id="text-23-6">
+<div id="outline-container-org43a5966" class="outline-3">
+<h3 id="org43a5966"><span class="section-number-3">24.6.</span> 禁用断点</h3>
+<div class="outline-text-3" id="text-24-6">
 <div class="org-src-container">
 <pre class="src src-gdb">(gdb) disable breakpoints 4 
 (gdb) i b
@@ -1050,9 +1101,9 @@ Num     Type           Disp Enb Address            What
 </div>
 </div>
 
-<div id="outline-container-org8b00c68" class="outline-3">
-<h3 id="org8b00c68"><span class="section-number-3">23.7.</span> 重新启用断点</h3>
-<div class="outline-text-3" id="text-23-7">
+<div id="outline-container-orgda59d2e" class="outline-3">
+<h3 id="orgda59d2e"><span class="section-number-3">24.7.</span> 重新启用断点</h3>
+<div class="outline-text-3" id="text-24-7">
 <pre class="example">
 (gdb) enable 4
 (gdb) i b 
@@ -1062,9 +1113,9 @@ Num     Type           Disp Enb Address            What
 </div>
 </div>
 
-<div id="outline-container-orgdcb11ae" class="outline-3">
-<h3 id="orgdcb11ae"><span class="section-number-3">23.8.</span> 删除断点</h3>
-<div class="outline-text-3" id="text-23-8">
+<div id="outline-container-orga2c7a8d" class="outline-3">
+<h3 id="orga2c7a8d"><span class="section-number-3">24.8.</span> 删除断点</h3>
+<div class="outline-text-3" id="text-24-8">
 <p>
 用断点序号指定要删除的断点
 </p>
@@ -1076,9 +1127,9 @@ Num     Type           Disp Enb Address            What
 </div>
 
 
-<div id="outline-container-orgfac9d38" class="outline-3">
-<h3 id="orgfac9d38"><span class="section-number-3">23.9.</span> 保存断点到文件</h3>
-<div class="outline-text-3" id="text-23-9">
+<div id="outline-container-org3c7a344" class="outline-3">
+<h3 id="org3c7a344"><span class="section-number-3">24.9.</span> 保存断点到文件</h3>
+<div class="outline-text-3" id="text-24-9">
 <p>
 这个功能本身很简陋, 使用前提是源代码不能修改过.
 save breakpoints myfile
@@ -1094,45 +1145,45 @@ source &lt;myfile&gt;
 
 
 
-<div id="outline-container-org8c98d8b" class="outline-3">
-<h3 id="org8c98d8b"><span class="section-number-3">23.10.</span> 单步跳过 next</h3>
-<div class="outline-text-3" id="text-23-10">
+<div id="outline-container-org6a09d2a" class="outline-3">
+<h3 id="org6a09d2a"><span class="section-number-3">24.10.</span> 单步跳过 next</h3>
+<div class="outline-text-3" id="text-24-10">
 <p>
 不会进入函数内部.
 </p>
 </div>
 </div>
 
-<div id="outline-container-org2332190" class="outline-3">
-<h3 id="org2332190"><span class="section-number-3">23.11.</span> 继续执行, 直至遇到断点</h3>
-<div class="outline-text-3" id="text-23-11">
+<div id="outline-container-orgebfa63a" class="outline-3">
+<h3 id="orgebfa63a"><span class="section-number-3">24.11.</span> 继续执行, 直至遇到断点</h3>
+<div class="outline-text-3" id="text-24-11">
 <p>
 continue
 </p>
 </div>
 </div>
 
-<div id="outline-container-org61ea8cb" class="outline-3">
-<h3 id="org61ea8cb"><span class="section-number-3">23.12.</span> 运行到某处,忽略期间的断点</h3>
-<div class="outline-text-3" id="text-23-12">
+<div id="outline-container-orgfa7780c" class="outline-3">
+<h3 id="orgfa7780c"><span class="section-number-3">24.12.</span> 运行到某处,忽略期间的断点</h3>
+<div class="outline-text-3" id="text-24-12">
 <p>
 until &lt;N行&gt; 运行下面N行, 忽略之间的断点.
 </p>
 </div>
 </div>
 
-<div id="outline-container-orgd0dd894" class="outline-3">
-<h3 id="orgd0dd894"><span class="section-number-3">23.13.</span> 进入到函数内部</h3>
-<div class="outline-text-3" id="text-23-13">
+<div id="outline-container-orgab7ec9c" class="outline-3">
+<h3 id="orgab7ec9c"><span class="section-number-3">24.13.</span> 进入到函数内部</h3>
+<div class="outline-text-3" id="text-24-13">
 <p>
 step
 </p>
 </div>
 </div>
 
-<div id="outline-container-org5fad8ff" class="outline-3">
-<h3 id="org5fad8ff"><span class="section-number-3">23.14.</span> 从函数中跳出并暂停</h3>
-<div class="outline-text-3" id="text-23-14">
+<div id="outline-container-org386d8b5" class="outline-3">
+<h3 id="org386d8b5"><span class="section-number-3">24.14.</span> 从函数中跳出并暂停</h3>
+<div class="outline-text-3" id="text-24-14">
 <p>
 finish
 </p>
@@ -1141,18 +1192,18 @@ finish
 
 
 
-<div id="outline-container-org7860e9a" class="outline-3">
-<h3 id="org7860e9a"><span class="section-number-3">23.15.</span> 强制从函数中返回特定值</h3>
-<div class="outline-text-3" id="text-23-15">
+<div id="outline-container-orgde7f3c0" class="outline-3">
+<h3 id="orgde7f3c0"><span class="section-number-3">24.15.</span> 强制从函数中返回特定值</h3>
+<div class="outline-text-3" id="text-24-15">
 <p>
 return 
 相当于一种特殊的jump, 并不会将函数体执行完.并指定一个返回值
 </p>
 </div>
 </div>
-<div id="outline-container-orgec11e48" class="outline-3">
-<h3 id="orgec11e48"><span class="section-number-3">23.16.</span> 跳转到指定位置继续执行</h3>
-<div class="outline-text-3" id="text-23-16">
+<div id="outline-container-org992d939" class="outline-3">
+<h3 id="org992d939"><span class="section-number-3">24.16.</span> 跳转到指定位置继续执行</h3>
+<div class="outline-text-3" id="text-24-16">
 <p>
 jump linenum 
 </p>
@@ -1163,21 +1214,21 @@ jump linenum
 </div>
 </div>
 
-<div id="outline-container-org7287720" class="outline-3">
-<h3 id="org7287720"><span class="section-number-3">23.17.</span> 显示当前所有的局部变量</h3>
-<div class="outline-text-3" id="text-23-17">
+<div id="outline-container-orgdc966cc" class="outline-3">
+<h3 id="orgdc966cc"><span class="section-number-3">24.17.</span> 显示当前所有的局部变量</h3>
+<div class="outline-text-3" id="text-24-17">
 <p>
 info loacls
 </p>
 </div>
 </div>
-<div id="outline-container-org635e0ac" class="outline-3">
-<h3 id="org635e0ac"><span class="section-number-3">23.18.</span> 变量/表达式相关</h3>
-<div class="outline-text-3" id="text-23-18">
+<div id="outline-container-org2bf9a09" class="outline-3">
+<h3 id="org2bf9a09"><span class="section-number-3">24.18.</span> 变量/表达式相关</h3>
+<div class="outline-text-3" id="text-24-18">
 </div>
-<div id="outline-container-orgaf5022a" class="outline-4">
-<h4 id="orgaf5022a"><span class="section-number-4">23.18.1.</span> 打印变量/表达式</h4>
-<div class="outline-text-4" id="text-23-18-1">
+<div id="outline-container-orgaac24c6" class="outline-4">
+<h4 id="orgaac24c6"><span class="section-number-4">24.18.1.</span> 打印变量/表达式</h4>
+<div class="outline-text-4" id="text-24-18-1">
 <div class="org-src-container">
 <pre class="src src-gdb">(gdb)  print tk.kind_
 $2 = mycompiler::Token::INT
@@ -1186,9 +1237,9 @@ $2 = mycompiler::Token::INT
 </div>
 </div>
 
-<div id="outline-container-org26a3084" class="outline-4">
-<h4 id="org26a3084"><span class="section-number-4">23.18.2.</span> 自动显示变量值</h4>
-<div class="outline-text-4" id="text-23-18-2">
+<div id="outline-container-orgca13cf7" class="outline-4">
+<h4 id="orgca13cf7"><span class="section-number-4">24.18.2.</span> 自动显示变量值</h4>
+<div class="outline-text-4" id="text-24-18-2">
 <p>
 display
 每次都将这些变量的值打印处理.
@@ -1203,9 +1254,9 @@ Num Enb Expression
 </div>
 </div>
 
-<div id="outline-container-org1653b8a" class="outline-4">
-<h4 id="org1653b8a"><span class="section-number-4">23.18.3.</span> 取消对变量的自动显示</h4>
-<div class="outline-text-4" id="text-23-18-3">
+<div id="outline-container-org9206474" class="outline-4">
+<h4 id="org9206474"><span class="section-number-4">24.18.3.</span> 取消对变量的自动显示</h4>
+<div class="outline-text-4" id="text-24-18-3">
 <p>
 undisplay + N
 </p>
@@ -1216,9 +1267,9 @@ undisplay + N
 
 
 
-<div id="outline-container-org224a284" class="outline-4">
-<h4 id="org224a284"><span class="section-number-4">23.18.4.</span> 显示变量/表达式类型</h4>
-<div class="outline-text-4" id="text-23-18-4">
+<div id="outline-container-org5fd3c66" class="outline-4">
+<h4 id="org5fd3c66"><span class="section-number-4">24.18.4.</span> 显示变量/表达式类型</h4>
+<div class="outline-text-4" id="text-24-18-4">
 <p>
 用what/whatis
 </p>
@@ -1234,9 +1285,9 @@ type = mycompiler::Token::Kind
 </div>
 </div>
 
-<div id="outline-container-orgd7fde66" class="outline-4">
-<h4 id="orgd7fde66"><span class="section-number-4">23.18.5.</span> 修改变量的值</h4>
-<div class="outline-text-4" id="text-23-18-5">
+<div id="outline-container-org124b2c1" class="outline-4">
+<h4 id="org124b2c1"><span class="section-number-4">24.18.5.</span> 修改变量的值</h4>
+<div class="outline-text-4" id="text-24-18-5">
 <p>
 可以在不修改源码的情况下对一些值进行设置.
 </p>
@@ -1249,9 +1300,9 @@ type = mycompiler::Token::Kind
 
 
 
-<div id="outline-container-orga068dbe" class="outline-4">
-<h4 id="orga068dbe"><span class="section-number-4">23.18.6.</span> 监视某变量的值</h4>
-<div class="outline-text-4" id="text-23-18-6">
+<div id="outline-container-orgdbe4131" class="outline-4">
+<h4 id="orgdbe4131"><span class="section-number-4">24.18.6.</span> 监视某变量的值</h4>
+<div class="outline-text-4" id="text-24-18-6">
 <p>
 只要这个值发生改变就会自动暂停,并显示新值和旧值.
 </p>
@@ -1272,19 +1323,19 @@ info watchpoints
 
 
 
-<div id="outline-container-orgfa11243" class="outline-3">
-<h3 id="orgfa11243"><span class="section-number-3">23.19.</span> 栈相关</h3>
-<div class="outline-text-3" id="text-23-19">
+<div id="outline-container-org2a4793c" class="outline-3">
+<h3 id="org2a4793c"><span class="section-number-3">24.19.</span> 栈相关</h3>
+<div class="outline-text-3" id="text-24-19">
 </div>
-<div id="outline-container-orgb8ba640" class="outline-4">
-<h4 id="orgb8ba640"><span class="section-number-4">23.19.1.</span> 显示堆栈信息: bt</h4>
+<div id="outline-container-org9668619" class="outline-4">
+<h4 id="org9668619"><span class="section-number-4">24.19.1.</span> 显示堆栈信息: bt</h4>
 </div>
 
 
 
-<div id="outline-container-org3753355" class="outline-4">
-<h4 id="org3753355"><span class="section-number-4">23.19.2.</span> 切换栈帧</h4>
-<div class="outline-text-4" id="text-23-19-2">
+<div id="outline-container-org28f9c96" class="outline-4">
+<h4 id="org28f9c96"><span class="section-number-4">24.19.2.</span> 切换栈帧</h4>
+<div class="outline-text-4" id="text-24-19-2">
 <p>
 up/down: 上一层栈帧/下一层栈帧
 </p>
@@ -1297,9 +1348,9 @@ up/down: 上一层栈帧/下一层栈帧
 </div>
 
 
-<div id="outline-container-org9528063" class="outline-3">
-<h3 id="org9528063"><span class="section-number-3">23.20.</span> 调试已经运行的程序</h3>
-<div class="outline-text-3" id="text-23-20">
+<div id="outline-container-org1692ab0" class="outline-3">
+<h3 id="org1692ab0"><span class="section-number-3">24.20.</span> 调试已经运行的程序</h3>
+<div class="outline-text-3" id="text-24-20">
 <p>
 首先需要获得其进程pid
 </p>
@@ -1315,17 +1366,17 @@ detach
 </div>
 
 
-<div id="outline-container-org579664f" class="outline-3">
-<h3 id="org579664f"><span class="section-number-3">23.21.</span> 检查点</h3>
-<div class="outline-text-3" id="text-23-21">
+<div id="outline-container-org412df64" class="outline-3">
+<h3 id="org412df64"><span class="section-number-3">24.21.</span> 检查点</h3>
+<div class="outline-text-3" id="text-24-21">
 <p>
 通过fork出新的进程来保存当前运行位置和状态.
 </p>
 </div>
 
-<div id="outline-container-org3bb89e4" class="outline-4">
-<h4 id="org3bb89e4"><span class="section-number-4">23.21.1.</span> 在当前位置添加checkpoint</h4>
-<div class="outline-text-4" id="text-23-21-1">
+<div id="outline-container-orge503029" class="outline-4">
+<h4 id="orge503029"><span class="section-number-4">24.21.1.</span> 在当前位置添加checkpoint</h4>
+<div class="outline-text-4" id="text-24-21-1">
 <p>
 checkpoint 
 </p>
@@ -1333,9 +1384,9 @@ checkpoint
 </div>
 
 
-<div id="outline-container-orgc516574" class="outline-4">
-<h4 id="orgc516574"><span class="section-number-4">23.21.2.</span> 查看所有checkpoints</h4>
-<div class="outline-text-4" id="text-23-21-2">
+<div id="outline-container-org34e985e" class="outline-4">
+<h4 id="org34e985e"><span class="section-number-4">24.21.2.</span> 查看所有checkpoints</h4>
+<div class="outline-text-4" id="text-24-21-2">
 <p>
 info checkpoints
 </p>
@@ -1343,9 +1394,9 @@ info checkpoints
 </div>
 
 
-<div id="outline-container-org458c8da" class="outline-4">
-<h4 id="org458c8da"><span class="section-number-4">23.21.3.</span> 删除指定checkpoint</h4>
-<div class="outline-text-4" id="text-23-21-3">
+<div id="outline-container-orge0c02b0" class="outline-4">
+<h4 id="orge0c02b0"><span class="section-number-4">24.21.3.</span> 删除指定checkpoint</h4>
+<div class="outline-text-4" id="text-24-21-3">
 <p>
 delete checkpoint N
 </p>
@@ -1358,22 +1409,22 @@ delete checkpoint N
 
 
 
-<div id="outline-container-orgc206e3c" class="outline-3">
-<h3 id="orgc206e3c"><span class="section-number-3">23.22.</span> 线程</h3>
-<div class="outline-text-3" id="text-23-22">
+<div id="outline-container-org1565b8c" class="outline-3">
+<h3 id="org1565b8c"><span class="section-number-3">24.22.</span> 线程</h3>
+<div class="outline-text-3" id="text-24-22">
 </div>
-<div id="outline-container-org423ecb1" class="outline-4">
-<h4 id="org423ecb1"><span class="section-number-4">23.22.1.</span> 显示所有线程</h4>
-<div class="outline-text-4" id="text-23-22-1">
+<div id="outline-container-orgc2bbfbb" class="outline-4">
+<h4 id="orgc2bbfbb"><span class="section-number-4">24.22.1.</span> 显示所有线程</h4>
+<div class="outline-text-4" id="text-24-22-1">
 <p>
 info threads
 </p>
 </div>
 </div>
 
-<div id="outline-container-org841a37d" class="outline-4">
-<h4 id="org841a37d"><span class="section-number-4">23.22.2.</span> 切换到指定线程</h4>
-<div class="outline-text-4" id="text-23-22-2">
+<div id="outline-container-org63623b1" class="outline-4">
+<h4 id="org63623b1"><span class="section-number-4">24.22.2.</span> 切换到指定线程</h4>
+<div class="outline-text-4" id="text-24-22-2">
 <p>
 thread N
 </p>
@@ -1386,9 +1437,9 @@ thread N
 
 
 
-<div id="outline-container-org682c982" class="outline-3">
-<h3 id="org682c982"><span class="section-number-3">23.23.</span> 以指定格式显示某地址处的内容</h3>
-<div class="outline-text-3" id="text-23-23">
+<div id="outline-container-orgd887d01" class="outline-3">
+<h3 id="orgd887d01"><span class="section-number-3">24.23.</span> 以指定格式显示某地址处的内容</h3>
+<div class="outline-text-3" id="text-24-23">
 <p>
 x/格式+长度 &lt;地址&gt;
 </p>
@@ -1397,9 +1448,9 @@ x/格式+长度 &lt;地址&gt;
 
 
 
-<div id="outline-container-org6a828be" class="outline-3">
-<h3 id="org6a828be"><span class="section-number-3">23.24.</span> 反向运行</h3>
-<div class="outline-text-3" id="text-23-24">
+<div id="outline-container-org40faf3e" class="outline-3">
+<h3 id="org40faf3e"><span class="section-number-3">24.24.</span> 反向运行</h3>
+<div class="outline-text-3" id="text-24-24">
 <p>
 记录反向运行所需信息
 </p>
@@ -1419,14 +1470,195 @@ reverse-XXX
 
 
 
-<div id="outline-container-org361cfd0" class="outline-2">
-<h2 id="org361cfd0"><span class="section-number-2">24.</span> <a href="./cmake-learning.html">CMake</a></h2>
+<div id="outline-container-org0e48f95" class="outline-2">
+<h2 id="org0e48f95"><span class="section-number-2">25.</span> valgrind</h2>
+<div class="outline-text-2" id="text-25">
+</div>
+<div id="outline-container-org0f47e0e" class="outline-3">
+<h3 id="org0f47e0e"><span class="section-number-3">25.1.</span> 无法使用, 报错</h3>
+<div class="outline-text-3" id="text-25-1">
+<ol class="org-ol">
+<li>首先尝试更新系统到最新, 然后重启</li>
+</ol>
+<pre class="example">
+sudo pacman -Syu
+</pre>
+
+<pre class="example">
+sudo reboot
+</pre>
+
+<ol class="org-ol">
+<li>否则可以试下安装 <code>glibc-debug</code></li>
+</ol>
+<p>
+在 <code>/etc/pacman.conf</code> 中临时启用:
+</p>
+<pre class="example">
+[system-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[world-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[galaxy-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[lib32-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+</pre>
+<p>
+<a href="https://www.reddit.com/r/artixlinux/comments/wpji7m/valgrind_cant_load_debug_info/">https://www.reddit.com/r/artixlinux/comments/wpji7m/valgrind_cant_load_debug_info/</a>
+</p>
+
+<pre class="example">
+sudo pacman -Sy glibc-debug
+</pre>
+</div>
+</div>
 </div>
 
 
-<div id="outline-container-orgd3b0e1c" class="outline-2">
-<h2 id="orgd3b0e1c"><span class="section-number-2">25.</span> cgroup v2</h2>
-<div class="outline-text-2" id="text-25">
+
+<div id="outline-container-org441336a" class="outline-2">
+<h2 id="org441336a"><span class="section-number-2">26.</span> <a href="./cmake-learning.html">CMake</a></h2>
+<div class="outline-text-2" id="text-26">
+<div class="org-src-container">
+<pre class="src src-cmake">cmake_minimum_required(VERSION 3.21)
+project(word-count C)
+
+# 设置编译器
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_COMPILER clang)
+
+add_compile_options(
+"-ggdb" # gdb调试支持
+"-m64"  
+) 
+# add_compile_definitions(LINE_COUNT) # 宏定义
+## add_compile_definitions(MACRO_CONSTANT_NAME=macro_value)
+
+# 生成 compile_commands.json 文件  for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include_directories(./include) # 头文件目录
+
+add_executable(test_strcmp.bin)
+target_sources(test_strcmp.bin PRIVATE
+  ./test_strcmp.c
+  ./str_cmp.c
+)
+
+# target_compile_options(test_strcmp.bin PRIVATE -ggdb)
+# target_include_directories(YourExecutableName PRIVATE include)
+
+
+add_executable(tokenize.bin)
+target_sources(tokenize.bin PRIVATE
+  ./tokenize.c
+  ./vector_char.c
+)
+
+
+add_executable(dictionary.bin)
+target_sources(dictionary.bin PRIVATE
+  ./dictionary.c
+  ./vector_char.c
+  ./vector_string.c
+  ./str_cmp.c
+)
+
+# add_executable(wordcount.bin)
+# target_sources(wordcount.bin PRIVATE
+#   ./wordcount.c
+#   ./vector_char.c
+#   ./table_string.c
+#   ./str_cmp.c
+# )
+
+
+add_executable(linecount.bin)
+target_sources(linecount.bin PRIVATE
+  ./linecount.c
+  ./vector_char.c
+  ./table_string.c
+  ./str_cmp.c
+)
+
+
+add_executable(duplicate.bin)
+target_sources(duplicate.bin PRIVATE
+  ./dedup.c
+  ./vector_char.c
+  ./table_string.c
+  ./duplicate.c
+  ./str_cmp.c
+)
+
+
+add_executable(unit_test_vector_char.bin)
+target_sources(unit_test_vector_char.bin PRIVATE
+  ./unit_test_vector_char.c
+  ./vector_char.c
+)
+
+
+# add_executable(unit_test_vector_string.bin)
+# target_sources(unit_test_vector_string.bin PRIVATE
+#   ./unit_test_vector_string.c
+#   ./vector_string.c
+#   ./str_cmp.c
+# )
+
+add_executable(unit_test_table_string.bin)
+target_sources(unit_test_table_string.bin PRIVATE
+  ./unit_test_table_string.c
+  ./table_string.c
+  ./vector_char.c
+  ./str_cmp.c
+)
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgef9a14f" class="outline-2">
+<h2 id="orgef9a14f"><span class="section-number-2">27.</span> clangd 配置</h2>
+<div class="outline-text-2" id="text-27">
+<p>
+在项目根目录下添加文件: <code>.clangd</code>
+参考: <a href="https://clangd.llvm.org/config#compileflags">https://clangd.llvm.org/config#compileflags</a>
+</p>
+</div>
+
+<div id="outline-container-orgc9e1410" class="outline-3">
+<h3 id="orgc9e1410"><span class="section-number-3">27.1.</span> 配置纯C项目</h3>
+<div class="outline-text-3" id="text-27-1">
+<pre class="example">
+CompileFlags:
+  Add: [-xc,-std=c99]
+  Compiler: clang
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org1d3fe76" class="outline-3">
+<h3 id="org1d3fe76"><span class="section-number-3">27.2.</span> 配置C++项目</h3>
+<div class="outline-text-3" id="text-27-2">
+<pre class="example">
+CompileFlags:                        # Tweak the parse settings
+  Add: [-xc++, -std=c++20]           # treat all files as C++
+  Compiler: clang++                  # Change argv[0] of compile flags to `clang++`
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org6cd262a" class="outline-2">
+<h2 id="org6cd262a"><span class="section-number-2">28.</span> cgroup v2</h2>
+<div class="outline-text-2" id="text-28">
 <p>
 查看cgroup 版本:
 </p>
@@ -1457,9 +1689,9 @@ cgroup2(伪)文件系统位于:
 
 
 
-<div id="outline-container-orgbd4672b" class="outline-3">
-<h3 id="orgbd4672b"><span class="section-number-3">25.1.</span> 组成</h3>
-<div class="outline-text-3" id="text-25-1">
+<div id="outline-container-org77d20c2" class="outline-3">
+<h3 id="org77d20c2"><span class="section-number-3">28.1.</span> 组成</h3>
+<div class="outline-text-3" id="text-28-1">
 <p>
 control groups 由两个部分组成:
 </p>
@@ -1476,9 +1708,9 @@ control group: 一组进程出于资源管理的目的被绑在一起.这组进�
 </div>
 
 
-<div id="outline-container-org312e7c6" class="outline-3">
-<h3 id="org312e7c6"><span class="section-number-3">25.2.</span> 功能</h3>
-<div class="outline-text-3" id="text-25-2">
+<div id="outline-container-org469b329" class="outline-3">
+<h3 id="org469b329"><span class="section-number-3">28.2.</span> 功能</h3>
+<div class="outline-text-3" id="text-28-2">
 <ul class="org-ul">
 <li>限制组的资源使用
 限制某个组的cpu可用百分比/ 可用内存的百分比</li>
@@ -1497,9 +1729,9 @@ control group: 一组进程出于资源管理的目的被绑在一起.这组进�
 
 
 
-<div id="outline-container-orgffdf9b8" class="outline-3">
-<h3 id="orgffdf9b8"><span class="section-number-3">25.3.</span> 接口</h3>
-<div class="outline-text-3" id="text-25-3">
+<div id="outline-container-org294aeac" class="outline-3">
+<h3 id="org294aeac"><span class="section-number-3">28.3.</span> 接口</h3>
+<div class="outline-text-3" id="text-28-3">
 <p>
 mkdir/rmdir 创建cgroups
 </p>
@@ -1514,9 +1746,9 @@ mkdir/rmdir 创建cgroups
 
 
 
-<div id="outline-container-org89c0fc0" class="outline-3">
-<h3 id="org89c0fc0"><span class="section-number-3">25.4.</span> eg: pids控制器</h3>
-<div class="outline-text-3" id="text-25-4">
+<div id="outline-container-org31eaef4" class="outline-3">
+<h3 id="org31eaef4"><span class="section-number-3">28.4.</span> eg: pids控制器</h3>
+<div class="outline-text-3" id="text-28-4">
 <div class="org-src-container">
 <pre class="src src-bash">sudo bash
 <span style="color: #c678dd;">cd</span> /sys/fs/cgroup
@@ -1634,9 +1866,9 @@ bash: fork: Resource temporarily unavailable
 </div>
 </div>
 
-<div id="outline-container-org95cd4c2" class="outline-3">
-<h3 id="org95cd4c2"><span class="section-number-3">25.5.</span> 删除cgroup</h3>
-<div class="outline-text-3" id="text-25-5">
+<div id="outline-container-orge5f34e4" class="outline-3">
+<h3 id="orge5f34e4"><span class="section-number-3">28.5.</span> 删除cgroup</h3>
+<div class="outline-text-3" id="text-28-5">
 <p>
 无法直接rmdir非空的(有进程)cgroup.
 </p>
@@ -1671,24 +1903,47 @@ bash: fork: Resource temporarily unavailable
 </div>
 
 
-<div id="outline-container-org673ddde" class="outline-3">
-<h3 id="org673ddde"><span class="section-number-3">25.6.</span> 控制器概览</h3>
-<div class="outline-text-3" id="text-25-6">
-<ul class="org-ul">
-<li>cpu: 限制并测量cpu的使用. 有两种模式, 可以混合使用: 
+<div id="outline-container-orgf7f8d2b" class="outline-3">
+<h3 id="orgf7f8d2b"><span class="section-number-3">28.6.</span> 控制器概览</h3>
+<div class="outline-text-3" id="text-28-6">
+</div>
+<div id="outline-container-org0fb2c19" class="outline-4">
+<h4 id="org0fb2c19"><span class="section-number-4">28.6.1.</span> cpu</h4>
+<div class="outline-text-4" id="text-28-6-1">
+<p>
+限制并测量cpu的使用. 有两种模式, 可以混合使用:
+</p>
 <ul class="org-ul">
 <li>比例权重(默认)</li>
 <li>带宽控制模式</li>
-</ul></li>
 </ul>
 
 
+<p>
+权重模式只在发生cpu争用时才会施加限制:
+</p>
 
 
-<div id="org4314607" class="figure">
+<div id="orgd312b87" class="figure">
 <p><img src="org-images/2023-03-21_16-03-41_screenshot.png" alt="2023-03-21_16-03-41_screenshot.png" width="500px" />
 </p>
 </div>
+
+
+<p>
+带宽模式即使在没有其它组的进程时也会严格施加限制:
+</p>
+
+
+<div id="org4db9d50" class="figure">
+<p><img src="org-images/2023-03-21_16-06-41_screenshot.png" alt="2023-03-21_16-06-41_screenshot.png" width="500px" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfda2e86" class="outline-4">
+<h4 id="orgfda2e86"><span class="section-number-4">28.6.2.</span> cpuset: 控制cpu和内存亲和度</h4>
 </div>
 </div>
 </div>

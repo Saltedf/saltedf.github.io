@@ -1,6 +1,6 @@
 #+title: the rust book 
 #+include: ../mytheme.setup
-#+startup: overview 
+#+startup: overview
 
  [[./rust-cli.org][RUST CLI]] 
 
@@ -92,6 +92,7 @@ cargo install cargo-expand
 line!()
 column!()
 file!()
+
 
 * 数据类型
 
@@ -1754,15 +1755,56 @@ panic = 'abort'
 * 闭包
 
 ** 函数和闭包的关系:
-函数的类型是 ~fn(xx) -> yy~ 的形式, 它实现了 特质 Fn/FnMut/FnOnce.
+函数的类型是 ~fn(xx) -> yy~ 的形式, 它实现了 特质 ~Fn/FnMut/FnOnce~.
 而闭包本质上是实现了 Trait: Fn(x)->y / FnMut / FnOnce 的一个 *结构体* 类型, 因此无法写出其准确类型, 只能用trait对象的写法来"约束"其类型:
 eg: ~&dyn Fn(T) -> S~
 eg: ~Box<dyn Fn(T) -> S>~
 
+
+要创建一个闭包,首先要创建一个struct:
+struct的字段是闭包捕获的变量: &mut T, &T, T
+
+在闭包中以什么借用方式使用捕获变量/是否加了move, 这两点影响的是创建的struct的字段类型,比如v1,v2,v3,中的某一个.
+
+下一步要实现闭包的Trait:
+而Fn/FnMut/FnOnce, 它们影响的是struct中唯一一个方法的self类型.
+也就是在创建出闭包的struct后, 以什么样的方式来使用闭包. 
+
+
+#+begin_src rust
+  struct ClosureStruct<'r> {
+      v1: &'r String,
+      v2: &'r mut Vec<i32>,
+      v3: HashSet<i32>,
+  }
+
+  impl<'r> ClosureStruct<'r> {
+      fn func(&self){
+
+      }
+  }
+  /// OR:
+  impl<'r> ClosureStruct<'r> {      
+      fn func_mut(&mut self){
+
+      }
+  }
+  /// OR:
+  impl<'r> ClosureStruct<'r> {            
+      fn func_once(self){
+
+      }
+  }
+#+end_src
+
+
+
+
+
 ** 闭包的两种写法
 主要区别是是否加了 ~move~ !
-move的作用是把闭包中以 *借用方式使用* 的变量的 *所有权* 转移到闭包中. 
-要注意的是, 即便没有move, 在闭包中直接以拥有所有权的方式使用闭包时, 也会发生所有权的转移, move只会影响那些以借用方式被使用的变量.
+~move~ 的作用是把闭包中以 *借用方式使用* 的变量的 *所有权* 转移到闭包中. 
+要注意的是, 即便没有move, 在闭包中直接以拥有所有权的方式使用闭包时, 也会发生所有权的转移, move只会影响那些 *以借用方式被使用* 的变量.
 
 #+begin_src rust
     let vec = vec![12,23,4];
@@ -1793,6 +1835,7 @@ Trait ~FnOnce~ 不是由是否有 所有权的转移 来区分的. 只要闭包�
 FnOnce中只有消耗闭包的函数调用.(可见下一小节中的两个例子)
 
 Trait ~Fn~ 适用于那些闭包中仅仅以不可变借用方式使用了外部变量. Fn 有借用闭包进行函数调用的方法, 同样也具备了FnMut和FnOnce的调用方式.
+
 Trait ~FnMut~ 适用于那些闭包中以可变借用方式使用了外部变量, 但没有发生所有权的转移! FnMut 有以可变借用进行函数调用的方式, 同样也具备了FnOnce的调用方式.
 
 ** 闭包作为返回值
@@ -3789,6 +3832,25 @@ while !live.load(Ordering::Acquire) {
 ** 多线程的debug
 
 
+* 全局变量
+
+OnceCell : 单线程环境中使用
+
+OnceLock : 多线程环境中使用
+
+#+begin_src rust
+  // 单例模式 ? 
+  pub fn stdin() -> Stdin {
+      static INSTANCE: OnceLock<Mutex<BufReader<StdinRaw>>> = OnceLock::new();
+      Stdin {
+	  inner: INSTANCE.get_or_init(|| {
+	      Mutex::new(BufReader::with_capacity(stdio::STDIN_BUF_SIZE, stdin_raw()))
+	  }),
+      }
+  }
+#+end_src
+
+
 * 异步编程 
 
 ** IO操作
@@ -4135,173 +4197,15 @@ Box::leak() 使得一个堆中变量是静态生存期的.
 
 
 
-*** 协程实现
-
-#+begin_src rust
-fn main() {
-    let mut scheduler = Scheduler::new();
-
-    let mut coroutines = Vec::new();
-
-    let mut counter = 0;
-    coroutines.push(Coroutine::new(move || loop {
-        println!("Counter: {}", counter);
-        counter += 1;
-    }));
-
-    let mut ticks = 0;
-    coroutines.push(Coroutine::new(move || loop {
-        if ticks == 10 {
-            println!("Ticks: {}", ticks);
-            break;
-        }
-        ticks += 1;
-    }));
-
-    for coroutine in coroutines {
-        scheduler.add_coroutine(coroutine);
-    }
-
-    scheduler.run();
-}
-#+end_src
-
-#+begin_src rust
-#![feature(asm)]
-#![feature(ptr_write)]
-
-use std::ptr;
-
-struct Context {
-    rsp: *mut usize,
-    stack: Vec<usize>,
-}
-
-impl Context {
-    fn new(size: usize) -> Context {
-        let mut stack = Vec::with_capacity(size);
-        stack.resize(size, 0);
-        let sp = unsafe { stack.as_mut_ptr().add(size) };
-        Context { rsp: sp, stack }
-    }
-}
-
-unsafe fn switch(context: &mut Context, new_rsp: *mut usize) {
-    asm!(
-        "mov [rdi], rsp",
-        "mov rsp, rsi",
-        "ret",
-        in("rdi") &mut context.rsp,
-        in("rsi") new_rsp,
-    )
-}
-
-#[derive(Debug, PartialEq)]
-enum State {
-    Ready,
-    Running,
-    Blocked,
-}
-
-struct Coroutine {
-    context: Context,
-    state: State,
-    f: Option<fn()>,
-}
-
-impl Coroutine {
-    fn new(f: fn()) -> Coroutine {
-        Coroutine {
-            context: Context::new(1024),
-            state: State::Ready,
-            f: Some(f),
-        }
-    }
-
-    fn run(&mut self) {
-        match self.f {
-            Some(f) => {
-                self.state = State::Running;
-                f();
-                self.state = State::Blocked;
-            }
-            None => {}
-        }
-    }
-
-    fn is_ready(&self) -> bool {
-        self.state == State::Ready
-    }
-
-    fn is_blocked(&self) -> bool {
-        self.state == State::Blocked
-    }
-
-    fn set_blocked(&mut self) {
-        self.state = State::Blocked;
-    }
-
-    fn set_ready(&mut self) {
-        self.state = State::Ready;
-    }
-}
-
-struct Scheduler {
-    coroutines: Vec<Coroutine>,
-    current: usize,
-}
-
-impl Scheduler {
-    fn new() -> Scheduler {
-        Scheduler {
-            coroutines: Vec::new(),
-            current: 0,
-        }
-    }
-
-    fn add_coroutine(&mut self, coroutine: Coroutine) {
-        self.coroutines.push(coroutine);
-    }
-
-    fn next_coroutine(&mut self) -> Option<&mut Coroutine> {
-        for i in 0..self.coroutines.len() {
-            self.current += 1;
-            self.current %= self.coroutines.len();
-            let coroutine = &mut self.coroutines[self.current];
-            if coroutine.is_ready() {
-                return Some(coroutine);
-            }
-        }
-        None
-    }
-
-    fn run(&mut self) {
-        loop {
-            match self.next_coroutine() {
-                Some(mut coroutine) => {
-                    let f_ptr = coroutine.f.unwrap() as *const ();
-                    let f_ptr = f_ptr as *const usize;
-                    let f_ptr = *f_ptr;
-
-                    unsafe {
-                        let sp = coroutine.context.rsp.sub(1);
-                        ptr::write(sp, f_ptr);
-                        switch(&mut coroutine.context, sp);
-                    }
-                }
-                None => break,
-            }
-        }
-    }
-}
+*** 处理 Option/Result 类型的值
 
 
-#+end_src
-上面的实现中保存了所有通用寄存器的值吗?
+~.map_or(为None时默认值, 闭包)~
 
-在协程的实现中，我们只保存了 rsp、rbp 和 rdi 寄存器的值。
-这是因为在 x86_64 架构中，函数调用约定规定了 rdi、rsi、rdx、rcx、r8 和 r9 这几个寄存器用于函数参数的传递。因此，保存这些寄存器的值可以保证函数参数不会在协程切换时丢失。
+~.map_or_else(为None时的闭包, 闭包)~
 
-通用寄存器 rax、rbx、rcx、rdx、rsi、rdi、rsp、rbp、r8、r9、r10、r11、r12、r13、r14 和 r15 都可以被用来保存临时变量和函数调用时的状态。
-在上面的实现中，我们只保存了 rsp、rbp 和 rdi 寄存器的值，而其他的通用寄存器的值并没有被保存。这是因为在实际的使用中，协程通常只需要保存函数参数和一些必要的状态，而不需要保存所有的通用寄存器。当然，在特定的应用场景中，也可以根据需要保存其他的寄存器的值。
 
+*** 访问字符串的第i个字符
+
+~s.chars().nth(i).unwrap()~
+~s.as_bytes()[i]~

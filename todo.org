@@ -11,17 +11,23 @@ sch: 日程, 指定时间的
 3. 设定优先级
 4. 设置tag
 
+
+写代码的上限是 200 - 300 行, >=300行是学习已有教程时的速度, 否则一般在200行/天以内
+看代码可以快一点 200 - 500 行/天.
+最低的速度是 100行/天 .
+   
 * inbox
 (明确细化任务, 以动词开头)
 
+** 清华 rust 课
 ** C即时通讯 in Rust
-** java DataBase书 in rust
+** java DataBase书 in rust 
 ** rust写预定系统 
 ** sylar服务器 in Rust
 ** 陈硕 muduo in Rust
 ** rust lecture
 https://www.youtube.com/@zackologlu7018/streams
-** 整理 the rust book 的todo list
+** 整理 the rust book 的 todo list
 ** Self Referential Structs in Rust                                  :@rust:
 https://arunanshub.hashnode.dev/series/selfref-structs-rust
 ** Build your own block_on()                                         :@rust:
@@ -407,6 +413,21 @@ https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html
 
 
 * /ref/
+** 编译器 eoc
+
+** react + web 开发
+
+** standford 网络
+crust tcp/ip
+
+** cmu db
+rust db databend
+
+** OS mit lab /thu os in rust
+
+** 南京大学 & csapp lab
+** youtube 静态分析 cpp lab
+
 ** llvm                                                          :@compiler:
 https://zhqli.com/post/1634083200
 
@@ -428,6 +449,7 @@ https://devalot.com/articles/2008/07/project-planning
 https://www.learncpp.com/cpp-tutorial/dependencies/
 ** 读懂 Rust 的Arc                                                   :@rust:
 https://qiita.com/qnighy/items/b3b728adf5e4a3f1a841#%E6%9C%AC%E7%A8%BF%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%88%E3%83%9F%E3%83%83%E3%82%AF%E6%93%8D%E4%BD%9C%E3%81%AE%E5%9B%B3%E7%A4%BA
+还有一本rust atomic书 
 ** A Guide to Porting C/C++ to Rust                             :@rust:@cpp:
 https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/
 ** rust cookbook                                                     :@rust:

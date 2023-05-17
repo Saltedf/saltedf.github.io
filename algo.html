@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-03-24 Fri 11:07 -->
+<!-- 2023-04-18 二 19:34 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>算法</title>
@@ -48,46 +48,63 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org3c947c5">1. 基础算法</a>
+<li><a href="#orga3ee523">1. 基础算法</a>
 <ul>
-<li><a href="#org13560a4">1.1. 排序</a>
+<li><a href="#org1d135a2">1.1. 排序</a>
 <ul>
-<li><a href="#org0454e60">1.1.1. 快排 -&gt; 基于分治思想</a></li>
-<li><a href="#orgdf048cb">1.1.2. 归并</a></li>
+<li><a href="#orgf3a34a9">1.1.1. 快排 -&gt; 基于分治思想</a></li>
+<li><a href="#orgd0ebb16">1.1.2. 归并</a></li>
 </ul>
 </li>
-<li><a href="#orgeb22d04">1.2. 二分</a>
+<li><a href="#orgaaade0e">1.2. 二分</a>
 <ul>
-<li><a href="#org949bfc5">1.2.1. 整数二分</a></li>
-<li><a href="#org6ac0d5c">1.2.2. 浮点数二分</a></li>
+<li><a href="#org7add0ed">1.2.1. 整数二分</a></li>
+<li><a href="#org5b4b090">1.2.2. 浮点数二分</a></li>
 </ul>
 </li>
-<li><a href="#org0d207f2">1.3. 大整数(高精度)</a>
+<li><a href="#orgf9fda2f">1.3. 大整数(高精度)</a>
 <ul>
-<li><a href="#orgdfd2dc6">1.3.1. 实现</a></li>
-<li><a href="#org6b1f565">1.3.2. 大整数相加减</a></li>
-<li><a href="#org489bc44">1.3.3. 大整数 乘/除以 小整数</a></li>
+<li><a href="#org1847be3">1.3.1. 实现</a></li>
+<li><a href="#org474999f">1.3.2. 大整数相加减</a></li>
+<li><a href="#orgd3c0c82">1.3.3. 大整数 乘/除以 小整数</a></li>
 </ul>
 </li>
-<li><a href="#org4d180f8">1.4. 前缀和 &amp; 差分</a>
+<li><a href="#org1ecb9fb">1.4. 前缀和 &amp; 差分</a>
 <ul>
-<li><a href="#orgff431ec">1.4.1. 计算前缀和</a></li>
-<li><a href="#org36474c4">1.4.2. 前缀和的应用: 求区间和</a></li>
-<li><a href="#org1f58bc8">1.4.3. 二维前缀和</a></li>
-<li><a href="#org30d0f96">1.4.4. 二维前缀和的计算</a></li>
+<li><a href="#orgffbf4e4">1.4.1. 计算前缀和</a></li>
+<li><a href="#org43fcbd4">1.4.2. 前缀和的应用: 求区间和</a></li>
+<li><a href="#orgf3398e3">1.4.3. 二维前缀和</a></li>
+<li><a href="#org4679e1d">1.4.4. 二维前缀和的计算</a></li>
 </ul>
 </li>
-<li><a href="#orgf63e0a0">1.5. 双指针</a></li>
-<li><a href="#org3cb71e2">1.6. 位运算</a></li>
-<li><a href="#orgbab3895">1.7. 离散化</a></li>
-<li><a href="#orgf33adf5">1.8. 区间合并</a></li>
+<li><a href="#org96aecab">1.5. 双指针</a></li>
+<li><a href="#org86a8186">1.6. 位运算</a></li>
+<li><a href="#orgb5b0742">1.7. 离散化</a></li>
+<li><a href="#org572aabb">1.8. 区间合并</a></li>
 </ul>
 </li>
-<li><a href="#org1b90711">2. 基本数据结构</a></li>
-<li><a href="#org4ad42d2">3. 搜索&amp;图论</a></li>
-<li><a href="#orgcddb4ac">4. 数学</a></li>
-<li><a href="#org26694c2">5. 动态规划</a></li>
-<li><a href="#orgaf609e6">6. 贪心算法</a></li>
+<li><a href="#org396a20e">2. 基本数据结构</a></li>
+<li><a href="#orgd20a0bc">3. 搜索&amp;图论</a>
+<ul>
+<li><a href="#org6e7c34f">3.1. DFS</a>
+<ul>
+<li><a href="#orgb6cbe4e">3.1.1. 回溯</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#orgc1fbd4d">4. 数学</a></li>
+<li><a href="#org856cb72">5. 动态规划</a>
+<ul>
+<li><a href="#org0e9680e">5.1. 01背包</a></li>
+<li><a href="#org79ce65e">5.2. 完全背包</a></li>
+</ul>
+</li>
+<li><a href="#orgffa4394">6. 贪心算法</a></li>
+<li><a href="#org40031bc">7. 如何 "对付" 二重循环</a></li>
+<li><a href="#org933e87d">8. 滑动窗口</a></li>
+<li><a href="#org1501dd4">9. 找数组中的多数者</a></li>
+<li><a href="#orge65a4a3">10. 产生满足某种性质的新链表</a></li>
 </ul>
 </div>
 </div>
@@ -95,30 +112,30 @@
 <a href="file:///home/sun/src/rust-learning/data-structure/">代码</a>
 </p>
 
-<p>
-1.理解算法
-</p>
+<ol class="org-ol">
+<li>理解算法</li>
+
+<li>记忆算法流程/思想</li>
+
+<li>模板题: 快速默写(调试通过)</li>
+
+<li>提高熟练度: 重写一道模板题 3-5 次</li>
+</ol>
 
 <p>
-2.记忆算法流程/思想
+(要进行"模式识别" : 题目有哪些 <b>特征</b> 引导我们使用X方法?)
 </p>
 
-<p>
-3.模板题: 快速默写(调试通过)
-n
-4.提高熟练度: 重写一道模板题 3-5 次
-</p>
-
-<div id="outline-container-org3c947c5" class="outline-2">
-<h2 id="org3c947c5"><span class="section-number-2">1.</span> 基础算法</h2>
+<div id="outline-container-orga3ee523" class="outline-2">
+<h2 id="orga3ee523"><span class="section-number-2">1.</span> 基础算法</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org13560a4" class="outline-3">
-<h3 id="org13560a4"><span class="section-number-3">1.1.</span> 排序</h3>
+<div id="outline-container-org1d135a2" class="outline-3">
+<h3 id="org1d135a2"><span class="section-number-3">1.1.</span> 排序</h3>
 <div class="outline-text-3" id="text-1-1">
 </div>
-<div id="outline-container-org0454e60" class="outline-4">
-<h4 id="org0454e60"><span class="section-number-4">1.1.1.</span> 快排 -&gt; 基于分治思想</h4>
+<div id="outline-container-orgf3a34a9" class="outline-4">
+<h4 id="orgf3a34a9"><span class="section-number-4">1.1.1.</span> 快排 -&gt; 基于分治思想</h4>
 <div class="outline-text-4" id="text-1-1-1">
 <ol class="org-ol">
 <li>确定分界点
@@ -165,34 +182,52 @@ n
 </pre>
 </div>
 
-<div class="org-src-container">
-<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #c678dd;">quick_sort</span>(<span style="color: #dcaeea;">arr</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> [<span style="color: #ECBE7B;">i32</span>]){
-    <span style="color: #51afef;">if</span> arr.len()&lt;=1 {<span style="color: #51afef;">return</span>; } <span style="color: #5B6268;">// </span><span style="color: #5B6268;">[2]</span>
 
-    <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">mid</span> = (0 + arr.len()-1) &gt;&gt; 1;
-    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">i</span>: <span style="color: #ECBE7B;">i32</span> = -1;
-    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">j</span>:<span style="color: #ECBE7B;">i32</span> = arr.len() <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">i32</span> ;
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">quicksort</span> ( <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">b</span> , <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">e</span> ,<span style="color: #ECBE7B;">vector</span>&lt;<span style="color: #ECBE7B;">int</span>&gt;&amp; <span style="color: #dcaeea;">a</span> )
+{
+    <span style="color: #51afef;">if</span>(a.size()&lt;= 1 ) <span style="color: #51afef;">return</span>;
+
+    <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">i</span>=b , <span style="color: #dcaeea;">j</span>=e , <span style="color: #dcaeea;">x</span>=a [ ( b+e ) / 2 ] ;
+    <span style="color: #51afef;">while</span>(i&lt;j){
+        <span style="color: #51afef;">while</span> ( a [ i ]&lt;x ) i++;
+        <span style="color: #51afef;">while</span> ( a [ j ]&gt;x )j--;
+        <span style="color: #51afef;">if</span> ( i&lt;=j ) <span style="color: #a9a1e1;">std</span>::swap ( a [ i++],a [j--]);
+    }
+    <span style="color: #51afef;">if</span> ( i&lt;e ) quicksort (i , e , a ) ;
+    <span style="color: #51afef;">if</span> ( j&gt;b ) quicksort (b , j , a ) ;
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #c678dd;">qsort</span>(<span style="color: #dcaeea;">a</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> [<span style="color: #ECBE7B;">i32</span>]) {
+    <span style="color: #51afef;">if</span> a.len()&lt;=1 {<span style="color: #51afef;">return</span>;}
+    <span style="color: #51afef; font-weight: bold;">debug_assert!</span>(a.len()&gt;=2);
+
+    <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">mid</span> = (0 + a.len()-1)/2;
+    <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">pivot</span> = a[mid];
+
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">i</span> = 0;
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> j= a.len()-1;
 
     <span style="color: #51afef;">while</span> i &lt; j {
-
-        <span style="color: #51afef;">loop</span>{
-            i+=1;
-            <span style="color: #51afef;">if</span> arr[i <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>] &gt;= arr[mid] { <span style="color: #51afef;">break</span>;} <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#26377;&#31561;&#21495;&#26159;&#20026;&#20102;&#23613;&#26089;&#36864;&#20986;, &#38450;&#27490;&#25968;&#32452;&#19979;&#26631;i/j&#36234;&#30028;!!</span>
+        <span style="color: #51afef;">while</span> a[i] &lt; pivot { <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt; !</span>
+            i+= 1;
         }
-
-        <span style="color: #51afef;">loop</span>{
-            j-=1;
-            <span style="color: #51afef;">if</span> arr[j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>] &lt;=  arr[mid] { <span style="color: #51afef;">break</span>;}
+        <span style="color: #51afef;">while</span> a[j] &gt; pivot { <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&gt; !</span>
+            j-= 1;
         }
-
-        <span style="color: #51afef;">if</span> i &lt; j {
-            arr.swap(i <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>,j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>);
+        <span style="color: #51afef;">if</span> i &lt;= j  {  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#24517;&#39035;&#26159; &lt;= !!! eg: arr= [1,2], &#21542;&#21017;&#24403;i = j = 0 &#26102;,&#38519;&#20837;&#27515;&#24490;&#29615;.</span>
+            a.swap(i,j);
+            <span style="color: #51afef;">if</span> i&lt; a.len()-1 { i +=1;} <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#38450;&#27490; i,j &#30340;&#32034;&#24341;&#36234;&#30028;.</span>
+            <span style="color: #51afef;">if</span> j &gt;0 { j -=1;}
         }
     }
 
-    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">[2,2]  i = 1, j = 0</span>
-    quick_sort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> arr[..=j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>]);     <span style="color: #5B6268;">// </span><span style="color: #5B6268;">0..=0 [2]</span>
-    quick_sort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> arr[(j <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>+1)..]);  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">1..   [2]</span>
+    <span style="color: #51afef; font-weight: bold;">debug_assert!</span>(j&lt;=i);  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">b&lt;= j &lt;= i  &lt;= e</span>
+    qsort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> a[0..=j]); 
+    qsort(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> a[i..]);
 }
 </pre>
 </div>
@@ -200,8 +235,8 @@ n
 </div>
 
 
-<div id="outline-container-orgdf048cb" class="outline-4">
-<h4 id="orgdf048cb"><span class="section-number-4">1.1.2.</span> 归并</h4>
+<div id="outline-container-orgd0ebb16" class="outline-4">
+<h4 id="orgd0ebb16"><span class="section-number-4">1.1.2.</span> 归并</h4>
 <div class="outline-text-4" id="text-1-1-2">
 <ol class="org-ol">
 <li>确定分界点</li>
@@ -258,12 +293,12 @@ n
 </div>
 
 
-<div id="outline-container-orgeb22d04" class="outline-3">
-<h3 id="orgeb22d04"><span class="section-number-3">1.2.</span> 二分</h3>
+<div id="outline-container-orgaaade0e" class="outline-3">
+<h3 id="orgaaade0e"><span class="section-number-3">1.2.</span> 二分</h3>
 <div class="outline-text-3" id="text-1-2">
 </div>
-<div id="outline-container-org949bfc5" class="outline-4">
-<h4 id="org949bfc5"><span class="section-number-4">1.2.1.</span> 整数二分</h4>
+<div id="outline-container-org7add0ed" class="outline-4">
+<h4 id="org7add0ed"><span class="section-number-4">1.2.1.</span> 整数二分</h4>
 <div class="outline-text-4" id="text-1-2-1">
 <p>
 整数除法会导致边界问题, 原则是: <b>调整为右边区间时要将mid点右移(+1)</b>.
@@ -312,8 +347,8 @@ n
 
 
 
-<div id="outline-container-org6ac0d5c" class="outline-4">
-<h4 id="org6ac0d5c"><span class="section-number-4">1.2.2.</span> 浮点数二分</h4>
+<div id="outline-container-org5b4b090" class="outline-4">
+<h4 id="org5b4b090"><span class="section-number-4">1.2.2.</span> 浮点数二分</h4>
 <div class="outline-text-4" id="text-1-2-2">
 <p>
 没有边界问题.
@@ -358,12 +393,12 @@ n
 </div>
 
 
-<div id="outline-container-org0d207f2" class="outline-3">
-<h3 id="org0d207f2"><span class="section-number-3">1.3.</span> 大整数(高精度)</h3>
+<div id="outline-container-orgf9fda2f" class="outline-3">
+<h3 id="orgf9fda2f"><span class="section-number-3">1.3.</span> 大整数(高精度)</h3>
 <div class="outline-text-3" id="text-1-3">
 </div>
-<div id="outline-container-orgdfd2dc6" class="outline-4">
-<h4 id="orgdfd2dc6"><span class="section-number-4">1.3.1.</span> 实现</h4>
+<div id="outline-container-org1847be3" class="outline-4">
+<h4 id="org1847be3"><span class="section-number-4">1.3.1.</span> 实现</h4>
 <div class="outline-text-4" id="text-1-3-1">
 <div class="org-src-container">
 <pre class="src src-rust"><span style="color: #51afef; font-weight: bold;">#[derive(Debug, Clone, Copy, PartialEq, Eq)]</span>
@@ -663,8 +698,8 @@ n
 </div>
 
 
-<div id="outline-container-org6b1f565" class="outline-4">
-<h4 id="org6b1f565"><span class="section-number-4">1.3.2.</span> 大整数相加减</h4>
+<div id="outline-container-org474999f" class="outline-4">
+<h4 id="org474999f"><span class="section-number-4">1.3.2.</span> 大整数相加减</h4>
 </div>
 
 
@@ -672,8 +707,8 @@ n
 
 
 
-<div id="outline-container-org489bc44" class="outline-4">
-<h4 id="org489bc44"><span class="section-number-4">1.3.3.</span> 大整数 乘/除以 小整数</h4>
+<div id="outline-container-orgd3c0c82" class="outline-4">
+<h4 id="orgd3c0c82"><span class="section-number-4">1.3.3.</span> 大整数 乘/除以 小整数</h4>
 <div class="outline-text-4" id="text-1-3-3">
 <p>
 这里的小整数数指的是基础类型中的整数, int, uint &#x2026;
@@ -681,7 +716,7 @@ n
 </div>
 
 <ol class="org-ol">
-<li><a id="org69e5311"></a>乘法<br />
+<li><a id="orge2b9052"></a>乘法<br />
 <div class="outline-text-5" id="text-1-3-3-1">
 <p>
 乘法是用小整数分别和大整数的每一位相乘:
@@ -709,7 +744,7 @@ n
 </li>
 
 
-<li><a id="orge09b0c4"></a>除法<br />
+<li><a id="org2c0c600"></a>除法<br />
 <div class="outline-text-5" id="text-1-3-3-2">
 <div class="org-src-container">
 <pre class="src src-cpp"><span style="color: #5B6268;">// </span><span style="color: #5B6268;">r&#34920;&#31034;&#36820;&#22238;&#30340;&#20313;&#25968;.</span>
@@ -741,8 +776,8 @@ n
 
 
 
-<div id="outline-container-org4d180f8" class="outline-3">
-<h3 id="org4d180f8"><span class="section-number-3">1.4.</span> 前缀和 &amp; 差分</h3>
+<div id="outline-container-org1ecb9fb" class="outline-3">
+<h3 id="org1ecb9fb"><span class="section-number-3">1.4.</span> 前缀和 &amp; 差分</h3>
 <div class="outline-text-3" id="text-1-4">
 <p>
 互为逆运算
@@ -762,8 +797,8 @@ n
 </p>
 </div>
 
-<div id="outline-container-orgff431ec" class="outline-4">
-<h4 id="orgff431ec"><span class="section-number-4">1.4.1.</span> 计算前缀和</h4>
+<div id="outline-container-orgffbf4e4" class="outline-4">
+<h4 id="orgffbf4e4"><span class="section-number-4">1.4.1.</span> 计算前缀和</h4>
 <div class="outline-text-4" id="text-1-4-1">
 <div class="org-src-container">
 <pre class="src src-rust"><span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">s</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[];
@@ -778,8 +813,8 @@ s.push(a[0]); <span style="color: #5B6268;">//</span><span style="color: #5B6268
 
 
 
-<div id="outline-container-org36474c4" class="outline-4">
-<h4 id="org36474c4"><span class="section-number-4">1.4.2.</span> 前缀和的应用: 求区间和</h4>
+<div id="outline-container-org43fcbd4" class="outline-4">
+<h4 id="org43fcbd4"><span class="section-number-4">1.4.2.</span> 前缀和的应用: 求区间和</h4>
 <div class="outline-text-4" id="text-1-4-2">
 <p>
 <code>[l!=0, r]</code> 的和:  \(S_r - S_{l-1}\)
@@ -801,8 +836,8 @@ s.push(a[0]); <span style="color: #5B6268;">//</span><span style="color: #5B6268
 
 
 
-<div id="outline-container-org1f58bc8" class="outline-4">
-<h4 id="org1f58bc8"><span class="section-number-4">1.4.3.</span> 二维前缀和</h4>
+<div id="outline-container-orgf3398e3" class="outline-4">
+<h4 id="orgf3398e3"><span class="section-number-4">1.4.3.</span> 二维前缀和</h4>
 <div class="outline-text-4" id="text-1-4-3">
 <p>
 \(S_{ij}\) 表示以 \(a_{00}\) 为矩形左上角,\(S_{ij}\) 为矩形右下角的区域中的 \(a_{ij}\) 元素之和
@@ -823,7 +858,7 @@ S = S_{x_2 y_2} - S_{x_2, y_1-1} - S_{x_1-1, y_2} + S_{x_1-1,y_1-1}
 </p>
 
 
-<div id="org27d7ab8" class="figure">
+<div id="org7ec7e46" class="figure">
 <p><img src="org-images/2023-03-21_13-23-27_screenshot.png" alt="2023-03-21_13-23-27_screenshot.png" width="320px" />
 </p>
 </div>
@@ -831,8 +866,8 @@ S = S_{x_2 y_2} - S_{x_2, y_1-1} - S_{x_1-1, y_2} + S_{x_1-1,y_1-1}
 </div>
 
 
-<div id="outline-container-org30d0f96" class="outline-4">
-<h4 id="org30d0f96"><span class="section-number-4">1.4.4.</span> 二维前缀和的计算</h4>
+<div id="outline-container-org4679e1d" class="outline-4">
+<h4 id="org4679e1d"><span class="section-number-4">1.4.4.</span> 二维前缀和的计算</h4>
 <div class="outline-text-4" id="text-1-4-4">
 <p>
 \[
@@ -845,42 +880,384 @@ S_{i,j} = S_{i-1,j} + S_{i,j-1} - S_{i-1,j-1} + a_{i,j}
 
 
 
-<div id="outline-container-orgf63e0a0" class="outline-3">
-<h3 id="orgf63e0a0"><span class="section-number-3">1.5.</span> 双指针</h3>
+<div id="outline-container-org96aecab" class="outline-3">
+<h3 id="org96aecab"><span class="section-number-3">1.5.</span> 双指针</h3>
 </div>
 
-<div id="outline-container-org3cb71e2" class="outline-3">
-<h3 id="org3cb71e2"><span class="section-number-3">1.6.</span> 位运算</h3>
+<div id="outline-container-org86a8186" class="outline-3">
+<h3 id="org86a8186"><span class="section-number-3">1.6.</span> 位运算</h3>
 </div>
 
-<div id="outline-container-orgbab3895" class="outline-3">
-<h3 id="orgbab3895"><span class="section-number-3">1.7.</span> 离散化</h3>
+<div id="outline-container-orgb5b0742" class="outline-3">
+<h3 id="orgb5b0742"><span class="section-number-3">1.7.</span> 离散化</h3>
 </div>
 
-<div id="outline-container-orgf33adf5" class="outline-3">
-<h3 id="orgf33adf5"><span class="section-number-3">1.8.</span> 区间合并</h3>
+<div id="outline-container-org572aabb" class="outline-3">
+<h3 id="org572aabb"><span class="section-number-3">1.8.</span> 区间合并</h3>
 </div>
 </div>
 
 
-<div id="outline-container-org1b90711" class="outline-2">
-<h2 id="org1b90711"><span class="section-number-2">2.</span> 基本数据结构</h2>
+<div id="outline-container-org396a20e" class="outline-2">
+<h2 id="org396a20e"><span class="section-number-2">2.</span> 基本数据结构</h2>
 </div>
 
-<div id="outline-container-org4ad42d2" class="outline-2">
-<h2 id="org4ad42d2"><span class="section-number-2">3.</span> 搜索&amp;图论</h2>
+<div id="outline-container-orgd20a0bc" class="outline-2">
+<h2 id="orgd20a0bc"><span class="section-number-2">3.</span> 搜索&amp;图论</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org6e7c34f" class="outline-3">
+<h3 id="org6e7c34f"><span class="section-number-3">3.1.</span> DFS</h3>
+<div class="outline-text-3" id="text-3-1">
+</div>
+<div id="outline-container-orgb6cbe4e" class="outline-4">
+<h4 id="orgb6cbe4e"><span class="section-number-4">3.1.1.</span> 回溯</h4>
+<div class="outline-text-4" id="text-3-1-1">
+</div>
+<ol class="org-ol">
+<li><a id="org982418f"></a><a href="https://leetcode.cn/problems/generate-parentheses/solution/shen-du-you-xian-bian-li-zui-jian-jie-yi-ypti/">22. 括号生成</a><br />
+<div class="outline-text-5" id="text-3-1-1-1">
+<p>
+实现dfs递归函数所需的基本要素:
+</p>
+
+<ul class="org-ul">
+<li>当前状态: prefix(当前所构造的括号序列) left 左括号个数, right: 右括号个数</li>
+<li>最大深度: n 括号对数</li>
+<li>是否停止递归: 当前状态所对应的深度 ?= 最大深度</li>
+<li>合法地更新状态,并继续递归:
+<ul class="org-ul">
+<li>在这里合法的意思是要让括号序列不能违背匹配所需的必要条件:
+<ul class="org-ul">
+<li>当左括号 &gt;= 右括号 时才能继续加右括号;</li>
+<li>当左括号&lt;n时,可以继续加左括号</li>
+</ul></li>
+</ul></li>
+</ul>
+
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">Solution</span> {
+    <span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">generate_parenthesis</span>(<span style="color: #dcaeea;">n</span>: <span style="color: #ECBE7B;">i32</span>) -&gt; <span style="color: #ECBE7B;">Vec</span>&lt;<span style="color: #ECBE7B;">String</span>&gt; {
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">res</span> = <span style="color: #ECBE7B;">Vec</span>::new();
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">s</span> = <span style="color: #ECBE7B;">String</span>::new();
+        <span style="color: #ECBE7B;">Self</span>::dfs(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> res,<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> s, 0,0,n);
+        res
+    }
+
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">dfs</span>(<span style="color: #dcaeea;">res</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> <span style="color: #ECBE7B;">Vec</span>&lt;<span style="color: #ECBE7B;">String</span>&gt;,<span style="color: #dcaeea;">prefix</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> <span style="color: #ECBE7B;">String</span>,<span style="color: #dcaeea;">left</span>:<span style="color: #ECBE7B;">i32</span>,<span style="color: #dcaeea;">right</span>:<span style="color: #ECBE7B;">i32</span>,<span style="color: #dcaeea;">n</span>:<span style="color: #ECBE7B;">i32</span>){
+        <span style="color: #51afef;">if</span> prefix.len() == 2*(n <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">usize</span>) { <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#33021;&#21040;&#36798;&#30340;&#26368;&#28145;&#20301;&#32622;</span>
+            res.push(prefix.clone());
+        } <span style="color: #51afef;">else</span> {
+            <span style="color: #51afef;">if</span> right &lt; left &amp;&amp; right &lt; n {
+                prefix.push(<span style="color: #98be65;">')'</span>);
+                <span style="color: #ECBE7B;">Self</span>::dfs(res,prefix,left , right +1 ,n);
+                prefix.pop();
+            }
+            <span style="color: #51afef;">if</span> left &lt; n {
+                prefix.push(<span style="color: #98be65;">'('</span>);
+                <span style="color: #ECBE7B;">Self</span>::dfs(res,prefix,left+1 , right ,n);
+                prefix.pop();
+            }
+        }
+
+    }
+}
+</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
 </div>
 
-<div id="outline-container-orgcddb4ac" class="outline-2">
-<h2 id="orgcddb4ac"><span class="section-number-2">4.</span> 数学</h2>
+
+<div id="outline-container-orgc1fbd4d" class="outline-2">
+<h2 id="orgc1fbd4d"><span class="section-number-2">4.</span> 数学</h2>
 </div>
 
-<div id="outline-container-org26694c2" class="outline-2">
-<h2 id="org26694c2"><span class="section-number-2">5.</span> 动态规划</h2>
+<div id="outline-container-org856cb72" class="outline-2">
+<h2 id="org856cb72"><span class="section-number-2">5.</span> 动态规划</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+能否直接用递归的思路求解?
+</p>
+
+<p>
+决定答案的变量有哪些?
+</p>
 </div>
 
-<div id="outline-container-orgaf609e6" class="outline-2">
-<h2 id="orgaf609e6"><span class="section-number-2">6.</span> 贪心算法</h2>
+
+
+<div id="outline-container-org0e9680e" class="outline-3">
+<h3 id="org0e9680e"><span class="section-number-3">5.1.</span> 01背包</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+被本质上就是 \(C^{k}_n\) 的推导.
+</p>
+
+<p>
+\(i\) 个物品, 不放回选择物品, 总体积限制是 \(j\) .每个物品的价值是\(w_i\),期望选择物品的总价值最大.
+</p>
+
+<p>
+\(dp[i][j]\) : 在前 \(i\) 个物品中选择且总体积不超过 \(j\) 时的最大价值
+</p>
+
+<p>
+以是否选择第 \(i\) 个物品作为划分集合的条件:
+\[dp[i][j] = max( dp[i-1][j], dp[i-1][j-v_i]+w_i )\]
+</p>
+
+<ul class="org-ul">
+<li>\(dp[i-1][j]\) 代表 不选择第 \(i\) 个物品, 只在前 \(i-1\) 个物品中选择</li>
+
+<li>\(dp[i-1][j-v_i]+w_i \  (j>=v_i)\) 代表一定选择第 \(i\) 个物品, 因此可用的体积还剩下j-vi, 且总价值至少有wi, 在前i-1个物品中继续选择.</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org79ce65e" class="outline-3">
+<h3 id="org79ce65e"><span class="section-number-3">5.2.</span> 完全背包</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+被本质上就是 \(A^{k}_n\) 的推导.
+</p>
+
+<p>
+\(i\) 个物品, 选择后放回(相当于每个物品的数量无限), 总体积限制是 \(j\) . 每个物品的价值是 \(w_i\), 期望选择物品的总价值最大.
+</p>
+
+<p>
+\(dp[i][j]\): 在前 \(i\) 个物品中选择且总体积不超过 \(j\) 时的最大价值                         
+</p>
+
+<p>
+以是否选择第i个物品作为划分集合的条件:
+</p>
+
+<p>
+\[dp[i][j] = max( dp[i-1][j], dp[i][j-v_i]+w_i )\]
+</p>
+
+<ul class="org-ul">
+<li>\(dp[i-1][j]\) 代表 不选择第i个物品, 只在前i-1个物品中选择</li>
+
+<li>\(dp[i-1][j-v_i]+w_i \ (j>=v_i)\) 代表至少选择一个第i个物品, 因此可用的体积还剩下j-vi, 且总价值至少有wi, 不过因为物品有无限个, 因此仍可在前i个物品中继续选择(而不是前i-1个物品)</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #5B6268;">// </span><span style="color: #5B6268;">n &#20010; &#29289;&#21697;</span>
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#32972;&#21253;&#20307;&#31215;&#20026; v</span>
+<span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">dp</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[<span style="color: #51afef; font-weight: bold;">vec!</span>[0;n];v];
+
+<span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 1..n {
+    <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">j</span> <span style="color: #51afef;">in</span> 1..v {
+        dp[i][j] = dp[i-1][j];
+        <span style="color: #51afef;">if</span> j &gt; v[i] { dp[i][j] = max(dp[i][j], dp[i][j-v[i]] + w[i] ) }
+    }
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #5B6268;">// </span><span style="color: #5B6268;">n &#20010; &#29289;&#21697;</span>
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#32972;&#21253;&#20307;&#31215;&#20026; v</span>
+<span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">dp</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[<span style="color: #51afef; font-weight: bold;">vec!</span>[0;n];v];
+
+<span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 1..n {
+    <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">j</span> <span style="color: #51afef;">in</span> 1..v {
+        dp[i][j] = dp[i-1][j];
+        <span style="color: #51afef;">if</span> j &gt; v[i] { dp[i][j] = max(dp[i][j], dp[i][j-v[i]] + w[i] ) }
+    }
+}
+</pre>
+</div>
+<p>
+dp在维度i上只和i-1有关 , 因此可以去掉这个维度.
+而 dp[i][j] = dp[i][j-v[i]] 时, dp[i][j] 的赋值不会导致 dp[i][&lt; j] 的值被覆盖掉, 因此不用倒着遍历j这个维度.
+(dp[i][j] = dp[i-1][j-v[i]], 在只有一维dp时,对dp[i][j]的赋值实际上会将dp[i-1][j]的值覆盖掉,之后的计算还会用到它, 因此要从大到小遍历 j.)
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #5B6268;">// </span><span style="color: #5B6268;">n &#20010; &#29289;&#21697;</span>
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#32972;&#21253;&#20307;&#31215;&#20026; v</span>
+<span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">dp</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[0; v];
+
+<span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 1..n {
+    <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">j</span> <span style="color: #51afef;">in</span> 1..v {
+        dp[j] = dp[j];
+        <span style="color: #51afef;">if</span> j &gt; v[i] { dp[j] = max(dp[j], dp[j-v[i]] + w[i] ) }
+    }
+}
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #5B6268;">// </span><span style="color: #5B6268;">n &#20010; &#29289;&#21697;</span>
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#32972;&#21253;&#20307;&#31215;&#20026; v</span>
+<span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">dp</span> = <span style="color: #51afef; font-weight: bold;">vec!</span>[0; v];
+
+<span style="color: #51afef;">for</span> <span style="color: #dcaeea;">i</span> <span style="color: #51afef;">in</span> 1..n {
+    <span style="color: #51afef;">for</span> <span style="color: #dcaeea;">j</span> <span style="color: #51afef;">in</span> v[i]..v {
+        dp[j] = max(dp[j], dp[j-v[i]] + w[i] );
+    }
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgffa4394" class="outline-2">
+<h2 id="orgffa4394"><span class="section-number-2">6.</span> 贪心算法</h2>
+</div>
+
+
+
+<div id="outline-container-org40031bc" class="outline-2">
+<h2 id="org40031bc"><span class="section-number-2">7.</span> 如何 "对付" 二重循环</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+<code>排序+双指针</code>: 二重循环压缩成一重循环.
+</p>
+
+<p>
+<code>剪枝</code>: 在循环中, 提前退出不满足的要求的迭代.
+</p>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org933e87d" class="outline-2">
+<h2 id="org933e87d"><span class="section-number-2">8.</span> 滑动窗口</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+这种查看数组中一个元素和相邻的其他元素的某种关系的问题,可以使用滑动窗口.
+</p>
+
+
+
+<div id="org101a981" class="figure">
+<p><img src="org-images/2023-04-06_23-06-29_screenshot.png" alt="2023-04-06_23-06-29_screenshot.png" width="320px" />
+</p>
+</div>
+
+
+<p>
+我们假设窗口总在当前元素的左边, 并且不包含当前元素.
+查看完窗口后,需要为下一个元素更新窗口:
+</p>
+
+<ol class="org-ol">
+<li>先移除窗口中最左侧的元素</li>
+<li>再将窗口右侧的元素加入到窗口中.</li>
+</ol>
+
+<p>
+"先删后加"的顺序可以保证即便 窗口是用 <code>Set</code> 实现时, 更新窗口的逻辑始终是正确的, 不会因为删除的元素和待添加的元素相等, 而导致删除了应当添加的函数.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org1501dd4" class="outline-2">
+<h2 id="org1501dd4"><span class="section-number-2">9.</span> 找数组中的多数者</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+严格大于 "半数"/ "三分之一数" &#x2026;
+</p>
+
+<p>
+寻找数组中 出现次数 <code>&gt; length/N</code> 的 <code>N-1</code> 个元素.(最多只能有N-1个)
+</p>
+
+<p>
+时间 <code>O(n)</code> , 空间 <code>O(1)</code>.
+(这种算法的使用前提是可以确保数组中一定存在多数元素, 否则会产生错误结果: [1,2,1,3] )
+</p>
+
+
+<p>
+将相同的元素看作同阵营的士兵. 假设有 <code>N-1</code> 个待突袭的房间.
+</p>
+
+<p>
+对每个士兵:
+</p>
+
+<ul class="org-ul">
+<li>若存在同阵营占领的房间, 则该士兵 <b>优先</b> 进入此房间, 人数+1. (优先选择此分支)</li>
+<li>若存在空房间,则该士兵占领此房间.(人数+1)</li>
+<li>若房间都被其他阵营的人占据, 则该士兵可以 <b>分别</b> 杀死每个房间中的1个人 (人数-1), 然后自己立即死去(即: 无法再占领出现的空房间).</li>
+</ul>
+
+<p>
+最后 <code>N-1</code> 个房间剩下的元素(士兵) 可能是多数元素. 需要再用一次循环统计元素个数, 来判断是否真的是多数元素.
+</p>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="outline-container-orge65a4a3" class="outline-2">
+<h2 id="orge65a4a3"><span class="section-number-2">10.</span> 产生满足某种性质的新链表</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+主要想法:
+</p>
+
+<p>
+准备一个节点dummy,作为输出链表的伪头部, 不断地从输入链表头部摘取节点, 按照某种条件/性质将其插入到dummy链表的正确位置(ptr后面), 直到没有节点可以摘取.
+</p>
+
+<p>
+这种写法不一定在时空复杂度上较优, 但是比较清楚, 代码量较少且思路可复用.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #83898d;">/// &#20266;&#20195;&#30721;&#27169;&#26495;:</span>
+
+<span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">dummy</span> = <span style="color: #ECBE7B;">ListNode</span>::new(<span style="color: #ECBE7B;">i32</span>::<span style="color: #ECBE7B;">MIN</span>); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#20219;&#24847;&#20540; </span>
+
+<span style="color: #51afef;">while</span> <span style="color: #51afef;">let</span> <span style="color: #ECBE7B;">Some</span>(<span style="color: #51afef;">mut</span> node1 ) = head {
+        <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#23558;&#31532;&#19968;&#20010;&#33410;&#28857;&#20174;&#38142;&#34920;&#19978;&#25688;&#19979;&#26469;: </span>
+        head = node.next.take();
+
+        <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#36890;&#36807;&#35843;&#25972;ptr&#26469;&#25214;&#21040;(&#36755;&#20986;&#38142;&#34920;)&#27491;&#30830;&#30340;&#25554;&#20837;&#20301;&#32622; </span>
+        <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">ptr</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> <span style="color: #ECBE7B;">ListNode</span> = <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> dummy;
+
+        <span style="color: #83898d;">/// ...</span>
+        <span style="color: #83898d;">/// &#26681;&#25454;&#39064;&#24847;&#35843;&#25972;ptr, &#20445;&#35777;dummy&#25152;&#25351;&#30340;&#38142;&#34920;&#22987;&#32456;&#28385;&#36275;&#39064;&#30446;&#35201;&#27714;&#30340;&#24615;&#36136;.</span>
+        <span style="color: #83898d;">/// ...</span>
+
+        <span style="color: #83898d;">/// &#23558;&#25688;&#19979;&#26469;&#30340;node&#25554;&#20837;&#21040;ptr&#20043;&#21518;: </span>
+        node.next = ptr.next.take();
+        ptr.next = <span style="color: #ECBE7B;">Some</span>(node);
+}
+
+<span style="color: #51afef;">return</span> dummy.next
+</pre>
+</div>
+</div>
 </div>
 </div>
 </body>

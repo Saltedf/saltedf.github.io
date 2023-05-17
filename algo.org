@@ -1,15 +1,19 @@
 #+TITLE: 算法
 #+include: mytheme.setup 
+#+startup: overview
+
 
 [[~/src/rust-learning/data-structure/][代码]]
 
-1.理解算法
+1. 理解算法
 
-2.记忆算法流程/思想
+2. 记忆算法流程/思想
 
-3.模板题: 快速默写(调试通过)
-n
-4.提高熟练度: 重写一道模板题 3-5 次
+3. 模板题: 快速默写(调试通过)
+
+4. 提高熟练度: 重写一道模板题 3-5 次
+
+(要进行"模式识别" : 题目有哪些 *特征* 引导我们使用X方法?)
 
 * 基础算法
 
@@ -653,18 +657,252 @@ $$
 
 * 基本数据结构
 
+
 * 搜索&图论
+
+** DFS
+和方案选择的问题, 要优先考虑到dfs
+
+*** 回溯
+
+**** [[https://leetcode.cn/problems/generate-parentheses/solution/shen-du-you-xian-bian-li-zui-jian-jie-yi-ypti/][22. 括号生成]]
+
+实现dfs递归函数所需的基本要素:
+
++ 当前状态: prefix(当前所构造的括号序列) left 左括号个数, right: 右括号个数
++ 最大深度: n 括号对数
++ 是否停止递归: 当前状态所对应的深度 ?= 最大深度
++ 合法地更新状态,并继续递归:
+  + 在这里合法的意思是要让括号序列不能违背匹配所需的必要条件:
+     - 当左括号 >= 右括号 时才能继续加右括号;
+     - 当左括号<n时,可以继续加左括号
+
+
+#+begin_src rust
+  impl Solution {
+      pub fn generate_parenthesis(n: i32) -> Vec<String> {
+	  let mut res = Vec::new();
+	  let mut s = String::new();
+	  Self::dfs(&mut res,&mut s, 0,0,n);
+	  res
+      }
+
+      fn dfs(res: &mut Vec<String>,prefix: &mut String,left:i32,right:i32,n:i32){
+	  if prefix.len() == 2*(n as usize) { // 能到达的最深位置
+	      res.push(prefix.clone());
+	  } else {
+	      if right < left && right < n {
+		  prefix.push(')');
+		  Self::dfs(res,prefix,left , right +1 ,n);
+		  prefix.pop();
+	      }
+	      if left < n {
+		  prefix.push('(');
+		  Self::dfs(res,prefix,left+1 , right ,n);
+		  prefix.pop();
+	      }
+	  }
+
+      }
+  }
+#+end_src
+
 
 * 数学
 
 * 动态规划
 
+
+能否则用dfs?
+
+能否直接用递归的思路求解?
+
+决定答案的变量有哪些?
+
+
+
+** 01背包
+
+
+被本质上就是 $C^{k}_n$ 的推导.
+
+$i$ 个物品, 不放回选择物品, 总体积限制是 $j$ .每个物品的价值是$w_i$,期望选择物品的总价值最大.
+
+$dp[i][j]$ : 在前 $i$ 个物品中选择且总体积不超过 $j$ 时的最大价值
+
+以是否选择第 $i$ 个物品作为划分集合的条件:
+$$dp[i][j] = max( dp[i-1][j], dp[i-1][j-v_i]+w_i )$$
+
++ $dp[i-1][j]$ 代表 不选择第 $i$ 个物品, 只在前 $i-1$ 个物品中选择
+  
++ $dp[i-1][j-v_i]+w_i \  (j>=v_i)$ 代表一定选择第 $i$ 个物品, 因此可用的体积还剩下j-vi, 且总价值至少有wi, 在前i-1个物品中继续选择.
+
+
+** 完全背包
+
+被本质上就是 $A^{k}_n$ 的推导.
+
+$i$ 个物品, 选择后放回(相当于每个物品的数量无限), 总体积限制是 $j$ . 每个物品的价值是 $w_i$, 期望选择物品的总价值最大.
+
+$dp[i][j]$: 在前 $i$ 个物品中选择且总体积不超过 $j$ 时的最大价值                         
+
+以是否选择第i个物品作为划分集合的条件:
+
+$$dp[i][j] = max( dp[i-1][j], dp[i][j-v_i]+w_i )$$
+
++ $dp[i-1][j]$ 代表 不选择第i个物品, 只在前i-1个物品中选择
+  
++ $dp[i-1][j-v_i]+w_i \ (j>=v_i)$ 代表至少选择一个第i个物品, 因此可用的体积还剩下j-vi, 且总价值至少有wi, 不过因为物品有无限个, 因此仍可在前i个物品中继续选择(而不是前i-1个物品)
+  
+#+begin_src rust
+    // n 个 物品
+    // 背包体积为 v
+    let mut dp = vec![vec![0;n];v];
+
+    for i in 1..n {
+	for j in 1..v {
+	    dp[i][j] = dp[i-1][j];
+	    if j > v[i] { dp[i][j] = max(dp[i][j], dp[i][j-v[i]] + w[i] ) }
+	}
+    }
+#+end_src
+
+#+begin_src rust
+    // n 个 物品
+    // 背包体积为 v
+    let mut dp = vec![vec![0;n];v];
+
+    for i in 1..n {
+	for j in 1..v {
+	    dp[i][j] = dp[i-1][j];
+	    if j > v[i] { dp[i][j] = max(dp[i][j], dp[i][j-v[i]] + w[i] ) }
+	}
+    }
+#+end_src
+dp在维度i上只和i-1有关 , 因此可以去掉这个维度.
+而 dp[i][j] = dp[i][j-v[i]] 时, dp[i][j] 的赋值不会导致 dp[i][< j] 的值被覆盖掉, 因此不用倒着遍历j这个维度.
+(dp[i][j] = dp[i-1][j-v[i]], 在只有一维dp时,对dp[i][j]的赋值实际上会将dp[i-1][j]的值覆盖掉,之后的计算还会用到它, 因此要从大到小遍历 j.)
+#+begin_src rust
+    // n 个 物品
+    // 背包体积为 v
+    let mut dp = vec![0; v];
+
+    for i in 1..n {
+	for j in 1..v {
+	    dp[j] = dp[j];
+	    if j > v[i] { dp[j] = max(dp[j], dp[j-v[i]] + w[i] ) }
+	}
+    }
+#+end_src
+#+begin_src rust
+    // n 个 物品
+    // 背包体积为 v
+    let mut dp = vec![0; v];
+
+    for i in 1..n {
+	for j in v[i]..v {
+	    dp[j] = max(dp[j], dp[j-v[i]] + w[i] );
+	}
+    }
+#+end_src
+
+
+
 * 贪心算法
 
 
 
-* 如何 "对付" 循环
+* 如何 "对付" 二重循环
 
 ~排序+双指针~: 二重循环压缩成一重循环.
 
 ~剪枝~: 在循环中, 提前退出不满足的要求的迭代.
+
+
+
+
+* 滑动窗口
+
+这种查看数组中一个元素和相邻的其他元素的某种关系的问题,可以使用滑动窗口.
+
+
+#+attr_html: :width 320px
+[[file:org-images/2023-04-06_23-06-29_screenshot.png]]
+
+
+我们假设窗口总在当前元素的左边, 并且不包含当前元素.
+查看完窗口后,需要为下一个元素更新窗口:
+
+1. 先移除窗口中最左侧的元素
+2. 再将窗口右侧的元素加入到窗口中.
+
+"先删后加"的顺序可以保证即便 窗口是用 ~Set~ 实现时, 更新窗口的逻辑始终是正确的, 不会因为删除的元素和待添加的元素相等, 而导致删除了应当添加的函数.
+  
+
+* 找数组中的多数者
+
+严格大于 "半数"/ "三分之一数" ...
+
+寻找数组中 出现次数 ~> length/N~ 的 =N-1= 个元素.(最多只能有N-1个)
+
+时间 ~O(n)~ , 空间 ~O(1)~.
+(这种算法的使用前提是可以确保数组中一定存在多数元素, 否则会产生错误结果: [1,2,1,3] )
+
+
+将相同的元素看作同阵营的士兵. 假设有 ~N-1~ 个待突袭的房间.
+
+对每个士兵:
+
++ 若存在同阵营占领的房间, 则该士兵 *优先* 进入此房间, 人数+1. (优先选择此分支)
++ 若存在空房间,则该士兵占领此房间.(人数+1)
++ 若房间都被其他阵营的人占据, 则该士兵可以 *分别* 杀死每个房间中的1个人 (人数-1), 然后自己立即死去(即: 无法再占领出现的空房间).
+
+最后 ~N-1~ 个房间剩下的元素(士兵) 可能是多数元素. 需要再用一次循环统计元素个数, 来判断是否真的是多数元素.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+* 产生满足某种性质的新链表
+
+主要想法:
+
+准备一个节点dummy,作为输出链表的伪头部, 不断地从输入链表头部摘取节点, 按照某种条件/性质将其插入到dummy链表的正确位置(ptr后面), 直到没有节点可以摘取.
+
+这种写法不一定在时空复杂度上较优, 但是比较清楚, 代码量较少且思路可复用.
+
+#+begin_src rust
+  /// 伪代码模板:
+  
+  let mut dummy = ListNode::new(i32::MIN); // 任意值 
+
+  while let Some(mut node1 ) = head {
+	  // 将第一个节点从链表上摘下来: 
+	  head = node.next.take();
+
+	  // 通过调整ptr来找到(输出链表)正确的插入位置 
+	  let mut ptr: &mut ListNode = &mut dummy;
+
+	  /// ...
+	  /// 根据题意调整ptr, 保证dummy所指的链表始终满足题目要求的性质.
+	  /// ...
+
+	  /// 将摘下来的node插入到ptr之后: 
+	  node.next = ptr.next.take();
+	  ptr.next = Some(node);
+  }
+
+  return dummy.next
+#+end_src
+

@@ -1,0 +1,1477 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-05-15 一 23:05 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ECE 252 系统编程 in C</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="/home/sun/src/saltedf.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">ECE 252 系统编程 in C</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org1a137e4">1. L1: C</a>
+<ul>
+<li><a href="#org70fd20d">1.1. 全局变量</a></li>
+<li><a href="#orgea71d34">1.2. 堆内存分配</a></li>
+<li><a href="#org3731388">1.3. 数组</a></li>
+<li><a href="#org81d5c12">1.4. 字符串</a></li>
+<li><a href="#orgc9e0b1a">1.5. 函数</a></li>
+<li><a href="#org85322ae">1.6. errno</a></li>
+<li><a href="#org31c4429">1.7. printf()</a></li>
+<li><a href="#org41f303e">1.8. 预处理</a></li>
+<li><a href="#org9767145">1.9. 解析参数</a></li>
+</ul>
+</li>
+<li><a href="#orgaba6d9d">2. L2: 中断&amp;系统调用</a>
+<ul>
+<li><a href="#org8f47553">2.1. 中断</a></li>
+<li><a href="#orgda26444">2.2. Trap: "软中断"</a></li>
+</ul>
+</li>
+<li><a href="#org54743ed">3. L3: 文件系统</a>
+<ul>
+<li><a href="#org642c992">3.1. 文件的属性</a></li>
+<li><a href="#orgf07103f">3.2. 文件操作</a>
+<ul>
+<li><a href="#org8ae306c">3.2.1. fopen</a></li>
+<li><a href="#org25ab92c">3.2.2. fseek()</a></li>
+<li><a href="#orgd63bd5d">3.2.3. remove()</a></li>
+<li><a href="#org498480b">3.2.4. 文件锁 flock()</a></li>
+<li><a href="#orgae65efa">3.2.5. 写入 fprintf()</a></li>
+<li><a href="#org23de360">3.2.6. 读取 fscanf()</a></li>
+</ul>
+</li>
+<li><a href="#org2885aaa">3.3. 目录</a>
+<ul>
+<li><a href="#org2dfdb78">3.3.1. Symbolic Link</a></li>
+<li><a href="#orgbd4d247">3.3.2. Hard Link</a></li>
+</ul>
+</li>
+<li><a href="#org64c3191">3.4. 文件权限:</a></li>
+<li><a href="#org940e17f">3.5. 访问权限:</a></li>
+</ul>
+</li>
+<li><a href="#org395e09a">4. L4+L5: 进程</a>
+<ul>
+<li><a href="#org07f6647">4.1. 进程控制块 PCB</a></li>
+<li><a href="#org48dfcbe">4.2. 进程切换</a></li>
+<li><a href="#org6b66c8e">4.3. 进程的创建</a></li>
+<li><a href="#orge152276">4.4. 进程的销毁</a></li>
+<li><a href="#org3a44792">4.5. 进程树</a></li>
+<li><a href="#org77c8e28">4.6. 僵尸进程</a></li>
+<li><a href="#orge524887">4.7. 孤儿进程</a></li>
+<li><a href="#org97405e7">4.8. 7种进程状态</a></li>
+<li><a href="#orgeb26cbb">4.9. Unix进程</a></li>
+<li><a href="#org7847a05">4.10. 信号</a></li>
+</ul>
+</li>
+<li><a href="#org1c2a633">5. L6: 进程间通信</a>
+<ul>
+<li><a href="#orga7809c2">5.1. 共享内存</a></li>
+<li><a href="#org8243be2">5.2. 消息传递</a>
+<ul>
+<li><a href="#orgbf1d76e">5.2.1. 信号是一种没有消息的消息传递</a></li>
+<li><a href="#org5e5dc27">5.2.2. 如何找出某进程的id</a></li>
+<li><a href="#org22c12b6">5.2.3. 屏蔽某个信号</a></li>
+<li><a href="#orge13e2a2">5.2.4. 对 <code>sigset_t</code> 的操作</a></li>
+<li><a href="#org07e5429">5.2.5. 注册信号处理程序</a></li>
+<li><a href="#orgccb2b2a">5.2.6. 消息队列</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#org40cfb4a">6. L7: Socket</a></li>
+</ul>
+</div>
+</div>
+
+
+
+<div id="outline-container-org1a137e4" class="outline-2">
+<h2 id="org1a137e4"><span class="section-number-2">1.</span> L1: C</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+声明变量要尽量立即进行初始化(赋初值) , 这是很多bug的根源.
+</p>
+</div>
+
+
+
+<div id="outline-container-org70fd20d" class="outline-3">
+<h3 id="org70fd20d"><span class="section-number-3">1.1.</span> 全局变量</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">char</span> <span style="color: #dcaeea;">g</span> = <span style="color: #98be65;">'z'</span>;
+<span style="color: #5B6268;">/* </span><span style="color: #5B6268;">&#23613;&#37327;&#36991;&#20813;&#20351;&#29992;</span><span style="color: #5B6268;"> */</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-orgea71d34" class="outline-3">
+<h3 id="orgea71d34"><span class="section-number-3">1.2.</span> 堆内存分配</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">allocate_memory</span>() {
+  <span style="color: #ECBE7B;">int</span>* <span style="color: #dcaeea;">x</span> = malloc(<span style="color: #51afef;">sizeof</span>(<span style="color: #ECBE7B;">int</span>)); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">sizeof &#36816;&#31639;&#31526;*/</span>
+  <span style="color: #ECBE7B;">int</span>* <span style="color: #dcaeea;">y</span> =x;
+  *x = 0;
+  free(x);
+
+  <span style="color: #ECBE7B;">point_t</span>* <span style="color: #dcaeea;">st</span> = malloc(<span style="color: #51afef;">sizeof</span>(point_t));
+  memset(st,0,<span style="color: #51afef;">sizeof</span>(point_t));
+  st-&gt;x = 0;
+  (*st).y = 0;
+  <span style="color: #51afef;">return</span> ;
+}
+</pre>
+</div>
+
+<p>
+free 应该和malloc 配对. 并且只能 free 一块内存一次.
+</p>
+
+<p>
+没有必要将返回的 <code>void*</code> 转换为 <code>int*</code> 之类的东西, <code>void*</code> 将自动适应任意类型的指针.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org3731388" class="outline-3">
+<h3 id="org3731388"><span class="section-number-3">1.3.</span> 数组</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">stack_arr</span>[10];
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span>* <span style="color: #dcaeea;">heap_arr</span> = malloc( 10* <span style="color: #51afef;">sizeof</span>(<span style="color: #ECBE7B;">int</span>) );
+<span style="color: #ECBE7B;">heap_arr</span>[2] = 1;
+
+<span style="color: #c678dd;">free</span>(<span style="color: #ECBE7B;">heap_arr</span>);
+</pre>
+</div>
+
+<p>
+初始化数组
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#include</span><span style="color: #98be65;">&lt;string.h&gt;</span>
+<span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">init_arr</span>(<span style="color: #ECBE7B;">int</span> *<span style="color: #dcaeea;">a</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">capacity</span>){
+  memset(a,0, capacity* <span style="color: #51afef;">sizeof</span>(<span style="color: #ECBE7B;">int</span>));
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org81d5c12" class="outline-3">
+<h3 id="org81d5c12"><span class="section-number-3">1.4.</span> 字符串</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+'\0'
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp">
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgc9e0b1a" class="outline-3">
+<h3 id="orgc9e0b1a"><span class="section-number-3">1.5.</span> 函数</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+通常将被修改的指针作为第一个参数:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">init_header</span>(<span style="color: #51afef;">struct</span> <span style="color: #ECBE7B;">header</span>*<span style="color: #dcaeea;">h</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">v</span>, <span style="color: #ECBE7B;">float</span> <span style="color: #dcaeea;">f</span>);
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org85322ae" class="outline-3">
+<h3 id="org85322ae"><span class="section-number-3">1.6.</span> errno</h3>
+<div class="outline-text-3" id="text-1-6">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;errno.h&gt;</span>
+
+<span style="color: #51afef;">extern</span> <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">errno</span> ; <span style="color: #5B6268;">/* </span><span style="color: #5B6268;">&#34920;&#31034;&#27492;&#21464;&#37327;&#22312;&#20854;&#23427;&#25991;&#20214;&#20013;&#23450;&#20041;</span><span style="color: #5B6268;"> */</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org31c4429" class="outline-3">
+<h3 id="org31c4429"><span class="section-number-3">1.7.</span> printf()</h3>
+<div class="outline-text-3" id="text-1-7">
+<div class="org-src-container">
+<pre class="src src-c">%d -- <span style="color: #ECBE7B;">int</span>  i32
+%lld -- <span style="color: #ECBE7B;">long</span> <span style="color: #ECBE7B;">long</span> i64
+%u -- <span style="color: #ECBE7B;">unsigned</span> <span style="color: #ECBE7B;">int</span>
+%s -- <span style="color: #ECBE7B;">char</span>*
+%f
+%lf
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org41f303e" class="outline-3">
+<h3 id="org41f303e"><span class="section-number-3">1.8.</span> 预处理</h3>
+<div class="outline-text-3" id="text-1-8">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#define</span> <span style="color: #dcaeea;">BUFFER_SIZE</span> 1024
+
+<span style="color: #51afef; font-weight: bold;">#define</span> <span style="color: #dcaeea;">VAL</span> (2 * 12 + 3) <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#21152;&#25324;&#21495;!!!</span>
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org9767145" class="outline-3">
+<h3 id="org9767145"><span class="section-number-3">1.9.</span> 解析参数</h3>
+<div class="outline-text-3" id="text-1-9">
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">argc</span>, <span style="color: #ECBE7B;">char</span>** <span style="color: #dcaeea;">argv</span>){
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">count</span> = atoi(argv[1]); 
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #c678dd;">atoi</span>(): <span style="color: #ECBE7B;">char</span>* <span style="color: #dcaeea;">&#36716;</span> <span style="color: #ECBE7B;">int</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgaba6d9d" class="outline-2">
+<h2 id="orgaba6d9d"><span class="section-number-2">2.</span> L2: 中断&amp;系统调用</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+为了执行程序,至少需要:
+</p>
+<ul class="org-ul">
+<li>主存</li>
+<li>系统总线</li>
+<li>处理器</li>
+</ul>
+
+
+<p>
+CPU 时计算机的大脑, 它重复地进行: "Fetch-Decode-Execute"这三个步骤,
+不同的步骤可以同时进行,即流水线. 
+</p>
+
+<p>
+一些指令只能在supervisor模式下执行,在user模式下会出错.
+eg: 中断
+</p>
+
+<p>
+常见的寄存器:
+</p>
+
+<p>
+PC: 下一条指令
+Status: 每个位表示状态/错误
+instruction: 最近被fetch的指令
+stack pointer:栈顶
+通用寄存器
+</p>
+</div>
+
+
+<div id="outline-container-org8f47553" class="outline-3">
+<h3 id="org8f47553"><span class="section-number-3">2.1.</span> 中断</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+CPU需要数据,但有些数据的获取需要很长时间,eg:获取磁盘上的数据.
+</p>
+
+
+<p>
+处理方法:
+轮询Polling: 周期性地检查数据是否就绪.
+</p>
+
+<p>
+中断: 当数据就绪后会收到通知.
+</p>
+
+
+<p>
+中断的分类:
+</p>
+
+<ul class="org-ul">
+<li>程序: 除以0, 对null解引用&#x2026;</li>
+<li>Timer定时器</li>
+<li>输入/输出</li>
+<li>硬件错误: 主电源断电</li>
+</ul>
+
+
+<p>
+大多数时候,CPU是需要处理收到的中断的. 此时会先保存当前的执行状态, 然后去执行中断处理程序, 最后恢复先前的状态.
+</p>
+
+<p>
+有时候CPU会处于不可被中断的状态(临时).
+</p>
+
+
+<p>
+两个中断可以是线性执行的, 也可以是高优先级中断打断了低优先级的中断.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgda26444" class="outline-3">
+<h3 id="orgda26444"><span class="section-number-3">2.2.</span> Trap: "软中断"</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+trap是中断的一种吗?
+</p>
+<div class="org-src-container">
+<pre class="src src-org">ChatGPT: 
+&#22312;&#35745;&#31639;&#26426;&#32534;&#31243;&#20013;&#65292;&#8220;trap&#8221;&#65288;&#38519;&#38449;&#65289;&#36890;&#24120;&#26159;&#25351;&#19968;&#20010;&#20013;&#26029;&#25110;&#24322;&#24120;&#65292;&#20063;&#34987;&#31216;&#20026;&#36719;&#20214;&#20013;&#26029;&#12290;
+&#23427;&#26159;&#30001;&#27491;&#22312;&#25191;&#34892;&#30340;&#31243;&#24207;&#25110;&#25805;&#20316;&#31995;&#32479;&#29983;&#25104;&#30340;&#65292;&#36890;&#24120;&#29992;&#20110;&#21709;&#24212;&#26576;&#20123;&#29305;&#23450;&#30340;&#20107;&#20214;&#25110;&#38169;&#35823;&#24773;&#20917;&#65292;
+&#20363;&#22914;&#38750;&#27861;&#25351;&#20196;&#12289;&#38500;&#25968;&#20026;&#38646;&#12289;&#20869;&#23384;&#35775;&#38382;&#38169;&#35823;&#31561;&#31561;&#12290;
+
+&#24403;&#19968;&#20010;&#31243;&#24207;&#35302;&#21457;&#19968;&#20010;trap&#26102;&#65292;&#22788;&#29702;&#22120;&#20250;&#20572;&#27490;&#24403;&#21069;&#27491;&#22312;&#25191;&#34892;&#30340;&#20219;&#21153;&#65292;
+&#36716;&#32780;&#25191;&#34892;&#19968;&#27573;&#39044;&#23450;&#20041;&#30340;&#20013;&#26029;&#22788;&#29702;&#31243;&#24207;&#65292;&#26469;&#22788;&#29702;&#36825;&#20010;trap&#12290;
+&#20013;&#26029;&#22788;&#29702;&#31243;&#24207;&#20250;&#22312;&#23436;&#25104;&#21518;&#36820;&#22238;&#21407;&#31243;&#24207;&#65292;&#20351;&#20854;&#21487;&#20197;&#32487;&#32493;&#25191;&#34892;&#12290;
+
+&#22240;&#27492;&#65292;&#21487;&#20197;&#35828;&#8220;trap&#8221;&#26159;&#19968;&#31181;&#20013;&#26029;&#26426;&#21046;&#65292;&#29992;&#20110;&#35753;&#35745;&#31639;&#26426;&#22788;&#29702;&#29305;&#23450;&#30340;&#20107;&#20214;&#25110;&#38169;&#35823;&#24773;&#20917;&#12290;
+</pre>
+</div>
+
+
+<p>
+trap可以用来实现系统调用, 其作用是在用户user模式下唤醒操作系统,从而进入kernel模式, kernel模式下可以直接操作硬件,有能力执行所有的指令.
+</p>
+
+<p>
+系统调用的流程:
+</p>
+
+<ol class="org-ol">
+<li>user-mode:在栈上压入参数</li>
+<li>user-mode:跳转到系统调用函数</li>
+<li>user-mode:系统调用函数将其id放到指定位置</li>
+<li>user-mode:系统调用函数调用 "Trap" 指令.</li>
+<li>OS接受中断,从指定位置处解析id,切换到kernel-mode,</li>
+<li>OS调用id对应的中断处理程序.</li>
+<li>OS离开kernel-mode, 重新回到user-mode,并回到系统调用函数中.</li>
+<li>从系统调用中返回.</li>
+</ol>
+
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdio.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdlib.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;string.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;fcntl.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;unistd.h&gt;</span>
+
+<span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">print_tail_zero</span>() {
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">z</span> = <span style="color: #98be65;">'\0'</span>;
+  printf(<span style="color: #98be65;">"%c is %d \n"</span>, <span style="color: #98be65;">'\0'</span>, z);
+  <span style="color: #51afef;">return</span>;
+}
+
+
+<span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">read_file</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span>);
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">argc</span>, <span style="color: #ECBE7B;">char</span>** <span style="color: #dcaeea;">argv</span>) {
+  <span style="color: #51afef;">if</span>( argc != 2 ){
+    printf(<span style="color: #98be65;">"Usage: %s &lt;filepath&gt; \n"</span>,argv[0]);
+    <span style="color: #51afef;">return</span> EXIT_FAILURE;
+  }
+
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span> = open(argv[1],O_RDONLY);
+  <span style="color: #51afef;">if</span> (fd &lt;0 ){
+    printf(<span style="color: #98be65;">"Error: cannot open file: %s  \n"</span>,argv[1]);
+    <span style="color: #51afef;">return</span> EXIT_FAILURE;
+  }
+
+  read_file(fd);
+
+  close(fd);
+  <span style="color: #51afef;">return</span> 0;
+}
+
+<span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">read_file</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span>){
+
+  <span style="color: #51afef;">const</span> <span style="color: #ECBE7B;">size_t</span> <span style="color: #dcaeea;">buf_size</span> = 256;
+
+  <span style="color: #ECBE7B;">char</span>* <span style="color: #dcaeea;">buffer</span> = malloc(buf_size);
+
+  <span style="color: #51afef;">while</span>(1) {
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">0 == '\0'</span>
+    memset(buffer,0,buf_size); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt;======= &#27599;&#27425;&#35835;&#21462;&#20043;&#21069;&#35201;&#28165;&#31354;&#32531;&#20914;&#21306;!!</span>
+    <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">bytes_read</span> = read(fd, buffer,buf_size-1);
+
+    <span style="color: #51afef;">if</span> (bytes_read  == 0 ){
+      <span style="color: #51afef;">break</span>;
+    }<span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span> (bytes_read &lt; 0 ){
+      printf(<span style="color: #98be65;">"Error: cannot read file.\n"</span>);
+      <span style="color: #51afef;">return</span>;
+    }
+    printf(<span style="color: #98be65;">"%s"</span>,buffer);
+  }
+
+  printf(<span style="color: #98be65;">"\n"</span>);
+  free(buffer);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org54743ed" class="outline-2">
+<h2 id="org54743ed"><span class="section-number-2">3.</span> L3: 文件系统</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org642c992" class="outline-3">
+<h3 id="org642c992"><span class="section-number-3">3.1.</span> 文件的属性</h3>
+<div class="outline-text-3" id="text-3-1">
+<ol class="org-ol">
+<li>文件名</li>
+<li>id</li>
+<li>类型</li>
+<li>物理位置</li>
+<li>大小</li>
+<li>保护位</li>
+<li>时间,日期,UserID(所有者)</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-orgf07103f" class="outline-3">
+<h3 id="orgf07103f"><span class="section-number-3">3.2.</span> 文件操作</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+创建,删除, 读写,在文件中定位,截断(清除内容)
+</p>
+</div>
+
+
+
+<div id="outline-container-org8ae306c" class="outline-4">
+<h4 id="org8ae306c"><span class="section-number-4">3.2.1.</span> fopen</h4>
+<div class="outline-text-4" id="text-3-2-1">
+<p>
+fopen(文件路径,"打开模式") -&gt; FILE*
+</p>
+
+<p>
+模式:
+</p>
+<ul class="org-ul">
+<li><code>r</code>  : 只读</li>
+<li><code>w</code> : 可以写入文件.若文件已经存在, 则覆盖内容.</li>
+<li><code>a</code> : 追加写入文件</li>
+<li><code>r+</code> : 可读可写.文件不存在则出错.写入只会覆盖当前文件指针位置.</li>
+<li><code>w+</code> : 可读可写.不存在则创建. 文件存在内容则会被清空.</li>
+<li><code>a+</code> : 可读可写.不存在则创建. 文件指针默认在尾部,写入总追加到末尾.</li>
+</ul>
+
+<p>
+添加 <code>x</code> 可以让写入操作在文件已经存在时发出错误.
+</p>
+
+<p>
+fclose(FILE*): 关闭文件
+</p>
+</div>
+</div>
+
+<div id="outline-container-org25ab92c" class="outline-4">
+<h4 id="org25ab92c"><span class="section-number-4">3.2.2.</span> fseek()</h4>
+<div class="outline-text-4" id="text-3-2-2">
+<p>
+int fseek(FILE *stream, 相对基准位置的offset, 基准位置);
+</p>
+
+<p>
+基准位置:  文件开头 <code>SEEK_SET</code> , 当前位置 <code>SEEK_CUR</code> , 文件末尾 <code>SEEK_END</code>
+</p>
+
+<p>
+rewind(FILE* ): 将文件指针重设为文件开头
+</p>
+</div>
+</div>
+<div id="outline-container-orgd63bd5d" class="outline-4">
+<h4 id="orgd63bd5d"><span class="section-number-4">3.2.3.</span> remove()</h4>
+<div class="outline-text-4" id="text-3-2-3">
+<p>
+删除文件.
+</p>
+
+<ul class="org-ul">
+<li>仅在目录树中删除,并将其标记为删除.</li>
+<li>直到最后一个打开此文件的程序关闭文件后, 文件才会被删除.</li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-org498480b" class="outline-4">
+<h4 id="org498480b"><span class="section-number-4">3.2.4.</span> 文件锁 flock()</h4>
+<div class="outline-text-4" id="text-3-2-4">
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">FILE</span>* <span style="color: #dcaeea;">f</span> = fopen(<span style="color: #98be65;">"./file.c"</span>, <span style="color: #98be65;">"r"</span>);
+<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">fd</span> = fileno(f); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">FILE* -&gt; &#25991;&#20214;&#25551;&#36848;&#31526;</span>
+<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">res</span> = flock(fd, LOCK_EX); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">exclusive &#25490;&#23427;&#38145;.</span>
+</pre>
+</div>
+
+<p>
+LOCK<sub>UN</sub>: 解锁
+</p>
+
+<p>
+LOCK<sub>SH</sub>: 共享锁
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgae65efa" class="outline-4">
+<h4 id="orgae65efa"><span class="section-number-4">3.2.5.</span> 写入 fprintf()</h4>
+<div class="outline-text-4" id="text-3-2-5">
+<div class="org-src-container">
+<pre class="src src-cpp">fprintf(file, <span style="color: #98be65;">"%s"</span>, <span style="color: #98be65;">"hello"</span>);
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org23de360" class="outline-4">
+<h4 id="org23de360"><span class="section-number-4">3.2.6.</span> 读取 fscanf()</h4>
+<div class="outline-text-4" id="text-3-2-6">
+<p>
+fscanf(fp,文件内容的模式,写入的变量&#x2026;) -&gt; 成功写入变量的个数
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp">
+<span style="color: #51afef;">while</span>(fscanf(fp, <span style="color: #98be65;">"%d,%d\n"</span>,&amp;i,&amp;squared) == 2) {
+  printf(<span style="color: #98be65;">"i= %d, squared= %d"</span>,i,squared);
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org2885aaa" class="outline-3">
+<h3 id="org2885aaa"><span class="section-number-3">3.3.</span> 目录</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+目录是一个符号表, 将文件名映射到其目录条目.
+</p>
+
+<p>
+目录操作:
+</p>
+<ol class="org-ol">
+<li>搜索</li>
+<li>添加文件</li>
+<li>删除文件</li>
+<li>列出目录内容</li>
+<li>重命名文件</li>
+<li>导航文件系统 (父目录,子目录..)</li>
+</ol>
+
+
+<p>
+删除目录:
+</p>
+
+<p>
+可以直接删除空目录
+</p>
+</div>
+
+
+
+<div id="outline-container-org2dfdb78" class="outline-4">
+<h4 id="org2dfdb78"><span class="section-number-4">3.3.1.</span> Symbolic Link</h4>
+<div class="outline-text-4" id="text-3-3-1">
+<p>
+相当于一个Weak指针, 或者快捷方式.
+</p>
+
+<p>
+(不是指向实际的目录条目, 而是指向符号表中的其它符号名)
+</p>
+
+<p>
+源文件被删除, 则符号链接失效.
+</p>
+
+<p>
+删除符号链接对源文件无影响
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgbd4d247" class="outline-4">
+<h4 id="orgbd4d247"><span class="section-number-4">3.3.2.</span> Hard Link</h4>
+<div class="outline-text-4" id="text-3-3-2">
+<p>
+相当于Rc指针, 实际占用一个引用计数.
+</p>
+
+<p>
+删除一个硬链接(大部分普通文件)会让计数-1, 直到最后一个hard link被删除时, 此文件真正被删除.
+</p>
+
+<p>
+eg: cp创建一个hard
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org64c3191" class="outline-3">
+<h3 id="org64c3191"><span class="section-number-3">3.4.</span> 文件权限:</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+1.读,写,执行
+</p>
+<ol class="org-ol">
+<li>追加</li>
+<li>删除</li>
+<li>List: 查看文件属性</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-org940e17f" class="outline-3">
+<h3 id="org940e17f"><span class="section-number-3">3.5.</span> 访问权限:</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+每个文件都有一个所有者owner和所有组group.
+setuid, setgid
+</p>
+
+<p>
+每个文件都有三组文件权限:
+分别代表 owner, 所在group, 其它任何人能对文件执行的操作.
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-sh">-rw-r--r--  1 sun sun    50 May  6 00:55 note.org
+10 bits&#34920;&#31034;
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #a9a1e1;">r</span>: 100
+w: 010
+x: 001
+
+r--: 100
+rw-: 110
+rwx: 111
+</pre>
+</div>
+
+
+<pre class="example">
+- : 不是目录, 普通文件
+d : 目录
+l : 符号链接
+</pre>
+</div>
+</div>
+</div>
+
+
+
+
+<div id="outline-container-org395e09a" class="outline-2">
+<h2 id="org395e09a"><span class="section-number-2">4.</span> L4+L5: 进程</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-org07f6647" class="outline-3">
+<h3 id="org07f6647"><span class="section-number-3">4.1.</span> 进程控制块 PCB</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+用于管理进程的数据结构, OS在产生进程时创建此数据结构, 并在进程退出时销毁此结构.
+通常包含了:
+</p>
+
+<ol class="org-ol">
+<li>进程id</li>
+<li>进程状态</li>
+<li>优先级</li>
+<li>程序计数器</li>
+<li>寄存器数据</li>
+<li>内存指针</li>
+<li>IO状态信息: 打开的文件, 是否在等待IO..</li>
+<li>记账信息, 消耗了多少资源</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-org48dfcbe" class="outline-3">
+<h3 id="org48dfcbe"><span class="section-number-3">4.2.</span> 进程切换</h3>
+<div class="outline-text-3" id="text-4-2">
+<p>
+当进程正在运行时, 会发生中断,或者主动呼叫了系统调用, 此时会触发进程切换:
+将当前程序的相关信息存放到其对应的PCB中.
+当OS再次调度进程执行时, 会选择某一个进程的PCB,将其中的数据恢复到寄存器等地.
+</p>
+
+
+
+<div id="orgfc60a8c" class="figure">
+<p><img src="org-images/2023-05-07_22-09-44_screenshot.png" alt="2023-05-07_22-09-44_screenshot.png" width="320px" />
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org6b66c8e" class="outline-3">
+<h3 id="org6b66c8e"><span class="section-number-3">4.3.</span> 进程的创建</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+途径
+</p>
+
+<ol class="org-ol">
+<li>系统启动</li>
+
+<li>用户创建</li>
+
+<li>进程fork()
+为了提高并发度或者容错性.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orge152276" class="outline-3">
+<h3 id="orge152276"><span class="section-number-3">4.4.</span> 进程的销毁</h3>
+<div class="outline-text-3" id="text-4-4">
+<ol class="org-ol">
+<li>进程退出(自愿) exit 0;</li>
+<li>错误退出(自愿) exit 1;</li>
+<li>故障退出(非自愿) : 解null指针, 段错误, stack overflow..</li>
+<li>被另一个进程kill(非自愿): killall/ kill -9</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-org3a44792" class="outline-3">
+<h3 id="org3a44792"><span class="section-number-3">4.5.</span> 进程树</h3>
+<div class="outline-text-3" id="text-4-5">
+<p>
+每个进程都有一个父进程, 但不一定有子进程.
+</p>
+
+<p>
+第一个进程通常是 <code>init</code> / <code>systemd</code>
+</p>
+
+
+<p>
+每个进程终止时都会返回一个 <b>退出码</b>.
+父进程可以获得此退出码.
+通常 0 标识此进程时正常退出的,其它值则代表发生了错误.
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org77c8e28" class="outline-3">
+<h3 id="org77c8e28"><span class="section-number-3">4.6.</span> 僵尸进程</h3>
+<div class="outline-text-3" id="text-4-6">
+<p>
+在一个子进程完成后,直到其父进程收到其退出码之前, 此子进程处于一种 "僵尸" 状态.
+(任务已经执行完毕, 但此进程的数据结构仍未销毁.)
+</p>
+
+
+<p>
+系统调用 <code>wait</code> 可以收集子进程的退出码.从而释放对应子进程的资源.
+wait()在当前进程的任意一个子进程的 <b>状态</b> 发生变化时返回.
+</p>
+
+<p>
+状态变化:
+</p>
+<ol class="org-ol">
+<li>子进程终止.</li>
+<li>子进程被信号暂停.</li>
+<li>子进程被信号恢复.</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#21457;&#36865;&#20449;&#21495;:</span>
+
+$ kill -STOP 32360 <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#26242;&#20572;</span>
+stopped by signal 19
+
+$ kill -CONT 32360 <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#24674;&#22797;</span>
+continued
+
+$ kill -TERM 32360 <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#32456;&#27490;</span>
+killed by signal 15
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">pid_t</span> <span style="color: #c678dd;">wait</span>(<span style="color: #ECBE7B;">int</span>* <span style="color: #dcaeea;">&#23384;&#25918;&#23376;&#36827;&#31243;&#36820;&#22238;&#30721;</span>); -&gt; &#25104;&#21151;&#26102;&#36820;&#22238;&#23545;&#24212;&#23376;&#36827;&#31243;pid, &#21542;&#21017;&#20026;-1.
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">pid_t</span> <span style="color: #dcaeea;">waitpid</span>(pid,&amp;&#36864;&#20986;&#30721;&#22320;&#22336;,options);
+</pre>
+</div>
+
+<p>
+默认情况下只在子进程收到终止信号时返回, 可以用options字段改变这一行为
+</p>
+
+<p>
+pid &gt; 0, 只等待特定子进程终止.
+pid = -1, 等待任意一个子进程终止
+</p>
+
+<p>
+pid=0, 等待任意一个其 <b>进程组</b> id = 调用进程id(父进程)
+pid=-1, 等待任意一个其 <b>进程组</b> id == pid绝对值
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge524887" class="outline-3">
+<h3 id="orge524887"><span class="section-number-3">4.7.</span> 孤儿进程</h3>
+<div class="outline-text-3" id="text-4-7">
+<p>
+失去了原父进程的进程会被init进程 "收养".
+</p>
+
+<p>
+僵尸进程和孤儿进程的区别?
+</p>
+
+<div class="org-src-container">
+<pre class="src src-org">ChatGPT: 
+&#20725;&#23608;&#36827;&#31243;&#21644;&#23396;&#20799;&#36827;&#31243;&#26159;&#25805;&#20316;&#31995;&#32479;&#20013;&#20004;&#31181;&#19981;&#21516;&#30340;&#36827;&#31243;&#29366;&#24577;&#65292;&#23427;&#20204;&#26377;&#20197;&#19979;&#21306;&#21035;&#65306;
+
+<span style="font-weight: bold;">&#20725;&#23608;&#36827;&#31243;&#65288;Zombie Process&#65289;</span> &#65306;
+&#24403;&#19968;&#20010;&#36827;&#31243;&#65288;&#29238;&#36827;&#31243;&#65289;&#21019;&#24314;&#20102;&#19968;&#20010;&#23376;&#36827;&#31243;&#65292;&#28982;&#21518;&#23376;&#36827;&#31243;&#20808;&#20110;&#29238;&#36827;&#31243;&#32467;&#26463;&#65292;
+&#24182;&#19988;&#29238;&#36827;&#31243;&#27809;&#26377;&#21450;&#26102;&#22788;&#29702;&#23376;&#36827;&#31243;&#30340;&#36864;&#20986;&#29366;&#24577;&#65292;&#37027;&#20040;&#23376;&#36827;&#31243;&#23601;&#20250;&#25104;&#20026;&#20725;&#23608;&#36827;&#31243;&#12290;
+&#20725;&#23608;&#36827;&#31243;&#21344;&#25454;&#31995;&#32479;&#36164;&#28304;&#65292;&#20294;&#19981;&#20250;&#25191;&#34892;&#20219;&#20309;&#25805;&#20316;&#12290;
+&#23427;&#20204;&#30340;&#36827;&#31243;&#21495;&#65288;PID&#65289;&#20173;&#28982;&#23384;&#22312;&#20110;&#36827;&#31243;&#34920;&#20013;&#65292;&#20197;&#35760;&#24405;&#20854;&#36864;&#20986;&#29366;&#24577;&#20197;&#22791;&#29238;&#36827;&#31243;&#26597;&#30475;&#12290;
+
+<span style="font-weight: bold;">&#23396;&#20799;&#36827;&#31243;&#65288;Orphan Process&#65289;</span> &#65306;
+&#24403;&#19968;&#20010;&#36827;&#31243;&#30340;&#29238;&#36827;&#31243;&#22312;&#20854;&#32456;&#27490;&#20043;&#21069;&#20808;&#20110;&#23427;&#32467;&#26463;&#65292;&#37027;&#20040;&#35813;&#36827;&#31243;&#25104;&#20026;&#23396;&#20799;&#36827;&#31243;&#12290;
+&#23396;&#20799;&#36827;&#31243;&#23558;&#34987;&#25805;&#20316;&#31995;&#32479;&#30340;init&#36827;&#31243;&#65288;PID&#20026;1&#30340;&#29305;&#27530;&#36827;&#31243;&#65289;&#25509;&#31649;&#65292;&#24182;&#30001;init&#36827;&#31243;&#25198;&#28436;&#29238;&#36827;&#31243;&#30340;&#35282;&#33394;&#12290;
+init&#36827;&#31243;&#20250;&#23450;&#26399;&#26816;&#26597;&#26159;&#21542;&#26377;&#23396;&#20799;&#36827;&#31243;&#65292;&#24182;&#36127;&#36131;&#22238;&#25910;&#23427;&#20204;&#30340;&#36164;&#28304;&#65292;&#30830;&#20445;&#23427;&#20204;&#19981;&#20250;&#25104;&#20026;&#20725;&#23608;&#36827;&#31243;&#12290;
+
+&#22240;&#27492;&#65292;&#21306;&#20998;&#20725;&#23608;&#36827;&#31243;&#21644;&#23396;&#20799;&#36827;&#31243;&#30340;&#20851;&#38190;&#22312;&#20110; <span style="font-weight: bold;">&#29238;&#36827;&#31243;&#26159;&#21542;&#23384;&#27963;</span> !
+&#22914;&#26524;&#29238;&#36827;&#31243;&#20173;&#28982;&#23384;&#22312;&#65292;&#20294;&#27809;&#26377;&#21450;&#26102;&#22788;&#29702;&#23376;&#36827;&#31243;&#30340;&#36864;&#20986;&#29366;&#24577;&#65292;&#37027;&#20040;&#23376;&#36827;&#31243;&#25104;&#20026;&#20725;&#23608;&#36827;&#31243;&#12290;
+&#22914;&#26524;&#29238;&#36827;&#31243;&#22312;&#23376;&#36827;&#31243;&#32456;&#27490;&#20043;&#21069;&#32467;&#26463;&#65292;&#37027;&#20040;&#23376;&#36827;&#31243;&#25104;&#20026;&#23396;&#20799;&#36827;&#31243;&#65292;&#24182;&#30001;init&#36827;&#31243;&#25509;&#31649;.
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org97405e7" class="outline-3">
+<h3 id="org97405e7"><span class="section-number-3">4.8.</span> 7种进程状态</h3>
+<div class="outline-text-3" id="text-4-8">
+
+<div id="orgbd778c4" class="figure">
+<p><img src="org-images/2023-05-07_23-14-22_screenshot.png" alt="2023-05-07_23-14-22_screenshot.png" width="520px" />
+</p>
+</div>
+
+
+
+<ul class="org-ul">
+<li>New: 刚创建, 尚未完成初始化.</li>
+<li>Running:</li>
+<li>Ready: 已经具备运行的条件,只是没有被调度.</li>
+<li>Blocked: 等待某种资源/事件.</li>
+<li>终止: 僵尸进程(已完成任务,仍占据资源)就是被困在这个状态上</li>
+</ul>
+
+
+<p>
+当进程所需要的内存空间无法全放到内存中时, OS会将一部分放在磁盘上: <b>swapping</b>
+</p>
+
+<ul class="org-ul">
+<li>Ready/Swapped: 进程已就绪,但处在磁盘上</li>
+<li>Block/Swapped: 进程还在等待资源/事件,并处在磁盘上</li>
+</ul>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgeb26cbb" class="outline-3">
+<h3 id="orgeb26cbb"><span class="section-number-3">4.9.</span> Unix进程</h3>
+<div class="outline-text-3" id="text-4-9">
+<p>
+init -&gt; login -&gt; bash
+</p>
+
+<p>
+当你运行一个命令后, 新进程会被创建,并且shell会等待这个子进程结束.
+</p>
+
+<p>
+父进程通过fork创建一个子进程, 并通过wait等待子进程结束并回收资源.
+子进程通过exit将code返回给父进程.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">execlp</span>(<span style="color: #98be65;">"&#31243;&#24207;&#36335;&#24452;"</span>,<span style="color: #98be65;">"&#36827;&#31243;&#21517;"</span>,&#21442;&#25968;... );
+</pre>
+</div>
+<div class="org-src-container">
+<pre class="src src-cpp">execl(<span style="color: #98be65;">"/usr/bin/emacs"</span>,<span style="color: #98be65;">"emacs"</span>, <span style="color: #a9a1e1;">NULL</span>);
+
+execlp(<span style="color: #98be65;">"/usr/bin/emacs"</span>,<span style="color: #98be65;">"emacs"</span>, <span style="color: #a9a1e1;">NULL</span>);
+execlp(<span style="color: #98be65;">"emacs"</span>,<span style="color: #98be65;">"emacs"</span>, <span style="color: #a9a1e1;">NULL</span>);  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#39318;&#20010;&#21442;&#25968;&#21487;&#20197;&#26159;&#21629;&#20196;&#21517;, &#23427;&#20250;&#33258;&#21160;&#20174;PATH&#20013;&#21305;&#37197; </span>
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-sh"><span style="color: #dcaeea;">PATH</span>=/home/sun/.opam/cs3110-2021fa/bin:/home/sun/.cabal/bin:/home/sun/.ghcup/bin:/home/sun/.emacs.d/bin:/home/sun/.local/bin:/home/sun/.cargo/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/home/sun/.dotnet/tools:/usr/lib/jvm/default/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/home/sun/understand_5_1/scitools/bin/linux64:https://debuginfod.archlinux.org:/home/sun/.bin
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdio.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdlib.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;sys/wait.h&gt;</span> <span style="color: #5B6268;">// </span><span style="color: #5B6268;">pid_t , waitpid</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;unistd.h&gt;</span> <span style="color: #5B6268;">// </span><span style="color: #5B6268;">fork</span>
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">argc</span> , <span style="color: #ECBE7B;">char</span>** <span style="color: #dcaeea;">argv</span>) {
+  <span style="color: #ECBE7B;">pid_t</span> <span style="color: #dcaeea;">pid</span> = -1;
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">child_code</span> = 0;
+
+  pid = fork();
+  <span style="color: #51afef;">if</span>(pid == -1) {
+    fprintf(stderr, <span style="color: #98be65;">"Error: fork()\n"</span>);
+    <span style="color: #51afef;">return</span> EXIT_FAILURE;
+  }
+
+  <span style="color: #51afef;">if</span>(pid == 0) {
+    printf(<span style="color: #98be65;">"Child process.\n"</span>);
+    execlp(<span style="color: #98be65;">"/usr/bin/ls"</span>,<span style="color: #98be65;">"clear"</span>);
+  }<span style="color: #51afef;">else</span> {
+    printf(<span style="color: #98be65;">"Parent process.\n"</span>);
+    waitpid(pid,&amp;child_code,0);
+    printf(<span style="color: #98be65;">"Parent: child process returned with %d\n"</span>,child_code);
+  }
+  <span style="color: #51afef;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7847a05" class="outline-3">
+<h3 id="org7847a05"><span class="section-number-3">4.10.</span> 信号</h3>
+<div class="outline-text-3" id="text-4-10">
+<p>
+Unix系统使用信号来表示事件的发生.
+信号本质上是 <b>一个带有数字ID的中断</b>
+</p>
+
+<p>
+默认情况下, 进程会用默认的信号处理程序来处理任何收到的信号.(来者不拒)
+</p>
+
+
+<p>
+SIGHUP: 表示电话挂断, 因为早期的unix使用的是电话网络.现在这个信号经常被用作通知进程重新加载配置.
+SIGINT: 可以让其在退出前执行一些清理工作.
+</p>
+
+<p>
+SIGKILL和SIGSTOP无法被捕获, 忽略,或者阻塞.
+</p>
+
+<p>
+<code>kill &lt;pid&gt;</code> 默认发送SIGHUP给程序, 通常可以杀死程序.但此信号若被忽略,则要发送无法被忽略的SIGKILL:  <code>kill -9</code>
+</p>
+
+<div id="org1c132b7" class="figure">
+<p><img src="org-images/2023-05-08_23-14-43_screenshot.png" alt="2023-05-08_23-14-43_screenshot.png" width="500px" />
+</p>
+</div>
+
+<p>
+<b>进程发送信号</b> 涉及到进程间通信的知识: 
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org1c2a633" class="outline-2">
+<h2 id="org1c2a633"><span class="section-number-2">5.</span> L6: 进程间通信</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+两个进程之间进行数据共享和交换需要使用进程间通信.
+</p>
+
+<p>
+发送和接收消息可以是同步或者异步的.
+</p>
+
+<p>
+同步发送: 发送者发送消息后阻塞, 直到数据被成功接收.
+异步发送: 发送者发送消息后继续执行.
+</p>
+
+<p>
+同步接收: 接收者阻塞直到收到消息.
+异步接收: 接收者会在没收到消息前继续执行, 直到收到通知.
+</p>
+
+<p>
+因此有它们有四种组合方式.
+</p>
+
+
+<p>
+实现IPC有三种方式:
+</p>
+
+<ol class="org-ol">
+<li>共享内存</li>
+<li>消息传递</li>
+<li>文件系统</li>
+</ol>
+</div>
+
+<div id="outline-container-orga7809c2" class="outline-3">
+<h3 id="orga7809c2"><span class="section-number-3">5.1.</span> 共享内存</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+被OS标记过的一块内存, 可以让多个进程对其进行 <b>读写</b> 操作.
+</p>
+
+<p>
+通常来讲, 一个块内存只属于一个进程, 只有此进程可以对其进行读写操作.其它进程对其进行读写操作时, OS会阻止并报错.
+</p>
+
+<p>
+另外只有这块内存被OS标记为由多个进程共享后, 当某个进程结束时, 这块内存才不会被回收.
+</p>
+
+<p>
+为了使用共享内存, 必须还要有某种协作机制. 
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-org8243be2" class="outline-3">
+<h3 id="org8243be2"><span class="section-number-3">5.2.</span> 消息传递</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+消息传递需要知道接收者的名字, eg 进程id.
+</p>
+</div>
+
+
+
+<div id="outline-container-orgbf1d76e" class="outline-4">
+<h4 id="orgbf1d76e"><span class="section-number-4">5.2.1.</span> 信号是一种没有消息的消息传递</h4>
+<div class="outline-text-4" id="text-5-2-1">
+<p>
+类似于红绿灯/火警, 需要事先规定好对信号的反应方式. 虽然无法携带消息,但信号本身在很多场景下已经够用.
+</p>
+
+<p>
+发送信号
+</p>
+
+<p>
+kill是杀死进程, 而是发送信号!!
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">kill</span>(pid, &#20449;&#21495;); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#21487;&#21457;&#36865;&#32473;&#25351;&#23450;&#30340;&#36827;&#31243;</span>
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">raise</span>(&#20449;&#21495;); <span style="color: #5B6268;">//</span><span style="color: #5B6268;">&#21457;&#36865;&#32473;&#24403;&#21069;&#36827;&#31243;</span>
+</pre>
+</div>
+
+
+
+
+<div class="org-src-container">
+<pre class="src src-org">pid = 0: &#23558;&#20449;&#21495;&#21457;&#36865;&#32473;&#21644;caller&#21516;&#36827;&#31243;&#32452;&#30340;&#25152;&#26377;&#36827;&#31243;
+
+pid = -1: &#24191;&#25773;&#32473;&#25152;&#26377;&#33021;&#21457;&#36865;&#21040;&#30340;&#36827;&#31243;.
+
+pid &lt; 0:  &#21457;&#36865;&#32473; &#36827;&#31243;&#32452;id == |pid| &#30340;&#25152;&#26377;&#36827;&#31243;
+</pre>
+</div>
+
+
+<p>
+<b>"空信号"</b> 
+信号为 0 时虽然不会发送任何信号, 但仍会做 pid 存在性的检查, 以及确认caller是否有权限发送信号.(CAP<sub>KILL</sub>)
+</p>
+
+<p>
+可以用这个技巧来判断指定进程是否存在
+</p>
+</div>
+</div>
+
+
+<div id="outline-container-org5e5dc27" class="outline-4">
+<h4 id="org5e5dc27"><span class="section-number-4">5.2.2.</span> 如何找出某进程的id</h4>
+<div class="outline-text-4" id="text-5-2-2">
+<p>
+当用fork创建进程时很容易知道子进程的id.
+</p>
+
+<p>
+那其它时候如何获得某个进程的id.
+</p>
+
+<p>
+通常server类的进程在启动后会将其进程id放在 <b>约定的文件中</b> :
+eg: MySQL
+</p>
+<pre class="example">
+/var/run/mysqld/mysqld.pid
+</pre>
+</div>
+</div>
+
+
+
+<div id="outline-container-org22c12b6" class="outline-4">
+<h4 id="org22c12b6"><span class="section-number-4">5.2.3.</span> 屏蔽某个信号</h4>
+<div class="outline-text-4" id="text-5-2-3">
+<p>
+信号可以被屏蔽, 即暂时不监听某个信号(除了SIGKILL, SIGSTOP)
+</p>
+
+<p>
+屏蔽/打开信号:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">sigprocmask</span>(&#21160;&#20316;: <span style="color: #ECBE7B;">int</span>, <span style="color: #ECBE7B;">&#26032;&#30340;</span> <span style="color: #dcaeea;">sigset_t</span>, <span style="color: #ECBE7B;">&#26087;&#30340;</span> <span style="color: #dcaeea;">sigset_t</span> );
+</pre>
+</div>
+
+<p>
+首先不论前两个参数是什么, 此函数都会将先前的信号屏蔽集填入第三个参数中(非NULL时)
+</p>
+
+<p>
+动作分成三种:
+</p>
+
+<p>
+<code>SIG_BLOCK</code> : 将第二个set 和 当前的信号屏蔽集取 <b>并集</b>, 也就是 <b>额外添加新的信号屏蔽</b>.
+</p>
+
+<p>
+<code>SIG_UNBLOCK</code> : 将第二个参数中指定的信号屏蔽移除.
+</p>
+
+<p>
+<code>SIG_SETMASK</code> : 直接将当前的信号屏蔽集设为第二个参数.
+</p>
+
+
+<p>
+我们没有必要知道什么是 <code>sigset_t</code> , 只需要知道对它的操作即可:
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge13e2a2" class="outline-4">
+<h4 id="orge13e2a2"><span class="section-number-4">5.2.4.</span> 对 <code>sigset_t</code> 的操作</h4>
+<div class="outline-text-4" id="text-5-2-4">
+<p>
+创建一个空的sigset
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">sigemptyset</span>(<span style="color: #ECBE7B;">sigset_t</span> *<span style="color: #dcaeea;">set</span>);
+</pre>
+</div>
+
+<p>
+设置指定的信号
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">sigaddset</span>(<span style="color: #ECBE7B;">sigset_t</span>* <span style="color: #dcaeea;">set</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">signal</span>);
+</pre>
+</div>
+
+<p>
+移除指定信号
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">sigdelset</span>(<span style="color: #ECBE7B;">sigset_t</span>* <span style="color: #dcaeea;">set</span>, <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">signal</span>);
+</pre>
+</div>
+
+<p>
+判断信号集中是否存在指定信号:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">sigismember</span>(<span style="color: #ECBE7B;">sigset_t</span> *<span style="color: #dcaeea;">set</span>,<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">signal</span>); 
+</pre>
+</div>
+
+<p>
+设置所有的信号:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">sigfillset</span>(<span style="color: #ECBE7B;">sigset_t</span> *<span style="color: #dcaeea;">set</span>);
+</pre>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org07e5429" class="outline-4">
+<h4 id="org07e5429"><span class="section-number-4">5.2.5.</span> 注册信号处理程序</h4>
+<div class="outline-text-4" id="text-5-2-5">
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #51afef;">typedef</span> <span style="color: #ECBE7B;">void</span> (*<span style="color: #ECBE7B;">sighandler_t</span>)(<span style="color: #ECBE7B;">int</span>);
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-rust">    signal(<span style="color: #dcaeea;">&#20449;&#21495;</span> : int, <span style="color: #dcaeea;">&#26032;&#30340;&#22788;&#29702;&#31243;&#24207;</span> : <span style="color: #51afef;">fn</span>(int) -&gt; void )
+-&gt; <span style="color: #dcaeea;">&#26087;&#30340;&#20449;&#21495;&#22788;&#29702;&#31243;&#24207;</span> : <span style="color: #51afef;">fn</span>(int) -&gt; void
+</pre>
+</div>
+
+<p>
+sig<sub>num</sub> 就是对应信号的值, 它的作用是可以使得一个函数可以被用在多个信号的处理.
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">handler</span>(<span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">sig_num</span>) {
+
+}
+</pre>
+</div>
+
+<p>
+要十分小心信号处理函数的编写, eg :在程序执行malloc()的过程中,切换到OS中执行handler, 并且handler也调用了malloc(), 那么会导致内存分配发送错误.
+</p>
+
+<p>
+因此只能在信号处理程序中使用 <b>可重入函数reentrant</b> . 大概的意思是在其执行过程中被可以被中断, 并在另一处也发生了同样的调用后, 再度回来继续执行时,一切程序状态都是正常的.
+</p>
+
+<p>
+可以认为只要函数中不使用 static/全局 变量就是可重入的.
+</p>
+
+<p>
+常用的 <code>malloc, printf</code> 都不是可重入的, 因此不能用在信号处理程序中.
+</p>
+</div>
+</div>
+
+
+
+<div id="outline-container-orgccb2b2a" class="outline-4">
+<h4 id="orgccb2b2a"><span class="section-number-4">5.2.6.</span> 消息队列</h4>
+<div class="outline-text-4" id="text-5-2-6">
+<p>
+// file to key<sub>t</sub>
+ftok()
+</p>
+
+<p>
+消息队列本质上是使用一块公共的内存, 供进程之间通信.
+</p>
+
+<p>
+创建System V消息队列.
+如果将消息队列视作某种临时文件, 那么创建一个消息队列, 要指定其名字和文件的权限.
+</p>
+
+<p>
+为了既要让两个"陌生的"进程能使用到同一个消息队列,
+又要保证消息队列所用的"名字"是不重复的.
+</p>
+
+<p>
+需要借助 <code>ftok(文件路径,项目id)</code> 来生成唯一的消息队列的hash值.
+只要两个进程调用此函数所用的文件路径和项目ID是相同的, 那么生成的 <code>key_t</code> 值就是相同的.
+</p>
+
+<p>
+当两个进程是特殊的父子关系时(eg:使用fork创建),可以不生成具体的 <code>key_t</code> , 而是用 <code>IPC_PRIVATE</code> 作为 <code>key_t</code>
+</p>
+
+<pre class="example">
+创建一个新的消息队列:
+msgget(消息队列的key_t, 0666|IPC_CREAT); 
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">mq_id</span> = msgget(IPC_PRIVATE,0666|IPC_CREAT);
+</pre>
+</div>
+
+<p>
+消息结构体需要保证首个字段是 <code>long type</code> , 其余字段可任意.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">msgsnd</span>(mq_id,&amp;msg,<span style="color: #51afef;">sizeof</span>(msg),0);
+</pre>
+</div>
+<p>
+最后一个参数是表示发送方式是否为阻塞, 只要没有 <code>IPC_NOWAIT</code> 都是阻塞的
+</p>
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">msgrcv</span>(mq_id,&amp;msg,<span style="color: #51afef;">sizeof</span>(msg),42 ,0);
+</pre>
+</div>
+
+<p>
+接收消息中多了一个type参数:
+</p>
+<div class="org-src-container">
+<pre class="src src-org">type &gt; 0 : &#25509;&#25910;&#25351;&#23450;&#31867;&#22411;&#30340;&#28040;&#24687;
+type = 0 : &#25509;&#25910;&#20219;&#24847;&#31867;&#22411;&#30340;&#28040;&#24687;
+type &lt; 0 : &#25509;&#25910;&#31867;&#22411;&#23567;&#20110; |type| &#30340;&#28040;&#24687; 
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdio.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdlib.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;unistd.h&gt;</span>
+
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;sys/msg.h&gt;</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;sys/wait.h&gt;</span>
+
+<span style="color: #51afef;">typedef</span> <span style="color: #51afef;">struct</span> <span style="color: #ECBE7B;">_message</span>{
+  <span style="color: #ECBE7B;">long</span> <span style="color: #dcaeea;">type</span>; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">must exist and the type is long</span>
+
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">data</span> ;
+  <span style="color: #ECBE7B;">double</span> <span style="color: #dcaeea;">other_data</span>;
+} <span style="color: #ECBE7B;">Message</span>;
+
+<span style="color: #ECBE7B;">int</span> <span style="color: #c678dd;">main</span>() {
+
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">mq_id</span> = msgget(IPC_PRIVATE,0666|IPC_CREAT);
+  <span style="color: #51afef;">if</span> (mq_id&lt;0 ) {
+    perror(<span style="color: #98be65;">"fail to create a message queue."</span>);
+    abort();
+  }
+
+  <span style="color: #ECBE7B;">int</span> <span style="color: #dcaeea;">pid</span> = fork();
+  <span style="color: #51afef;">if</span> (pid &gt; 0) { <span style="color: #5B6268;">// </span><span style="color: #5B6268;">parent process</span>
+    <span style="color: #ECBE7B;">Message</span> <span style="color: #dcaeea;">msg</span> ;
+    msg.type = 42; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt;==!!</span>
+    msg.data = 233;
+    msg.other_data = 233.333;
+    <span style="color: #51afef;">if</span> (msgsnd(mq_id,&amp;msg,<span style="color: #51afef;">sizeof</span>(msg),0) &lt; 0 ) {
+      perror(<span style="color: #98be65;">"fail to send message."</span>);
+      abort();
+    }
+    wait(<span style="color: #a9a1e1;">NULL</span>); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">wait for child process!</span>
+  }<span style="color: #51afef;">else</span> <span style="color: #51afef;">if</span>(pid == 0) { <span style="color: #5B6268;">// </span><span style="color: #5B6268;">child process</span>
+    <span style="color: #ECBE7B;">Message</span> <span style="color: #dcaeea;">msg</span> ;
+    <span style="color: #51afef;">if</span>( msgrcv(mq_id,&amp;msg,<span style="color: #51afef;">sizeof</span>(msg),42 ,0) &lt;0) {
+      perror(<span style="color: #98be65;">"fail to receive message."</span>);
+      abort();
+    }
+    printf(<span style="color: #98be65;">"[receive]: %d %lf"</span>,msg.data,msg.other_data);
+
+  }<span style="color: #51afef;">else</span> { 
+    perror(<span style="color: #98be65;">"fork"</span>);
+    abort();
+  }
+
+
+  <span style="color: #51afef;">return</span> 0;
+}
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org40cfb4a" class="outline-2">
+<h2 id="org40cfb4a"><span class="section-number-2">6.</span> L7: Socket</h2>
+</div>
+</div>
+</body>
+</html>

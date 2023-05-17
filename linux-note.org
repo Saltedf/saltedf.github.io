@@ -4,6 +4,44 @@
 #+startup: content
 
 
+
+* fd (find)
+
+在当前目录下的所有文件中寻找某字符串:
+~\{\}~ 表示fd找到的每个文件/路径, 将其传给 ~-exec~ 的子命令
+#+begin_src sh
+  fd . --type f # 文件类型 f, d ..
+       --exec grep --color=always -nH  -e rust  \{\}  # -exec 对每个查找出来的文件路径执行命令
+     #  其中{}代表路径, \{\} 是为了防止歧义
+#+end_src
+
+使用 ~-e~ 可以指定文件拓展名:
+#+begin_src
+-e rs
+-e cpp
+-e c
+#+end_src
+
+#+begin_src sh
+fd . --type f  -e c -e rs -e cpp -x grep --color=always -i -nH -e hello \{\}
+#+end_src
+
+#+begin_src sh
+  find -type f -exec grep --color=always -nH -e hello \{\} +  # 对于find 的-exec子命令, {}后面需要接上加号+ !!
+#+end_src
+
+
+#+begin_src sh
+  grep --color=always -nH -i -e hello <FILE>
+  # -n 行号
+  # -H 文件名
+  # -e 正则表达式
+  # -i 忽略大小写
+  # --color=always 给查询结果上色
+  # --null 在文件名后面加上尾零.
+#+end_src
+
+
 * shell
 
 ** 忽略错误继续执行
@@ -117,11 +155,8 @@ E.g
 
 
 
-* bash脚本的编写
 
-** ~set -e~ 遇到错误就停止
-bash脚本默认行为是忽略错误,继续运行.
-在脚本开头设置set -e就会使得: 只要有命令返回值!=0整个脚本的运行就会终止
+
 
 * pstree 查看进程树
 
@@ -819,7 +854,162 @@ reverse-XXX
 
 
 
+* valgrind
+
+** 无法使用, 报错
+
+1. 首先尝试更新系统到最新, 然后重启
+#+begin_src
+sudo pacman -Syu
+#+end_src
+
+#+begin_src
+sudo reboot
+#+end_src
+
+2. 否则可以试下安装 ~glibc-debug~
+在 ~/etc/pacman.conf~ 中临时启用:
+#+begin_src
+[system-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[world-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[galaxy-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[lib32-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+#+end_src
+https://www.reddit.com/r/artixlinux/comments/wpji7m/valgrind_cant_load_debug_info/
+
+#+begin_src
+sudo pacman -Sy glibc-debug
+#+end_src
+
+
+
 * [[./cmake-learning.org][CMake]] 
+
+
+#+begin_src cmake
+cmake_minimum_required(VERSION 3.21)
+project(word-count C)
+
+# 设置编译器
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_COMPILER clang)
+
+add_compile_options(
+"-ggdb" # gdb调试支持
+"-m64"  
+) 
+# add_compile_definitions(LINE_COUNT) # 宏定义
+## add_compile_definitions(MACRO_CONSTANT_NAME=macro_value)
+
+# 生成 compile_commands.json 文件  for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include_directories(./include) # 头文件目录
+
+add_executable(test_strcmp.bin)
+target_sources(test_strcmp.bin PRIVATE
+  ./test_strcmp.c
+  ./str_cmp.c
+)
+
+# target_compile_options(test_strcmp.bin PRIVATE -ggdb)
+# target_include_directories(YourExecutableName PRIVATE include)
+
+
+add_executable(tokenize.bin)
+target_sources(tokenize.bin PRIVATE
+  ./tokenize.c
+  ./vector_char.c
+)
+
+
+add_executable(dictionary.bin)
+target_sources(dictionary.bin PRIVATE
+  ./dictionary.c
+  ./vector_char.c
+  ./vector_string.c
+  ./str_cmp.c
+)
+
+# add_executable(wordcount.bin)
+# target_sources(wordcount.bin PRIVATE
+#   ./wordcount.c
+#   ./vector_char.c
+#   ./table_string.c
+#   ./str_cmp.c
+# )
+
+
+add_executable(linecount.bin)
+target_sources(linecount.bin PRIVATE
+  ./linecount.c
+  ./vector_char.c
+  ./table_string.c
+  ./str_cmp.c
+)
+
+
+add_executable(duplicate.bin)
+target_sources(duplicate.bin PRIVATE
+  ./dedup.c
+  ./vector_char.c
+  ./table_string.c
+  ./duplicate.c
+  ./str_cmp.c
+)
+
+
+add_executable(unit_test_vector_char.bin)
+target_sources(unit_test_vector_char.bin PRIVATE
+  ./unit_test_vector_char.c
+  ./vector_char.c
+)
+
+
+# add_executable(unit_test_vector_string.bin)
+# target_sources(unit_test_vector_string.bin PRIVATE
+#   ./unit_test_vector_string.c
+#   ./vector_string.c
+#   ./str_cmp.c
+# )
+
+add_executable(unit_test_table_string.bin)
+target_sources(unit_test_table_string.bin PRIVATE
+  ./unit_test_table_string.c
+  ./table_string.c
+  ./vector_char.c
+  ./str_cmp.c
+)
+
+#+end_src
+
+
+* clangd 配置
+
+在项目根目录下添加文件: ~.clangd~
+参考: https://clangd.llvm.org/config#compileflags
+
+** 配置纯C项目
+
+#+begin_src
+CompileFlags:
+  Add: [-xc,-std=c99]
+  Compiler: clang
+#+end_src
+
+** 配置C++项目
+
+#+begin_src
+CompileFlags:                        # Tweak the parse settings
+  Add: [-xc++, -std=c++20]           # treat all files as C++
+  Compiler: clang++                  # Change argv[0] of compile flags to `clang++`
+#+end_src
+
 
 
 * cgroup v2

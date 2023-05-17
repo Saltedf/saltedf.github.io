@@ -1,7 +1,8 @@
 #+TITLE: CMake学习
 #+OPTIONS: toc:t num:t
+#+include: mytheme.setup
 
-#+SETUPFILE: ./mytheme.setup
+
 
 
 * 基本的cmake命令

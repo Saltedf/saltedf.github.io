@@ -3,22 +3,22 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2022-05-18 三 12:02 -->
+<!-- 2023-05-11 四 20:30 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>CMake学习</title>
 <meta name="generator" content="Org Mode" />
-<link rel="stylesheet" type="text/css" href="./org-html-themes/src/bigblow_theme/css/htmlize.css"/>
-<link rel="stylesheet" type="text/css" href="./org-html-themes/src/bigblow_theme/css/bigblow.css"/>
-<link rel="stylesheet" type="text/css" href="./org-html-themes/src/bigblow_theme/css/hideshow.css"/>
-<script type="text/javascript" src="./org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="./org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
-<script type="text/javascript" src="./org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
-<script type="text/javascript" src="./org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
-<script type="text/javascript" src="./org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
-<script type="text/javascript" src="./org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
-<script type="text/javascript" src="./org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
-<script type="text/javascript" src="./org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
 </head>
 <body>
 <div id="content" class="content">
@@ -27,27 +27,27 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org2e97449">1. 基本的cmake命令</a>
+<li><a href="#org2139fd0">1. 基本的cmake命令</a>
 <ul>
-<li><a href="#org825f7ea">1.1. 配置阶段:生成makefile</a></li>
-<li><a href="#orgc3a8d29">1.2. 实际构建阶段:执行makefile</a></li>
+<li><a href="#org7b80201">1.1. 配置阶段:生成makefile</a></li>
+<li><a href="#org3341ce2">1.2. 实际构建阶段:执行makefile</a></li>
 </ul>
 </li>
-<li><a href="#org8994035">2. 为目标添加源码文件</a></li>
-<li><a href="#org68b65ac">3. 生成库</a></li>
-<li><a href="#org5ccd2c4">4. 为某个可执行文件链接上库</a></li>
-<li><a href="#org05b10d1">5. extern "C" {}</a></li>
-<li><a href="#org0dc54f9">6. pragma once / ifndef define endif</a></li>
-<li><a href="#org0981113">7. 为某个目标指定头文件搜索目录</a></li>
-<li><a href="#org70c3c54">8. 为某个目标添加宏定义</a></li>
-<li><a href="#org2fde41b">9. 为某目标添加编译选项</a></li>
-<li><a href="#org55ff94f">10. 全局添加宏定义</a></li>
-<li><a href="#org72916f3">11. 每个CMakeLists的第二行: project()</a></li>
-<li><a href="#orga3d8397">12. 局部变量</a>
+<li><a href="#org0d23dfe">2. 为目标添加源码文件</a></li>
+<li><a href="#org1545812">3. 生成库</a></li>
+<li><a href="#org292c150">4. 为某个可执行文件链接上库</a></li>
+<li><a href="#org5c300d2">5. extern "C" {}</a></li>
+<li><a href="#org54ab063">6. pragma once / ifndef define endif</a></li>
+<li><a href="#orgc8b6628">7. 为某个目标指定头文件搜索目录</a></li>
+<li><a href="#orgb7fa782">8. 为某个目标添加宏定义</a></li>
+<li><a href="#orga6b6ea7">9. 为某目标添加编译选项</a></li>
+<li><a href="#org8d0d94d">10. 全局添加宏定义</a></li>
+<li><a href="#org1a97301">11. 每个CMakeLists的第二行: project()</a></li>
+<li><a href="#org9b48528">12. 局部变量</a>
 <ul>
-<li><a href="#org55a69dc">12.1. 定义变量</a></li>
-<li><a href="#orgdae7ef5">12.2. 访问一个变量:</a></li>
-<li><a href="#orgf74f241">12.3. 可以用 <code>set()</code> 定义一个list</a></li>
+<li><a href="#org673f475">12.1. 定义变量</a></li>
+<li><a href="#org7d34189">12.2. 访问一个变量:</a></li>
+<li><a href="#org3894382">12.3. 可以用 <code>set()</code> 定义一个list</a></li>
 </ul>
 </li>
 </ul>
@@ -55,12 +55,14 @@
 </div>
 
 
-<div id="outline-container-org2e97449" class="outline-2">
-<h2 id="org2e97449"><span class="section-number-2">1.</span> 基本的cmake命令</h2>
+
+
+<div id="outline-container-org2139fd0" class="outline-2">
+<h2 id="org2139fd0"><span class="section-number-2">1.</span> 基本的cmake命令</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org825f7ea" class="outline-3">
-<h3 id="org825f7ea"><span class="section-number-3">1.1.</span> 配置阶段:生成makefile</h3>
+<div id="outline-container-org7b80201" class="outline-3">
+<h3 id="org7b80201"><span class="section-number-3">1.1.</span> 配置阶段:生成makefile</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 <code>cmake -B build -D CMAKE_CXX_COMPILER=clang++</code>
@@ -76,8 +78,8 @@
 </div>
 </div>
 
-<div id="outline-container-orgc3a8d29" class="outline-3">
-<h3 id="orgc3a8d29"><span class="section-number-3">1.2.</span> 实际构建阶段:执行makefile</h3>
+<div id="outline-container-org3341ce2" class="outline-3">
+<h3 id="org3341ce2"><span class="section-number-3">1.2.</span> 实际构建阶段:执行makefile</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 自动识别构建工具,并在build目录中进行构建(make -j4)
@@ -92,8 +94,8 @@
 
 
 
-<div id="outline-container-org8994035" class="outline-2">
-<h2 id="org8994035"><span class="section-number-2">2.</span> 为目标添加源码文件</h2>
+<div id="outline-container-org0d23dfe" class="outline-2">
+<h2 id="org0d23dfe"><span class="section-number-2">2.</span> 为目标添加源码文件</h2>
 <div class="outline-text-2" id="text-2">
 <div class="org-src-container">
 <pre class="src src-cmake">add_executable(myexe)
@@ -105,8 +107,8 @@ target_sources(myexe ${myexe_sources} )
 </div>
 
 
-<div id="outline-container-org68b65ac" class="outline-2">
-<h2 id="org68b65ac"><span class="section-number-2">3.</span> 生成库</h2>
+<div id="outline-container-org1545812" class="outline-2">
+<h2 id="org1545812"><span class="section-number-2">3.</span> 生成库</h2>
 <div class="outline-text-2" id="text-3">
 <pre class="example">
 add_library(mylib STATIC  source1.cc source2.cc)
@@ -119,8 +121,8 @@ add_library(mylib SHARED source1.cc source2.cc)
 </div>
 </div>
 
-<div id="outline-container-org5ccd2c4" class="outline-2">
-<h2 id="org5ccd2c4"><span class="section-number-2">4.</span> 为某个可执行文件链接上库</h2>
+<div id="outline-container-org292c150" class="outline-2">
+<h2 id="org292c150"><span class="section-number-2">4.</span> 为某个可执行文件链接上库</h2>
 <div class="outline-text-2" id="text-4">
 <pre class="example">
 target_link_libraries(myexe PUBLIC mylib)
@@ -128,23 +130,23 @@ target_link_libraries(myexe PUBLIC mylib)
 </div>
 </div>
 
-<div id="outline-container-org05b10d1" class="outline-2">
-<h2 id="org05b10d1"><span class="section-number-2">5.</span> extern "C" {}</h2>
+<div id="outline-container-org5c300d2" class="outline-2">
+<h2 id="org5c300d2"><span class="section-number-2">5.</span> extern "C" {}</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 在C++代码中将某段代码解释为C语言的, 从而避免使用重载机制
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp"><span style="color: #C57BDB; font-weight: bold;">#ifdef</span> __cplusplus
-<span style="color: #51afef;">extern</span> <span style="color: #7bc275;">"C"</span> {
-<span style="color: #C57BDB; font-weight: bold;">#endif</span>
+<pre class="src src-cpp"><span style="color: #51afef; font-weight: bold;">#ifdef</span> __cplusplus
+<span style="color: #51afef;">extern</span> <span style="color: #98be65;">"C"</span> {
+<span style="color: #51afef; font-weight: bold;">#endif</span>
 
-<span style="color: #62686E;">// </span><span style="color: #62686E;">&#26399;&#26395;&#34987;&#29702;&#35299;&#20026;C&#35821;&#35328;&#30340;&#20195;&#30721;</span>
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#26399;&#26395;&#34987;&#29702;&#35299;&#20026;C&#35821;&#35328;&#30340;&#20195;&#30721;</span>
 
-<span style="color: #C57BDB; font-weight: bold;">#ifdef</span> __cplusplus
+<span style="color: #51afef; font-weight: bold;">#ifdef</span> __cplusplus
 }
-<span style="color: #C57BDB; font-weight: bold;">#endif</span>
+<span style="color: #51afef; font-weight: bold;">#endif</span>
 </pre>
 </div>
 </div>
@@ -155,13 +157,13 @@ target_link_libraries(myexe PUBLIC mylib)
 
 
 
-<div id="outline-container-org0dc54f9" class="outline-2">
-<h2 id="org0dc54f9"><span class="section-number-2">6.</span> pragma once / ifndef define endif</h2>
+<div id="outline-container-org54ab063" class="outline-2">
+<h2 id="org54ab063"><span class="section-number-2">6.</span> pragma once / ifndef define endif</h2>
 </div>
 
 
-<div id="outline-container-org0981113" class="outline-2">
-<h2 id="org0981113"><span class="section-number-2">7.</span> 为某个目标指定头文件搜索目录</h2>
+<div id="outline-container-orgc8b6628" class="outline-2">
+<h2 id="orgc8b6628"><span class="section-number-2">7.</span> 为某个目标指定头文件搜索目录</h2>
 <div class="outline-text-2" id="text-7">
 <pre class="example">
 target_include_directories(mylib PUBLIC ..XX)
@@ -179,8 +181,8 @@ PUBLIC/PRIVATE的作用是是否将这个属性(这里是头文件搜索路径)�
 </div>
 
 
-<div id="outline-container-org70c3c54" class="outline-2">
-<h2 id="org70c3c54"><span class="section-number-2">8.</span> 为某个目标添加宏定义</h2>
+<div id="outline-container-orgb7fa782" class="outline-2">
+<h2 id="orgb7fa782"><span class="section-number-2">8.</span> 为某个目标添加宏定义</h2>
 <div class="outline-text-2" id="text-8">
 <pre class="example">
 target_add_definitions(myexe PUBLIC MY_MACRO=XX )
@@ -188,8 +190,8 @@ target_add_definitions(myexe PUBLIC MY_MACRO=XX )
 </div>
 </div>
 
-<div id="outline-container-org2fde41b" class="outline-2">
-<h2 id="org2fde41b"><span class="section-number-2">9.</span> 为某目标添加编译选项</h2>
+<div id="outline-container-orga6b6ea7" class="outline-2">
+<h2 id="orga6b6ea7"><span class="section-number-2">9.</span> 为某目标添加编译选项</h2>
 <div class="outline-text-2" id="text-9">
 <pre class="example">
 target_compile_options(myexe PUBLIC -fopenmp
@@ -198,8 +200,8 @@ target_compile_options(myexe PUBLIC -fopenmp
 </div>
 
 
-<div id="outline-container-org55ff94f" class="outline-2">
-<h2 id="org55ff94f"><span class="section-number-2">10.</span> 全局添加宏定义</h2>
+<div id="outline-container-org8d0d94d" class="outline-2">
+<h2 id="org8d0d94d"><span class="section-number-2">10.</span> 全局添加宏定义</h2>
 <div class="outline-text-2" id="text-10">
 <pre class="example">
 add_definitions()
@@ -208,8 +210,8 @@ add_definitions()
 </div>
 
 
-<div id="outline-container-org72916f3" class="outline-2">
-<h2 id="org72916f3"><span class="section-number-2">11.</span> 每个CMakeLists的第二行: project()</h2>
+<div id="outline-container-org1a97301" class="outline-2">
+<h2 id="org1a97301"><span class="section-number-2">11.</span> 每个CMakeLists的第二行: project()</h2>
 <div class="outline-text-2" id="text-11">
 <div class="org-src-container">
 <pre class="src src-cmake">project(MyProject VERSION 1.0.0
@@ -227,12 +229,12 @@ add_definitions()
 
 
 
-<div id="outline-container-orga3d8397" class="outline-2">
-<h2 id="orga3d8397"><span class="section-number-2">12.</span> 局部变量</h2>
+<div id="outline-container-org9b48528" class="outline-2">
+<h2 id="org9b48528"><span class="section-number-2">12.</span> 局部变量</h2>
 <div class="outline-text-2" id="text-12">
 </div>
-<div id="outline-container-org55a69dc" class="outline-3">
-<h3 id="org55a69dc"><span class="section-number-3">12.1.</span> 定义变量</h3>
+<div id="outline-container-org673f475" class="outline-3">
+<h3 id="org673f475"><span class="section-number-3">12.1.</span> 定义变量</h3>
 <div class="outline-text-3" id="text-12-1">
 <pre class="example">
 set(MY_VAR "value" )
@@ -240,8 +242,8 @@ set(MY_VAR "value" )
 </div>
 </div>
 
-<div id="outline-container-orgdae7ef5" class="outline-3">
-<h3 id="orgdae7ef5"><span class="section-number-3">12.2.</span> 访问一个变量:</h3>
+<div id="outline-container-org7d34189" class="outline-3">
+<h3 id="org7d34189"><span class="section-number-3">12.2.</span> 访问一个变量:</h3>
 <div class="outline-text-3" id="text-12-2">
 <pre class="example">
 ${MY_VAR}
@@ -255,8 +257,8 @@ cmake中有作用域的概念, 这意味着一个定义在函数范围内/子目
 
 
 
-<div id="outline-container-orgf74f241" class="outline-3">
-<h3 id="orgf74f241"><span class="section-number-3">12.3.</span> 可以用 <code>set()</code> 定义一个list</h3>
+<div id="outline-container-org3894382" class="outline-3">
+<h3 id="org3894382"><span class="section-number-3">12.3.</span> 可以用 <code>set()</code> 定义一个list</h3>
 <div class="outline-text-3" id="text-12-3">
 <pre class="example">
 set(MY_LIST "first" "second" ) # 元素用空格分割
@@ -275,10 +277,6 @@ set(MY_LIST "first;second" ) # 这种方式也是等价的, 用分号.
 </div>
 </div>
 </div>
-</div>
-<div id="postamble" class="status">
-<p class="date">Created: 2022-05-18 三 12:02</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
 </html>

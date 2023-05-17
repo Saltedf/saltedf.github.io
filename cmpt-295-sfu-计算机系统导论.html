@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2023-05-16 二 23:52 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>计算机系统导论 risc-v</title>
+<meta name="generator" content="Org Mode" />
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
+<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
+<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script> -->
+<!-- <script> -->
+<!--   window.addEventListener('DOMContentLoaded', (event) => { -->
+<!--     const codeBlocks = document.querySelectorAll('.org-src-container'); -->
+
+<!--     codeBlocks.forEach((block) => { -->
+<!--       const pre = block.querySelector('pre'); -->
+<!--       const isHidden = block.classList.contains('org-src-hidden'); -->
+
+<!--       if (isHidden) { -->
+<!--         pre.style.display = 'none'; -->
+<!--       } else { -->
+<!--         const button = document.createElement('button'); -->
+<!--         button.textContent = '> Code'; -->
+<!--         button.addEventListener('click', () => { -->
+<!--           pre.style.display = pre.style.display === 'none' ? 'block' : 'none'; -->
+<!--         }); -->
+
+<!--         block.insertBefore(button, block.firstChild); -->
+<!--       } -->
+<!--     }); -->
+<!--   }); -->
+  <!-- </script> -->
+<style>
+  .org-src-container {
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .org-src-container .arrow {
+    display: block;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: transform 0.3s;
+  }
+
+  .org-src-container pre {
+    margin: 0;
+    display: none;
+  }
+
+  .org-src-container.open pre {
+    display: block;
+  }
+
+  .org-src-container.open .arrow {
+    transform: rotate(90deg);
+  }
+</style>
+<script>
+  window.addEventListener('DOMContentLoaded', (event) => {
+    const codeBlocks = document.querySelectorAll('.org-src-container');
+
+    codeBlocks.forEach((block) => {
+      const pre = block.querySelector('pre');
+      const isHidden = block.classList.contains('org-src-hidden');
+
+      if (isHidden) {
+        pre.style.display = 'none';
+      } else {
+        const arrow = document.createElement('span');
+        arrow.classList.add('arrow');
+        arrow.innerHTML = '&#9658;';
+
+        arrow.addEventListener('click', () => {
+          pre.style.display = pre.style.display === 'none' ? 'block' : 'none';
+          arrow.innerHTML = pre.style.display === 'none' ? '&#9658;' : '&#9660;';
+        });
+
+        block.insertBefore(arrow, block.firstChild);
+      }
+    });
+  });
+</script>
+</head>
+
+
+</head>
+<body>
+<div id="content" class="content">
+<h1 class="title">计算机系统导论 risc-v</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org07b119a">1. Labs</a></li>
+<li><a href="#org58e757f">2. Assignment</a>
+<ul>
+<li><a href="#org8d323fa">2.1. A1</a></li>
+</ul>
+</li>
+<li><a href="#orga136a52">3. Week1</a>
+<ul>
+<li><a href="#org9aef7e0">3.1. L1 数字系统</a></li>
+</ul>
+</li>
+<li><a href="#org93fa76e">4. Week2</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org07b119a" class="outline-2">
+<h2 id="org07b119a"><span class="section-number-2">1.</span> Labs</h2>
+</div>
+
+
+<div id="outline-container-org58e757f" class="outline-2">
+<h2 id="org58e757f"><span class="section-number-2">2.</span> Assignment</h2>
+<div class="outline-text-2" id="text-2">
+</div>
+<div id="outline-container-org8d323fa" class="outline-3">
+<h3 id="org8d323fa"><span class="section-number-3">2.1.</span> A1</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+<pre class="src src-python">cmake_minimum_required(VERSION 3.21)
+project(word-count C)
+
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#35774;&#32622;&#32534;&#35793;&#22120;</span>
+<span style="color: #c678dd;">set</span>(CMAKE_C_STANDARD 99)
+<span style="color: #c678dd;">set</span>(CMAKE_C_STANDARD_REQUIRED ON)
+<span style="color: #c678dd;">set</span>(CMAKE_C_COMPILER clang)
+
+add_compile_options(
+<span style="color: #98be65;">"-ggdb"</span> <span style="color: #5B6268;"># </span><span style="color: #5B6268;">gdb&#35843;&#35797;&#25903;&#25345;</span>
+<span style="color: #98be65;">"-m64"</span>  
+) 
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">add_compile_definitions(LINE_COUNT) # &#23439;&#23450;&#20041;</span>
+<span style="color: #5B6268;">## </span><span style="color: #5B6268;">add_compile_definitions(MACRO_CONSTANT_NAME=macro_value)</span>
+
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#29983;&#25104; compile_commands.json &#25991;&#20214;  for clangd</span>
+<span style="color: #c678dd;">set</span>(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include_directories(./include) <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#22836;&#25991;&#20214;&#30446;&#24405;</span>
+
+add_executable(test_strcmp.<span style="color: #c678dd;">bin</span>)
+target_sources(test_strcmp.<span style="color: #c678dd;">bin</span> PRIVATE
+  ./test_strcmp.c
+  ./str_cmp.c
+)
+
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">target_compile_options(test_strcmp.bin PRIVATE -ggdb)</span>
+<span style="color: #5B6268;"># </span><span style="color: #5B6268;">target_include_directories(YourExecutableName PRIVATE include)</span>
+
+
+add_executable(tokenize.<span style="color: #c678dd;">bin</span>)
+target_sources(tokenize.<span style="color: #c678dd;">bin</span> PRIVATE
+  ./tokenize.c
+  ./vector_char.c
+)
+
+
+add_executable(dictionary.<span style="color: #c678dd;">bin</span>)
+target_sources(dictionary.<span style="color: #c678dd;">bin</span> PRIVATE
+  ./dictionary.c
+  ./vector_char.c
+  ./vector_string.c
+  ./str_cmp.c
+)
+
+
+add_executable(linecount.<span style="color: #c678dd;">bin</span>)
+target_compile_definitions(linecount.<span style="color: #c678dd;">bin</span> PRIVATE LINE_COUNT) <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#23439;&#23450;&#20041;</span>
+target_sources(linecount.<span style="color: #c678dd;">bin</span> PRIVATE
+  ./linecount.c
+  ./vector_char.c
+  ./table_string.c
+  ./str_cmp.c
+)
+
+
+add_executable(duplicate.<span style="color: #c678dd;">bin</span>)
+target_sources(duplicate.<span style="color: #c678dd;">bin</span> PRIVATE
+  ./dedup.c
+  ./vector_char.c
+  ./table_string.c
+  ./duplicate.c
+  ./str_cmp.c
+)
+
+
+add_executable(unit_test_vector_char.<span style="color: #c678dd;">bin</span>)
+target_sources(unit_test_vector_char.<span style="color: #c678dd;">bin</span> PRIVATE
+  ./unit_test_vector_char.c
+  ./vector_char.c
+)
+
+
+
+add_executable(unit_test_table_string.<span style="color: #c678dd;">bin</span>)
+target_compile_definitions(unit_test_table_string.<span style="color: #c678dd;">bin</span> PRIVATE LINE_COUNT) <span style="color: #5B6268;"># </span><span style="color: #5B6268;">&#23439;&#23450;&#20041;</span>
+target_sources(unit_test_table_string.<span style="color: #c678dd;">bin</span> PRIVATE
+  ./unit_test_table_string.c
+  ./table_string.c
+  ./vector_char.c
+  ./str_cmp.c
+)
+
+</pre>
+</div>
+</div>
+
+
+<ol class="org-ol">
+<li><a id="org68ce1e1"></a>tokenize<br />
+<div class="outline-text-5" id="text-2-1-0-1">
+<div class="HIDE" id="org0cfb751">
+<p>
+
+</p>
+
+<p>
+这里放置你的代码块
+</p>
+
+</div>
+
+<div class="org-src-container">
+<pre class="src src-cpp">#+BEGIN_EXAMPLE
+  &#36825;&#37324;&#25918;&#32622;&#20320;&#30340;&#20195;&#30721;&#22359;
+#+END_EXAMPLE
+</pre>
+</div>
+
+
+<p>
+首先要实现用来存放字符的动态数组:
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #51afef;">struct</span> <span style="color: #ECBE7B;">vector_char</span> {
+  <span style="color: #ECBE7B;">uint32_t</span> <span style="color: #dcaeea;">len</span>; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#24403;&#21069;&#38271;&#24230;(&#24050;&#20351;&#29992;)</span>
+  <span style="color: #ECBE7B;">uint32_t</span> <span style="color: #dcaeea;">max</span>; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#26368;&#22823;&#23481;&#37327;</span>
+  <span style="color: #ECBE7B;">char</span> *<span style="color: #dcaeea;">data</span>; 
+};
+</pre>
+</div>
+
+<p>
+核心代码是扩容
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp">vector_char-&gt;data =
+    realloc(vector_char-&gt;data, <span style="color: #51afef;">sizeof</span>(<span style="color: #ECBE7B;">char</span>) * vector_char-&gt;max);
+</pre>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">"vector_char.h"</span>
+<span style="color: #51afef; font-weight: bold;">#include</span> <span style="color: #98be65;">&lt;stdio.h&gt;</span>
+
+<span style="color: #5B6268;">/* </span><span style="color: #5B6268;">Internal functions declared here . See bottom for definition</span><span style="color: #5B6268;"> */</span>
+<span style="color: #51afef;">static</span> <span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">_vector_char_expand</span>(<span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #dcaeea;">vector_char</span>);
+<span style="color: #51afef;">static</span> <span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">_free</span>(<span style="color: #ECBE7B;">void</span> *<span style="color: #dcaeea;">ptr</span>);
+
+<span style="color: #83898d;">/**</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@brief</span><span style="color: #83898d;"> Allocate header for describing vector chars. Initialize internal data</span>
+<span style="color: #83898d;"> * pointer to NULL</span>
+<span style="color: #83898d;"> *</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@return</span><span style="color: #83898d;"> vector_char_t*</span>
+<span style="color: #83898d;"> */</span>
+<span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #c678dd;">vector_char_allocate</span>(<span style="color: #ECBE7B;">void</span>) {
+  <span style="color: #83898d;">/** &#20026;&#21160;&#24577;&#25968;&#32452;&#32467;&#26500;&#20307;&#26412;&#36523;&#20998;&#37197;&#31354;&#38388;, &#23558;&#23481;&#37327;,&#38271;&#24230;&#21021;&#22987;&#21270;&#20026;0 */</span>
+  <span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #dcaeea;">header</span> = (<span style="color: #ECBE7B;">vector_char_t</span> *)malloc(<span style="color: #51afef;">sizeof</span>(vector_char_t));
+  <span style="color: #51afef;">if</span> (<span style="color: #51afef; font-weight: bold;">!</span>header)
+    <span style="color: #51afef;">return</span> <span style="color: #a9a1e1;">NULL</span>;
+
+  header-&gt;data = <span style="color: #a9a1e1;">NULL</span>;
+  header-&gt;len = header-&gt;max = 0;
+
+  <span style="color: #51afef;">return</span> header;
+}
+
+<span style="color: #83898d;">/**</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@brief</span><span style="color: #83898d;"> Clean up both the header describing vector_char and internal data</span>
+<span style="color: #83898d;"> *</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@param</span><span style="color: #83898d;"> vector_char</span>
+<span style="color: #83898d;"> */</span>
+<span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">vector_char_delete</span>(<span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #dcaeea;">vector_char</span>) {
+  <span style="color: #51afef;">if</span> (<span style="color: #51afef; font-weight: bold;">!</span>vector_char) <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#20026;&#31354;&#21017;&#30452;&#25509;&#36820;&#22238;</span>
+    <span style="color: #51afef;">return</span>;
+
+  <span style="color: #51afef;">if</span> (vector_char-&gt;max)
+    _free(vector_char-&gt;data); <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#37322;&#25918;&#23383;&#31526;&#24207;&#21015;</span>
+
+  _free(vector_char); <span style="color: #5B6268;">//</span><span style="color: #5B6268;">&#37322;&#25918;&#32467;&#26500;&#20307;&#26412;&#36523;</span>
+}
+<span style="color: #83898d;">/** &#22312;&#28155;&#21152;&#20803;&#32032;&#26102;&#36827;&#34892;&#25193;&#23481;&#30340;&#21028;&#26029;*/</span>
+<span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">vector_char_add</span>(<span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #dcaeea;">vector_char</span>, <span style="color: #ECBE7B;">char</span> <span style="color: #dcaeea;">entry</span>) {
+  <span style="color: #51afef;">if</span> (vector_char-&gt;len &gt;= vector_char-&gt;max)
+    _vector_char_expand(vector_char);
+
+  vector_char-&gt;data[vector_char-&gt;len++] = entry;
+}
+
+<span style="color: #83898d;">/**</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@brief</span><span style="color: #83898d;"> Get the character at a particular location</span>
+<span style="color: #83898d;"> *</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@param</span><span style="color: #83898d;"> vector_char</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@param</span><span style="color: #83898d;"> index</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@return</span><span style="color: #83898d;"> char</span>
+<span style="color: #83898d;"> */</span>
+<span style="color: #ECBE7B;">char</span> <span style="color: #c678dd;">vector_char_get</span>(<span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #dcaeea;">vector_char</span>, <span style="color: #ECBE7B;">uint32_t</span> <span style="color: #dcaeea;">index</span>) {
+  <span style="color: #51afef;">if</span> (index &gt; vector_char-&gt;len)
+    exit(EXIT_FAILURE);
+
+  <span style="color: #51afef;">return</span> vector_char-&gt;data[index];
+}
+
+<span style="color: #83898d;">/**</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@brief</span><span style="color: #83898d;"> returns the internal char array as a raw pointer</span>
+<span style="color: #83898d;"> * WARNING: Do not free on the outside. This will lead to inconsistent results</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@param</span><span style="color: #83898d;"> vector_char</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@return</span><span style="color: #83898d;"> char*</span>
+<span style="color: #83898d;"> */</span>
+<span style="color: #ECBE7B;">char</span> *<span style="color: #c678dd;">vector_char_get_array</span>(<span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #dcaeea;">vector_char</span>) {
+  <span style="color: #51afef;">return</span> vector_char-&gt;data;
+}
+
+<span style="color: #83898d;">/**</span>
+<span style="color: #83898d;"> * </span><span style="color: #a9a1e1;">@brief</span><span style="color: #83898d;"> Internal use only. User does not interact with these functions</span>
+<span style="color: #83898d;"> *</span>
+<span style="color: #83898d;"> */</span>
+<span style="color: #51afef;">static</span> <span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">_vector_char_expand</span>(<span style="color: #ECBE7B;">vector_char_t</span> *<span style="color: #dcaeea;">vector_char</span>) {
+  <span style="color: #51afef;">if</span> (<span style="color: #51afef; font-weight: bold;">!</span>vector_char-&gt;max) { <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#33509;max == 0, &#21017;&#35828;&#26126;data&#27809;&#26377;&#34987;&#20998;&#37197;&#31354;&#38388;</span>
+    vector_char-&gt;max = 16; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#20026;&#25968;&#32452;&#39318;&#27425;&#20998;&#37197;&#31354;&#38388;</span>
+    vector_char-&gt;data = malloc(vector_char-&gt;max * <span style="color: #51afef;">sizeof</span>(<span style="color: #ECBE7B;">char</span>));
+    <span style="color: #51afef;">if</span> (<span style="color: #51afef; font-weight: bold;">!</span>vector_char-&gt;data)
+      exit(EXIT_FAILURE);
+    <span style="color: #51afef;">return</span>;
+  }
+  <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#23558;&#24403;&#21069;&#23481;&#37327;&#25193;&#22823;&#20004;&#20493;,&#37325;&#26032;&#20998;&#37197;&#31354;&#38388;</span>
+  vector_char-&gt;max &lt;&lt;= 1;
+  vector_char-&gt;data =
+      realloc(vector_char-&gt;data, <span style="color: #51afef;">sizeof</span>(<span style="color: #ECBE7B;">char</span>) * vector_char-&gt;max);
+  <span style="color: #51afef;">if</span> (<span style="color: #51afef; font-weight: bold;">!</span>vector_char-&gt;data)
+    exit(EXIT_FAILURE);
+}
+
+<span style="color: #51afef;">static</span> <span style="color: #ECBE7B;">void</span> <span style="color: #c678dd;">_free</span>(<span style="color: #ECBE7B;">void</span> *<span style="color: #dcaeea;">ptr</span>) {
+  free(ptr);
+  ptr = <span style="color: #a9a1e1;">NULL</span>;
+}
+</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+
+
+<div id="outline-container-orga136a52" class="outline-2">
+<h2 id="orga136a52"><span class="section-number-2">3.</span> Week1</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+这门课程围绕着4个伟大的想法开展: 
+</p>
+
+<ol class="org-ol">
+<li>抽象层级</li>
+<li>局部性原理/ 内存层次</li>
+<li>并行(流水线)</li>
+<li>性能测量和优化</li>
+</ol>
+</div>
+
+
+<div id="outline-container-org9aef7e0" class="outline-3">
+<h3 id="org9aef7e0"><span class="section-number-3">3.1.</span> L1 数字系统</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+每个数字系统都有一个基数base, 它表示最多可以使用几个符号来表示数字.
+</p>
+
+<p>
+对十进制,可以使用10个符号:0-9.
+</p>
+
+<p>
+每个数字可以看成是有长度为N的符号序列, 从右往左,从0开始编号到 <code>N-1</code>.
+</p>
+
+<p>
+N位Base进制的数字的最大值是 \(Base^{N-1}\)
+</p>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+<div id="outline-container-org93fa76e" class="outline-2">
+<h2 id="org93fa76e"><span class="section-number-2">4.</span> Week2</h2>
+</div>
+</div>
+</body>
+</html>
