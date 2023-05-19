@@ -209,3 +209,9 @@ impl TryFrom<(i16, i16, i16)> for Color {
     }
 }
 #+end_src
+
+
+* day3 5.19
+
+学习 ~RISC-V~ 特权模式的基础内容, 看了对应的视频课, 做了笔记.
+

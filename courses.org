@@ -1,12 +1,15 @@
 #+startup: overview
 
-* 计算机系统基础csapp,
+* 计算机`系统基础csapp,
 + CMPT-295-SFU risc-v
   https://www.cs.sfu.ca/~ashriram/Courses/CS295//index.html
   https://www.cs.sfu.ca/~ashriram/Courses/CS295//videos.html
   https://www.bilibili.com/video/BV1pA411P79P
 + cs 61c
-  
+
+
++ risc-v
+  https://www.youtube.com/@JohnsBasement/playlists
 
 * 系统编程
  
@@ -115,6 +118,15 @@ n+ cs270 系统编程
 + linux  https://www.youtube.com/@cs310operatingsystemscours8
 + https://www.youtube.com/playlist?list=PL2Yggtk_pK6-R9ehjj0AoTnWrNOLChuld
 
++ xv6 in risc-v
+  https://www.youtube.com/watch?v=fWUJKH0RNFE&list=PLbtzT1TYeoMhTPzyTZboW_j7TPAnjv9XB
+
++ GWU OS https://www.youtube.com/playlist?list=PLVW70f0xtTUxHXRtZhGEJAiBDFx-ofc_G
++ cs134 https://www.youtube.com/@NeilRhodesHMC
++ https://www.youtube.com/watch?v=iOFmirsqC1o&list=PLsoEMNGAqtDPaLGSJjq8vSHLRls3SaQ9R&pp=iAQB
+
+
++ ECE 344 https://www.youtube.com/playlist?list=PLunILarQwxnnjX1C3MBfUkWtvAcJmYcRC
   
 * 编译器
 
