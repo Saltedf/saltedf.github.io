@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-05-17 三 12:04 -->
+<!-- 2023-05-19 五 09:49 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OS 2023 学习记录</title>
@@ -23,7 +23,260 @@
 <body>
 <div id="content" class="content">
 <h1 class="title">OS 2023 学习记录</h1>
+<div id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li><a href="#org12bcd2e">1. day1 5.17</a></li>
+<li><a href="#org64b7ad4">2. day2 5.18</a></li>
+</ul>
+</div>
+</div>
 
+
+<div id="outline-container-org12bcd2e" class="outline-2">
+<h2 id="org12bcd2e"><span class="section-number-2">1.</span> day1 5.17</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+完成了rustlings的50%.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">let</span> <span style="color: #dcaeea;">entry_mut_ref</span>  = map.entry(key).or_insert(init);
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #98be65;">"bar"</span>.repeat(n);
+</pre>
+</div>
+</div>
+</div>
+
+
+
+<div id="outline-container-org64b7ad4" class="outline-2">
+<h2 id="org64b7ad4"><span class="section-number-2">2.</span> day2 5.18</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+继续完成rustlings剩下的50%.
+</p>
+
+<p>
+这个错误处理的例子值得认真学习, 之前写的一些代码的错误处理太粗糙了.
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">use</span> <span style="color: #a9a1e1;">std</span>::<span style="color: #a9a1e1;">num</span>::<span style="color: #ECBE7B;">ParseIntError</span>;
+
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">This is a custom error type that we will be using in `parse_pos_nonzero()`.</span>
+<span style="color: #51afef; font-weight: bold;">#[derive(PartialEq, Debug)]</span>
+<span style="color: #51afef;">enum</span> <span style="color: #ECBE7B;">ParsePosNonzeroError</span> {
+    <span style="color: #ECBE7B;">Creation</span>(<span style="color: #ECBE7B;">CreationError</span>),
+    <span style="color: #ECBE7B;">ParseInt</span>(<span style="color: #ECBE7B;">ParseIntError</span>)
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">ParsePosNonzeroError</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">from_creation</span>(<span style="color: #dcaeea;">err</span>: <span style="color: #ECBE7B;">CreationError</span>) -&gt; <span style="color: #ECBE7B;">ParsePosNonzeroError</span> { <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt;&lt;====</span>
+        <span style="color: #ECBE7B;">ParsePosNonzeroError</span>::<span style="color: #ECBE7B;">Creation</span>(err)
+    }
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">TODO: add another error conversion function here.</span>
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">from_parseint</span>(<span style="color: #dcaeea;">err</span>: <span style="color: #ECBE7B;">ParseIntError</span>) -&gt; <span style="color: #ECBE7B;">ParsePosNonzeroError</span> {<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt;&lt;====</span>
+        <span style="color: #ECBE7B;">ParsePosNonzeroError</span>::<span style="color: #ECBE7B;">ParseInt</span>(err)
+    }
+}
+
+<span style="color: #51afef;">fn</span> <span style="color: #c678dd;">parse_pos_nonzero</span>(<span style="color: #dcaeea;">s</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">str</span>)
+    -&gt; <span style="color: #ECBE7B;">Result</span>&lt;<span style="color: #ECBE7B;">PositiveNonzeroInteger</span>, <span style="color: #ECBE7B;">ParsePosNonzeroError</span>&gt;
+{
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">TODO: change this to return an appropriate error instead of panicking</span>
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">when `parse()` returns an error.</span>
+    <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">x</span>: <span style="color: #ECBE7B;">i64</span> = s.parse().map_err(<span style="color: #ECBE7B;">ParsePosNonzeroError</span>::from_parseint)<span style="color: #c678dd; font-weight: bold;">?</span>; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt;&lt;====</span>
+    <span style="color: #ECBE7B;">PositiveNonzeroInteger</span>::new(x)
+        .map_err(<span style="color: #ECBE7B;">ParsePosNonzeroError</span>::from_creation)<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt;&lt;====</span>
+}
+
+<span style="color: #5B6268;">// </span><span style="color: #5B6268;">Don't change anything below this line.</span>
+
+<span style="color: #51afef; font-weight: bold;">#[derive(PartialEq, Debug)]</span>
+<span style="color: #51afef;">struct</span> <span style="color: #ECBE7B;">PositiveNonzeroInteger</span>(<span style="color: #ECBE7B;">u64</span>);
+
+<span style="color: #51afef; font-weight: bold;">#[derive(PartialEq, Debug)]</span>
+<span style="color: #51afef;">enum</span> <span style="color: #ECBE7B;">CreationError</span> {
+    <span style="color: #ECBE7B;">Negative</span>,
+    <span style="color: #ECBE7B;">Zero</span>,
+}
+
+<span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">PositiveNonzeroInteger</span> {
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">new</span>(<span style="color: #dcaeea;">value</span>: <span style="color: #ECBE7B;">i64</span>) -&gt; <span style="color: #ECBE7B;">Result</span>&lt;<span style="color: #ECBE7B;">PositiveNonzeroInteger</span>, <span style="color: #ECBE7B;">CreationError</span>&gt; {<span style="color: #5B6268;">// </span><span style="color: #5B6268;">&lt;&lt;====</span>
+        <span style="color: #51afef;">match</span> value {
+            x <span style="color: #51afef;">if</span> x &lt; 0 =&gt; <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">CreationError</span>::<span style="color: #ECBE7B;">Negative</span>),
+            x <span style="color: #51afef;">if</span> x == 0 =&gt; <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">CreationError</span>::<span style="color: #ECBE7B;">Zero</span>),
+            x =&gt; <span style="color: #ECBE7B;">Ok</span>(<span style="color: #ECBE7B;">PositiveNonzeroInteger</span>(x <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">u64</span>))
+        }
+    }
+}
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">fn</span> <span style="color: #c678dd;">some_func</span>(<span style="color: #dcaeea;">item</span>: <span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">SomeTrait</span> +  <span style="color: #ECBE7B;">OtherTrait</span> ) -&gt; <span style="color: #ECBE7B;">bool</span> {
+</pre>
+</div>
+
+
+
+
+
+<p>
+迭代器:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #83898d;">/// "hello" -&gt; "Hello"</span>
+<span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">capitalize_first</span>(<span style="color: #dcaeea;">input</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">str</span>) -&gt; <span style="color: #ECBE7B;">String</span> {
+    <span style="color: #51afef;">let</span> <span style="color: #51afef;">mut</span> <span style="color: #dcaeea;">c</span> = input.chars();
+    <span style="color: #51afef;">match</span> c.next() {
+        <span style="color: #ECBE7B;">None</span> =&gt; <span style="color: #ECBE7B;">String</span>::new(),
+        <span style="color: #ECBE7B;">Some</span>(first) =&gt; first.to_uppercase().chain(c).collect()
+    }
+}
+
+<span style="color: #83898d;">/// ["hello", " ", "world"] -&gt; "Hello World"</span>
+<span style="color: #51afef;">pub</span> <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">capitalize_words_string</span>(<span style="color: #dcaeea;">words</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span>[<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">str</span>]) -&gt; <span style="color: #ECBE7B;">String</span> {
+    words.iter().map(|w| capitalize_first(w))
+        .fold(<span style="color: #98be65;">""</span>.to_string(), | <span style="color: #51afef;">mut</span> acc,cur |{acc.push_str(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span>cur);acc })
+
+}
+</pre>
+</div>
+
+
+<p>
+Cow指针:
+</p>
+
+<p>
+Owned/Brorrowed
+</p>
+
+
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #83898d;">/// Clone : &amp;T -&gt; T</span>
+<span style="color: #83898d;">/// ToOwned&#26159;Clone&#30340;&#27867;&#21270;&#29256;&#26412;.&#32780;&#19981;&#26159;&#20165;&#20165;&#33021;&#20174; &amp;T &#24471;&#21040; T</span>
+<span style="color: #83898d;">/// &#36890;&#24120;&#26159;&#29992;&#20110;&#23558;&#21516;&#31181;&#35821;&#20041;&#30340;&#31867;&#22411;,&#20294;&#19968;&#20010;&#26159;&#21464;&#38271;&#31867;&#22411;(heap&#19978;&#20998;&#37197;), &#21478;&#19968;&#20010;&#26159;&#23450;&#38271;&#31867;&#22411;&#30340;(stack&#19978;&#20998;&#37197;),</span>
+<span style="color: #83898d;">/// &#29992;&#26469;&#23558;stack&#19978;&#20998;&#37197;&#30340;&#31867;&#22411;&#36716;&#20026;heap&#19978;&#20998;&#37197;&#30340;&#31867;&#22411;.</span>
+<span style="color: #51afef;">pub</span> <span style="color: #51afef;">trait</span> <span style="color: #ECBE7B;">ToOwned</span> {
+    <span style="color: #51afef;">type</span> <span style="color: #dcaeea;">Owned</span>: <span style="color: #ECBE7B;">Borrow</span>&lt;<span style="color: #ECBE7B;">Self</span>&gt;; <span style="color: #5B6268;">// </span><span style="color: #5B6268;">&#36825;&#20010;Owned&#31867;&#22411;&#24517;&#39035;&#33021;&#20135;&#29983;.borrow()Self&#31867;&#22411;&#30340;(&#19981;&#21487;&#21464;)&#20511;&#29992;</span>
+
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">Required method</span>
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">to_owned</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>) -&gt; <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Owned</span>;
+
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">Provided method</span>
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">clone_into</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>, <span style="color: #dcaeea;">target</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">mut</span> <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Owned</span>) { ... }
+}
+
+</pre>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">pub</span> <span style="color: #51afef;">trait</span> <span style="color: #ECBE7B;">Borrow</span>&lt;<span style="color: #ECBE7B;">Borrowed</span>&gt;
+<span style="color: #51afef;">where</span>
+    <span style="color: #dcaeea;">Borrowed</span>: <span style="color: #c678dd; font-weight: bold;">?</span><span style="color: #ECBE7B;">Sized</span>,
+{
+    <span style="color: #5B6268;">// </span><span style="color: #5B6268;">Required method</span>
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">borrow</span>(<span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #51afef;">self</span>) -&gt; <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">Borrowed</span>;
+}
+</pre>
+</div>
+
+<pre class="example">
+eg1: str实现了ToOwned,且type Owned = String. 因为String实现了Borrow,即String能产生&amp;str
+
+eg2: [T]实现了ToOwned,且type Owned = Vec&lt;T&gt;. 因为Vec&lt;T&gt;实现了Borrow,即Vec&lt;T&gt;能产生&amp;[T]
+
+eg3: Path实现了ToOwned,且type Owned = PathBuf. 因为PathBuf实现了Borrow,即 PathBuf 能产生&amp;Path
+</pre>
+
+
+<p>
+宏的定义必须在使用之前.
+</p>
+
+
+
+<p>
+<code>FromStr</code> : 字符串转T
+<code>str.parse::&lt;T&gt;()</code>
+</p>
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">FromStr</span> <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">Person</span> {
+    <span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">Err</span> = <span style="color: #ECBE7B;">ParsePersonError</span>;
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">from_str</span>(<span style="color: #dcaeea;">s</span>: <span style="color: #bbc2cf; background-color: #282c34;">&amp;</span><span style="color: #ECBE7B;">str</span>) -&gt; <span style="color: #ECBE7B;">Result</span>&lt;<span style="color: #ECBE7B;">Person</span>, <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Err</span>&gt; {
+        <span style="color: #51afef;">if</span> s.len() == 0 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">ParsePersonError</span>::<span style="color: #ECBE7B;">Empty</span>);
+        }
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">v</span> : <span style="color: #ECBE7B;">Vec</span>&lt;_&gt; = s.split(<span style="color: #98be65;">','</span>).collect();
+        <span style="color: #51afef;">if</span> v.len() != 2 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">ParsePersonError</span>::<span style="color: #ECBE7B;">BadLen</span>);
+        }
+        <span style="color: #51afef;">if</span> v[0].len() == 0 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">ParsePersonError</span>::<span style="color: #ECBE7B;">NoName</span>);
+        }
+        <span style="color: #51afef;">let</span> <span style="color: #dcaeea;">age</span> = v[1].parse::&lt;<span style="color: #ECBE7B;">usize</span>&gt;()
+            .map_err(<span style="color: #ECBE7B;">ParsePersonError</span>::<span style="color: #ECBE7B;">ParseInt</span>)<span style="color: #c678dd; font-weight: bold;">?</span>;
+
+        <span style="color: #ECBE7B;">Ok</span>(<span style="color: #ECBE7B;">Person</span>{
+            <span style="color: #dcaeea;">name</span> : v[0].to_string(),
+            age ,
+        })
+
+    }
+}
+</pre>
+</div>
+
+<p>
+<code>S: AsRef&lt;T&gt;</code> 从 <code>S</code> 可以得到 <code>&amp;T</code>
+<code>S: AsMut&lt;T&gt;</code> 从 <code>S</code> 可以得到 <code>&amp;mut T</code>
+</p>
+
+
+<p>
+<code>From&lt;T&gt;</code> : 从T类型对象中构造指定类似对象,无法成功构造时通常返回默认值 <code>default()</code>.
+</p>
+
+<p>
+<code>TryFrom</code> 类似于 <code>From</code> , 在无法构造对象时返回Err.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-rust"><span style="color: #51afef;">impl</span> <span style="color: #ECBE7B;">TryFrom</span>&lt;(<span style="color: #ECBE7B;">i16</span>, <span style="color: #ECBE7B;">i16</span>, <span style="color: #ECBE7B;">i16</span>)&gt; <span style="color: #51afef;">for</span> <span style="color: #ECBE7B;">Color</span> {
+    <span style="color: #51afef;">type</span> <span style="color: #ECBE7B;">Error</span> = <span style="color: #ECBE7B;">IntoColorError</span>;
+    <span style="color: #51afef;">fn</span> <span style="color: #c678dd;">try_from</span>(<span style="color: #dcaeea;">tuple</span>: (<span style="color: #ECBE7B;">i16</span>, <span style="color: #ECBE7B;">i16</span>, <span style="color: #ECBE7B;">i16</span>)) -&gt; <span style="color: #ECBE7B;">Result</span>&lt;<span style="color: #ECBE7B;">Self</span>, <span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Error</span>&gt; {
+
+
+        <span style="color: #51afef;">if</span> tuple.0 &gt; 255 || tuple.0 &lt; 0 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Error</span>::<span style="color: #ECBE7B;">IntConversion</span>);
+        }
+        <span style="color: #51afef;">if</span> tuple.1 &gt; 255 || tuple.1 &lt; 0 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Error</span>::<span style="color: #ECBE7B;">IntConversion</span>);
+        }
+        <span style="color: #51afef;">if</span> tuple.2 &gt; 255 || tuple.2 &lt; 0 {
+            <span style="color: #51afef;">return</span> <span style="color: #ECBE7B;">Err</span>(<span style="color: #ECBE7B;">Self</span>::<span style="color: #ECBE7B;">Error</span>::<span style="color: #ECBE7B;">IntConversion</span>);
+        }               
+
+        <span style="color: #ECBE7B;">Ok</span>(<span style="color: #ECBE7B;">Color</span> {
+            <span style="color: #dcaeea;">red</span> : tuple.0 <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">u8</span>,
+            <span style="color: #dcaeea;">green</span> : tuple.1 <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">u8</span>,
+            <span style="color: #dcaeea;">blue</span>: tuple.2 <span style="color: #51afef;">as</span> <span style="color: #ECBE7B;">u8</span>,
+        })
+    }
+}
+</pre>
+</div>
+</div>
+</div>
 </div>
 </body>
 </html>

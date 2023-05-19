@@ -65,6 +65,10 @@ n+ cs270 系统编程
   https://www.youtube.com/watch?v=GwII1AJzKN4  
   https://www.youtube.com/watch?v=x9Scb5Mku1g  
 ** 特定于Rust
+
++ 韩国 KAIST CS431: Concurrent Programming (无锁数据结构)
+  https://github.com/kaist-cp/cs431
+  
 + 异步运行时实现:
   https://night-cruise.github.io/async-rust/Introduction.html
 + async in depth https://www.youtube.com/watch?v=yfcJGEISsLc&t=2s
