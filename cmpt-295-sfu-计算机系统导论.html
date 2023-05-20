@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-05-16 二 23:52 -->
+<!-- 2023-05-20 六 22:25 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>计算机系统导论 risc-v</title>
@@ -39,84 +39,7 @@
              }
 });
 </script>
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script> -->
-<!-- <script> -->
-<!--   window.addEventListener('DOMContentLoaded', (event) => { -->
-<!--     const codeBlocks = document.querySelectorAll('.org-src-container'); -->
-
-<!--     codeBlocks.forEach((block) => { -->
-<!--       const pre = block.querySelector('pre'); -->
-<!--       const isHidden = block.classList.contains('org-src-hidden'); -->
-
-<!--       if (isHidden) { -->
-<!--         pre.style.display = 'none'; -->
-<!--       } else { -->
-<!--         const button = document.createElement('button'); -->
-<!--         button.textContent = '> Code'; -->
-<!--         button.addEventListener('click', () => { -->
-<!--           pre.style.display = pre.style.display === 'none' ? 'block' : 'none'; -->
-<!--         }); -->
-
-<!--         block.insertBefore(button, block.firstChild); -->
-<!--       } -->
-<!--     }); -->
-<!--   }); -->
-  <!-- </script> -->
-<style>
-  .org-src-container {
-    position: relative;
-    margin-bottom: 10px;
-  }
-
-  .org-src-container .arrow {
-    display: block;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 1;
-    transition: transform 0.3s;
-  }
-
-  .org-src-container pre {
-    margin: 0;
-    display: none;
-  }
-
-  .org-src-container.open pre {
-    display: block;
-  }
-
-  .org-src-container.open .arrow {
-    transform: rotate(90deg);
-  }
-</style>
-<script>
-  window.addEventListener('DOMContentLoaded', (event) => {
-    const codeBlocks = document.querySelectorAll('.org-src-container');
-
-    codeBlocks.forEach((block) => {
-      const pre = block.querySelector('pre');
-      const isHidden = block.classList.contains('org-src-hidden');
-
-      if (isHidden) {
-        pre.style.display = 'none';
-      } else {
-        const arrow = document.createElement('span');
-        arrow.classList.add('arrow');
-        arrow.innerHTML = '&#9658;';
-
-        arrow.addEventListener('click', () => {
-          pre.style.display = pre.style.display === 'none' ? 'block' : 'none';
-          arrow.innerHTML = pre.style.display === 'none' ? '&#9658;' : '&#9660;';
-        });
-
-        block.insertBefore(arrow, block.firstChild);
-      }
-    });
-  });
-</script>
-</head>
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
 <div id="content" class="content">
@@ -125,33 +48,38 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#org07b119a">1. Labs</a></li>
-<li><a href="#org58e757f">2. Assignment</a>
+<li><a href="#org6476e92">1. Labs</a></li>
+<li><a href="#org76fd83a">2. Assignment</a>
 <ul>
-<li><a href="#org8d323fa">2.1. A1</a></li>
+<li><a href="#org645c477">2.1. A1</a></li>
 </ul>
 </li>
-<li><a href="#orga136a52">3. Week1</a>
+<li><a href="#orgefc42ec">3. Week1</a>
 <ul>
-<li><a href="#org9aef7e0">3.1. L1 数字系统</a></li>
+<li><a href="#org449f6e5">3.1. L1 数字系统</a>
+<ul>
+<li><a href="#org2024778">3.1.1. 十进制 -&gt; B进制</a></li>
 </ul>
 </li>
-<li><a href="#org93fa76e">4. Week2</a></li>
+<li><a href="#org3decd09">3.2. L2 内存</a></li>
+</ul>
+</li>
+<li><a href="#orgefda994">4. Week2</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org07b119a" class="outline-2">
-<h2 id="org07b119a"><span class="section-number-2">1.</span> Labs</h2>
+<div id="outline-container-org6476e92" class="outline-2">
+<h2 id="org6476e92"><span class="section-number-2">1.</span> Labs</h2>
 </div>
 
 
-<div id="outline-container-org58e757f" class="outline-2">
-<h2 id="org58e757f"><span class="section-number-2">2.</span> Assignment</h2>
+<div id="outline-container-org76fd83a" class="outline-2">
+<h2 id="org76fd83a"><span class="section-number-2">2.</span> Assignment</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-org8d323fa" class="outline-3">
-<h3 id="org8d323fa"><span class="section-number-3">2.1.</span> A1</h3>
+<div id="outline-container-org645c477" class="outline-3">
+<h3 id="org645c477"><span class="section-number-3">2.1.</span> A1</h3>
 <div class="outline-text-3" id="text-2-1">
 <div class="org-src-container">
 <pre class="src src-python">cmake_minimum_required(VERSION 3.21)
@@ -243,9 +171,9 @@ target_sources(unit_test_table_string.<span style="color: #c678dd;">bin</span> P
 
 
 <ol class="org-ol">
-<li><a id="org68ce1e1"></a>tokenize<br />
+<li><a id="org64a4573"></a>tokenize<br />
 <div class="outline-text-5" id="text-2-1-0-1">
-<div class="HIDE" id="org0cfb751">
+<div class="HIDE" id="org10aef75">
 <p>
 
 </p>
@@ -391,8 +319,8 @@ target_sources(unit_test_table_string.<span style="color: #c678dd;">bin</span> P
 </div>
 
 
-<div id="outline-container-orga136a52" class="outline-2">
-<h2 id="orga136a52"><span class="section-number-2">3.</span> Week1</h2>
+<div id="outline-container-orgefc42ec" class="outline-2">
+<h2 id="orgefc42ec"><span class="section-number-2">3.</span> Week1</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 这门课程围绕着4个伟大的想法开展: 
@@ -407,8 +335,8 @@ target_sources(unit_test_table_string.<span style="color: #c678dd;">bin</span> P
 </div>
 
 
-<div id="outline-container-org9aef7e0" class="outline-3">
-<h3 id="org9aef7e0"><span class="section-number-3">3.1.</span> L1 数字系统</h3>
+<div id="outline-container-org449f6e5" class="outline-3">
+<h3 id="org449f6e5"><span class="section-number-3">3.1.</span> L1 数字系统</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 每个数字系统都有一个基数base, 它表示最多可以使用几个符号来表示数字.
@@ -426,19 +354,79 @@ target_sources(unit_test_table_string.<span style="color: #c678dd;">bin</span> P
 N位Base进制的数字的最大值是 \(Base^{N-1}\)
 </p>
 </div>
+
+<div id="outline-container-org2024778" class="outline-4">
+<h4 id="org2024778"><span class="section-number-4">3.1.1.</span> 十进制 -&gt; B进制</h4>
+<div class="outline-text-4" id="text-3-1-1">
+<p>
+\(B^n, B^{n-1},  B^{n-2} , .. , B^0\)
+</p>
+
+<p>
+十进制num转B进制, 从小于num的最大的 \(k*B^n\) 开始, k就是最高位.
+然后对 \(num - k * B^n\) 做相同的计算, 得到num的下一位.
+</p>
+</div>
+</div>
+</div>
+
+
+<div id="outline-container-org3decd09" class="outline-3">
+<h3 id="org3decd09"><span class="section-number-3">3.2.</span> L2 内存</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+内存可以看作是一个大数组, 这个数组的索引被称作地址.
+</p>
+
+<p>
+因此地址也是一个数字,可以被存放到内存中.
+</p>
+
+<p>
+而且有些值无法用一个字节表示(&gt;256),因此需要将多个字节看作一个"整体"来表示一个数.
+</p>
+
+
+<p>
+<b>机器字Word</b> 通常指的就是这多个字节组成的整体,它的长度和其能表示的最大地址范围有关.
+</p>
+
+<p>
+eg: x86系统使用了 <b>64位</b> 的机器字. 因此其能表示的最大地址空间是 \(2^64\) . 这是一个相当大的数字, 实际不会用到这么多内存. 因此实际的地址长度是48位.
+</p>
+
+
+<p>
+即便内存是按照机器字的大小被划分成一小块一小块, 但是其地址仍然是以字节为单位来表示的.
+eg: 0x00 和 0x08
+</p>
+
+
+<div id="org3246569" class="figure">
+<p><img src="org-images/2023-05-20_22-17-16_screenshot.png" alt="2023-05-20_22-17-16_screenshot.png" width="420px" />
+</p>
+</div>
+
+
+
+<p>
+用机器字作为基本单元来表示数据时,对那些较小的数可能会导致空间的浪费, eg: 数字1只使用了机器字的第一个字节,但总体上来看还是可以接受的.
+</p>
+
+
+
+<div id="orga12311e" class="figure">
+<p><img src="org-images/2023-05-20_22-25-23_screenshot.png" alt="2023-05-20_22-25-23_screenshot.png" width="320px" />
+</p>
+</div>
+</div>
 </div>
 </div>
 
 
 
-
-
-
-
-
-
-<div id="outline-container-org93fa76e" class="outline-2">
-<h2 id="org93fa76e"><span class="section-number-2">4.</span> Week2</h2>
+<div id="outline-container-orgefda994" class="outline-2">
+<h2 id="orgefda994"><span class="section-number-2">4.</span> Week2</h2>
 </div>
 </div>
 </body>

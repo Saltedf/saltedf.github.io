@@ -215,3 +215,57 @@ impl TryFrom<(i16, i16, i16)> for Color {
 
 学习 ~RISC-V~ 特权模式的基础内容, 看了对应的视频课, 做了笔记.
 
+* day4 5.20
+
+
+** 环境配置
+
+用中科院软件所的源编译安装了risc-v工具链.
+
+#+begin_src sh
+curl https://mirror.iscas.ac.cn/riscv-toolchains/git/riscv-collab/riscv-gnu-toolchain.sh | bash
+#+end_src
+
+参考: https://xiangshan-doc.readthedocs.io/zh_CN/latest/compiler/gnu_toolchain/ 
+
+
+在 QEMU 模拟器上成功运行 ~rCore-Tutorial-v3~.
+
+运行 ~usertests~ :
+
+#+begin_src
+...
+
+34 of sueecssed apps, 9 of failed apps run correctly. 
+Usertests passed!
+#+end_src
+
+
+
+** 阅读rcore-tutorial-book第一章
+
+
+#+begin_src
+给0x80200000打完断点，却无法持续执行到该位置的朋友，检查一下自己的qemu版本，若是7.2.x，通过 https://github.com/rustsbi/rustsbi-qemu 编译出支持 qemu-7.2 的 rustsbi-qemu.bin，作为启动的bootloader
+#+end_src
+
+#+begin_src
+Q: 
+.text : {
+        *(.text.entry)
+        *(.text .text.*)
+}
+
+请问这样为什么不会让 .text.entry 被加入两次呢？ 我觉得下面的 .text.text.*也能匹配 .text.entry 吧？
+
+A: 段只会被插入到它在链接脚本中首次被匹配到的位置。
+#+end_src
+
+
+
+#+begin_src
+Q: 关于内核的加载这里有一个疑问，如果说按照这里内核是直接进行从文件中进行拷贝过去(低版本qemu的行为)，那么是否会出现文件中相应片段大小小于实际在内存中占用大小的情况？（因为传统elf文件是有可能出现片段在文件中占用大小小于实际内存中大小的）
+
+
+A: 这种情况一般只出现在零初始化的.bss段，在ELF中可能有元数据记录该段的位置而不会真的有一个全零的数据段。可以看到我们在链接脚本中将.bss段置于最后，在加载的时候并不会拷贝一个全零数据段，而在内核中我们会通过clear_bss将其清零。
+#+end_src

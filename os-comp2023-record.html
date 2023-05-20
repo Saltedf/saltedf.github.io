@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2023-05-19 五 21:42 -->
+<!-- 2023-05-20 六 15:49 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>OS 2023 学习记录</title>
@@ -27,16 +27,22 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orgdf20351">1. day1 5.17</a></li>
-<li><a href="#orga5e8cfc">2. day2 5.18</a></li>
-<li><a href="#org7004d63">3. day3 5.19</a></li>
+<li><a href="#org744a4da">1. day1 5.17</a></li>
+<li><a href="#org2227bb5">2. day2 5.18</a></li>
+<li><a href="#org9dd7ed9">3. day3 5.19</a></li>
+<li><a href="#org454806f">4. day4 5.20</a>
+<ul>
+<li><a href="#orgbc42736">4.1. 环境配置</a></li>
+<li><a href="#org7a24a79">4.2. 阅读rcore-tutorial-book第一章</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-orgdf20351" class="outline-2">
-<h2 id="orgdf20351"><span class="section-number-2">1.</span> day1 5.17</h2>
+<div id="outline-container-org744a4da" class="outline-2">
+<h2 id="org744a4da"><span class="section-number-2">1.</span> day1 5.17</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 完成了rustlings的50%.
@@ -56,8 +62,8 @@
 
 
 
-<div id="outline-container-orga5e8cfc" class="outline-2">
-<h2 id="orga5e8cfc"><span class="section-number-2">2.</span> day2 5.18</h2>
+<div id="outline-container-org2227bb5" class="outline-2">
+<h2 id="org2227bb5"><span class="section-number-2">2.</span> day2 5.18</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 继续完成rustlings剩下的50%.
@@ -280,12 +286,83 @@ eg3: Path实现了ToOwned,且type Owned = PathBuf. 因为PathBuf实现了Borrow,
 </div>
 
 
-<div id="outline-container-org7004d63" class="outline-2">
-<h2 id="org7004d63"><span class="section-number-2">3.</span> day3 5.19</h2>
+<div id="outline-container-org9dd7ed9" class="outline-2">
+<h2 id="org9dd7ed9"><span class="section-number-2">3.</span> day3 5.19</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 学习 <code>RISC-V</code> 特权模式的基础内容, 看了对应的视频课, 做了笔记.
 </p>
+</div>
+</div>
+
+<div id="outline-container-org454806f" class="outline-2">
+<h2 id="org454806f"><span class="section-number-2">4.</span> day4 5.20</h2>
+<div class="outline-text-2" id="text-4">
+</div>
+<div id="outline-container-orgbc42736" class="outline-3">
+<h3 id="orgbc42736"><span class="section-number-3">4.1.</span> 环境配置</h3>
+<div class="outline-text-3" id="text-4-1">
+<p>
+用中科院软件所的源编译安装了risc-v工具链.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-sh">curl https://mirror.iscas.ac.cn/riscv-toolchains/git/riscv-collab/riscv-gnu-toolchain.sh | bash
+</pre>
+</div>
+
+<p>
+参考: <a href="https://xiangshan-doc.readthedocs.io/zh_CN/latest/compiler/gnu_toolchain/">https://xiangshan-doc.readthedocs.io/zh_CN/latest/compiler/gnu_toolchain/</a> 
+</p>
+
+
+<p>
+在 QEMU 模拟器上成功运行 <code>rCore-Tutorial-v3</code>.
+</p>
+
+<p>
+运行 <code>usertests</code> :
+</p>
+
+<pre class="example">
+...
+
+34 of sueecssed apps, 9 of failed apps run correctly. 
+Usertests passed!
+</pre>
+</div>
+</div>
+
+
+
+<div id="outline-container-org7a24a79" class="outline-3">
+<h3 id="org7a24a79"><span class="section-number-3">4.2.</span> 阅读rcore-tutorial-book第一章</h3>
+<div class="outline-text-3" id="text-4-2">
+<pre class="example">
+给0x80200000打完断点，却无法持续执行到该位置的朋友，检查一下自己的qemu版本，若是7.2.x，通过 https://github.com/rustsbi/rustsbi-qemu 编译出支持 qemu-7.2 的 rustsbi-qemu.bin，作为启动的bootloader
+</pre>
+
+<pre class="example">
+Q: 
+.text : {
+	*(.text.entry)
+	*(.text .text.*)
+}
+
+请问这样为什么不会让 .text.entry 被加入两次呢？ 我觉得下面的 .text.text.*也能匹配 .text.entry 吧？
+
+A: 段只会被插入到它在链接脚本中首次被匹配到的位置。
+</pre>
+
+
+
+<pre class="example">
+Q: 关于内核的加载这里有一个疑问，如果说按照这里内核是直接进行从文件中进行拷贝过去(低版本qemu的行为)，那么是否会出现文件中相应片段大小小于实际在内存中占用大小的情况？（因为传统elf文件是有可能出现片段在文件中占用大小小于实际内存中大小的）
+
+
+A: 这种情况一般只出现在零初始化的.bss段，在ELF中可能有元数据记录该段的位置而不会真的有一个全零的数据段。可以看到我们在链接脚本中将.bss段置于最后，在加载的时候并不会拷贝一个全零数据段，而在内核中我们会通过clear_bss将其清零。
+</pre>
+</div>
 </div>
 </div>
 </div>
