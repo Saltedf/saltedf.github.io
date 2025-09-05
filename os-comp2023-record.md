@@ -1,0 +1,238 @@
+# day1 5.17
+
+完成了rustlings的50%.
+
+``` rust
+let entry_mut_ref  = map.entry(key).or_insert(init);
+```
+
+``` rust
+"bar".repeat(n);
+```
+
+# day2 5.18
+
+继续完成rustlings剩下的50%.
+
+这个错误处理的例子值得认真学习, 之前写的一些代码的错误处理太粗糙了.
+
+``` rust
+use std::num::ParseIntError;
+
+// This is a custom error type that we will be using in `parse_pos_nonzero()`.
+#[derive(PartialEq, Debug)]
+enum ParsePosNonzeroError {
+    Creation(CreationError),
+    ParseInt(ParseIntError)
+}
+
+impl ParsePosNonzeroError {
+    fn from_creation(err: CreationError) -> ParsePosNonzeroError { // <<====
+        ParsePosNonzeroError::Creation(err)
+    }
+    // TODO: add another error conversion function here.
+    fn from_parseint(err: ParseIntError) -> ParsePosNonzeroError {// <<====
+    ParsePosNonzeroError::ParseInt(err)
+    }
+}
+
+fn parse_pos_nonzero(s: &str)
+    -> Result<PositiveNonzeroInteger, ParsePosNonzeroError>
+{
+    // TODO: change this to return an appropriate error instead of panicking
+    // when `parse()` returns an error.
+    let x: i64 = s.parse().map_err(ParsePosNonzeroError::from_parseint)?; // <<====
+    PositiveNonzeroInteger::new(x)
+        .map_err(ParsePosNonzeroError::from_creation)// <<====
+}
+
+// Don't change anything below this line.
+
+#[derive(PartialEq, Debug)]
+struct PositiveNonzeroInteger(u64);
+
+#[derive(PartialEq, Debug)]
+enum CreationError {
+    Negative,
+    Zero,
+}
+
+impl PositiveNonzeroInteger {
+    fn new(value: i64) -> Result<PositiveNonzeroInteger, CreationError> {// <<====
+        match value {
+            x if x < 0 => Err(CreationError::Negative),
+            x if x == 0 => Err(CreationError::Zero),
+            x => Ok(PositiveNonzeroInteger(x as u64))
+        }
+    }
+}
+```
+
+``` rust
+fn some_func(item: impl SomeTrait +  OtherTrait ) -> bool {
+```
+
+迭代器:
+
+``` rust
+/// "hello" -> "Hello"
+pub fn capitalize_first(input: &str) -> String {
+    let mut c = input.chars();
+    match c.next() {
+        None => String::new(),
+        Some(first) => first.to_uppercase().chain(c).collect()
+    }
+}
+
+/// ["hello", " ", "world"] -> "Hello World"
+pub fn capitalize_words_string(words: &[&str]) -> String {
+    words.iter().map(|w| capitalize_first(w))
+    .fold("".to_string(), | mut acc,cur |{acc.push_str(&cur);acc })
+
+}
+```
+
+Cow指针:
+
+Owned/Brorrowed
+
+``` rust
+/// Clone : &T -> T
+/// ToOwned是Clone的泛化版本.而不是仅仅能从 &T 得到 T
+/// 通常是用于将同种语义的类型,但一个是变长类型(heap上分配), 另一个是定长类型的(stack上分配),
+/// 用来将stack上分配的类型转为heap上分配的类型.
+pub trait ToOwned {
+    type Owned: Borrow<Self>; // 这个Owned类型必须能产生.borrow()Self类型的(不可变)借用
+
+    // Required method
+    fn to_owned(&self) -> Self::Owned;
+
+    // Provided method
+    fn clone_into(&self, target: &mut Self::Owned) { ... }
+}
+
+```
+
+``` rust
+pub trait Borrow<Borrowed>
+where
+    Borrowed: ?Sized,
+{
+    // Required method
+    fn borrow(&self) -> &Borrowed;
+}
+```
+
+    eg1: str实现了ToOwned,且type Owned = String. 因为String实现了Borrow,即String能产生&str
+
+    eg2: [T]实现了ToOwned,且type Owned = Vec<T>. 因为Vec<T>实现了Borrow,即Vec<T>能产生&[T]
+
+    eg3: Path实现了ToOwned,且type Owned = PathBuf. 因为PathBuf实现了Borrow,即 PathBuf 能产生&Path
+
+宏的定义必须在使用之前.
+
+`FromStr` : 字符串转T `str.parse::<T>()`
+
+``` rust
+impl FromStr for Person {
+    type Err = ParsePersonError;
+    fn from_str(s: &str) -> Result<Person, Self::Err> {
+    if s.len() == 0 {
+        return Err(ParsePersonError::Empty);
+    }
+    let v : Vec<_> = s.split(',').collect();
+    if v.len() != 2 {
+        return Err(ParsePersonError::BadLen);
+    }
+    if v[0].len() == 0 {
+        return Err(ParsePersonError::NoName);
+    }
+    let age = v[1].parse::<usize>()
+        .map_err(ParsePersonError::ParseInt)?;
+
+    Ok(Person{
+        name : v[0].to_string(),
+        age ,
+    })
+
+    }
+}
+```
+
+`S: AsRef<T>` 从 `S` 可以得到 `&T` `S: AsMut<T>` 从 `S` 可以得到
+`&mut T`
+
+`From<T>` : 从T类型对象中构造指定类似对象,无法成功构造时通常返回默认值
+`default()`.
+
+`TryFrom` 类似于 `From` , 在无法构造对象时返回Err.
+
+``` rust
+impl TryFrom<(i16, i16, i16)> for Color {
+    type Error = IntoColorError;
+    fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+
+
+    if tuple.0 > 255 || tuple.0 < 0 {
+        return Err(Self::Error::IntConversion);
+    }
+    if tuple.1 > 255 || tuple.1 < 0 {
+        return Err(Self::Error::IntConversion);
+    }
+    if tuple.2 > 255 || tuple.2 < 0 {
+        return Err(Self::Error::IntConversion);
+    }       
+
+    Ok(Color {
+        red : tuple.0 as u8,
+        green : tuple.1 as u8,
+        blue: tuple.2 as u8,
+    })
+    }
+}
+```
+
+# day3 5.19
+
+学习 `RISC-V` 特权模式的基础内容, 看了对应的视频课, 做了笔记.
+
+# day4 5.20
+
+## 环境配置
+
+用中科院软件所的源编译安装了risc-v工具链.
+
+``` bash
+curl https://mirror.iscas.ac.cn/riscv-toolchains/git/riscv-collab/riscv-gnu-toolchain.sh | bash
+```
+
+参考:
+<https://xiangshan-doc.readthedocs.io/zh_CN/latest/compiler/gnu_toolchain/>
+
+在 QEMU 模拟器上成功运行 `rCore-Tutorial-v3`.
+
+运行 `usertests` :
+
+    ...
+
+    34 of sueecssed apps, 9 of failed apps run correctly. 
+    Usertests passed!
+
+## 阅读rcore-tutorial-book第一章
+
+    给0x80200000打完断点，却无法持续执行到该位置的朋友，检查一下自己的qemu版本，若是7.2.x，通过 https://github.com/rustsbi/rustsbi-qemu 编译出支持 qemu-7.2 的 rustsbi-qemu.bin，作为启动的bootloader
+
+    Q: 
+    .text : {
+            *(.text.entry)
+            *(.text .text.*)
+    }
+
+    请问这样为什么不会让 .text.entry 被加入两次呢？ 我觉得下面的 .text.text.*也能匹配 .text.entry 吧？
+
+    A: 段只会被插入到它在链接脚本中首次被匹配到的位置。
+
+    Q: 关于内核的加载这里有一个疑问，如果说按照这里内核是直接进行从文件中进行拷贝过去(低版本qemu的行为)，那么是否会出现文件中相应片段大小小于实际在内存中占用大小的情况？（因为传统elf文件是有可能出现片段在文件中占用大小小于实际内存中大小的）
+
+
+    A: 这种情况一般只出现在零初始化的.bss段，在ELF中可能有元数据记录该段的位置而不会真的有一个全零的数据段。可以看到我们在链接脚本中将.bss段置于最后，在加载的时候并不会拷贝一个全零数据段，而在内核中我们会通过clear_bss将其清零。

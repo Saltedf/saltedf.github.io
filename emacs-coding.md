@@ -1,0 +1,50 @@
+# 文本文件显示异常( 中文utf-8编码 )
+
+emacs 打开包含中文的文本文件后中文显示为8进制
+但在vim等编辑器中却显示正常
+
+用下面的命令可以将读取编码硬换成 `utf-8` , 但指标不治本,
+下次打开显示依然异常.
+
+    M-x revert-buffer-with-coding-system
+
+    utf-8-unix
+
+网上有人遇到类似的问题,
+据说是因为文件中包含了空字节,导致文件被识别成了二进制文件.
+而emacs的默认行为是 “进行空字节检测”
+,这就导致了文本文件被识别成了二进制的数据文件.( file命令显示为data类型,
+而不是XX编码的文本文件 )
+
+解决思路有二:
+
+- 要么关闭emacs的"空字节检测" : `(setq inhibit-null-byte-detection t )`
+
+- 要么去除文本文件中的空字节: `sed -i s/"\x0"// FILE.TXT`
+
+**参考**
+
+- <https://emacs.stackexchange.com/questions/21467/getting-no-conversion-nil-encoding-each-time-when-opening-a-file-which-should>
+- <https://lists.gnu.org/archive/html/emacs-devel/2018-11/msg00071.html>
+
+# flycheck 入门
+
+显示所有问题： flycheck-list-errors
+
+# 快捷键查看
+
+C-h b c-h k
+
+# 标签页
+
+c-x t b/0/1/2
+
+c-m-space
+
+# 查看光标处字符对应的acsii码
+
+describe-char
+
+C-x =
+
+分别显示 10进制/8进制/16进制 形式的acsii码

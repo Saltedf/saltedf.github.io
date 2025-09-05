@@ -1,0 +1,163 @@
+# 简介
+
+`desktop-save-mode`
+
+`shift + 方向键` or `C-c C-t`: 切换 `todo/done`
+
+`shift+tab` 全文折叠
+
+## org文件header
+
+`C-c C-c` 使配置生效
+
+``` org
+#+STARTUP: indent  显示缩进,
+#+STARTUP: content  默认不显示标题下的内容
+#+STARTUP: showall 展开所有内容(不包含drawer)
+#+STARTUP: showeverything 展开所有, 包括drawer
+#+STARTUP: logdone 自动添加CLOSE (完成时间)
+           ;;(setq org-log-done 'time)
+```
+
+``` org
+#+TAGS: @rust(r)  @compiler(c)
+#+TODO: TODO(t) SCH(s) WAIT(w) | DONE(d) CANCELED(c) 
+```
+
+## 设置时间 \<2022-12-16 五 23:00-23:40\>
+
+- `C-c .` 在日历中设置激活时间 尖括号(在agenda中显示)
+- 静态时间(方括号) `[2020-11-01 日]` 输入日期后 `C-c C-c`
+  自动补充星期.(文本, 不显示在agenda中)
+- 在日期上按 `C-c .` 可修改时间. +1, 18, 07-18 ….
+- 时间区间(长): `<2022-12-16 五 23:00>--<2023-12-01 五>` 两次 `C-c .`
+- 小时区间 : `<2022-12-16 五 23:00-23:40>`
+- 用 `C-c C-c` 来格式化时间
+
+### 开始时间&截止时间
+
+1.  预计开始时间schedule: `C-c C-s`
+
+    `SCHEDULED: <2022-12-16 五 21:00>`
+
+2.  最后期限deadline: `C-c C-d`
+
+    `DEADLINE: <2022-12-16 五 23:00>`
+
+### (org-set-effort) 预计持续时长
+
+### 计时
+
+``` elisp
+(org-clock-in)
+(org-clock-out)
+```
+
+## gtd简介
+
+清空大脑, 调度任务, 明确下一步任务.
+
+### 任务分类流程
+
+1.  是否可执行?
+    - 否则:
+      - Trash: 不做了
+      - Someday/maybe: 暂时做不了, 没法做
+      - reference: 参考/收藏..
+2.  是否可一口气完成(非项目)
+    - 否则将其作为项目进行管理: "plan project"
+      (将其拆分为若干一步可执行的小任务)
+3.  所需时间是否超过两分钟?
+    - 不超过就马上开始!
+4.  是否一定要亲自去做?
+    - 否则加入到 "waiting for" 清单
+    - 新增一个交付任务
+5.  是否要在特定日期来做?
+    - 若是, 则记录到日历中
+    - 否则, 加入到 "context task" (执行清单?) ,设置schedule
+
+inbox/next-step/project/someday-maybe/wait-for/日历
+
+回顾: 重设时间, 删除任务, 及时更新清单!!!
+
+### 工作流
+
+1.  先看 org-agenda
+
+<img src="org-images/screenshot_2022-12-17_11-04-04.png" width="320" />
+
+## 设置tag
+
+`C-c C-c` 进行快速设置.
+
+<img src="org-images/screenshot_2022-12-16_15-26-24.png" width="320" />
+
+## agenda
+
+`C-c [` 将当前文件加入到agenda搜寻路径. 一般将 `C-c a` 设为
+`org-agenda:`
+
+- `a` 本周/今日计划
+  - 空格/tab: 显示详情
+  - t: 切换状态
+  - g: 刷新
+  - s: save
+
+`+ t` 所有todo事项
+
+## 归档 archieve
+
+`C-c $`
+
+将条目移动到同名文件加后缀archieve的另一文件中.
+
+## 动态生成图片
+
+``` dot
+digraph G {
+      hello->world
+      hello2
+      fuck
+      world2
+      hello2->world2
+  }
+```
+
+``` dot
+digraph graphname{ 
+    开始 -> {b c};
+    c -> e;
+    b -> d;
+
+    subgraph cluster_bc {
+        bgcolor=yellow;
+    b;
+    c;
+    }
+
+    subgraph cluster_de {
+
+    label="Block";
+    d;
+    e;
+    }
+}
+```
+
+## refile
+
+`C-c C-w` 移动当前条目到某条目下
+
+# Example
+
+## inbox
+
+### 读rust <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span>
+
+### 看cranelift源码 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span> <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span>
+
+## mytask \[2020-11-01 日\]
+
+hello mytask
+
+## mytask2 \<2022-12-16 五 19:00\>

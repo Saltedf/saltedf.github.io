@@ -1,0 +1,141 @@
+<span id="top"></span>
+
+gtd = get things done
+
+# emacs备忘
+
+## kill buffer: C-x k
+
+### 
+
+# org 入门
+
+## S-tab 对整个文件进行缩进
+
+## Tab 对特定标题下的内容进行展开/折叠
+
+## C-\<RET\> 自动创建和上面相同的标题
+
+## M-左/右 对标题的缩进进行调整
+
+## M-上/下 对标题所在行的位置进行调整
+
+## 用三组括号标记链接/图片
+
+``` org
+[[http://www.baidu.com][BAIDU]]
+```
+
+## 表格 行末按Tab
+
+| 发萨  | 发大萨  | 发大发大 |     |     |     |
+| --- | ---- | ---- | --- | --- | --- |
+| 发萨分 | 发大发大 | 发大发大 |     |     |     |
+|     |      |      |     |     |     |
+|     |      |      |     |     |     |
+
+## 任务状态切换 C-c C-t
+
+### <span class="todo TODO">TODO</span> task1
+
+### <span class="todo TODO">TODO</span> task2
+
+## 查看整个文件中的todo事项
+
+M-x org-show-todo-tree
+
+## 为todo事项添加子任务
+
+### <span class="todo TODO">TODO</span> some hige task \[0/3\] \[0%\] (用C-c C-c来刷新任务进度)
+
+- [ ] subtask1 (用C-c C-c切换子任务状态)
+- [ ] 发大发
+- [ ] newtsk
+
+## `C-c [` 将文件加入agenda列表中
+
+## `C-c ]` 将当前文件从agenda列表中移除
+
+### Mx org-agenda
+
+1.  t:查看所有todo事项
+
+2.  在todo事项中用t来切换状态
+
+3.  用q退出todo事项列表
+
+## 代码块
+
+    int main(){
+    std::cout << "hello" ;
+    }
+
+## C-c d/s 为任务设定开始和截止日期
+
++3d 5pm
+
++1m
+
++1w
+
+### <span class="todo TODO">TODO</span> sometask
+
+## `agenda` 来查看任务时间表
+
+M-x org-agenda -\> a
+
+f/b 来进行上下翻页
+
+n/p 上一行/下一行
+
+## `C-c C-e h` 将org导出为html
+
+`M-x org-html-export-to-html`
+
+# VSCode
+
+## C-S-p
+
+### open file
+
+### close edit :关闭当前文件
+
+### shortcuts
+
+### new untitled file 创建新文件
+
+### new window
+
+### open Folder :打开文件夹
+
+### open recent
+
+### add folder to workspace
+
+将其它位置的文件夹加入到当前工作区
+
+### save workspace as
+
+### prefer setting (ui/json) 设置
+
+## 选中范围内查找替换
+
+C-f/h M-l
+
+## 
+
+# Elisp
+
+## eval-expression M-: 对表达式进行求值
+
+## eval-buffer
+
+(concat) Connection string
+
+## variable
+
+(setq a 3) (setq b "abc") (+ 3 34)
+
+# hello <span id="hello"></span>
+
+[top](#top) [file:./index.org::end](./index.org::end)

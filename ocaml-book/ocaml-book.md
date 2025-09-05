@@ -1,0 +1,4218 @@
+# CS3110 练习题
+
+- [Ch2](./ch2/ex.org)
+- [Ch3](./ch3/exercises.org)
+- [Ch4](./ch4/ex.org)
+- [Ch5](./ch5/ex.org)
+
+# opam包管理器
+
+`opam install XX`
+
+``` bash
+opam install -y utop odoc ounit2 qcheck bisect_ppx menhir ocaml-lsp-server ocamlformat ocamlformat-rpc
+```
+
+# utop交互式解释器
+
+每次启动utop都会自动加载 `.ocamlinit` 文件，它会自动执行脚本，
+使得不用每次都手动加载库
+
+``` ocaml
+#use "topfind";;
+#thread;;
+#require "core.top";;
+
+```
+
+## Exit utop
+
+``` ocaml
+#quit;; 
+```
+
+``` ocaml
+exit 0;;
+```
+
+# 配置Emacs支持ocaml \| Configure EMACS supports Ocaml
+
+``` ocaml
+opam install tuareg ocp-indent merlin
+opam install user-setup
+opam user-setup install
+```
+
+# 编译ocamlc
+
+``` bash
+ocamlc -o test.byte test.ml 
+```
+
+这和gcc类似，不同的是它还会产生中间文件： `test.cmi test.cmo`
+
+## main()函数？
+
+ocaml中没有专门的main函数，文件（指的是dune中name命令指定的那个）中最后一个函数定义将作为整个程序的入口。
+
+## 构建系统Dune
+
+- 用dune创建项目根目录 Create a project root directory with dune
+
+  ``` bash
+  dune init project dirname
+  ```
+
+- create a file named dune in the project root directory
+
+  ``` elisp
+  (executable
+    (name XX) ;;XX为main函数所在文件的名字
+    ;;(libraries yyy) ;; eg: ounit2
+    )
+  ```
+
+- Generate executable file
+
+  ``` bash
+  dune build XX.exe 
+  ```
+
+- run project
+
+  ``` bash
+  # Manually
+  ./_build/default/XX.exe
+
+  # automatic
+  dune exec ./XX.exe
+  ```
+
+- Clean up the <sub>build</sub> directory
+
+  ``` bash
+  dune clean # remove the _build directory 
+  ```
+
+# ocaml的显著差别
+
+## 递归函数要用 `rec` 标记
+
+``` ocaml
+let rec append lst1 lst2 =
+  match lst1 with
+  | [] -> lst2
+  | h :: t -> h :: (append t lst2 )
+;;
+```
+
+## 严格区分整数和浮点数的运算：
+
+int： `0 + - * /  abs`
+
+float: ~0. +. -. \*. /. ~
+
+## 连接字符串: 用 `^`
+
+``` ocaml
+"hello" ^ "world" 
+```
+
+## 带类型注释的函数定义
+
+``` ocaml
+let func (a:int) (b: float) : string(*返回值*) =
+ ...
+```
+
+# let 不是表达式
+
+``` ocaml
+
+utop # let x = 3;;
+val x : int = 3
+
+utop # (fun x y -> x * y);;
+- : int -> int -> int = <fun>
+
+utop # (fun x y -> x * y) 4 5;;
+- : int = 20
+
+utop # let multf x y = x *. y;;
+val multf : float -> float -> float = <fun>
+
+utop # multf 1. 4.;;
+- : float = 4.
+```
+
+# let … in …表达式
+
+在utop环境下，所有的let定义都会被转化成层层嵌套的let..in..表达式。
+因此在表面上好像是支持了改变变量的值。
+
+There must be parentheses here:
+
+``` ocaml
+utop # let a = 19 in (fun x -> x + a)  19;;
+- : int = 38
+```
+
+本质上在ocaml中不存在多参函数，所谓的多参函数只是语法糖：
+
+``` ocaml
+utop # let multargs = fun x -> (fun y -> ( fun z -> x+y+z )) ;;
+val multargs : int -> int -> int -> int = <fun>
+
+utop # multargs 1 2 3 ;;
+- : int = 6
+
+utop # let same_as_multargs x y z = x+y+z ;;
+val same_as_multargs : int -> int -> int -> int = <fun>
+
+utop # same_as_multargs 1 2 3;;
+- : int = 6
+```
+
+范型：带撇的类型名 'a 'b
+
+``` ocaml
+utop # let foo = fun (n : int ) (x : 'a) (y : 'a) ->  if n > 0 then x else y ;;
+val foo : int -> 'a -> 'a -> 'a = <fun>
+
+utop # foo -1 "hello" "fuck" ;;
+Error: This expression has type int -> 'a -> 'a -> 'a
+but an expression was expected of type int
+
+utop # foo 3 "hello" "fuck" ;;
+- : string = "hello"
+
+utop # foo (-1)  "hello" "fuck" ;;
+- : string = "fuck"
+```
+
+# 运算符
+
+## 用括号定义标点符号
+
+## 运算符@@ 分隔开函数和参数
+
+主要是为了避免空格分割导致参数的识别不正常：
+
+``` ocaml
+utop[3]> succ 3;;
+- : int = 4
+utop[4]> succ 1 * 4 ;;
+- : int = 8
+utop[5]> succ (1 * 4) ;;
+- : int = 5
+utop[6]> succ @@ 1 * 4;;
+- : int = 5
+```
+
+## 运算符\|\> 管道符
+
+``` ocaml
+let (|>) x f = f x  ;;
+```
+
+``` ocaml
+  let foo x : int = x*x +1;;
+  val foo : int -> int = <fun>
+
+  utop[1]> foo 3;;
+  - : int = 10
+
+  utop[2]> 3 |> foo;;
+  - : int = 10
+
+utop[13]> succ (foo (foo 3));;
+- : int = 102
+utop[14]> 3 |> foo |> foo |> succ ;;
+- : int = 102
+```
+
+## 文档
+
+`(**  .. *)` 即是文档的格式。 用方括号包围起来的将会被导出为等宽字体。
+
+``` ocaml
+(** [args] *)
+```
+
+- 前置条件
+  对参数含义的描述，以及对合法参数的约束，对动态类型的语言可能还要加上对参数类型的描述
+- 后置条件： 对返回值的约定。对错误情况/异常抛出的约定
+
+## 打印
+
+print<sub>xxx</sub> :返回类型为unit.
+
+唯一一个类型是unit的值是 `()`
+类似于void，通常用于不关心输入参数/返回值时，这时候一般想利用函数的副作用。
+
+在let in中要求我们必须为值进行绑定： x = val
+对于返回类型为unit的函数：可以写成
+
+``` ocaml
+let _ = func args in ...
+```
+
+或者
+
+``` ocaml
+let () = func args in ...
+```
+
+``` ocaml
+#
+let ()  = print_endline "fuck" in 
+let ()  = print_endline "your" in 
+print_endline "mother" ;;
+```
+
+``` ocaml
+fuck
+your
+mother
+- : unit = ()
+```
+
+这种写法太繁琐了，可以像C中用逗号表达式分别对前面的表达式求值，但只将最后一个表达式的值返回。
+在Ocaml中是用 `;` 来分割的：
+
+``` ocaml
+"hello" ; 233  (* 这会发出警告 it will cause warnings*)
+```
+
+``` ocaml
+- : int = 233 
+```
+
+因此可写成更简单的形式，而不用写成嵌套的 let..in..
+
+``` ocaml
+print_endline "fuck";
+print_endline "your";
+print_endline "mother"  (* 最后一个表达式后面无分号！ *)
+```
+
+在分号表达式中，若前面被忽略值的表达式的类型不是unit，则会发出警告。
+通过ignore函数可以消除警告。
+
+(ignore "hello") ; 233
+
+``` ocaml
+let ignore x = ()  
+```
+
+可见，分号表达式的主要作用是串联前面几个产生副作用的表达式，并在最后一个表达式中返回值。
+
+### 格式化输出
+
+``` ocaml
+utop # Printf.printf "%s %F\n %!" "hello" 3.14 
+```
+
+``` ocaml
+hello 3.14
+ - : unit = ()
+```
+
+`%!` 用来刷写缓冲区，类似于std::endl
+
+`%F` 浮点数
+
+`%i` 整数
+
+### 格式化字符串
+
+Printf.sprintf 会产生一个string
+
+# list
+
+ocaml 中的list是同类型元素构成的单链表： `'a list` 。 in OCaml, the list
+is first class status
+
+ocaml 中的list是第一类的，这意味着有专门的语法支持list.
+每个list节点是一个pair. `[]` 表示空list.
+
+## 创建list
+
+有两种方式：
+
+- 通过 `::` 链接元素
+
+  必须在最后链接上一个空节点 `[]`
+
+  ``` ocaml
+  1::2::3::[]
+  ;;
+  ```
+
+- 通过方括号和分号
+
+  这种方式可以看作是上面那种方式的语法糖，可以省略链接空列表。
+
+  ``` ocaml
+  [1;2;3]
+  ;;
+  ```
+
+## 用 `@` 连接两个list
+
+``` ocaml
+let a = 1 :: 3 ::[] ;;
+let b = 2 :: 4 ::[] ;;
+
+a @ b ;;
+
+a @ [233] ;;
+```
+
+## 通过模式匹配 访问元素
+
+``` ocaml
+match XX with
+| pattern1 -> do something
+| pattern2 -> do something
+| _ ->  ...
+```
+
+所谓模式就是数据的形式（样子），比如list可以是空的，也可以是不空的。
+
+``` ocaml
+match lst with
+| [] -> 0
+| head :: tail -> head 
+```
+
+空list的形状就是 `[]` ，非空的列表意味着至少有一个有效元素： `e :: []`
+因此，其形状是 `head::tail` 。
+
+在一个模式中不能有两个同名的符号： `x::x`
+
+有两种特殊的模式： `_` 和 `x` (x是随便一个符号名）
+它们都能和任意的数据匹配上，不同之处在于匹配上的数据不会绑定到 `_`
+上，但是会绑定到 `x` 上。 也就是说，在 `->` 右侧能否引用匹配上的值。
+
+``` ocaml
+let rec length lst =
+  match lst with
+  | [] -> 0
+  | h :: t -> 1 + length t
+;;
+```
+
+在这个函数中的模式匹配里，第二个模式的 `h`
+是没有必要的，因为箭头后面根本就没有使用 `h`,
+
+`List.hd/List.tl` 分别能取出list的head和tail, 但是当他们作用于空列表
+`[]` 时，会抛出异常。
+而使用模式匹配的方式访问head/tail的好处是会强制你处理list的所有形式。
+
+## list的不可变
+
+在ocaml中，所有变量都是immutable，也就是无法被原地修改的。对list来说，只有被改变的元素才会被拷贝，而未改变的部分是共享的，不会发生额外的拷贝。
+
+eg：
+
+``` ocaml
+let incr_first (lst : int list) : int list =
+  match lst with
+  |[] -> []
+  |h::t -> (h+1) :: t
+;;
+
+```
+
+# 模式匹配
+
+`_` 是通配符，不会和值进行绑定。
+
+在模式匹配中主要做了两件事情：
+
+- 判断模式和给定的值是否匹配
+- 决定值的那些部分可以和模式中的变量名进行绑定 我们用 `h -> 1`
+  这样的写法表示变量绑定：变量h的值为1
+
+用这个记号来看模式：
+
+- 模式x能匹配上任何value： `x->value`
+- 模式 `_` 能和任何值匹配，但不进行绑定。
+- 模式 `[]` 匹配上空list ~\[\]~，它也没有绑定。
+- 模式 `[p1;...pn]` 能匹配上形如 `[v1;...vn]` 的值，并且有 `pi->vi` .
+
+## 模式匹配的求值规则（动态语义）
+
+``` ocaml
+match e with
+| p1 -> e1
+  ...
+| pn -> en
+;;
+```
+
+- 将表达式 `e` 求值为 `v`
+- 将v分别和 `p1` … `pn` 进行匹配。
+- 若v无法和任何模式匹配上，则会抛出 `Match_failure` 异常。
+- 否则，在第一个和v成功匹配的模式 `pi` 处停下，并用绑定 `pi -> v` 将
+  `ei` 中的 `pi` 替换掉，得到新的表达式 `e'`
+- 对表达式 `e'` 求值为 `v'`
+- 整个match表达式的值为 `v'`
+
+## 模式匹配静态语义
+
+### 类型推断/检查
+
+若 `e : ta` ，且 `pi:ta` , `ei:tb` , 则有： `match表达式 : tb`
+
+### match的分支是否完整包含了所有情况
+
+    [partial-match]: this pattern-matching is not exhaustive.
+
+这种警告会在分支未完全覆盖可能出现的所有模式时发出：
+
+``` ocaml
+ let head lst =
+   match lst with
+   | h::_ -> h
+(* | [] -> faliwith  "empty list"  *)
+ ;;
+```
+
+### match中是否包含无用分支
+
+``` ocaml
+let head lst =
+match lst with
+  | h::t -> h
+  | [x] -> x
+  | [] -> 0
+;;
+```
+
+因为模式h::t已经包括了模式\[x\]的情况，因此这时会发出警告：
+
+    [redundant-case]: this match case is unused.
+
+但稍微调整一下分支的顺序，就能使这个例子的警告消失：
+
+``` ocaml
+let head lst =
+match lst with
+  | [x] -> x
+  | h::t -> h
+  | [] -> 0
+;;
+```
+
+## 一些关于list的模式
+
+``` ocaml
+(* 至少含3个元素的list *)
+_::_::_::_
+(* 正好有两个元素的list *)
+_::_::[] 
+```
+
+## 用于函数定义的简化模式匹配
+
+- 最后一个参数是要进行匹配的，需要省略不写.
+- 用 `function` 代替 `match xx with` .
+
+``` ocaml
+let rec sum = function
+  | [] ->
+  | h::t -> h + sum t
+;;
+
+let rec sum lst =
+  match lst with
+  | [] -> 0
+  | h::t -> h + sum t
+;;
+```
+
+## 更多模式
+
+### 匹配上模式并满足when的条件
+
+`p when e` : 当和模式p匹配且e的值为true
+
+``` ocaml
+let first_zero = function 
+| [] -> true 
+| h::t when h = 0 -> true 
+| _ -> false 
+;;
+```
+
+``` ocaml
+let number_or_letter = function 
+  |'A' .. 'Z' | 'a' .. 'z' -> "letter" 
+  | '0' .. '9' -> "number"
+  | _ -> "??" 
+;;
+```
+
+这里有两个模式，一个是关于字符范围的，另一个是表示 OR 的。
+
+`'A' .. 'Z'` 表示从A-Z的任意一个字符。 `|` 表示或
+
+## let in 中的模式匹配
+
+在语法中 `let p=e in e1` p可以是模式，而不仅仅是一个标识符：
+
+``` ocaml
+let (a,b) = (1, 'c' ) in
+Printf.printf "%i,%c %!" a b
+;;
+```
+
+## 元组的模式匹配
+
+``` ocaml
+let thrid (_,_,x,_) = x ;;
+
+thrid 3,4,"hello", 5.0  ;; 
+```
+
+# 尾递归
+
+在函数定义中，从递归调用返回后没有其他计算.
+
+eg: sum函数
+
+这不是尾递归，因为从sum返回后还需要一次加法运算
+
+``` ocaml
+let rec sum n =
+  if n = 0 then 0
+  else n + sum (n-1)  
+;;
+```
+
+通过给递归函数增加一个参数 `res` 来保存中间结果使得它成为尾递归
+`tail recursion`
+
+``` ocaml
+let rec sum_tr res n  =
+  if n = 0 then res 
+  else sum_tr (res+n) (n-1) 
+;;
+
+let sum n =
+  sum_tr 0 n
+;;
+```
+
+本质上，这个递归版本的sum函数只是将规模为N的问题转化成了 `一个`
+规模为N-1的子问题，这种原问题和子问题之间的依赖关系只是一个链表结构，而不是一个树状结构。
+只有树状的关系才无法成为尾递归，而在sum函数这个例子中完全不需要在
+`sum(n-1)` 调用结束后再进行额外的计算来得到 `sum n`
+的结果，而是将这部分计算放到 `sum n-1` 中完成
+
+eg: 尾递归函数from产生从i ~ j 的列表
+
+``` ocaml
+
+let rec from i j lst  =
+  if j < i then lst 
+  else from i (j-1) (j :: lst)
+;;
+
+let ( -- ) i j =
+  from i j []
+;;
+
+
+(* Usage: *)
+1 -- 10 ;;
+```
+
+    - : int list = [1; 2; 3; 4; 5; 6; 7; 8; 9; 10]
+
+OCaml中有类似的函数
+
+    List.init  length  func  ==> [f 0;f 1;f 2;...;f (length-1) ] 
+
+``` ocaml
+let plus_one x = x + 1 ;;
+
+List.init 10 plus_one ;;
+```
+
+# 变体 \| Variants
+
+变体就像是能在enum中使用class的一种东西。
+
+Variant不能以大写字母开头！其下面的构造器名以大写字母开头！
+
+``` ocaml
+type basic_color = Red | Green | Blue  ;;
+
+let which_color  = function
+  | Red -> "red"
+  | Green -> "green"
+  | Blue -> "blue"
+;;
+```
+
+这些以大写字母开头的单词是构造器/标签Tag
+这些构造器Red能创建就是basic<sub>color类型的值</sub>，并保留了这个值是Red的信息。
+构造器能携带值，通过定义时加上 `Tag of ValueType`
+
+``` ocaml
+type  token = Ident of string  | Num of int  ;;
+```
+
+``` ocaml
+let tk = Ident "foo" ;;
+
+val tk : token = Ident "foo"
+```
+
+``` ocaml
+Num 233 ;;
+
+- : token = Num 233
+```
+
+仍能从变量tk中获得它是一个Id的信息。
+
+``` ocaml
+match tk with 
+|Ident name ->  name 
+|Num n -> string_of_int n 
+;;
+
+- : string = "foo"
+```
+
+## 额外携带数据的Variant也被叫做代数数据类型
+
+因为它包含了类型的sum product运算： 一个Varant值是多个构造器中的一种
+每个构造器能携带record/tuple类型。
+
+## 对Variant使用模式匹配的要点
+
+尽量避免使用 `_`
+,否则当增加Variant的选项后，很可能忘记修改match的代码来增加对应的新分支，
+因为 `_` 通配符会匹配上这个新模式。
+
+## Variant的递归定义
+
+``` ocaml
+type tnode   = EmptyNode | Node of  int   * tnode * tnode
+;;
+```
+
+``` ocaml
+ Node  (233 , (Node (123 ,EmptyNode,EmptyNode )) ,EmptyNode ) ;;
+
+- : tnode = Node (233, Node (123, EmptyNode, EmptyNode), EmptyNode)
+```
+
+## `and` 关键字使类型定义可以是互相递归的
+
+``` ocaml
+type node  = { value : int ; nextnode : int mylist}
+and  mylist = Nil | Node of int node
+;;
+(* 同时定义了一个 record 和一个 variant*)
+```
+
+``` ocaml
+ Node{ value = 123 ; nextnode = Node{value = 2333 ; nextnode = Nil } } 
+;;
+```
+
+``` ocaml
+type tnode = {value : int ; left : mytree ; right: mytree}
+and mytree = TNil | TNode of tnode
+;;
+```
+
+## Variants的参数多态
+
+带范型的Variants
+
+``` ocaml
+type 'a node  = { value : 'a ; nextnode : 'a mylist}
+and 'a mylist = Nil | Node of 'a node
+;;
+```
+
+当然，一个更清晰的版本是：
+
+``` ocaml
+type 'a mylist = Nil | Node of 'a * 'a mylist  ;;
+```
+
+``` ocaml
+Node ( 233 , Node (123, Nil)) ;;
+```
+
+**多个类型参数:**
+
+``` ocaml
+type ('a , 'b) mypair = {first :'a ;second :'b}
+;;
+```
+
+list/options 就是参数化Variant :
+
+``` ocaml
+let  'a list = [] | ( :: ) of 'a * 'a list
+;;
+```
+
+``` ocaml
+type 'a options = None | Some of 'a
+;;
+```
+
+## 多态Variant/匿名Variant
+
+当某些Variant只需要使用一次（eg
+作为返回值），这时候给它一个全局定义是没必要的。 这时需要匿名Variant：
+在构造器前面加上 `` ` ``
+
+``` ocaml
+let mydiv a b =
+  if b = 0 then `Inf
+  else `Num (a/b)
+;;
+```
+
+``` ocaml
+val mydiv : int -> int -> [> `Inf | `Num of int ] = <fun>
+```
+
+``` ocaml
+utop[41]> mydiv 2 3 ;;
+- : [> `Inf | `Num of int ] = `Num 0
+```
+
+``` ocaml
+utop[42]> mydiv 4 0 ;;
+- : [> `Inf | `Num of int ] = `Inf
+```
+
+# 和match天生一对的Options= Some/None
+
+在不用空指针的情况下表达“返回结果可能为空。
+
+``` ocaml
+let getstr  s =
+  if s = "" then None
+  else Some s
+;;
+```
+
+``` ocaml
+getstr "" ;;
+- : string option = None
+
+getstr "hello" ;;
+- : string option = Some "hello"
+```
+
+对需要处理值是Options的代码，需要用 `match` 进行匹配。
+
+``` ocaml
+let dealwiths s = match s with 
+  |None -> "there is nothing"
+  |Some x -> "this is " ^ x 
+;;
+```
+
+``` ocaml
+dealwiths (Some "a cat" ) ;;
+- : string = "this is a cat"
+
+dealwiths (getstr "") ;;
+- : string = "there is nothing"
+```
+
+None 的类型是 `'a option` , Some expr的类型是 `t option` (expr:t)
+用None表示返回一个空 + 模式匹配强制要求处理Options所有可能的模式 =
+强制要求检查返回值可能为空的场景。
+
+# 列表推导 \| List Comprehensions
+
+一种产生list的语法糖。
+
+# OUnit2
+
+首先创建dune项目
+
+``` bash
+dune init project yourproject
+```
+
+在dune中链接ounit2:
+
+``` dune
+(executable
+  (name test_xx)
+  (libraries ounit2))
+```
+
+创建测试文件 `test_xx.ml` 引入ounit2和被测试的模块
+
+``` ocaml
+open Xx
+open OUnit2
+
+```
+
+为某个函数/功能创建测试套件：
+
+``` ocaml
+"测试套件名" >::: [  (* 测试项list *) ] 
+```
+
+编写测试用例：
+
+``` ocaml
+"测试项目名" >:: (fun _ -> assert_xxx arg1 arg2 .. ) ;
+```
+
+运行一个测试套件：
+
+``` ocaml
+let _ = run_test_tt_main 测试套件 
+```
+
+完整例子：
+
+``` ocaml
+open OUnit2
+open Sum
+
+let tests = "test suite for sum" >::: [
+    "empty" >:: (fun _ -> assert_equal 0 (sum []) ) ;
+    "singleton" >:: (fun _ -> assert_equal 1 (sum [1]) ) ;
+    "two elements" >:: (fun _ -> assert_equal 3 (sum [1;2]));
+  ]
+
+let _ = run_test_tt_main tests 
+```
+
+## 打印测试用例出错时的值
+
+要给 `assert_xxx` 的 `printer` 参数传入一个输出字符串表达的函数，eg:
+`string_of_int`
+
+``` ocaml
+
+
+let mytsts = "test suite for some module" >::: [
+    "case1" >:: (fun _ -> assert_equal 0 (sum []) ~printer:string_of_int ) ;
+    ]
+```
+
+会输出：
+
+    expected: 0 but got: 1
+
+从这个打印结果能看出，assert的首个参数应该是期望的值。
+
+## 测试是否发出了异常
+
+``` ocaml
+"test case" >:: (fun _ -> assert_raise (异常对象) (fun () -> 能发出异常的表达式 ) ) 
+```
+
+``` ocaml
+open OUnit2
+open Stdlib   
+
+let raise_expection () =
+  raise (Failure "mytest")
+;;
+
+let mytests = "test suite" >::: [
+    "test-raise-exceptions" >:: (fun _ -> assert_raises
+                    (Failure "mytest") (fun () -> raise_expection ( ) ))
+  ]
+
+let _ = run_test_tt_main mytests ;; 
+```
+
+# Records & Tuples
+
+将几个数据放到一起的方式有两种：
+Records就像C中的结构体，主要特点是能按名字访问字段。
+Tuples不会给字段命名，而是通过位置来访问字段。 二者都是定长的类型。
+
+## Record定义
+
+``` ocaml
+type ptype = TNormal | TFire | TWater ;;
+
+type mon = {name : string ; hp : int ; ptype : ptype } ;;
+
+let c = {name = "bird" ;hp = 40 ; ptype = TNormal } ;;
+(* 字段的顺序可以和定义不一致 *)
+
+```
+
+## 访问Record的字段
+
+### 通过 `R.field`
+
+field只能是定义中提到的标识符，而不是表达式。
+
+若想要通过某些计算来动态获得字段名，应该使用 `map` 类型。
+
+``` ocaml
+c.name ;; 
+```
+
+### 通过模式匹配
+
+``` ocaml
+match c with
+  | { name=n; hp=h; ptype=t } -> n
+;;
+```
+
+## 从旧record中创建新record
+
+``` ocaml
+let new_c = { c with name = "world" ; hp = 123 } ;;
+```
+
+创建record拷贝，只是某些字段的值不同。
+
+## Tuple的定义
+
+``` ocaml
+type subject = string * int ;; 
+```
+
+用小括号和 `,` 来创建一个tuple变量。
+
+``` ocaml
+let t = (23,3.0,"hello") ;; 
+```
+
+`int * float * string` 是t的类型：
+
+``` ocaml
+val t : int * float * string = (23, 3., "hello)"
+```
+
+# 类型别名
+
+``` ocaml
+type point = float * float ;;
+type intlist = int list ;;
+
+```
+
+# 异常
+
+OCaml中的异常是一个 **可拓展** 的Variant.
+
+有了异常的概念后，我们能完整地描述OCaml表达式的 **动态语义** ：
+
+- 被计算为一个值 evaluates to a value
+- 发出异常 raises an expection
+- 无限循环 an infinite loop
+
+（因此在match的分支中要充分考虑到前两类）
+
+## 定义一个新的异常
+
+不携带数据：
+
+``` ocaml
+exception SomethingWrong  ;; 
+```
+
+携带数据的构造器
+
+``` ocaml
+exception MyException of int * string ;;
+```
+
+``` ocaml
+MyException (22, "err" ) ;; 
+
+- : exn = MyException(22, "err")
+```
+
+## 抛出异常
+
+raise是引发异常的通用手段。 failwith只能引发Failure这个类型的异常。
+
+### raise
+
+``` ocaml
+raise ( MyException (233,"error") ) ;;
+```
+
+注意raise的返回类型： `'a`
+这是一个范型，因为raise不会求值为某个值，而是抛出异常，因此它的作用是应付类型检查。
+在 if / match等结构中，都要求分支的类型相同。raise的返回类型为 `'a`
+使得正常返回值的分支和发出异常的分支能够相容。
+
+``` ocaml
+ raise ;;
+
+- : exn -> 'a = <fun>
+```
+
+### failwith
+
+``` ocaml
+failwith "xxx" ;;
+```
+
+等价于
+
+``` ocaml
+raise (Failure "xxx") ;;
+```
+
+## 捕获并处理异常
+
+用try with捕获异常后的行为应该是提供一个和表达式类型相同的值
+
+``` ocaml
+try 表达式 : T with
+| Exn1 -> e1 : T
+| Exn2 -> e2 : T
+;;
+```
+
+``` ocaml
+let raise_some_exn a b =
+  match a,b with
+  | 0,_ -> raise SomethingWrong 
+  | _,0 -> raise ( MyException ( (-1) , "div by 0" ) )
+  | _,_ -> a/b
+;;
+```
+
+`try with` 的目的是让异常消失，并在异常发生时赋予表达式一个值
+（类型要和表达式的相同）
+
+match则更加通用，分支的类型不必和被匹配的表达式的类型一致。
+
+``` ocaml
+let catch_exception a b = 
+  try
+    raise_some_exn a b
+  with
+  | SomethingWrong -> 0 
+  | MyException (i,s) -> 4611686018427387903
+;;
+```
+
+用match也能实现异常的捕获+处理，但更加麻烦：必须要写 `exception` ！
+
+``` ocaml
+match raise_some_exn 1 0 with 
+  | exception (MyException ( i,s)) -> (string_of_int i ) ^ s 
+  | exception SomethingWrong -> "something wrong"
+  | x  -> string_of_int x 
+;;
+
+
+match
+  try raise_some_exn 1 0 with (*根据发生的异常种类来为表达式赋以特殊值 *)
+  | SomethingWrong -> 0 
+  | MyException (i,s) ->  4611686018427387903 
+with (*根据返回值的形式来决定后续动作 *)
+| 0 -> "something wrong"
+|  4611686018427387903   -> "div 0"
+| x -> "result = " ^ string_of_int x
+;;
+```
+
+# 定义二叉树类型 Binary Tree
+
+Leaf表示空节点，即不存放值，仅作为占位使用。
+
+Node表示非空节点，是否为叶节点要看它是否有子节点。
+
+叶节点： `Node(value,Leaf,Leaf)` 非叶节点：左右子节点至少有一个不是
+`Leaf`
+
+## 用Tuples表示 \| representation with tuples
+
+### 定义
+
+``` ocaml
+type 'tp tree = 
+|Leaf 
+|Node of 'tp * 'tp tree * 'tp tree
+;;
+```
+
+### 创建对象
+
+``` ocaml
+let a_tree =  Node(2,
+  Node(1,Leaf,Leaf),
+  Node(3,Leaf,Leaf)
+) ;;
+```
+
+### 使用
+
+``` ocaml
+let rec size_of_tree t = 
+match t with 
+|Leaf -> 0
+|Node(_,l,r) -> 1 + size_of_tree l + size_of_tree r
+;;
+```
+
+## 用Records表示 \| representation with records
+
+### 定义
+
+``` ocaml
+type 'a tree = 
+|Leaf
+|Node of { v : 'a ; 
+           l : 'a tree ; 
+           r : 'a tree }
+;;
+```
+
+### 创建对象
+
+``` ocaml
+let a_tree = Node {v=2;
+           l= Node{v=1;l=Leaf;r=Leaf};
+           r= Node{v=3;l=Leaf;r=Leaf}
+          } 
+;;
+```
+
+### 使用方法，匹配tree对象
+
+``` ocaml
+let rec  size_of_tree tr = match tr with 
+  | Leaf ->  0
+  | Node{v=_;l=a;r=b} -> 1+ size_of_tree a + size_of_tree b 
+;;
+```
+
+（不要用 `val` 做变量名！）
+
+``` ocaml
+let rec is_member va t = match t with 
+|Leaf -> false 
+|Node {v=v;l=l;r=r} -> v=va || is_member va l || is_member va r 
+;;
+```
+
+先序遍历 preorder traversal
+
+``` ocaml
+let rec preorder (t :'a tree) :  'a list = 
+  match t with 
+  |Leaf -> []
+  |Node{v=v;l=l;r=r} -> [v] @ preorder l @ preorder r 
+;;
+```
+
+因append操作 `@` 开销太大（线性时间），因此改用 `::`
+来将每个节点的值加入list
+
+因此用一个输入参数res来记录上一次迭代过程的返回值
+
+    Node{v=1;l=Leaf;r=Leaf}   ==> [1]
+
+    [2;1;3] == 2::[1;3]   => 2::(1::[3])
+
+    [mid;l;r] => mid :: [l;r]   => mid::( l::( [r] ) )
+
+先被应用 `preorder()` 的节点 先将值加入 `res` 队首 因此位置最终更靠后。
+
+``` ocaml
+let rec preorder (res :'a list)  (t :'a tree) : 'a list = 
+  match t with 
+  |Leaf -> res  (* 不添加元素到res 即原样返回 *)
+  |Node{v=v;l=l;r=r} -> v::(preorder (preorder res r) l)
+;;
+```
+
+# 定义自然数类型 natural numbers
+
+## 定义 nat
+
+``` ocaml
+type nat = Zero | Nextnum of nat ;;
+```
+
+## 创建nat对象
+
+``` ocaml
+let zero = Zero 
+let one = Nextnum zero 
+let two = Nextnum one 
+let three = Nextnum two 
+let four = Nextnum three ;;
+```
+
+## 操作自然数
+
+### 是否为0
+
+``` ocaml
+let is_zero  = function
+  | Zero -> true
+  | Nextnum _ -> false
+;;
+```
+
+### 前驱？
+
+``` ocaml
+  let pred = function
+    | Zero -> None
+    | Nextnum rest -> Some rest
+  ;;
+(* ======================= *)
+  let pred_e = function
+    | Zero -> failwith "pred zero is undefined"
+    | Nextnum rest -> rest
+  ;;
+```
+
+### 加法运算
+
+``` ocaml
+let nat_add n1 n2 = match n1 with
+  |Zero -> n2
+  |Nextnum x -> nat_add x  (Nextnum n2)
+;;
+```
+
+### int和nat的相互转换
+
+``` ocaml
+let int_of_nat n = 
+  let rec int_of_nat_tr acc  = function
+    | Zero -> acc
+    | Nextnum x -> int_of_nat_tr (1+acc) x
+  in
+  int_of_nat_tr 0 n
+;;
+```
+
+``` ocaml
+let  nat_of_int i =
+  let rec nat_of_int_tr acc =  function
+  |n when n = 0  -> acc 
+  |n when n > 0 -> nat_of_int_tr (Nextnum acc)  (n-1) 
+  |_  -> failwith "n cannot be postived"
+  in
+  nat_of_int_tr Zero i
+;;
+```
+
+注意这里模式中使用了 `when` ，因此最后要有一个通配模式 `_` .
+否则将会有警告，即使模式包含了在逻辑上存在的所有情况：
+
+``` ocaml
+.... = function
+  |n when n = 0  -> acc 
+  |n when n > 0 -> nat_of_int_tr (Nextnum acc)  (n-1) 
+  |n when n < 0  -> failwith "n cannot be postived"
+;;
+```
+
+这种写法仍然会有警告：
+
+    [partial-match]: this pattern-matching is not exhaustive.
+
+# 高阶函数
+
+在OCaml中，函数和普通的值处于同一地位。
+所谓高阶函数，就是将函数作为参数/返回值的函数。
+
+## 将函数作为参数
+
+``` ocaml
+let double x = 2 * x ;; (* 两倍 *) 
+
+(* 四倍 *)
+let fourth x = double ( double x) ;; 
+let fourth' x = x |> double |> double ;;
+```
+
+``` ocaml
+let square x = x*x ;; (* 平方 *)
+
+(* 四次方 *)
+let quad x = square (square x) 
+let quad' x = x |> square |> square ;;
+```
+
+上面这两个例子有某种相似之处：都apply某个函数两次
+因此可以编写一个高阶函数，它将某函数f应用两次到参数上。
+
+``` ocaml
+let apply_twice f x = f (f x) 
+let apply_twice' f x = x |> f |> f ;;
+```
+
+因此可以重写上面的函数：
+
+``` ocaml
+let fourth x = apply_twice double x ;;
+
+let quad x = apply_twice square x ;;
+```
+
+## 将函数作为返回值
+
+``` ocaml
+apply_twice double ;;
+
+- : int -> int = <fun>
+```
+
+通过部分应用apply<sub>twice</sub>，返回了一个新的函数
+
+## 更多的高阶函数例子
+
+### apply
+
+``` ocaml
+let apply f x = f x ;;
+```
+
+### pipeline
+
+``` ocaml
+let pipeline x f = f x 
+let (|>) = pipeline ;;
+```
+
+### compose
+
+``` ocaml
+let compose f g x = f (g x) ;;
+```
+
+usage:
+
+``` ocaml
+let square_then_double = compose double square ;;
+```
+
+### both
+
+``` ocaml
+let both f g x = (f x,g x)
+```
+
+### cond
+
+``` ocaml
+let cond p f g x =
+  if p then f x else g x ;;
+```
+
+## map/reduce
+
+map/reduce 是典型的高阶函数，在逻辑上它们都接收一个函数作为参数。
+map将输入的函数/运算应用到list的每个元素上，并返回一个由运算结果构成的list
+reduce利用输入的函数/操作将list中的元素合成为一个结果
+
+### map
+
+map将一个list映射为另一个list
+
+``` ocaml
+let rec addone = function
+  |[] -> []
+  |h::t -> (h+1) :: (addone t)
+;;
+
+let rec concat_3110 = function
+  |[] -> []
+  |h::t -> (h^ "3110" ) :: (concat_3110 t)
+;;
+```
+
+这两个函数都是将列表中的某个元素变换成另一个，并返回由这些新元素构成的列表。
+它们的形式也是十分相似的：将变换后的首个元素 链接上
+(递归调用list的剩余部分）
+
+因此我们能通过抽取出相同的代码，形成一个新的函数，不同的部分作为参数传入，这就是
+`map` / `transform` 。
+
+``` ocaml
+let rec map(*transform*) func = function
+  |[] -> []
+  |h::t -> (func h) :: (map func t)
+;;
+```
+
+OCaml中已经有库函数 `List.map` (在C++中Map函数是 `std::transform` )
+
+通过map重新定义上面的两个函数 （部分应用map）
+
+``` ocaml
+let addone' = map (fun x -> x+1)
+let concat_3110' = map (fun s -> s ^ "3110" )
+;;
+```
+
+将int list转换为string list
+
+``` ocaml
+let strlist_of_intlist = map string_of_int ;;
+```
+
+1.  利用副作用来观察map的作用顺序
+
+    我们自己实现的map函数是有点问题的。
+
+    ``` ocaml
+    let p x = print_int x; print_newline(); x+1
+
+    let lst = map p [1;2]
+    ;;
+    ```
+
+    执行结果如下：
+
+        2
+        1
+
+        val lst : int list = [2; 3]
+
+    虽然 `+1`
+    的转换结果是正确的，但我们期望的从左到右输出list元素却不符合预期，打印顺序是刚好相反的。
+    原因出在我们的 `map`
+    实现上，对递归定义的函数来说，先调用的后执行。因此最后一个元素是最先被输出的。
+
+    我们再来看这个map的实现：
+
+    ``` ocaml
+    let rec map(*transform*) func = function
+       |[] -> []
+       |h::t -> (func h) :: (map func t)
+     ;;
+    ```
+
+    原因在于 (func h) 这个表达式晚于 `(map func t)` 被求值。
+    在OCaml中子表达式的求值顺序是不确定的，这要依赖于具体实现，在这个地方能发现其求值顺序是从右到左的。
+    因此我们要想个办法强制让 `(func h)` 先执行： 使用 `let` ！！
+
+    ``` ocaml
+    let rec map func = function
+      |[] -> []
+      |h::t -> let hh = (func h) in hh::(map func t)
+    ;;
+    ```
+
+    List.map的行为就和这个新的map相同。因此最好使用这个库函数。
+
+    **副作用是对求值顺序敏感的**
+    ，输出和抛出异常都属于副作用，这时要注意求值顺序（let）
+
+2.  map和尾递归
+
+    想使用尾递归的目的是优化执行时间，很容易能写出一个尾递归的map
+
+    ``` ocaml
+    let map func lst =
+      let rec map_tr acc func = function
+        |[] -> acc
+        |h::t -> map_tr (acc @ [func h]) func t 
+      in
+      map_tr [] func lst
+    ;;
+    ```
+
+        千万注意 =@= 的操作数是两个list，因此对一个元素用 =@= 前要将它用 =[]= 包裹起来。
+
+    但是这个实现中有个很扎眼的 `@`
+    尾部追加，它导致了线性时间。因此整个算法的时间大概是
+    O(n<sup>2</sup>)
+    因此我们采用对list的惯用操作：先用cons创建list，再反转list
+
+    ``` ocaml
+    let map func lst =
+      let rec map_tr acc func = function
+        |[] -> List.rev acc
+        |h::t -> map_tr (acc @ [func h]) func t 
+      in
+      map_tr [] func lst
+    ;;
+    ```
+
+### 抽象原则
+
+抽取出重复出现的代码模式，不要重复编写它们。
+不同的东西作为参数，让使用者负责传入。
+
+### fold
+
+将一个list映射为一个新的list元素。标准库中提供了 `fold` 函数
+
+``` ocaml
+let rec sum = function
+  |[] -> 0
+  |h::t -> h + (sum t)
+
+let rec concat = function
+  |[] -> ""
+  |h::t -> h ^ (concat t)
+;;
+```
+
+同样能发现重复出现的模式：
+
+不同之处在于，这两个函数是将一个二元运算施加到 首个元素 和
+（递归调用list的剩余部分）
+
+将相同的模式抽出作为函数体，将不同的部分设为参数，让使用者负责提供：
+
+``` ocaml
+let rec fold_right op init = function
+  |[] -> init
+  |h::t -> op  h (fold_right op init t)
+;;
+```
+
+同样重写上面两个函数：
+
+``` ocaml
+let sum' = fold_right 0 ( + )
+
+let concat' = fold_right "" ( ^ )
+;;
+```
+
+1.  尾递归的fold
+
+    ``` ocaml
+    let fold op init lst = 
+      let rec fold_tr acc op  = function 
+        |[] -> acc 
+        |h::t -> fold_tr (op h acc) op t
+      in
+       fold_tr init op lst 
+      ;; 
+    ```
+
+2.  fold的结合性
+
+    在这个函数中我们观察op作用到list中的元素的顺序，由于后调用的函数先返回（栈的性质：先进后出，后进先出）
+    因此后面的reduce调用会先进行计算，反应到list中的元素的计算顺序就是：从list尾部的元素开始向头部进行op运算：
+    也可以说，运算op是右结合的。
+
+    有一个库函数反应了这一点：
+
+    ``` ocaml
+    List.fold_right f list init ;;
+    ```
+
+    它计算过程是
+
+    ``` ocaml
+    List.fold_right f [a;b;c] init == f a (f b (f c init)) 
+    ```
+
+    这种fold（reduce）就是上面实现过的函数：
+
+    ``` ocaml
+    let rec fold_right init f  = function
+        |[] -> init
+        |h::t -> f h (fold init f t)
+    ;;
+    ```
+
+    对称地，也有一个库函数： `List.fold_left`
+    ，它从list头部向list尾部应用op运算。
+
+    ``` ocaml
+    let fold_left init f lst =
+      let rec impl acc f = function
+        |[] -> acc
+        |h::t -> impl (f acc h) f t
+      in
+      impl init f lst
+    ;;
+    ```
+
+    务必要注意那些不满足“结合性”的运算，对这种运算要严格区分“从右侧开始折叠”/“从左侧开始折叠”的概念。
+    （如：减法）
+
+    另外，对于满足结合性的运算，优先考虑使用fold<sub>left</sub>，因为它是尾递归（迭代）。
+    对于那些仅满足右结合性的运算，若不想使用非尾递归的 `fold_right`
+    ，则可以将list反转（ `List.rev` ），再对其进行 `fold_left`
+
+    综合这些，可归纳出这两种版本的fold函数的异同：
+
+    - fold<sub>left和foldright的求值顺序不同</sub>
+    - fold<sub>left是尾递归</sub>, 而fold<sub>right则不是</sub>
+    - 两个函数的list元素类型和acc/init类型是无关的,
+      并且返回类型都是acc/init的类型.
+
+3.  用标签参数辅助函数调用
+
+    不论是那种fold函数, 在使用他们的时候会发现有时候很难记得参数的顺序
+    (以及类型) 更不用说比它们更复杂的函数了.
+    因此一个不依赖参数顺序的函数调用方式是很有用的
+    而标签参数则能做到这点, 只需要在传入参数时同时指明参数名称即可. 如:
+    标准库中有模块 `ListLabels` , 这里定义了带标签版本的fold函数
+
+    ``` ocaml
+    ListLabels.fold_left ;;
+
+    - : f:('a -> 'b -> 'a) -> init:'a -> 'b list -> 'a = <fun> 
+    ```
+
+    从返回的类型来看, 三个参数中有两个是标签参数: `f` 和 `init`
+
+    ``` ocaml
+    ListLabels.fold_left [1;2;3] ~init:1 ~f: (fun x y -> x*y)  ;; 
+    ```
+
+    可以换成另外一种顺序:
+
+    ``` ocaml
+    ListLabels.fold_left  ~f: (fun x y -> x*y)  [1; 2; 3]  ~init:1;; 
+    ```
+
+4.  作为标签参数的函数
+
+    若一个标签参数表示一个函数, 并且要限制函数也是一个声明含标签参数
+    和普通的声明不同, 区别在于这种函数的表示中不用为其标签参数名前面加上
+    `~` `~标签: 参数本身` `~op: (f:  acc:'a -> elt:'b -> 'a)` 注意,
+    为op传入的函数必须在对应位置也是有标签参数的.
+
+    带标签参数的fold<sub>left</sub>
+
+    ``` ocaml
+    let rec fold_left ~init:acc ~op:(f : acc:'a-> e: 'b -> 'a) lst = match lst with
+      |[] -> acc
+      |h::t -> fold_left ~init:(f ~acc:acc ~e:h)   ~op:f  t
+    ;;
+    ```
+
+    尤其注意这个定义要求传入op的函数的两个参数都是要带标签的,
+    并且标签分别是 acc 和 e .因此这个op无法接收 `( * )` ,
+    因为它是不带有指定标签的.
+
+    ``` ocaml
+    let s = fold_left  ~op:( + ) ~init:0 [1;2;3] ;;
+                           ^^^^^
+    Error: This expression has type int -> int -> int
+        but an expression was expected of type acc:int -> e:'a -> int
+    ```
+
+    解决这个问题可以为加法重新定义一个带标签的函数:
+
+    ``` ocaml
+    let add ~acc:x ~e:y = x+y ;;
+    ```
+
+    而下面这个实现则取消了对标签参数op的限制,
+    它可以是任何满足这个类型的函数, 其参数是无需带有标签的 (注意op和f)
+
+    ``` ocaml
+    let rec  fold_left' ~init:acc ~op:(f : 'a -> 'b -> 'a) lst = match lst with
+      |[] -> acc
+      |h::t -> fold_left' ~init:(f acc h)  ~op:f t
+    ;;
+    ```
+
+    因此这个版本能够接收 `( * )` :
+
+    ``` ocaml
+    let s = fold_left' ~op:( + ) ~init:0 [1;2;3] ;;
+
+    val s : int = 6
+    ```
+
+5.  应用fold的例子
+
+    fold函数不仅能完成一些"求和"的计算, 也能用来实现filter和map.
+
+    ``` ocaml
+    let length lst =
+      fold_left (fun len _ -> len+1) 0 lst ;;
+
+    let rev lst =
+      fold_left (fun e acc -> e::acc) [] lst ;;
+    ```
+
+    注意下面这两个函数的实现都采用了fold<sub>right</sub>(从右到左),
+    这是因为传入的函数采用了cons来合并结果,
+    这样最终返回的list的顺序才和原来一致.
+
+    ``` ocaml
+    let map f lst =
+      fold_right (fun e acc-> (f e)::acc) [] lst ;;
+
+    let filter p lst =
+      fold_right (fun e acc-> if p e then e::acc else acc) [] lst ;;
+    ```
+
+    在OCaml标准库中,这两个函数不是用fold实现的.可能这样的可读性更好.
+    另一方面, 用fold实现其它函数避免了自己写递归函数.
+
+6.  对比使用递归/fold/库函数的三种方案
+
+    要编写一个作用在 bool list上的and函数,有三种写法:
+
+    ``` ocaml
+    let rec list_and_rec = function
+      |[] -> true
+      |h::t -> h && list_and_rec t
+    ;;
+
+    let list_and_fold lst =
+      fold_left (fun e acc -> acc && e ) true lst
+    ;;
+
+    let list_and_lib lst =
+      List.for_all (fun x -> x) lst
+    ;;
+    ```
+
+    因为实现中包含了短路与,因此第一种和第三种的实现在某个元素为false时就会立即返回.
+    而第二种仍要遍历整个list.
+
+### filter
+
+过滤：接收一个函数作为谓词，将list中满足谓词的元素组成的新list返回。
+
+从list中过滤出奇数/偶数
+
+``` ocaml
+let rec evens = function
+  |[] -> []
+  |h::t -> if (h mod 2) == 0 then h::(evens t) else  t
+;;
+
+let rec odds = function
+  |[] -> []
+  | h::t -> if (h mod 2) != 0 then h::(odds t) else t
+;;
+```
+
+显然这两个函数几乎就是一样的，因此将相同的部分抽取出来作为函数体，不同的部分提取为参数
+
+``` ocaml
+let rec filter p = function
+  |[] -> []
+  |h::t -> if (p h) then h::(filter p t) else filter p t
+;;
+```
+
+``` ocaml
+let evens = filter (fun i -> (i mod 2) = 0 )
+let odds = filter (fun i -> (i mod 2) != 0 )
+;;
+```
+
+目前这个filter函数不是尾递归的，可以将它改写成尾递归版本。
+一般地改写成尾递归的方法如下：
+
+1.  为递归定义的函数增加一个 acc 参数，作为每次的累计值。
+2.  为递归的平凡情况返回acc
+3.  在每次递归调用时更新acc
+
+``` ocaml
+let filter p lst = 
+  let rec impl acc p = function
+    |[] -> List.rev acc 
+    |h::t -> impl (if (p h) then h::acc else acc) p t 
+  in
+  impl [] p lst 
+;;
+```
+
+这个例子不完全符合上面的三步，主要是为了避免使用list的添加到尾部的操作（线性时间）
+而选择了用 `::`
+(cons)来更新acc，因此最后得到acc的顺序是反的，最后返回时需要List.rev来反转列表。
+
+### tree版本的map/fold/filter
+
+``` ocaml
+type 'a tree =
+    Leaf
+  | Node of 'a * 'a tree * 'a tree
+;;
+```
+
+``` ocaml
+let rec tree_map func = function
+  |Leaf -> Leaf
+  |Node (v,l,r) -> Node( (func v),(tree_map func l),(tree_map func r) )
+;;
+```
+
+``` ocaml
+let rec tree_fold init op = function
+  | Leaf -> init
+  | Node (v,l,r) -> op v (tree_fold init op l) (tree_fold init op r) 
+;;
+```
+
+这个fold的区别在于op是一个三元运算, 第一个参数是当前节点的值,
+第二三个参数是左右子树的递归计算结果
+
+应用tree<sub>fold</sub>:
+
+``` ocaml
+let size t =
+  tree_fold 0 (fun _ l r -> 1+l+r)  t
+;;
+```
+
+``` ocaml
+let depth t =
+  tree_fold 0 (fun _ l r -> 1+ (max l r)) t
+;;
+```
+
+用先序遍历的方式生成list
+
+``` ocaml
+let preorder t =
+  tree_fold [] (fun e l r -> [e] @ l @ r ) t
+;;
+```
+
+### 流水线 (流式操作 管道符)
+
+来考虑计算 1<sup>2</sup> + … + n<sup>2</sup> 用递归
+
+``` ocaml
+let sum_square n =
+  let rec loop acc i  =
+    if i>n then acc
+    else loop acc+(i*i) (i+1)
+  in
+  loop 0 1
+;;
+```
+
+也可以用流式操作+fold/map 先需要有一个容器:1,…,n
+
+``` ocaml
+let ( -- ) i j =
+  let rec loop acc i j =
+    if i>j then acc
+    else loop (j::acc) i (j-1)
+  in
+  loop [] i j
+;;
+```
+
+在对这个list作用上fold/map运算
+
+``` ocaml
+let sum_square n =
+  (1 -- n) |> (fold_left (fun acc e -> acc+e*e) 0) 
+;;
+```
+
+下面这个版本虽然没有直接用fold的简洁,但是含义更加清楚:
+
+``` ocaml
+let sum = fold_left (fun acc e -> acc+e) 0 ;;
+
+let sum_square n =
+   (1 -- n) |> map (fun e -> e*e) |> sum
+;;
+```
+
+不过下面这两个版本上在实现上都有缺陷:
+每次递归调用fold/map时都要重新求值参数 `(1 -- n)` 可以用 `let`
+修正这一点:
+
+``` ocaml
+let sum_square n =
+  let lst = (1 -- n) in
+  lst |> (fold_left (fun acc e -> acc+e*e) 0) 
+ ;;
+
+let sum_square n =
+  let l = (1 -- n) in 
+   l |> map (fun e -> e*e) |> sum
+;;
+```
+
+总结来看,目前let有两个用法:
+
+- 避免重复计算同一变量
+- 提前计算某些表达式 (改变子表达式的计算顺序)
+
+### curried和uncurried
+
+我们知道在OCaml中的多参函数实际上只是语法糖,本质上只是层层嵌套的单参匿名函数.
+这种单参函数的嵌套形成的函数被称为curried函数.
+反之,下面这两个函数不是curried函数
+
+``` ocaml
+let f (x,y) = x+y
+
+let g t = fst t + snd t 
+```
+
+它们的类型是:
+
+``` ocaml
+int * int -> int = <fun>
+```
+
+参数是tuple类型的.
+在逻辑上这两个函数也是接收两个参数的.这种多参函数被叫做uncurried函数.
+
+采用curried函数的好处是这种函数允许 **部分应用** .
+
+偶尔需要在curried函数和uncurried之间相互转换:
+
+``` ocaml
+let curried f x y = f (x,y) ;;
+
+let uncurried f (x,y) = f x y ;;
+```
+
+# 模块
+
+引入模块的动机就是希望能将代码分成一个个能被单独理解和编写的部分。
+这样就能做到"局部推理":
+只需要思考一个模块的编写和它如何与剩下部分的程序进行通信的契约.
+提供模块的抽象需要有语言的支持：
+
+- 命名空间 ：structure
+- 接口：signature
+  为使用者提供关于模块的功能,并隐藏实现细节(可看作是structure的类型)
+- 封装：abstract type ( 以及signatures )
+- 代码重用：include:更智能的复制粘贴, 可以只引入一部分代码 / functor:
+  从旧模块中产生新模块.
+
+module ModuleName = module<sub>expression</sub>
+这是准确的定义module语法, 右侧的表达式不一定是struct开头的,
+也可以是一个已经定义过的模块:
+
+``` ocaml
+module Alias = List ;;
+```
+
+## `struct` 关键字
+
+### 用struct创建模块
+
+用module关键字将名字绑定到一个module值上.可以将module看作是特殊的 `let`
+struct的名字必须是以大写字母开头的
+
+``` ocaml
+module Myspace = struct
+  let inc x = x+1
+  type color = Red|Green|Blue
+  exception Oops
+
+  module NestedSpace = struct
+    exception DivideByZero 
+    type frac = ( :: ) of int * int
+
+    let ( + ) (a::b) (x::y) =
+  if b=0 || y==0 then raise DivideByZero
+  else (a*y + x*b)::(b*y)
+    let ( * ) (a::b)  (x::y) =
+  if b=0 || y==0 then raise DivideByZero
+  else (a*x) :: (b*y)
+    let ( - ) (a::b) (x::y) =  (a::b) + ((0-x)::y) 
+    let ( / ) (a::b) (x::y) = (a::b) * (y::x) 
+
+  end
+
+end
+```
+
+1.  在struct中使用双分号 `;;`
+
+    下面这段是无法通过编译的
+
+    ``` ocaml
+    module M = struct
+      let x = 0
+      assert (x != 0)
+    end ;;
+    ```
+
+    而在中间加上一个 `;;` 就能通过编译
+
+    ``` ocaml
+     module M = struct
+      let x = 0 ;;
+      assert (x != 0)
+    end ;; 
+    ```
+
+    或者也有不加分号的解决方案
+
+    ``` ocaml
+    module M = struct
+      let x = 0 
+      let _ =  assert (x != 0)
+    end ;; 
+    ```
+
+### struct module的语义
+
+模块不能作为参数/返回值，也不能用let绑定到某个名字上。
+
+- 求值
+
+从上到下依次对每个定义进行求值，最后返回一个module类型的值，它绑定了名字和值
+而后又将module值绑定到 `module MyName` 中的名字上。
+因此被依赖的定义要写在前面.
+
+``` ocaml
+module M = struct
+  let y = 1
+  let x = y
+end
+```
+
+模块中也允许相互递归的定义:
+
+``` ocaml
+module M = struct
+
+  let rec even = function |0 -> true |n-> odd(n-1)
+  and odd = function |1 -> true |n -> even(n-1)
+
+end
+```
+
+### 使用struct模块中的定义
+
+``` ocaml
+Myspace.myfunc ....
+```
+
+在使用中有个麻烦的问题是，若出现的多个定义同属于同一模块时，没有必要每次都加上命名空间前缀。
+有3个方法能避免重复书写struct模块名：
+
+- 1\. `open` 关键字
+
+**函数定义open**
+
+``` ocaml
+let retval =
+  let open MyStack in
+  Empty |> push 3 |> top
+;;
+```
+
+**在structure内open** 使得在此模块内可以不加前缀地引用该模块中的定义
+
+``` ocaml
+module MyStruct = struct
+  open List
+  open String (* 也定义了map *)
+
+  let to_upper = List.map uppercase_ascii 
+end
+```
+
+这里因为两个模块中都有map函数的定义.
+因此后open的String.map会遮挡List.map的定义
+因此这里最好的做法是不要用任何open
+
+**全局open**
+
+``` ocaml
+open MyStack (* 到文件末尾 *)
+let val = Empty |> push 3 |> push 4 |> top 
+```
+
+全局open相当于对模块中的每个定义都用let重新绑定了一个简短的新名字
+
+``` ocaml
+open String
+let length = String.length
+let get = String.get
+    ...    ...
+```
+
+在OCaml中有个默认被open的模块是 `Stdlib.`
+
+- 2\. 在表达式之前加上 `MyName.`
+
+``` ocaml
+let t = MyTree. Node(2,Leaf,Leaf) ;;
+```
+
+编译器能自行推断出Node/Leaf所属的命名空间
+
+- 3\. 为变量添加类型注释
+
+``` ocaml
+let t : int MyTree.tree = Node(2,Leaf,Leaf) ;;
+```
+
+### 例子 ListStack
+
+``` ocaml
+module ListStackImpl = struct
+
+  type 'a stack =
+    |Empty 
+    |Entry of 'a * 'a stack
+
+  let empty = Empty
+
+  let push e stk = Entry(e,stk)
+
+  let pop = function
+    |Empty -> Empty
+    |Entry(_,rest) ->  rest
+
+  let peek = function
+    |Empty -> None
+    |Entry(top, _ )-> Some top
+
+  let peek_exn = function
+    |Empty -> failwith "Empty Stack"
+    |Entry(top,_) -> top
+
+end
+;;
+```
+
+两种使用module的方式
+
+``` ocaml
+# let open MyStack in 
+  empty |> push 2 |> push 3 |> push 4 |> peek ;;
+
+  - : int option = Some 4
+```
+
+``` ocaml
+# MyStack. (empty |> push 2 |> push 3 |> push 4 |> peek) ;;
+
+- : int option = Some 4
+```
+
+这里实现是一个函数式数据结构，这意味着任何对数据结构的操作都无法修改它的数据，而是创建一个新的数据结构对象。
+我们称这种数据结构是持久的。
+
+### 例子 ListQueue <span id="ListQueue"></span>
+
+用list实现queue
+
+``` ocaml
+ module ListQueue = struct
+
+   type 'a queue = 'a list
+
+   let enqueue v  que =
+     que @ [v]  (*线性时间*)
+
+   let dequeue = function
+     |[] -> None
+     |_::t -> Some t 
+
+   let dequeue_exn = function
+     |[] -> failwith "empty queue"
+     |_::t -> t
+
+   let first = function
+     |[] -> None
+     |h::_ -> Some h
+
+   let first_exn = function
+     |[] -> failwith "empty queue"
+     |h::_ -> h
+
+ end
+;;
+```
+
+这个实现的一个问题就是其入队操作要花费线性时间。
+有一个解决方法是用两个list，分别表示queue的前面和后面。 eg: front=
+\[2;4\], back=\[7;6;5\] (逆序) ==\> queue = \[2;4; 5;6;7\]
+这样实现的队列在均摊时间上是常数级的。
+
+``` ocaml
+module TwoListQueue = struct
+
+  type 'a queue = {
+    front: 'a list ;
+    back: 'a list 
+  }
+
+  let empty = {
+    front= [];
+    back = []
+  }
+
+  let peek = function
+    |{front=[] } -> None
+    |{front=x::_ ;} -> Some x
+  ;;
+
+  let enqueue x = function
+    |{front=[] } -> {front=[x] ; back=[] }
+    |q -> {q with back=x::q.back}  (* 即：当front不为空list时*)
+
+  let dequeue = function
+    |{front=[]} -> None
+    |{front= _::[] ;back=b} -> Some {front = List.rev b ;back=[] } 
+    |{front=_::t;back=b} -> Some {front = t ;back=b}
+
+end
+```
+
+在peek的实现中，面临着一个选择就是当front为空时应该如何匹配，我们可以分别列出back为\[\]或非空的list。
+或者我们来假设front为空时，back也必然为空，这个假设基于我们的入队操作优先作用到哪个list上。
+只要我们在实现中优先让入队作用到front上，这样就能确保front为空时，必然能推出back也为空。
+并且在出队操作时保证front为空时，将back中的元素自动补充到front中。
+
+基于这个假设，queue的模式大致有两类： {front=\[\]}，以及其它情况。
+
+dequeue的实现中，看似只需要第一个模式和第三个模式即可，即当front为空以及front不为空时。
+但是第三个模式的操作结果可能会破坏之前的假设（不变量）：front为空必然推出back为空
+
+因此需要在出队时额外区分一种情况：front中只有一个元素。此时需要在出队后，将back中的元素补充到front,这样才能维持不变量。
+
+> **异常和Options的选择**
+>
+> 采用异常的好处是不用额外处理函数的返回值，相对地，用Options的坏处是可能需要额外剥离
+> `Some x` 换句话讲，采用异常的函数更容易和管道符 `|>`
+> 一起使用。而采用option的函数则不能出现在管道符的之间。
+>
+> ``` ocaml
+> (* 这样无法通过编译： *）
+> empty |> enqueue 2 |> enqueue 4 |> dequeue |> peek 
+> ```
+>
+> ``` ocaml
+> (* 换用抛出异常的版本就可以了 *)
+> empty |> enqueue 2 |> enqueue 4 |> dequeue_exn |> peek
+> ```
+>
+> 为此可以重写2个能自动剥离输入参数为 `Some` 的新管道符，
+>
+> 一个专门用于连接那些返回option的函数： `>>|`
+>
+> 另一个用于那些返回普通值的函数（使用用异常的） `>>=`
+>
+> ``` ocaml
+> let ( >>| ) opt func =
+>   match opt  with
+>   |None -> None 
+>   |Some v -> (func v)
+> ;;
+> ```
+>
+> ``` ocaml
+> let ( >>= ) opt f_exn =
+>    match opt  with
+>    |None -> None 
+>    |Some v -> Some (f_exn v)
+>  ;;
+> ```
+>
+> ``` ocaml
+> let open TwoListQueue in 
+> empty |> enqueue 2 |> enqueue 4 |> dequeue >>= enqueue 3 >>|  dequeue >>=  peek
+> ;;  
+> ```
+
+## `sig` 关键字
+
+### signature是module的类型
+
+在utop中定义一个模块:
+
+``` ocaml
+ module MyModule = struct
+  let inc x = x+1
+  type primary_color = Red | Green | Blue 
+  exception Oops
+end
+ ;;
+```
+
+返回结果是:
+
+``` ocaml
+module MyModule :
+
+  sig
+    val inc : int -> int
+    type primary_color = Red | Green | Blue
+    exception Oops
+  end
+```
+
+``` ocaml
+# let foo = 100 ;;
+val foo : int = 100
+
+# let inc y = y+1 ;;
+val inc : int -> int = <fun>
+```
+
+参考上面的格式, 能启发我们得知 名字"MyModule" 对应的不是一个变量/函数,
+而是一个module. 并且这个module的类型是一个 **无名的signature** :
+
+``` ocaml
+sig
+  val inc : int -> int
+  type primary_color = Red | Green | Blue
+  exception Oops
+end
+```
+
+因此一个signature就是一个module的类型.
+
+### 定义接口
+
+（ 定义一个新的 module type ）
+
+变量和函数要以 `val` 开头, 在名字后面用冒号指明类型. 还能定义
+`exception` , `type` , 和嵌套的 `module type`
+
+``` ocaml
+module type Fact =
+sig 
+  val fact : int -> int 
+end
+```
+
+``` ocaml
+module type LIST_STACK =
+sig
+  exception EmptyStack
+  val empty : 'a list
+  val is_empty : 'a list -> bool
+  val push : 'a -> 'a list -> 'a list
+  val pop : 'a list -> 'a list
+  val peek : 'a list -> 'a 
+end
+```
+
+### 实现接口
+
+（创建一个类型为 module type Fact类型的“对象” ）
+
+``` ocaml
+module 模块名 : 模块类型sig =  struct ....  end  ;; 
+```
+
+``` ocaml
+  module RescursiveFact : Fact = struct
+    let rec fact n =
+      if n=0 then 1 else n * fact (n-1)
+  end
+(*****************************************) 
+  module TailRescursiveFact : Fact =struct
+    let rec fact_iteration acc = function
+      |0 -> acc
+      |n -> fact_iteration (acc*n) (n-1)
+    let fact n = fact_iteration 1 n
+  end
+  ;;
+```
+
+``` ocaml
+module ListStack :LIST_STACK = struct 
+  exception EmptyStack
+  let empty = [] 
+
+  let is_empty = function 
+    |[] -> true 
+    |_ -> false 
+
+  let push e stk= e::stk
+
+  let pop = function 
+    |[] -> raise EmptyStack 
+    |_::t -> t 
+
+  let peek = function 
+    |[] -> raise EmptyStack
+    |h::_ -> h 
+end
+;;
+```
+
+在实现中必须出现接口中定义过的东西，这时在实现中定义其它东西是不会报错的。
+
+``` ocaml
+module type Addone = sig
+  val addone: int list -> int list
+end
+
+module MyAddone: Addone  = struct
+  let incr x  = x+1
+  let rec addone = function
+    |[] -> []
+    |h::t -> (1+ h ) :: (addone t)
+end
+;;
+```
+
+使用这种实现某个接口sig的struct时，只能使用sig声明过的东西，struct中的其它定义对外是不可访问的。
+
+``` ocaml
+(* 这是不允许的：
+ MyAddone.incr 4;; *)
+
+MyAddone.addone [1;3;5] ;;(*合法操作*)
+```
+
+### 在signature中声明module类型的量
+
+``` ocaml
+module type X  =
+sig
+  val x : int 
+end
+
+module type T =
+sig
+  module Inner: X 
+end
+```
+
+``` ocaml
+module T_impl  = struct
+
+  module Inner : X = struct
+    let x = 100 
+  end
+end
+```
+
+### signature 的语义
+
+这里的语义主要指的是和类型检查相关的.
+
+1.  签名匹配: 确保在sig中声明的都在相应的模块中有正确的定义
+    - 任何在sig中出现的名字都必须在module struct中被定义
+    - module中定义的类型必须和对应在sig中的类型一致或更"广泛"
+2.  封装: 只允许在sig中指定的那些东西能在模块外使用
+
+``` ocaml
+  module type IntFunc = sig 
+    val foo : int -> int 
+  end
+  ;;
+(* 下面实现中的foo其实是 'a -> 'a 类型的, 但只要能符合接口中的规定即可 *)
+  module IntFuncImpl: IntFunc =  struct 
+    let foo x = x 
+  end
+  ;;
+```
+
+ocaml中的类型不是像java/c++ 中的那样,
+是按照声明的名称来进行区分的.也就是说同样包含两个 int a = 0
+作为字段的不同名称的类代表着两个不同的类型. 而在OCaml中,
+类型是根据结构进行判断的.
+
+``` ocaml
+module M = struct
+  let x = 0
+  let z =1
+end
+```
+
+module M : sig val x : int val z : int end
+
+``` ocaml
+module type X = sig
+  val x : int
+end
+```
+
+这里将M这个具体的模块当作是类型X是可以的. 因为类型上是相容的:
+模块M中定义了名称x且类型也是int, 这符合类型X的定义
+
+``` ocaml
+module Mx : X = M ;;
+```
+
+类似地有
+
+``` ocaml
+module type Z = sig
+  val z : int
+end
+
+module Mz : Z = M ;;
+```
+
+当然M也符合一个同时含有z和x的sig类型
+
+``` ocaml
+module type XZ = sig
+  val x : int
+  val z : int
+end
+
+module Mxz : XZ = M ;;
+```
+
+最后有一个值得注意的点:
+
+``` ocaml
+module Mxz' = ((M:X):Z) ;; 
+```
+
+这个定义是无法通过编译的,会提示没有提供z的定义 不能简单地看M中的定义.
+因为 (M:X) 相当于将M的类型转换为X ,而X 中是没有关于z的定义的,
+因此它不能再用 (? : Z)来转换为类型Z的模块.
+
+综上所述, 有两条关于模块的类型注释的静态语义:
+
+1.  模块类型注释(M:T)是合法的, 若M的类型是T的子类型(结构是相容的).
+    并且得到的模块(M:T) 的类型是T
+
+2.  module类型S是T的子类型, 若S中的定义之集是T中定义之集的超集(包含),
+    并且T中的定义类型可以是S中对应定义类型的特化版本.
+
+    ocaml中的类型注释是静态的, 和java/python不同,
+    他们二者是在运行时进行的.
+
+<!-- -->
+
+    第一类module: OCaml中的module本身不是firstclass的, 但可以通过"打包"将其变为第一类的值,从而能作为函数的参数/返回值
+
+## 在utop中使用module
+
+### 直接加载文件 (不当作模块使用)
+
+命令 `#use XX.ml` 的效果等同于将文件中的代码一行行地输入到utop中.
+
+实现自定义的 `sig` 的module: 其具体实现是不回显的
+
+``` ocaml
+module type NumType = sig
+  type t
+  val n : t
+end
+
+module NumInt : NumType = struct
+  type t = int
+  let n = 100
+end
+;;
+```
+
+实际实现的类型和值都不会显示:
+
+``` ocaml
+# NumInt.n ;;
+- : NumInt.t = <abstr>
+```
+
+而对一个未指定sig的普通模块
+
+``` ocaml
+module N = struct 
+  type t = int
+  let (n:t) = 100 
+end 
+;;
+```
+
+其内部定义的值是可以被直接显示的
+
+``` ocaml
+# N.n ;;
+  - : N.t = 100
+```
+
+### 作为模块加载文件
+
+1.  将模块进行编译
+
+`ocamlbuild XX.cmi XX.cmo` 将分别对 XX.mli 和 XX.ml 进行编译
+
+`ocamlc xx.ml` -\> `xx.cmo`
+
+1.  指定编译后的模块所在目录 `#directory "_build"`
+
+2.  加载编译后的模块 `#load "xx.cmo"`
+
+### 加载已经安装的第三方模块
+
+`#require "ounit2"` 然后再进行 open OUnit2
+
+### 借助dune在utop中加载module
+
+先编写dune文件: 用xxx.ml和同目录下的其它文件创建库xxx
+
+``` commonlisp
+(library
+ (name xxx))
+```
+
+然后运行 `dune utop`
+
+### 在工作目录中创建 .ocamlinit
+
+在xx.ml所在目录中创建 `.ocamlinit` 文件, 并在文件中使用命令
+`open / #require / #library/ #load / #use` 载入所需要的模块 并用
+`dune utop` 启动
+
+## 封装 Encapsulation
+
+模块系统
+
+### 不透明度
+
+在一个模块的实现中, 有时可能会定义一些不希望暴露给使用者的辅助函数:
+
+``` ocaml
+(* 实现阶乘fact*) 
+module Math = struct
+  let rec fact_impl acc n =
+    if n=0 then acc 
+    else fact_impl (n*acc) (n-1)
+  let fact = fact_impl 1
+
+end
+```
+
+如何让辅助函数fact<sub>impl对使用者是隐藏的呢</sub>?
+一种方式就是在函数定义中再定义辅助函数(就像之前实现尾递归函数做的那样)
+但这种方式的弊端是会降低代码的可读性
+
+``` ocaml
+(* 实现阶乘fact*) 
+module Math = struct
+  let fact n = 
+    let rec fact_impl acc n =
+  if n=0 then acc 
+  else fact_impl (n*acc) (n-1)
+    in fact_impl 1 n 
+end
+```
+
+可以用模块的方式来实现隐藏: 定义一个Math的signature
+
+``` ocaml
+module type Math = sig
+  val fact : int -> int
+end
+
+module MathImpl : Math = struct
+  let rec fact_impl acc n =
+    if n=0 then acc 
+    else fact_impl (n*acc) (n-1)
+  let fact = fact_impl 1
+end
+```
+
+被Math模块类型约束过的struct就能实现对外隐藏信息
+
+### 抽象类型 abstract type
+
+C++中的泛型 std::vector\<T\> ?
+
+``` ocaml
+module type ListStack = sig
+  exception StackIsEmpty
+
+  val empty : 'a list
+
+  val is_empty : 'a list -> bool
+  val push : 'a -> 'a list -> 'a list
+  val peek : 'a list -> 'a
+  val pop : 'a list -> 'a list
+
+end
+
+module ListStackImpl : ListStack = struct
+  exception StackIsEmpty
+  let empty = []
+  let is_empty = function
+    | [] -> true
+    | _ -> false
+  let push e s = e::s
+  let peek = function
+     | [] -> raise StackIsEmpty
+     | h::_ -> h
+  let pop = function
+    | [] -> raise StackIsEmpty
+    | _::t -> t
+end
+```
+
+然后我们要添加一个操作 : size
+
+``` ocaml
+  module type ListStack = sig
+    val size : 'a list -> int
+  ....
+  end
+
+module ListStackImpl = struct
+  let size  = List.length 
+  .... 
+end
+```
+
+这个size的实现显然是线性时间的.我们希望通过保存size变量,
+来使得size的实现是常数时间的.(和 std::array 类似)
+为此我们要将stack的类型实现为一个 `pair: list + int`
+
+``` ocaml
+module ListStackCachedSizeImpl = struct
+  exception StackIsEmpty
+
+  let empty = ([],0) 
+  let is_empty = function
+    | ([],_) -> true
+    | _ -> false
+  let size (s,n) = n 
+  let push e (s,n) = (e::s, (1+n) ) 
+  let peek = function
+     | ([],_) -> raise StackIsEmpty
+     | (h::_,_ ) -> h 
+  let pop = function
+    | ([],_) -> raise StackIsEmpty
+    | (_::t,n) -> (t,(n-1))
+
+end
+```
+
+``` ocaml
+ListStackCachedSize. (empty |> push 1 |> push 2 |> size )  ;;
+(* --> 2 *)
+```
+
+虽然这样能实现,但是它不符合signature ListStack的要求,
+因为在接口中已经固定了stack的实现类型为 `'a list` , 而这里的类型是
+`'a list * int`
+
+因此我们需要修改接口中stack的类型, 不能让它在接口的规范中就固定下来.
+而是将具体实现交给 `struct` .因此不能在接口中出现stack的具体实现类型,
+而是用一个变量来暂时代表它 完成接口的定义.
+
+``` ocaml
+module type ListStack = sig
+
+  type 'a stack
+  exception StackIsEmpty
+  val empty : 'a stack
+  val is_empty : 'a stack -> bool
+  val push : 'a -> 'a stack -> 'a stack
+  val peek : 'a stack -> 'a
+  val pop : 'a stack -> 'a stack
+  val size : 'a stack -> int
+
+end
+```
+
+``` ocaml
+  module ListStackCachedSizeImpl = struct
+      type 'a stack = 'a list * int 
+      exception StackIsEmpty
+
+      let empty = ([],0) 
+      let is_empty = function
+    | ([],_) -> true
+    | _ -> false
+      let size (s,n) = n 
+      let push e (s,n) = (e::s, (1+n) ) 
+      let peek = function
+     | ([],_) -> raise StackIsEmpty
+     | (h::_,_ ) -> h 
+      let pop = function
+    | ([],_) -> raise StackIsEmpty
+    | (_::t,n) -> (t,(n-1))
+    end
+(*************************)
+  module ListStackCachedSize : ListStack =  ListStackCachedSizeImpl ;;
+```
+
+使用在接口中声明抽象类型意味着 在module外部无法直接使用实现类型的具体值
+
+``` ocaml
+module type IntType = sig
+  type inttype
+  val element : inttype 
+end
+
+module MyInt : IntType = struct
+  type inttype = int
+  let element = 0 
+end
+```
+
+``` ocaml
+# let a = MyInt.element ;;
+val a : MyInt.inttype = <abstr>
+```
+
+### 更好的打印
+
+对于抽象类型的数据的打印结果, 只会显示出一个 \<abstr\>
+这的确起到了隐藏数据的目的, 但对于可以公开的信息,
+目前的没有一个可以显示它们的方式. 在utop中提供了一个命令
+`#install_printer` 来注册打印函数:
+
+- 编写一个类型为 `Format.formatter -> t -> unit` 的函数 pp
+
+- 调用指令: `install_printer pp`
+
+- 取消注册打印函数 `#remove_printer pp`
+
+那么 Format.fomatter 代表什么呢? 它可以理解为某种输出地点
+那么一个典型的pp函数是用 `Format.fprintf` 来定义的
+
+``` ocaml
+ module type IntType = sig
+  type inttype
+  val element : inttype 
+  val pp : Format.formatter -> inttype -> unit 
+end
+
+module MyInt : IntType = struct
+  type inttype = int
+  let element = 0 
+  let pp fmt (i: inttype) =
+    Format.fprintf fmt ">%d<" i 
+
+end ;;
+
+#install_printer MyInt.pp ;;  
+```
+
+``` ocaml
+# MyInt.element ;;
+- : MyInt.inttype = >0<
+
+# let a = MyInt.element ;;
+val a : MyInt.inttype = >0<
+```
+
+## 编译单元
+
+编译单元 = XX.ml + XX.mli 这两个文件
+
+编译单元可以看成是隐式定义 signature 和 struct的语法糖
+
+设XX.ml中的内容表示为 "DM" XX.mli中的内容为 "DS"
+
+则编译单元实际上做的事情等价于:
+
+``` ocaml
+module XX [: sig DS end ] = struct
+  DM
+end
+```
+
+### 在utop中使用编译单元
+
+1.  在dune项目中, 进入 lib 目录
+
+2.  分别创建 xx.mli 和 xx.ml 文件
+
+3.  编辑dune文件
+
+<!-- -->
+
+    (library
+     (name xxx )) 
+
+1.  编译并启动utop:
+
+<!-- -->
+
+    dune utop 
+
+### 不完整的编译单元
+
+我们知道完整的编译单元由两个文件组成, 当二者有一个缺失会如何呢?
+
+1.  缺失接口文件 `.mli`
+
+2.  缺失实现文件 `.ml`
+
+    缺失 .ml 可能是因为对编译单元的误用上. 比如现有接口 stack.mli ,
+    而stack有两种以上的实现: stack1.ml stack2.ml ocaml中没有办法指明
+    stack.mli分别能和 stack1.ml 或 stack2.ml 组成编译单元.
+
+    因此解决方案有两个 :
+
+    1.  不使用编译单元, 也就是不用 `.mli` 文件 编写一个stack的简短名字的
+        signature
+
+    ``` ocaml
+    (* stack.ml *)
+    module type S = sig
+      type 'a t
+      val push : 'a -> 'a t -> 'a t
+      val peek : 'a t -> 'a
+      val pop : 'a t -> 'a t
+    end
+    ```
+
+    实现 Stack模块中的接口 S
+
+    ``` ocaml
+    (* stack01.ml *)
+    module Stack01 : Stack.S = struct
+      type 'a t = 'a list
+      ...
+    end
+    ```
+
+    ``` ocaml
+    (* stack02.ml *)
+    module Stack02 : Stack.S = struct
+      ... 
+    end
+    ```
+
+    1.  使用编译单元(接口文件 `.mli` )
+        这个解决方案的想法是在接口文件中声明 其它 signature和 module
+
+    ``` ocaml
+    (* stack.mli *)
+    (** 这个接口中规定了实现中必须定义三个东西:
+    一个是名为S的module type, 剩下两个是 实现接口S的 module struct *)
+
+    module type S = sig
+      type 'a t 
+      val push : 'a -> 'a t -> 'a t
+      val pop : 'a t -> 'a t
+      val peek : 'a t -> 'a
+        ...
+    end
+
+    module StackImpl : S
+
+    module OtherStackImpl : S 
+    ```
+
+    实现:
+
+    ``` ocaml
+    (* stack.ml *)
+    module type S = sig
+      type 'a t 
+      val push : 'a -> 'a t -> 'a t
+      val pop : 'a t -> 'a t
+      val peek : 'a t -> 'a
+        .... 
+    end
+
+    module StackImpl : S = struct
+      type 'a t = 'a list 
+      ....
+    end
+
+    module OtherStackImpl : S = struct
+      type 'a t = int * 'a list
+      ....
+    end
+    ```
+
+    但这个解决方案会导致代码的重复: `module type` 的重复定义
+    (之后会用functor解决这个问题)
+
+## 函数式数据结构
+
+### 函数式数据结构的特点
+
+- 无mutable更新操作: 即没有原地修改数据结构的操作.
+  只是接收旧的数据结构,返回新的数据结构. 不会改变旧的数据结构
+
+- 所有绑定到名字上的数据结构都是持久的, 被使用后不会被销毁.
+
+### lists
+
+``` ocaml
+let lst = [1;3;4;5;7]
+let lst' = List.tl lst ;;
+```
+
+list是持久的数据结构:
+
+``` ocaml
+lst;;
+(* lst并未因tl操作而被修改 *)
+- : int list = [3; 4; 5; 7]
+```
+
+### stacks
+
+我们之前实现的stack也是持久的
+
+``` ocaml
+module type Stack = sig
+  type 'a t
+  exception EmptyStack
+  val empty : 'a t 
+  val is_empty : 'a t -> bool
+  val size : 'a t -> int
+  val push : 'a -> 'a t -> 'a t
+  val peek : 'a t -> 'a
+  val peek_opt : 'a t -> 'a option
+  val pop : 'a t -> 'a t
+  val pop_opt : 'a t -> 'a t option 
+end
+```
+
+``` ocaml
+module StackImpl : Stack = struct
+  type 'a t = 'a list
+  exception EmptyStack
+  let empty = [] 
+  let is_empty = function
+    | [] -> true 
+    | _ -> false
+  let size = List.length
+  let push e s = e::s
+
+  let peek = function
+    |[] -> raise StackEmpty
+    |h::_ -> h
+  let peek_opt = function
+    |[] -> None
+    |h::_ -> Some h
+
+  let pop = function
+    |[] -> raise StackEmpty
+    |_::t -> t
+  let pop_opt = function
+    |[] -> None
+    |_::t -> Some t
+
+
+end
+```
+
+### 用options还是exceptions?
+
+在之前的大部分实现中, 我们都选择了用异常来处理意外情况.
+还可以使用options, 使用options的坏处是这样的函数因为返回了 Some/None
+导致 `|>` 无法串联起一系列操作. 一个补救方法是定义新的管道符:
+
+1.  对输入/输出类型都不是 option 的函数
+
+`... >>| f`
+
+``` ocaml
+let ( >>| ) opt f =
+  match opt with
+  | None -> None
+  | Some x -> Some (f x) 
+```
+
+1.  对输入类型不是option, 但输出类型为 option的函数
+
+`... >>= f`
+
+``` ocaml
+let ( >>= ) opt f =
+  match opt with
+  |None -> None
+  |Some x -> f x 
+```
+
+通常来说, 可以同时提供两种版本的函数, 比如: `peek` 和 `peek_opt` .
+用opt后缀来标识返回类型为options的函数.
+
+``` ocaml
+StackImpl. (empty |> push 1 |> push 2 |> pop_opt >>| push 4 >>= peek_opt )
+```
+
+### queues
+
+``` ocaml
+module type Queue = sig
+  type 'a t
+  exception EmptyQueue
+  val empty : 'a t
+  val is_empty : 'a t -> bool
+  val size : 'a t -> int
+  val enqueue : 'a -> 'a t -> 'a t
+  val front : 'a t -> 'a
+  val dequeue : 'a t -> 'a t
+  val to_list : 'a t -> 'a list 
+end
+```
+
+``` ocaml
+module ListQueue : Queue = struct
+  type 'a t = 'a list
+  exception EmptyQueue
+  let empty = []
+  let is_empty = function
+    | [] -> true
+    | _ -> false
+  let size = List.length
+
+  let enqueue e q = q @ [e]  (* !! *)
+  let front = function
+    | [] -> raise EmptyQueue
+    | h::_ -> h
+  let dequeue = function
+    | [] -> raise EmptyQueue
+    | _::t -> t 
+  let to_list = Fun.id (* 恒等映射 *)
+```
+
+1.  更高效的queue实现
+
+    “implementing a queue with two stacks”
+
+    主要是为避免入队操作是线性时间的. 分别用两个list
+    标识队列的前半和后半 ,
+    后半部分是逆序存储的(为了能用cons完成入队操作) :
+
+    - `前半[1;2] + 后半[6;5;4]  ==> 队列[1;2;4;5;6]`
+
+    - 入队: 当表示前半部分的list为空时, 入队元素优先进入前半list
+
+    - 出队: 出队导致前半list为空后, 用后半list补充前半list .
+
+      在前面已经[实现](#ListQueue)过了
+
+### maps
+
+``` ocaml
+module type Map = sig
+  type ('k,'v) t
+  exception EmptyMap
+  val empty : ('k,'v) t
+  val insert : 'k -> 'v -> ('k,'v) t -> ('k,'v) t
+  val lookup : 'k -> ('k,'v) t -> 'v
+  val bindings : ('k,'v) t -> ('k * 'v) list 
+end 
+```
+
+允许有重复key:
+
+``` ocaml
+module AssocListMap : Map = struct
+  type ('k,'v) t = ('k*'v) list
+  exception EmptyMap
+  let empty = []
+  let insert k v m = (k,v)::m
+
+  let rec lookup k = function
+    | [] -> raise EmptyMap
+    | (key,value) :: t -> if k = key then value else (lookup k t)
+
+  let bindings_aux m = List. (m |> map fst |>sort_uniq Stdlib.compare )  
+  let bindings m =  m |> bindings_aux |> List.map (fun k -> ( k,(lookup k m)))
+
+end
+```
+
+不允许有重复的key
+
+``` ocaml
+module UniqAssocListMap : Map = struct
+   type ('k,'v) t = ('k*'v) list
+   exception EmptyMap
+
+   let empty = []
+
+   let rec insert k v = function
+     | [] -> [(k,v)]
+     | (key,value)::t ->  if k=key then (key,v)::t else (insert k v t )
+
+   let rec lookup k = function
+     | [] -> raise EmptyMap
+     | (key,value) :: t -> if k = key then value else (lookup k t)
+
+   let bindings = Fun.id 
+ end
+```
+
+### sets
+
+``` ocaml
+module type Set = sig
+  type 'a t
+  val empty : 'a t 
+  val add : 'a -> 'a t -> 'a t
+  val mem : 'a -> 'a t -> bool
+  val elements : 'a t -> 'a list 
+end
+```
+
+``` ocaml
+module ListSet : Set = struct
+  type 'a t = 'a list
+  let empty = []
+  let add e s = e::s
+  let rec mem e  = function
+    | [] -> false
+    | h::t -> if h = e then true else (mem e t)
+
+  let elements s = s |> ( List.sort_uniq Stdlib.compare ) 
+end
+```
+
+``` ocaml
+module UniqListSet = struct
+  type 'a t = 'a list
+  let empty = []
+  let rec add e s =
+    match s with
+    | [] -> [e]
+    | h::t -> if h = e then h::t else h::(add e t)
+
+  let rec mem e  = function
+    | [] -> false
+    | h::t -> if h = e then true else mem e t
+
+  let elements = Fun.id 
+end
+```
+
+## 模块类型约束 module type constraints
+
+创建新的module type: 特化已有module type中的抽象类型
+
+module type 中允许声明 type / module / val(函数/变量)
+其中不确定的是用type声明抽象类型, 以及声明module中包含的抽象类型
+
+我们可以基于一个已有的包含抽象类型的module
+type来创建一个指明了内部抽象类型的module type
+
+``` ocaml
+MyType with type t = int
+
+MyType with module M = OtherModule
+
+MyType with type t1 = int and type t2 = string and module M = OtherModule 
+```
+
+对module进行约束实际上是对其中的一组抽象type进行约束
+
+``` ocaml
+module type XY = sig
+  type x
+  type y
+end
+
+module type MyType = sig
+  type t
+  module M : XY
+  val data : int 
+end
+```
+
+``` ocaml
+module ModImpl : XY = struct
+  type x = float
+  type y = float 
+end
+
+module type New = MyType with type t = string
+              and module M = ModImpl  ;;
+```
+
+``` ocaml
+module ModImpl = struct
+  type x = float
+  type y = float 
+end
+
+module _ : XY = ModImpl
+
+module type New = MyType with type t = string
+              and module M = ModImpl  ;;
+```
+
+## includes
+
+复用已有module struct/type. 避免复制粘贴. 类似于OOP中的继承
+
+例如, 已有接口Set和其实现ListSet
+
+``` ocaml
+module type Set = sig
+  type 'a t
+  val empty : 'a t
+  val add : 'a -> 'a t -> 'a t
+  val mem : 'a -> 'a t -> bool
+  val elements : 'a t -> 'a list
+end
+
+module ListSet : Set  = struct
+  type 'a t = 'a list
+  let empty = []
+  let add e s = e::s
+  let rec mem e = function
+    | [] -> false
+    | h::t -> if h=e then true else mem e t
+  let elements s = List.sort_uniq Stdlib.compare s
+end
+```
+
+假设现在要对 ListSet 进行拓展, 增加 of<sub>list</sub> : 'a list -\> 'a t
+函数
+
+``` ocaml
+module ListSetExtended  = struct
+  include ListSet
+  let of_list lst = ...
+end
+```
+
+对 module type的复用
+
+``` ocaml
+module type SetExtended = sig
+  include Set
+  val of_list : 'a list -> 'a t
+end
+
+```
+
+    module type SetExtended =
+      sig
+        type 'a t
+        val empty : 'a t
+        val add : 'a -> 'a t -> 'a t
+        val mem : 'a -> 'a t -> bool
+        val elements : 'a t -> 'a list
+        val of_list : 'a t -> 'a list
+      end
+
+### include的语义
+
+1.  include 一个 struct
+
+    只是为了少写重复定义的语法糖, 本质上和手工写重复的定义是一样的.
+
+2.  include 一个 signature
+
+### 封装和includes
+
+include引入的被封装的struct中的内容对当前struct的实现仍是不可见的.
+
+``` ocaml
+  module ListSetExtended : SetExtended = struct
+    include ListSet
+    let of_list = Fun.id 
+  end
+(* 这样实现是错误的 : *) 
+    Values do not match:
+  val of_list : 'a -> 'a
+      is not included in
+  val of_list : 'a t -> 'a list
+```
+
+和上面的ListSetExtended的例子稍有不同: 这个模块有了signature的约束. 因此
+`of_list` 的类型必须能满足 `SetExtended` 中的签名. 我们之前提到过,
+满足签名不意味着类型要完全一致,
+比签名中的类型更宽泛亦可.因此下面这个例子是可以通过编译的.
+
+``` ocaml
+module type T = sig
+  type 'a t 
+  val foo : 'a list -> 'a t 
+end 
+
+module M : T = struct 
+  type 'a t = 'a list 
+  let foo lst = lst  (* 'a -> 'a *)
+end ;;
+```
+
+但为什么上面的例子不行呢? 原因在于 include 引入的 `module ListSet`
+本身是被封装过的(实现了 `sig Set` , 因而类型对外是抽象的)
+所以在struct的实现中, 不知道这个抽象类型 `'a t` 其实就是 `'a list`,
+而用Fun.id实现的 `of_list` 是要求输入类型和输出类型相同的函数, 因此判定
+`of_list : 'a -> 'a` 无法满足 `'a list -> 'a t` 的约束
+
+因此要用ListSet中对外暴露的东西来实现 `of_list` ,以得到正确的类型:
+
+``` ocaml
+module ListSetExtended : SetExtended = struct
+  include ListSet
+  let of_list lst = List.fold_right add lst empty 
+end  ;;
+```
+
+### open和include的对比
+
+### 在多个模块中include同一块代码
+
+假设现在要对Set的两个实现都添加 `of_list` 函数. 考虑到抽象原则,
+要将重复的代码提出来, 而不是用复制粘贴.
+
+``` ocaml
+let of_list lst =  List.fold_right add lst empty
+```
+
+但这段代码离开Set后就需要将Set的操作作为参数传入:
+
+``` ocaml
+let set_of_list add empty lst = List.fold_right add lst empty 
+```
+
+为了复用这段代码, 将它用module包裹起来:
+
+``` ocaml
+module SetOfList = struct
+  let set_of_list add empty lst = List.fold_right add lst empty  
+end
+```
+
+``` ocaml
+module ListSetExtended : SetExtended = struct
+  include ListSet
+  include SetOfList
+  let of_list lst = set_of_list add empty lst 
+end
+```
+
+``` ocaml
+module UniqListSetExtended : SetExtended = struct
+  include UniqListSet
+  include SetOfList
+  let of_list lst = set_of_list add empty lst 
+end
+```
+
+但这样的做法仍不满足抽象原则: 其 `of_list` 的定义出现了重复
+(后面会用functor来解决 )
+
+## functors: 从模块到模块的映射
+
+用functor可以解决上面提到的模块中的代码重复
+
+``` ocaml
+module type T = sig
+  val x : int
+end
+
+module IncX (M : T) = struct
+  let x = M.x+1 
+end
+```
+
+``` ocaml
+module IncX : functor (M : T) -> sig val x : int end
+```
+
+用functor是除了struct外第二个能产生模块值的方法:
+
+``` ocaml
+module A = struct let x = 0 end
+
+module B = IncX(A) 
+```
+
+除了将functor看作是一个映射, 还可以将其看作是"参数化的struct"
+
+``` ocaml
+module IncX (M : T) = struct
+  let x = M.x+1 
+end
+```
+
+其参数是类型为T的M
+
+functor返回的module可以和输入的module毫无关系
+
+``` ocaml
+
+module IncX (M : T) = struct 
+  let foo x = x+1
+end ;;
+
+module IncX : functor (M : T) -> sig val foo : int -> int end
+```
+
+functor可以作用在一个无名的structure上:
+
+``` ocaml
+module X = IncX( struct let x = 10 end) 
+```
+
+### functor的语法和语义
+
+``` ocaml
+module F (M1:T1)  (M2:T2) ...  : S  = struct 
+
+end
+```
+
+和普通函数一样, 上面的多参数functor也是某种匿名functor的语法糖.
+
+``` ocaml
+module F =
+  functor (M1:T1) ->
+  functor (M2:T2) ->
+    ...
+  functor (M : T) -> 
+struct
+  ...
+end
+```
+
+### functor type的语法和语义
+
+``` ocaml
+module type Add = sig
+  val add : int -> int
+end
+
+module AddX (M : T) = struct
+  let add y = M.x + y
+end
+
+module CheckAddX : T -> Add =  AddX 
+```
+
+CheckAddX 是一个输入类型为T, 输出类型为Add的functor
+
+会发现这个functor的签名中包含了参数名! 这点和函数的签名是不同的.
+当functor的输出模块使用了输入模块中的类型时, 可以看出这样设计的原因
+
+``` ocaml
+module type T = sig
+  type t
+  val x : t
+end
+
+module PairX (M : T) = struct
+  let p = (M.x , 1)
+end
+```
+
+因为输出类型中使用了 T中声明的抽象类型t , 为了引用到这个t,
+必须要有它所在的那个模块名, 因此functor的签名中必须包含参数的名字.
+
+``` ocaml
+module type T = sig type t val x : t end
+
+module PairX : functor (M : T) -> sig val p : M.t * int end
+```
+
+    *functor type* 是一种高级编程语言的特性:依赖类型 的例子, 它描述了输出类型被输入类型决定的现象. (和函数不同, 函数的输入输出类型之间是独立的) 
+
+为functor传入的实际模块的类型不一定要和声明中的类型完全一致,
+也可以传入其 **子类型** :
+
+``` ocaml
+module F (M : sig val x :int end) = struct
+  let x = M.x +1
+end
+
+module A = struct
+  let x = 1
+end
+module B = struct
+  let x = 2
+  let y = 100
+end
+
+module _ = F(A)
+module _ = F(B) 
+```
+
+### 应用: Map模块中使用functor
+
+这是用来创建一个具体Map模块的functor
+
+``` ocaml
+module Make :
+  functor (Order: OrderType ) -> S with type key = Order.t 
+```
+
+输入类型
+
+``` ocaml
+module type OrderType = sig
+  type t  (* key的类型 *)
+  val compare : t -> t -> int (* 定义了key1 - key2 = ? *)
+end
+```
+
+输出类型
+
+``` ocaml
+module type S = sig
+  type key
+  ..... (* 各种Map的操作 *)
+end
+```
+
+使用 `Map.Make()`
+
+``` ocaml
+type day = Mon | Tue | Wed | Thu | Fri | Sat | Sun
+
+let int_of_day = function
+  | Mon -> 1
+  | Tue -> 2
+  | Wed-> 3
+  | Thu -> 4
+  | Fri -> 5
+  | Sat -> 6
+  | Sun -> 7
+
+module DayKey = struct
+  type t = day
+  let compare d1 d2 =
+    (int_of_day d1) - (int_of_day d2)
+end
+
+module DayMap = Map.Make(DayKey)
+
+DayMap. (empty |> add Mon "monday" |> add Tue "tuesday" ) 
+
+```
+
+模块类型约束 Make的返回类型中使用了module类型约束,
+来生成一个新的特化的module type
+
+``` ocaml
+S with type key = Order.t 
+```
+
+目的是为了让生成的模块中不含抽象类型, 使得使用者能用键原本的类型,
+而不是抽象类型key.
+
+### 应用: 为多个sig实现编写单元测试
+
+本质上是为了在只有模块名不同时避免代码重复.
+
+假设要对Stack编写单元测试, 并且有两种Stack实现.
+
+``` ocaml
+exception Empty
+
+module type Stack = sig
+  type 'a t
+  val empty : 'a t
+  val push : 'a -> 'a t -> 'a t
+  val peek : 'a t -> 'a
+  val pop : 'a t -> 'a t
+end
+
+module ListStack = struct
+  type 'a t = 'a list
+  let empty = []
+  let push = List.cons
+  let peek = function [] -> raise Empty | x :: _ -> x
+  let pop = function [] -> raise Empty | _ :: s -> s
+end
+
+module VariantStack = struct
+  type 'a t = E | S of 'a * 'a t
+  let empty = E
+  let push x s = S (x, s)
+  let peek = function E -> raise Empty | S (x, _) -> x
+  let pop = function E -> raise Empty | S (_, s) -> s
+end
+```
+
+可想而知, 测试用的代码基本上是相同的. 差别只在模块名上.
+因此要以模块作为参数:
+
+``` ocaml
+module StackTester (S:Stack) = struct
+  let tests = [
+    "peek (push x empty) = x" >:: (fun _ -> assert_equal 3 S. (empty |> push 3 |> peek) )
+  ]
+end
+```
+
+``` ocaml
+module LTest = StackTester(ListStack)
+module VTest = StackTester(VariantStack)
+
+let alltests = List.flatten [ LTest.tests; VTest.tests ]
+```
+
+这里的一个小技巧是用 `List.flatten` 将list的list "拍扁"为list
+
+``` ocaml
+List.flatten [ [2;3;4] ;[0] ; [5;7] ]
+(* - : int list = [2; 3; 4; 0; 5; 7] *)
+```
+
+但这段代码的方案仍不够精简, 假若Stack的实现有100个,
+那么需要将StackTester()应用到每个module上, 这造成了大量重复代码.
+因此解决方案是批量应用StackTester()到每个Stack的实现module上,
+为此需要将这些实现放进一个list
+
+``` ocaml
+let stackimpls = [ (module ListStack: Stack) ; (module VariantStack : Stack); ..... ]
+
+let get_tests m =
+  let module StackImpl = (val m : Stack)
+  in
+    let module StackTests = StackTester(StackImpl)
+    in StackTests.tests
+
+let all_tests = stackimpls |> List.map get_tests |> List.flatten 
+
+
+```
+
+这里的 `(module ListStack: Stack)` 和
+`let module StackImpl = (val m : Stack)` 都使用了first class module,
+可以让module作为普通值进行传递
+
+### 应用: 解决为Set添加 `of_list`
+
+我们之前的做法是分别为每个Set的实现用include引入原有的定义后,再额外定义一个
+`of_list` 方法. 这导致了重复的模式, 现在有了能产生module的函数: functor
+, 通过它可以将重复部分提出作为functor
+
+``` ocaml
+module SetWithOfList (M: Set) = struct
+  include M
+  let of_list s = List.fold_right M.add lst  M.empty
+end
+```
+
+这个方法比起OOP中的继承更加灵活, 产生的module type 不必是被拓展module
+type的子类型.
+
+# 抽象
+
+## 何为抽象?
+
+作为动词: 它意味着忽略掉一部分信息, 从而将不同的事物能看作是相同的事物.
+作为名词: 它是从上面的过程中产生的函数/module/class …
+
+## 规范
+
+名词: 抽象的预期行为 动词: 这是创建这些函数/class/module的行为
+
+### 规范的受众
+
+- 使用者
+  - 前置条件: 使用前必须满足的条件
+  - 后置条件: 对输出可以进行哪些假设
+- 实现者
+  - 前置: 调用前可以假设已经满足了哪些条件
+  - 后置: 调用后必须的满足的条件
+
+### 好处
+
+- 局部性: 不用看实现就能理解抽象的含义
+- 可修改: 可以更改实现而不需要修改其使用者的代码
+- 可追责: 在出现问题时能界定是调用者还是实现者犯了错误
+
+### 函数规范的写法
+
+``` ocaml
+(** [f x] is ... 函数的功能
+    Example: ... 例子
+    Requires: ... 前置条件
+    Raise: ...  *)
+val f: t -> u
+```
+
+### library 规范
+
+``` ocaml
+val sort :
+  ('a -> 'a -> int) -> 'a list -> 'a list
+```
+
+根据比较函数将list排序为升序. \[一句话概述此函数的功能\]
+comparison函数必须在比较的两个参数相等时返回0,
+当第一个参数更大时返回一个正数, 当第二个参数更大时返回一个负数.例如
+`compare` 就是一个合适的比较函数. \[前置条件\]
+返回的结果list是按照升序排列的. \[后置条件\] `List.sort`
+保证使用常量级别的堆空间和log级别的stack空间. \[对效率的保证\]
+
+### requires子句
+
+若结果不符合预期,则应该责怪使用者
+
+``` ocaml
+(** [hd lst] is the head of [lst].
+    Requires: [lst] is non-empty. *)
+val hd : 'a list -> 'a 
+```
+
+前置条件precondition不必总是需要在代码中进行验证的,
+因为有些验证会花费大量的时间(\>常数级别) .
+在实践中只去检查那些简单的/开销低的前置条件.
+
+### Returns 子句
+
+在ocaml的文档中, 不需要显式写出returns子句, 而是被包含第一句中.
+若结果不符合预期, 则应该责怪实现者.
+
+``` ocaml
+(** [sort lst] contains the same elements as [lst], but sorted in ascending order. *)
+val sort : int list -> int list
+```
+
+### Examples 子句
+
+``` ocaml
+(** Examples:
+  - [sort [1;3;2]] is [[1;2;3]].
+  - [sort []] is [[]]. *)
+val sort : int list -> int list 
+```
+
+要列举出包含边界条件的例子.
+
+### Raises 子句
+
+这也是一个后置条件, 实现者必须提供此行为.
+
+``` ocaml
+(** [hd lst] is the head of [hd].
+  Requires: [lst] is non-empty.
+  Raises: [Failure "hd"] if [lst] is empty.  *)
+val hd : 'a list -> 'a 
+```
+
+### 数据抽象
+
+**数据抽象** 是在某种集合上的一系列运算的规范. 例如:
+stacks有push/pop/peek…操作, 而无需指明其值具体是什么
+ocaml中的带有抽象类型的signature就是 **数据抽象** 的例子.
+
+**数据结构** 是数据抽象的一种特殊实现. 例如 `ListStack` 用
+`'a list/(::)` … 实现了 `Stack` signature. 因此 struct 是数据结构的例子.
+
+### 例子: Set
+
+数据抽象:
+
+``` ocaml
+module type Set = sig
+  (** ['a t] is the type of a set whose elements have type ['a] *)
+  type 'a t
+  (** [empty] is a empty set *)
+  val empty : 'a t
+  (** [add e s] is a set containing all the elements of [s] and element [e] *)
+  val add : 'a -> 'a t -> 'a t
+  (** [size s] is the number of elements in [s]
+  [size empty] is zero *)
+  val size : 'a t -> int
+    (** [mem e s] is true iff [e] is an element of [s] *)
+  val mem : 'a -> 'a t -> bool
+
+  val union : 'a t -> 'a t -> 'a t
+end
+```
+
+数据结构:
+
+``` ocaml
+module ListSetImpl = struct
+  (** the list cannot contain duplicates*)
+  type 'a t = 'a list
+  let empty = []
+  let rec add e = function
+    | [] -> [e]
+    | h::t -> if h = e then h::t else h::(add e t)
+
+  let size = List.length
+  let rec mem e = function
+    | [] -> false
+    | h::t -> (h = e) || (mem e t)
+
+  let union s1 s2 = s1 @ s2 |> List.sort_uniq Stdlib.compare
+end
+
+module ListSet : Set = ListSetImpl ;; 
+```
+
+``` ocaml
+module ListSetDupsImpl = struct
+  (** the list may contain duplicates*)
+  type 'a t = 'a list 
+  let empty = []
+  let rec add e s= e::s
+  let size s = s |> (List.sort_uniq Stdlib.compare ) |> List.length 
+  let rec mem e = function
+    | [] -> false
+    | h::t -> (h = e) || (mem e t)
+
+  let union s1 s2 = s1 @ s2 
+end
+```
+
+ch6 P1-36
+
+## 抽象函数 AF
+
+抽象函数/映射是描述如何将数据的 **有效**
+的具体值映射为用户视角中的抽象值.
+
+eg: set的抽象 \[1;2;2\] -\> {1,2} \[1;2\] -\> {1,2}
+
+抽象函数是文档的一部分,一般写在type的前面.
+
+``` ocaml
+(** AF: .. *) 
+```
+
+抽象函数是头脑中的概念, 是没有实现的. 但java中的 `tostring`
+很接近抽象函数的实现.
+
+``` ocaml
+
+let removedups lst =
+  lst |> List.sort_uniq Stdlib.compare
+
+let string_of_list string_of_ele = function
+  | [] -> ""  
+  | h::t -> "{ " ^ (List.fold_left (fun acc e -> acc ^ "," ^ (string_of_ele e) ) t (string_of_ele h) ) ^ " }"
+
+```
+
+## 不变量 RI
+
+有效意味着这个具体值不能违反不变量. 例如, Set中,
+若不变量为list中不能有重复元素, 那么 \[1;2;2\] 就不是一个有效的具体值.
+
+不变量在文档中也要写在最前面,
+
+不变量的实现是蕴含在各种操作的实现中的.
+不变量的维持在操作的实现过程中是可以暂时被违反的,
+但在操作的输入输出两端, 不变量是必须成立的. (例如, 平衡二叉树,
+先插入到合适的位置, 再去维持平衡)
+
+### 实现
+
+可以实现一个函数在每个操作的输入和输出位置对不变量进行检查. (防御性编程)
+
+``` ocaml
+let rep_ok (x : t) : t =
+if (** check invariants *) then x
+else failwith "invariants"
+;;
+```
+
+``` ocaml
+let removedups lst =
+   lst |> List.sort_uniq Stdlib.compare
+
+let rep_ok s =
+  if List.length (removedups s) = List.length s then s
+  else failwith "the set exists dups"
+;;
+```
+
+在这里, 对不变量的检查的开销是十分巨大的. 会导致操作的效率低下.
+
+``` ocaml
+module ListSetImpl = struct
+  (** the list cannot contain duplicates*)
+  type 'a t = 'a list
+
+  let empty = rep_ok []
+
+  let rec add e s = match ( rep_ok s ) with 
+    | [] -> [e]
+    | h::t -> if h = e then h::t else  rep_ok  (h::(add e t))
+
+  let size s = List.length (rep_ok s)
+
+  let rec mem e s = match (rep_ok s) with 
+    | [] -> false
+    | h::t -> (h = e) || (mem e t)
+
+  let union s1 s2 = (rep_ok s1) @ (rep_ok s2) |> List.sort_uniq Stdlib.compare |> rep_ok
+
+
+end
+
+module ListSet : Set = ListSetImpl ;; 
+```
+
+应对这种开销问题的方法就是将 `rep_ok` 在不需要debug时替换为 恒等函数
+
+``` ocaml
+let rep_ok s = s
+
+ (* if List.length (removedups s) = List.length s then s
+    else failwith "the set exists dups" *)
+```
+
+交换图:
+
+``` bash
+    抽象的操作
+    * ----> *
+    ^       ^
+AF  |       | AF
+    |       |
+    * ----> *
+    实现的操作
+```
+
+eg: 实现中允许重复set的交换图
+
+``` bash
+   抽象操作 union {2,3}
+
+ {1,2} ----------------> {1,2,3} 
+   ^                        ^
+AF |                        | AF
+   |                        |
+ [1;2] ----------------> [1;2;2;3]
+
+   具体实现的操作 List.append [2;3] 
+```
+
+从逻辑上讲, 要得到集合{1,2,3}有两条路径.
+
+一个操作的实现是正确的, 若其对应的 AF 图是可交换的.
+
+op<sub>abs</sub>(AF(c)) = AF(op<sub>conc</sub>(c))
+
+## 黑盒测试
+
+在不知道具体实现的情况下. 测试是基于规范的.
+
+测试不基于实现. 测试不会因为实现的改变而失去健壮性.
+测试能被reviewer阅读/执行.
+
+### 边界测试
+
+### 路径通过测试
+
+- 对每一类输出编写对应的测试 eg 返回 bool/variant的/; compare函数(三类)
+
+- 组合不同的前置条件
+
+eg : requires: x\>=0 且 n \>= 0
+
+1.  x\>0 & n\>0
+2.  x=0 & n\>0
+3.  x\>0 & n=0
+4.  x=0 & n=0
+
+- 分别对抛出异常/不抛出异常编写测试
+
+对生产类型和消费类型的操作混合测试
+
+(empty \|\> add 1 \|\> size) == 1?
+
+## 白盒测试
+
+白盒测试要求我们的测试要尽量覆盖到源码的每一行,甚至是每一个表达式.
+
+要对 `if/match/switch ...` 的每个分支进行测试. 若是递归函数,
+则要对基本情况和递归调用都进行测试. 当然测试也要将涉及的异常都触发一遍.
+
+``` ocaml
+let max3 x y z =
+  if x > y then
+    if x > z then x else z
+  else
+    if y > z then y else z
+;;
+```
+
+为了覆盖这个例子中的四个分支, 要编写如下四个测试:
+
+``` ocaml
+max3  3 2 1
+max3  3 2 4
+max3  1 2 1
+max3  1 2 3
+```
+
+有工具来辅助查看白盒测试的覆盖情况. ocaml有 `bisect_ppx` .
+
+## 随机测试
+
+生成随机的输入, 观察程序是否会崩溃.
+
+ocaml中有 `QCheck` 支持随机测试.
+
+``` ocaml
+(** 这个函数正常状况下总会返回true,除非leap_year的逻辑有错误/程序崩溃 *)
+(** 要么输入是闰年(一定能被4整除), 要么不是闰年*)
+let mult4_or_non_leap_year y =
+   y mod 4 == 0 || not (leap_year y)
+
+let random_non_4s =
+QCheck.Test.make ~count:1000 (* 随机测试的次数 *)
+  ~name: "a randomized  test" 
+  QCheck.(1 -- 3000) (* 随机选择的输入范围 *)
+  mult4_or_non_leap_year (* 接受随机输入的函数 *)
+```
+
+将 `QCheck` 随机测试映射为 `OUnit` 测试:
+
+``` ocaml
+let qcheck_randomized_tests = List.map QCheck.ounit.to_ounit2_test [random_non_4s; another_qcheck_test; ..]
+```
+
+将qcheck测试list加入测试套件:
+
+``` ocaml
+let test_suite = "leap year"  >:: List.flatten [
+    tests;
+    qcheck_randomized_tests; 
+  ]
+```
+
+## 调试 Debug
+
+测试发现错误, debug找出错误的原因.
+
+### 建议
+
+1.  形成一个可证伪的假设(关于为何有bug).
+
+2.  找出一个最简单的能触发bug的输入.
+
+3.  将实验过程记录下来.
+
+4.  采用防御性编程 用断言检查前置条件&不变量;
+    将if/match等分支语句写得完备, 覆盖到每一种情况.
+
+## 两端代码的等价性
+
+后置条件描述了函数输出和用数学/英语描述的涉及输入的输出的等价性.
+
+表达式的等价性 (无副作用,无异常)
+
+eg: 31+1 ?= 32 在语法上, 二者不等价. 但在语义上, 二者是等价的.
+
+两个表达式在语义上等价意味着它们的值是相等的.
+
+函数的等价性
+
+eg: (fun x -\> x+1) (fun y -\> y+1)
+
+显然在语法上也是不相等的. 在语义上是相等的,
+因为二者作用在同一参数上总能得到相同的结果.
+
+## 程序的停止
+
+一个递归函数会停止, 若:
+
+1.  所有递归调用作用于更小规模的输入, 并且
+
+2.  基础情况下是可以停止的.

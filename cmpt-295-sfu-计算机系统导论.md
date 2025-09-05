@@ -1,0 +1,291 @@
+# Labs
+
+# Assignment
+
+## A1
+
+``` python
+cmake_minimum_required(VERSION 3.21)
+project(word-count C)
+
+# 设置编译器
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_COMPILER clang)
+
+add_compile_options(
+"-ggdb" # gdb调试支持
+"-m64"  
+) 
+# add_compile_definitions(LINE_COUNT) # 宏定义
+## add_compile_definitions(MACRO_CONSTANT_NAME=macro_value)
+
+# 生成 compile_commands.json 文件  for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include_directories(./include) # 头文件目录
+
+add_executable(test_strcmp.bin)
+target_sources(test_strcmp.bin PRIVATE
+  ./test_strcmp.c
+  ./str_cmp.c
+)
+
+# target_compile_options(test_strcmp.bin PRIVATE -ggdb)
+# target_include_directories(YourExecutableName PRIVATE include)
+
+
+add_executable(tokenize.bin)
+target_sources(tokenize.bin PRIVATE
+  ./tokenize.c
+  ./vector_char.c
+)
+
+
+add_executable(dictionary.bin)
+target_sources(dictionary.bin PRIVATE
+  ./dictionary.c
+  ./vector_char.c
+  ./vector_string.c
+  ./str_cmp.c
+)
+
+
+add_executable(linecount.bin)
+target_compile_definitions(linecount.bin PRIVATE LINE_COUNT) # 宏定义
+target_sources(linecount.bin PRIVATE
+  ./linecount.c
+  ./vector_char.c
+  ./table_string.c
+  ./str_cmp.c
+)
+
+
+add_executable(duplicate.bin)
+target_sources(duplicate.bin PRIVATE
+  ./dedup.c
+  ./vector_char.c
+  ./table_string.c
+  ./duplicate.c
+  ./str_cmp.c
+)
+
+
+add_executable(unit_test_vector_char.bin)
+target_sources(unit_test_vector_char.bin PRIVATE
+  ./unit_test_vector_char.c
+  ./vector_char.c
+)
+
+
+
+add_executable(unit_test_table_string.bin)
+target_compile_definitions(unit_test_table_string.bin PRIVATE LINE_COUNT) # 宏定义
+target_sources(unit_test_table_string.bin PRIVATE
+  ./unit_test_table_string.c
+  ./table_string.c
+  ./vector_char.c
+  ./str_cmp.c
+)
+
+```
+
+tokenize
+
+<div class="HIDE">
+
+这里放置你的代码块
+
+</div>
+
+``` cpp
+#+BEGIN_EXAMPLE
+  这里放置你的代码块
+#+END_EXAMPLE
+```
+
+首先要实现用来存放字符的动态数组:
+
+``` cpp
+struct vector_char {
+  uint32_t len; // 当前长度(已使用)
+  uint32_t max; // 最大容量
+  char *data; 
+};
+```
+
+核心代码是扩容
+
+``` cpp
+vector_char->data =
+    realloc(vector_char->data, sizeof(char) * vector_char->max);
+```
+
+``` cpp
+#include "vector_char.h"
+#include <stdio.h>
+
+/* Internal functions declared here . See bottom for definition */
+static void _vector_char_expand(vector_char_t *vector_char);
+static void _free(void *ptr);
+
+/**
+ * @brief Allocate header for describing vector chars. Initialize internal data
+ * pointer to NULL
+ *
+ * @return vector_char_t*
+ */
+vector_char_t *vector_char_allocate(void) {
+  /** 为动态数组结构体本身分配空间, 将容量,长度初始化为0 */
+  vector_char_t *header = (vector_char_t *)malloc(sizeof(vector_char_t));
+  if (!header)
+    return NULL;
+
+  header->data = NULL;
+  header->len = header->max = 0;
+
+  return header;
+}
+
+/**
+ * @brief Clean up both the header describing vector_char and internal data
+ *
+ * @param vector_char
+ */
+void vector_char_delete(vector_char_t *vector_char) {
+  if (!vector_char) // 为空则直接返回
+    return;
+
+  if (vector_char->max)
+    _free(vector_char->data); // 释放字符序列
+
+  _free(vector_char); //释放结构体本身
+}
+/** 在添加元素时进行扩容的判断*/
+void vector_char_add(vector_char_t *vector_char, char entry) {
+  if (vector_char->len >= vector_char->max)
+    _vector_char_expand(vector_char);
+
+  vector_char->data[vector_char->len++] = entry;
+}
+
+/**
+ * @brief Get the character at a particular location
+ *
+ * @param vector_char
+ * @param index
+ * @return char
+ */
+char vector_char_get(vector_char_t *vector_char, uint32_t index) {
+  if (index > vector_char->len)
+    exit(EXIT_FAILURE);
+
+  return vector_char->data[index];
+}
+
+/**
+ * @brief returns the internal char array as a raw pointer
+ * WARNING: Do not free on the outside. This will lead to inconsistent results
+ * @param vector_char
+ * @return char*
+ */
+char *vector_char_get_array(vector_char_t *vector_char) {
+  return vector_char->data;
+}
+
+/**
+ * @brief Internal use only. User does not interact with these functions
+ *
+ */
+static void _vector_char_expand(vector_char_t *vector_char) {
+  if (!vector_char->max) { // 若max == 0, 则说明data没有被分配空间
+    vector_char->max = 16; // 为数组首次分配空间
+    vector_char->data = malloc(vector_char->max * sizeof(char));
+    if (!vector_char->data)
+      exit(EXIT_FAILURE);
+    return;
+  }
+  // 将当前容量扩大两倍,重新分配空间
+  vector_char->max <<= 1;
+  vector_char->data =
+      realloc(vector_char->data, sizeof(char) * vector_char->max);
+  if (!vector_char->data)
+    exit(EXIT_FAILURE);
+}
+
+static void _free(void *ptr) {
+  free(ptr);
+  ptr = NULL;
+}
+```
+
+# Week1
+
+这门课程围绕着4个伟大的想法开展:
+
+1.  抽象层级
+2.  局部性原理/ 内存层次
+3.  并行(流水线)
+4.  性能测量和优化
+
+## L1 数字系统
+
+每个数字系统都有一个基数base, 它表示最多可以使用几个符号来表示数字.
+
+对十进制,可以使用10个符号:0-9.
+
+每个数字可以看成是有长度为N的符号序列, 从右往左,从0开始编号到 `N-1`.
+
+N位Base进制的数字的最大值是 $`Base^{N-1}`$
+
+### 十进制 -\> B进制
+
+$`B^n, B^{n-1},  B^{n-2} , .. , B^0`$
+
+十进制num转B进制, 从小于num的最大的 $`k*B^n`$ 开始, k就是最高位. 然后对
+$`num - k * B^n`$ 做相同的计算, 得到num的下一位.
+
+## L2 内存
+
+内存可以看作是一个大数组, 这个数组的索引被称作地址.
+
+因此地址也是一个数字,可以被存放到内存中.
+
+而且有些值无法用一个字节表示(\>256),因此需要将多个字节看作一个"整体"来表示一个数.
+
+**机器字Word**
+通常指的就是这多个字节组成的整体,它的长度和其能表示的最大地址范围有关.
+
+eg: x86系统使用了 **64位** 的机器字. 因此其能表示的最大地址空间是
+$`2^64`$ . 这是一个相当大的数字, 实际不会用到这么多内存.
+因此实际的地址长度是48位.
+
+即便内存是按照机器字的大小被划分成一小块一小块,
+但是其地址仍然是以字节为单位来表示的. eg: 0x00 和 0x08
+
+<img src="org-images/2023-05-20_22-17-16_screenshot.png" width="420" />
+
+用机器字作为基本单元来表示数据时,对那些较小的数可能会导致空间的浪费, eg:
+数字1只使用了机器字的第一个字节,但总体上来看还是可以接受的.
+
+每行表示一个机器字word.每个格子表示一个字节byte.
+
+<img src="org-images/2023-05-20_22-30-04_screenshot.png" width="320" />
+
+指针就是存放着地址的内存单元. 因此指针类型的长度通常和word相同
+
+下面这个例子是采用大端表示. 左上角是第0个字节. `0x01f8`
+的高字节0x00先被存储, f8这个字节最后存储.
+
+<img src="org-images/2023-05-20_22-34-11_screenshot.png" width="320" />
+
+### 对齐
+
+K字节的基本对象的地址必须按照K字节对齐.
+
+2字节对象, 地址最后一位是 0. 4字节对象, 地址最后2位是 00. 8字节对象,
+地址最后3位是 000.
+
+### 字节序
+
+# Week2
