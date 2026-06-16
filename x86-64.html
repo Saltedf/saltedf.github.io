@@ -1,711 +1,1507 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-<!-- 2022-09-12 一 23:05 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>x86-64 汇编</title>
-<meta name="generator" content="Org Mode" />
-<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
-<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
-<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
-<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>x86-64 — Salted的笔记</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<style>
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f5f5f7;
+  --bg-inset: #f4f4f5;
+  --bg-toc: #fafbfc;
+
+  --text: #1a1a1f;
+  --text-secondary: #4a4a55;
+  --text-muted: #8a8a95;
+  --text-faint: #c8c8d0;
+  --text-ghost: #e6e6ea;
+
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.07);
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+
+  --border: #ececef;
+  --border-soft: #f2f2f5;
+  --border-strong: #d8d8de;
+
+  --code-bg: #f6f6f8;
+  --code-text: #1a1a1f;
+  --code-border: #e8e8ec;
+
+  --quote-bg: #fafbfc;
+  --quote-border: #d8d8de;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 30, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 30, 0.06), 0 1px 3px rgba(15, 15, 30, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 15, 30, 0.08);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --max-width: 860px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+               "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+main, header, footer, .topbar { position: relative; }
+
+/* ---------- 顶部进度条 ---------- */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width 0.05s linear;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 50;
+}
+
+.topbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.topbar .brand:hover { color: var(--accent); border-bottom: none; }
+.topbar .brand .seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  color: white;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.topbar .spacer { flex: 1; }
+
+.topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
+}
+.topbar button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.topbar button:active {
+  background: var(--bg-inset);
+  transform: scale(0.97);
+}
+.topbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.topbar button.icon {
+  width: 28px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topbar button .chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.topbar button:hover .chev { color: inherit; }
+.topbar button[data-state="folded"] .chev { transform: rotate(-90deg); }
+.topbar button[data-state="expanded"] .chev { transform: rotate(0deg); }
+
+.topbar .search {
+  flex: 0 1 280px;
+  padding: 5px 11px 5px 30px;
+  background: var(--bg-inset) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a95' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>") 9px center/13px no-repeat;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.12s;
+}
+.topbar .search:focus {
+  background-color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.topbar .search::placeholder { color: var(--text-muted); }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 32px 4px;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.hero .title {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92em;
+  margin: 0;
+  line-height: 1.55;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero .stats > div { display: flex; align-items: baseline; gap: 6px; }
+.hero .stats .num {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.hero .stats .label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* ---------- 笔记页文档头 ---------- */
+article {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.back-link {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.back-link:hover { color: var(--accent); border-bottom: none; }
+.doc-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.doc-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-meta code { font-size: 12px; }
+.doc-meta .sep { color: var(--text-ghost); }
+
+/* ---------- 折叠节点 — 树形大纲 ---------- */
+.outline { padding: 0; margin: 0; list-style: none; }
+
+.section {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 行(标题区) */
+.section > summary,
+.node-row {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 0;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary:hover,
+.note-node > summary:hover { background: var(--bg-hover); }
+.section > summary:focus-visible,
+.note-node > summary:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 折叠图标 */
+.caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--text-faint);
+  transition: transform 0.15s ease, color 0.1s;
+  font-size: 9px;
+  line-height: 1;
+}
+details[open] > summary > .caret,
+.section[open] > summary > .caret {
+  transform: rotate(90deg);
+  color: var(--text-muted);
+}
+.section > summary:hover > .caret,
+.note-node > summary:hover > .caret { color: var(--text-secondary); }
+
+/* 圆点 — org-mode bullet */
+.bullet {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-ghost);
+  flex-shrink: 0;
+  transition: background 0.12s, transform 0.12s;
+  position: relative;
+}
+.section > summary:hover > .bullet,
+.note-node > summary:hover > .bullet { background: var(--accent); }
+.section[open] > summary > .bullet { background: var(--text-secondary); }
+.note-node[open] > summary > .bullet { background: var(--text-secondary); }
+
+/* 标题文字 */
+.heading-text,
+.note-node > summary > .title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.section > summary:hover > .heading-text,
+.note-node > summary:hover > .title { color: var(--accent); }
+
+.note-node > summary > .title {
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.005em;
+}
+
+/* 锚点链接 */
+.anchor-link {
+  opacity: 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.12s, background 0.12s;
+  border-bottom: none;
+}
+.section > summary:hover > .anchor-link { opacity: 1; }
+.anchor-link:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* 元数据(章节计数等) */
+.row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--bg-inset);
+  border-radius: 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 层级字号 ---------- */
+.section.level-1 > summary { padding: 12px 8px 12px 0; }
+.section.level-1 > summary > .heading-text {
+  font-size: 1.35em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.section.level-1 > summary > .bullet { width: 7px; height: 7px; }
+
+.section.level-2 > summary > .heading-text {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.section.level-2 > summary > .bullet { width: 6px; height: 6px; }
+
+.section.level-3 > summary > .heading-text {
+  font-size: 0.98em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section.level-3 > summary > .bullet { width: 5px; height: 5px; }
+
+.section.level-4 > summary,
+.section.level-5 > summary,
+.section.level-6 > summary { padding: 5px 8px 5px 0; }
+.section.level-4 > summary > .heading-text,
+.section.level-5 > summary > .heading-text,
+.section.level-6 > summary > .heading-text {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.section.level-4 > summary > .bullet,
+.section.level-5 > summary > .bullet,
+.section.level-6 > summary > .bullet { width: 4px; height: 4px; }
+
+/* 缩进 — 层级通过 padding-left */
+/* 层级缩进由 section-body padding-left 统一负责,这里不再额外加 */
+
+/* 标题前缩进对齐 caret+bullet,使内容左边缘整齐 */
+.section > summary {
+  position: relative;
+}
+
+/* 层级缩进:统一通过 section-body 的 padding-left 实现,每嵌套一层 +16px */
+.section-body {
+  padding: 6px 0 14px 16px;
+  margin-left: 0;
+}
+
+/* 折叠动画(用 interpolate-size,现代浏览器支持) */
+@supports (interpolate-size: allow-keywords) {
+  html { interpolate-size: allow-keywords; }
+  .section > .section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
+  }
+  .section:not([open]) > .section-body {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .section-body > * { overflow: hidden; min-height: 0; }
+}
+
+/* ---------- 内容样式 ---------- */
+.section-body > p { margin: 10px 0; }
+.section-body > p:first-child { margin-top: 6px; }
+.section-body > p:last-child { margin-bottom: 4px; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.12s;
+}
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+em, i { font-style: italic; }
+
+ul, ol { margin: 10px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+li > p { margin: 4px 0; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: var(--quote-bg);
+  border-left: 2px solid var(--quote-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.96em;
+}
+blockquote p { margin: 4px 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 0.93em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead { background: var(--bg-soft); }
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92em;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.08s; }
+tbody tr:hover { background: var(--bg-hover); }
+
+/* 行内代码 — 关键修复:无 border,纯净 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  font-feature-settings: "calt" 1, "zero" 1;
+  border: none;
+}
+
+/* 代码块容器 — 用 highlight.js 做高亮 */
+.code-block {
+  margin: 18px 0;
+  background: #f6f8fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 15, 30, 0.04);
+  position: relative;
+}
+.code-block + .code-block { margin-top: 18px; }
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 6px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid #eaecef;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  user-select: none;
+}
+.code-header .dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+.code-header .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e1e4e8;
+}
+.code-lang {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex: 1;
+  text-align: center;
+}
+.code-block pre {
+  display: block;
+  margin: 0;
+  padding: 13px 16px;
+  background: transparent;
+  color: #1f2328;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  word-break: normal;
+  tab-size: 4;
+}
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+}
+.code-block pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #1f2328;
+}
+
+/* 没被包成 .code-block 的裸 pre(理论上不会出现,留个 fallback) */
+pre:not(.code-block pre) {
+  display: block;
+  margin: 14px 0;
+  padding: 13px 16px;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  position: relative;
+}
+
+/* 复制按钮(放在 code-header 里,常驻显示) */
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  line-height: 1.4;
+}
+.code-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.code-copy-btn.copied {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.code-copy-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ---------- 主页:大纲树 ---------- */
+.outline-tree {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 8px 32px 120px;
+}
+
+.note-node {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-node:last-child { border-bottom: none; }
+
+.note-node > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.note-node > summary::-webkit-details-marker { display: none; }
+.note-node > summary > .caret {
+  width: 16px; height: 16px;
+  font-size: 10px;
+}
+.note-node > summary > .bullet {
+  width: 7px; height: 7px;
+}
+.note-node[open] > summary { padding-bottom: 8px; }
+.note-node > summary > .title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.note-node > summary > .desc {
+  flex: 0 1 40%;
+  font-size: 0.84em;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* 章节列表(在主页 note-node 展开时显示) */
+.note-children {
+  padding: 0 0 16px 30px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+.note-children::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 1px;
+  background: var(--border);
+}
+.note-children li { margin: 0; }
+.note-children a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.1s;
+  border-bottom: none;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note-children a::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  background: var(--border);
+}
+.note-children a:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-bottom: none;
+}
+.note-children .lvl-2 { font-weight: 600; color: var(--text); font-size: 14px; }
+.note-children .lvl-3 { padding-left: 26px; }
+.note-children .lvl-4,
+.note-children .lvl-5 { padding-left: 38px; color: var(--text-muted); font-size: 12px; }
+.note-children .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.note-children a:hover .dot { background: var(--accent); }
+
+/* 搜索过滤 */
+.hidden-by-search { display: none !important; }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+  font-size: 16px;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ---------- footer ---------- */
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+}
+footer a {
+  color: var(--link);
+  border-bottom: 1px dotted var(--text-muted);
+}
+footer a:hover { border-bottom-color: var(--accent); }
+footer code { font-size: 11px; }
+
+/* ---------- 快捷键提示 ---------- */
+.kbd-hints { display: none; }  /* 已废弃,保留以防漏改 */
+
+.help-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.help-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 100;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+.help-wrap:hover .help-popover,
+.help-wrap:focus-within .help-popover,
+.help-popover:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.help-row + .help-row { border-top: 1px solid var(--border-soft); }
+.help-row .keys {
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.help-row .desc {
+  flex: 1;
+  color: var(--text);
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+.help-row .dot-demo {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.help-row .link-demo {
+  color: var(--accent);
+  font-weight: 600;
+}
+.help-btn {
+  font-weight: 700;
+}
+.help-btn:hover {
+  color: var(--accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 720px) {
+  body { font-size: 14px; }
+  .hero { padding: 16px 20px 4px; }
+  .hero .title { font-size: 1.7em; }
+  .hero .stats { gap: 20px; flex-wrap: wrap; }
+  article, .outline-tree { padding: 24px 18px 80px; }
+  .section.level-1 > summary > .heading-text { font-size: 1.2em; }
+  .section.level-2 > summary > .heading-text { font-size: 1em; }
+  .note-node > summary > .desc { display: none; }
+  .note-children { padding-left: 22px; }
+  .note-children .lvl-3 { padding-left: 18px; }
+  table { font-size: 0.85em; }
+  th, td { padding: 8px 10px; }
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .topbar .search { flex: 1 1 100%; order: 10; }
+  .kbd-hints { padding: 0 18px 24px; font-size: 11px; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .to-top, .progress-bar, .kbd-hints { display: none; }
+  .section-body { padding-left: 0 !important; }
+  details > .section-body { display: block !important; }
+  .section { padding-left: 0 !important; }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* 代码块水平滚动条更细 */
+.code-block pre::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-block pre::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+</style>
 </head>
-<body>
-<div id="content" class="content">
-<h1 class="title">x86-64 汇编</h1>
-<div class="org-src-container">
-<pre class="src src-makefile"><span style="color: #DFDFDF;">MYASM</span>=test1
-
-<span style="color: #51afef;">default</span>:
-        as -o $(<span style="color: #DFDFDF;">MYASM</span>).o $(<span style="color: #DFDFDF;">MYASM</span>).s &amp;&amp; ld -o $(<span style="color: #DFDFDF;">MYASM</span>) $(<span style="color: #DFDFDF;">MYASM</span>).o
-        <span style="color: #FCCE7B;">@-</span>./$(<span style="color: #DFDFDF;">MYASM</span>) ; echo $$?  <span style="color: #62686E;"># </span><span style="color: #62686E;">&#29992;-&#24573;&#30053;&#36827;&#31243;&#36864;&#20986;&#30721;!= 0&#30340;&#24773;&#20917;, &#25171;&#21360;&#36864;&#20986;&#30721; .&#29992;@&#19981;&#22238;&#26174;&#36825;&#34892;&#21629;&#20196;</span>
-
-<span style="color: #51afef;">clean</span>:
-        <span style="color: #FCCE7B;">-</span>rm ./*.o
-        <span style="color: #FCCE7B;">-</span>rm $(<span style="color: #DFDFDF;">MYASM</span>) 
-
-<span style="color: #51afef;">.PHONY</span>: default clean
-</pre>
+<body class="page-note" data-note-id="x86-64">
+<div class="progress-bar"></div>
+<div class="topbar">
+  <a class="brand" href="index.html"><span class="seal">造</span> Salted的笔记</a>
+  <span class="spacer"></span>
+  <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
+  <div class="help-wrap">
+    <button class="help-btn icon" aria-label="快捷键">?</button>
+    <div class="help-popover">
+      <div class="help-row"><span class="keys"><kbd>Tab</kbd></span><span class="desc">折叠当前</span></div>
+      <div class="help-row"><span class="keys"><kbd>Shift</kbd>+<kbd>Tab</kbd></span><span class="desc">全局折叠</span></div>
+      <div class="help-row"><span class="keys"><kbd>/</kbd></span><span class="desc">搜索</span></div>
+      <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
+    </div>
+  </div>
+  <button data-action="toggle-fold" data-state="expanded"><span class="chev">▾</span>折叠</button>
 </div>
+<article>
+  <h1 class="doc-title">x86-64</h1>
+  <div class="doc-meta">
+    <span>0 章</span>
+    <span class="sep">·</span>
+    <span>更新 2026-06-17</span>
+  </div>
+<pre><code class="language-makefile">MYASM=test1
 
+default:
+    as -o $(MYASM).o $(MYASM).s &amp;&amp; ld -o $(MYASM) $(MYASM).o
+    @-./$(MYASM) ; echo $$?  # 用-忽略进程退出码!= 0的情况, 打印退出码 .用@不回显这行命令
 
-<div class="org-src-container">
-<pre class="src src-asm">        <span style="color: #51afef;">.global</span> _start      <span style="color: #62686E;">;</span><span style="color: #62686E;">&#31243;&#24207;&#20837;&#21475;</span>
-        <span style="color: #51afef;">.text</span>
-<span style="color: #5cEfFF;">_start</span>:
-        <span style="color: #51afef;">mov</span>   $60, <span style="color: #DFDFDF;">%rax</span>     
-        <span style="color: #51afef;">mov</span>   $1, <span style="color: #DFDFDF;">%rdi</span> <span style="color: #62686E;">; </span><span style="color: #62686E;">&#36827;&#31243;&#36864;&#20986;&#30721;</span>
-        <span style="color: #51afef;">add</span> $1, <span style="color: #DFDFDF;">%rdi</span>
-        <span style="color: #51afef;">sub</span> $1, <span style="color: #DFDFDF;">%rdi</span>
-        <span style="color: #51afef;">syscall</span> 
-</pre>
-</div>
+clean:
+    -rm ./*.o
+    -rm $(MYASM) 
 
-<div class="org-src-container">
-<pre class="src src-sh">as -o test1.o test1.s &amp;&amp; ld -o test1 test1.o
+.PHONY: default clean
+</code></pre>
+<pre><code class="language-asm">    .global _start        ;程序入口
+    .text
+_start:
+    mov   $60, %rax       
+    mov   $1, %rdi ; 进程退出码
+    add $1, %rdi
+    sub $1, %rdi
+    syscall   
+</code></pre>
+<pre><code class="language-bash">as -o test1.o test1.s &amp;&amp; ld -o test1 test1.o
 
-./test1 ; <span style="color: #C57BDB;">echo</span> $<span style="color: #DFDFDF;">?</span>  
-</pre>
-</div>
-
-<p>
-运行结果为1 
-</p>
-
-
-<p>
-<code>ld -e foo</code> 可以指定程序的入口标签 
-</p>
-
-<div class="org-src-container">
-<pre class="src src-asm">        <span style="color: #51afef;">.global</span> foo
-        <span style="color: #51afef;">.text</span>
-<span style="color: #5cEfFF;">foo</span>:
-        <span style="color: #51afef;">mov</span> $60, <span style="color: #DFDFDF;">%rax</span>
-        <span style="color: #51afef;">mov</span> $1, <span style="color: #DFDFDF;">%rdi</span>
-        <span style="color: #51afef;">syscall</span> 
-</pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-sh">as -o test1.o test1.s &amp;&amp; ld -e foo -o test1 test1.o
-</pre>
-</div>
-
-
-
-<p>
-函数调用
-</p>
-
-
-
-
-
-<div id="org54d1b0f" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_15-18-29.png" alt="screenshot_2022-09-11_15-18-29.png" />
-</p>
-</div>
-
-
-<div id="orgc88f381" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_15-18-39.png" alt="screenshot_2022-09-11_15-18-39.png" />
-</p>
-</div>
-
-
-<p>
-sumstore的三个参数将由调用者提供, 将使用前三个寄存器: 
-x : rdi
-y : rsi
-dest : rdx 
-</p>
-
-
-<p>
-首条指令是将 rbx 保存到stack, 防止被覆盖, 因为rbx是一个callee负责保存的寄存器, 这意味着若一个函数需要覆盖它时需要将其保存起来, 并在此函数返回之前将值恢复. 
-</p>
-
-<p>
-第二条指令将rdx移动到rbx, 即将dest保存到rbx中.
-因为rdx是caller负责保存的寄存器, 并且编译器决定将rdx保存到rbx中,而不是stack.
-变量x y 仍在rdi和rsi 中, 因此当调用plus时,其参数已经准备好了.
-当plus返回后, 返回值存放在rax中.
-因此第四行汇编将返回值存入dest指向的位置. 
-</p>
-
-<p>
-最后两行恢复rbx, 并返回.
-</p>
-
-
-
-
-<p>
-等价的代码: 将rdx保存到stack中. 
-</p>
-
-
-<div id="orgc6a7333" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_15-23-20.png" alt="screenshot_2022-09-11_15-23-20.png" />
-</p>
-</div>
-
-
-<p>
- <code>movq</code> 中的q表示四字 <code>quad word</code> , 一个字 <code>word</code> 为16位. 四字为64位.
-(x86-64中对word的定义是16位.而其它ISA中可能将word定义为32位) 
-</p>
-
-<p>
-反汇编目标文件: 
-</p>
-<div class="org-src-container">
-<pre class="src src-sh">objdump -d sum &gt; sum.d
-</pre>
-</div>
-
-
-<p>
-x86-64 一共有16个 <b>整数</b> 寄存器
-他们的开头都是 <code>%r</code> .
-</p>
-
-
-
-<div id="orgf3b37ec" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_15-38-15.png" alt="screenshot_2022-09-11_15-38-15.png" />
-</p>
-</div>
-
-<p>
-对应的双字(double word)寄存器(一半):
-一部分是将 <code>%r</code> 替换为 <code>%e</code>. 另一部分是加后缀 <code>d</code>
-</p>
-
-<div class="org-src-container">
-<pre class="src src-c">%rbp %rsp ==&gt;  %ebp %esp
+./test1 ; echo $?  
+</code></pre>
+<p>运行结果为1</p>
+<p><code>ld -e foo</code> 可以指定程序的入口标签</p>
+<pre><code class="language-asm">    .global foo
+    .text
+foo:
+    mov $60, %rax
+    mov $1, %rdi
+    syscall 
+</code></pre>
+<pre><code class="language-bash">as -o test1.o test1.s &amp;&amp; ld -e foo -o test1 test1.o
+</code></pre>
+<p>函数调用</p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_15-18-29.png"/></p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_15-18-39.png"/></p>
+<p>sumstore的三个参数将由调用者提供, 将使用前三个寄存器: x : rdi y : rsi
+dest : rdx</p>
+<p>首条指令是将 rbx 保存到stack, 防止被覆盖,
+因为rbx是一个callee负责保存的寄存器,
+这意味着若一个函数需要覆盖它时需要将其保存起来,
+并在此函数返回之前将值恢复.</p>
+<p>第二条指令将rdx移动到rbx, 即将dest保存到rbx中.
+因为rdx是caller负责保存的寄存器,
+并且编译器决定将rdx保存到rbx中,而不是stack. 变量x y 仍在rdi和rsi 中,
+因此当调用plus时,其参数已经准备好了. 当plus返回后, 返回值存放在rax中.
+因此第四行汇编将返回值存入dest指向的位置.</p>
+<p>最后两行恢复rbx, 并返回.</p>
+<p>等价的代码: 将rdx保存到stack中.</p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_15-23-20.png"/></p>
+<p><code>movq</code> 中的q表示四字 <code>quad word</code> , 一个字 <code>word</code> 为16位. 四字为64位.
+(x86-64中对word的定义是16位.而其它ISA中可能将word定义为32位)</p>
+<p>反汇编目标文件:</p>
+<pre><code class="language-bash">objdump -d sum &gt; sum.d
+</code></pre>
+<p>x86-64 一共有16个 <strong>整数</strong> 寄存器 他们的开头都是 <code>%r</code> .</p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_15-38-15.png"/></p>
+<p>对应的双字(double word)寄存器(一半): 一部分是将 <code>%r</code> 替换为 <code>%e</code>.
+另一部分是加后缀 <code>d</code></p>
+<pre><code class="language-c">%rbp %rsp ==&gt;  %ebp %esp
 
 %r8 %r15  ==&gt;  %r8d %r15d
-</pre>
-</div>
+</code></pre>
+<p>movq source , dest</p>
+<p>source 可以是 imm / register / mem dest 是 reg / mem</p>
+<p>source和dest不能同时为mem</p>
+<p>有很多表示mem的方式: 最常见的是寄存器寻址: (%rax) 括号类似于解引用*rax</p>
+<p>位移寻址: movq 8(%rbp), %rdx ;; *(%rbp+8)</p>
+<p>一般的寻址形式:</p>
+<pre><code class="language-cpp">D(base, index, scale) =&gt;  *(base + scale*index + D)
 
-
-<p>
-movq source , dest
-</p>
-
-<p>
-source 可以是 imm / register / mem
-dest 是 reg / mem
-</p>
-
-<p>
-source和dest不能同时为mem
-</p>
-
-<p>
-有很多表示mem的方式:
-最常见的是寄存器寻址: (%rax) 括号类似于解引用*rax
-</p>
-
-<p>
-位移寻址: 
-movq 8(%rbp), %rdx 
-;; *(%rbp+8)
-</p>
-
-<p>
-一般的寻址形式:
-</p>
-<div class="org-src-container">
-<pre class="src src-cpp">D(base, index, scale) =&gt;  *(base + scale*index + D)
-
-D : 1/2/4&#23383;&#33410; ,&#21363; 8/16/32
-base &#20219;&#20309;&#19968;&#20010;&#25972;&#25968;&#23492;&#23384;&#22120;
-index &#38500;&#20102;rsp&#20043;&#22806;&#30340;15&#20010;&#25972;&#25968;&#23492;&#23384;&#22120;
+D : 1/2/4字节 ,即 8/16/32
+base 任何一个整数寄存器
+index 除了rsp之外的15个整数寄存器
 scale: 1/2/4/8 
-</pre>
-</div>
-
-<p>
-地址的计算, 然后对这些地址进行解引用才得到最终结果. 
-<img src="org-images/screenshot_2022-09-11_16-07-37.png" alt="screenshot_2022-09-11_16-07-37.png" />
-</p>
-
-
-
-
-
-
-<div id="org9e8c025" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_15-55-00.png" alt="screenshot_2022-09-11_15-55-00.png" />
-</p>
-</div>
-
-
-
-<div id="org478f877" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_15-55-11.png" alt="screenshot_2022-09-11_15-55-11.png" />
-</p>
-</div>
-
-<p>
-编译器分配了rax rdx这两个 caller保存的寄存器, 来保存函数的临时变量.
-caller 保存的寄存器无需保存到stack并从中恢复.
-</p>
-
-
-
-
-<div id="orgc822d66" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_15-59-51.png" alt="screenshot_2022-09-11_15-59-51.png" />
-</p>
-</div>
-
-
-
-
-<p>
-算术&amp;逻辑运算
-</p>
-
-
-<p>
-lea = load effective address
-</p>
-
-<p>
-leaq src , dst
-用于计算地址, 而不进行 "解引用".
-主要目的是生成需要重复使用的地址.
-</p>
-
-<p>
-也可以用作一个紧凑的算术运算: 
-</p>
-
-<div class="org-src-container">
-<pre class="src src-c"><span style="color: #FCCE7B;">long</span> <span style="color: #5cEfFF;">m12</span>(<span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">x</span>){
-  <span style="color: #51afef;">return</span> x*12;
+</code></pre>
+<p>地址的计算, 然后对这些地址进行解引用才得到最终结果.
+<img alt="" src="org-images/screenshot_2022-09-11_16-07-37.png"/></p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_15-55-00.png"/></p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_15-55-11.png"/></p>
+<p>编译器分配了rax rdx这两个 caller保存的寄存器, 来保存函数的临时变量.
+caller 保存的寄存器无需保存到stack并从中恢复.</p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_15-59-51.png"/></p>
+<p>算术&amp;逻辑运算</p>
+<p>lea = load effective address</p>
+<p>leaq src , dst 用于计算地址, 而不进行 "解引用".
+主要目的是生成需要重复使用的地址.</p>
+<p>也可以用作一个紧凑的算术运算:</p>
+<pre><code class="language-c">long m12(long x){
+  return x*12;
 }
-</pre>
-</div>
-<p>
-可以被编译为:
-</p>
-<div class="org-src-container">
-<pre class="src src-asm"><span style="color: #5cEfFF;">leaq</span>    (<span style="color: #DFDFDF;">%rdi</span>,<span style="color: #DFDFDF;">%rdi</span>,2), <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">; </span><span style="color: #62686E;">rax = x + x*2 = 3*x</span>
-<span style="color: #5cEfFF;">sal</span>     <span style="color: #51afef;">$2</span>, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">; </span><span style="color: #62686E;">rax = rax &lt;&lt; 2 = (3*x)*4     </span>
-</pre>
-</div>
-<p>
-sal为算术左移.
-</p>
+</code></pre>
+<p>可以被编译为:</p>
+<pre><code class="language-asm">leaq  (%rdi,%rdi,2), %rax ; rax = x + x*2 = 3*x
+sal   $2, %rax ; rax = rax &lt;&lt; 2 = (3*x)*4 
+</code></pre>
+<p>sal为算术左移.</p>
+<p>addq src, dest</p>
+<p>dest = src + dest</p>
+<p>subq src, dest</p>
+<p>dest = dest - src</p>
+<p>imulq src, dest 对溢出的结果进行截断.</p>
+<p>salq/shlq src,dest</p>
+<p>dest = dest \&lt;\&lt; src</p>
+<p>(算术左移和逻辑左移没有区别)</p>
+<p>sarq src , dest dest = dest &gt;&gt;&gt; src
+算术右移,最高位补1/0取决于原来的dest的最高位(符号位)</p>
+<p>shrq src, dest dest = dest &gt;&gt; src 逻辑右移, 最高位补0</p>
+<p>xorq src,dest 按位异或. 不同为1, 相同为0</p>
+<p>andq src, dst</p>
+<p>orq src,dst</p>
+<p>单操作数指令</p>
+<p>incq dest dest = dest + 1</p>
+<p>decq dest dest = dest - 1</p>
+<p>negq dest 取相反数 dest = -1* dest</p>
+<p>notq dst dst = ~dst 按位取反</p>
+<p>例 : <img alt="" src="org-images/screenshot_2022-09-11_17-30-04.png"/></p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_17-30-45.png"/></p>
+<p><img alt="" src="org-images/screenshot_2022-09-11_17-56-52.png"/></p>
+<pre><code class="language-asm">rdi = x
+rsi = y
+rdx = z
+</code></pre>
+<p>使用 <code>leaq</code> 的好处是不会覆盖掉某些后面还要用的寄存器值.</p>
+<pre><code class="language-asm">arith:
+    leaq (%rdi,%rsi), %rax ;; t1 = x+y
+    addq %rdx, %rax  ;; t2 = z+t1
 
+    ;; t4 = y * 48
+    ;; 48 = 3*16 = 3 * 2^4 = (1+2) * 2^4
+    leaq (%rsi,%rsi,2),%rdx
+    salq $4, %rdx
 
-<p>
-addq src, dest 
-</p>
+    ;; t3 = x+4
+    ;; t5 = t3 + t4 = x + t4 + 4
+    leaq 4(%rdi,%rdx), %rcx
 
-<p>
-dest = src + dest 
-</p>
-
-<p>
-subq src, dest 
-</p>
-
-<p>
-dest = dest - src
-</p>
-
-
-<p>
-imulq src, dest
-对溢出的结果进行截断.
-</p>
-
-<p>
-salq/shlq src,dest
-</p>
-
-<p>
-dest = dest &lt;&lt; src
-</p>
-
-<p>
-(算术左移和逻辑左移没有区别)
-</p>
-
-<p>
-sarq src , dest
-dest =  dest &gt;&gt;&gt; src 
-算术右移,最高位补1/0取决于原来的dest的最高位(符号位)
-</p>
-
-<p>
-shrq src, dest
-dest = dest &gt;&gt; src
-逻辑右移, 最高位补0
-</p>
-
-<p>
-xorq src,dest
-按位异或. 不同为1, 相同为0
-</p>
-
-<p>
-andq src, dst
-</p>
-
-<p>
-orq src,dst
-</p>
-
-<p>
-单操作数指令
-</p>
-
-<p>
-incq dest
-dest = dest + 1
-</p>
-
-<p>
-decq dest
-dest = dest - 1
-</p>
-
-
-<p>
-negq dest
-取相反数
-dest = -1* dest
-</p>
-
-<p>
-notq dst
-dst = ~dst
-按位取反
-</p>
-
-
-
-<p>
-例 : 
-<img src="org-images/screenshot_2022-09-11_17-30-04.png" alt="screenshot_2022-09-11_17-30-04.png" />
-</p>
-
-
-<div id="orga2defd0" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_17-30-45.png" alt="screenshot_2022-09-11_17-30-45.png" />
-</p>
-</div>
-
-
-
-
-
-<div id="orgf14308d" class="figure">
-<p><img src="org-images/screenshot_2022-09-11_17-56-52.png" alt="screenshot_2022-09-11_17-56-52.png" />
-</p>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-asm"><span style="color: #5cEfFF;">rdi</span> = x
-<span style="color: #5cEfFF;">rsi</span> = y
-<span style="color: #5cEfFF;">rdx</span> = z
-</pre>
-</div>
-
-<p>
-使用 <code>leaq</code> 的好处是不会覆盖掉某些后面还要用的寄存器值.
-</p>
-<div class="org-src-container">
-<pre class="src src-asm"><span style="color: #5cEfFF;">arith</span>:
-        <span style="color: #51afef;">leaq</span> (<span style="color: #DFDFDF;">%rdi</span>,<span style="color: #DFDFDF;">%rsi</span>), <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">t1 = x+y</span>
-        <span style="color: #51afef;">addq</span> <span style="color: #DFDFDF;">%rdx</span>, <span style="color: #DFDFDF;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">t2 = z+t1</span>
-
-        <span style="color: #62686E;">;; </span><span style="color: #62686E;">t4 = y * 48</span>
-        <span style="color: #62686E;">;; </span><span style="color: #62686E;">48 = 3*16 = 3 * 2^4 = (1+2) * 2^4</span>
-        <span style="color: #51afef;">leaq</span> (<span style="color: #DFDFDF;">%rsi</span>,<span style="color: #DFDFDF;">%rsi</span>,2),<span style="color: #DFDFDF;">%rdx</span>
-        <span style="color: #51afef;">salq</span> $4, <span style="color: #DFDFDF;">%rdx</span>
-
-        <span style="color: #62686E;">;; </span><span style="color: #62686E;">t3 = x+4</span>
-        <span style="color: #62686E;">;; </span><span style="color: #62686E;">t5 = t3 + t4 = x + t4 + 4</span>
-        <span style="color: #51afef;">leaq</span> 4(<span style="color: #DFDFDF;">%rdi</span>,<span style="color: #DFDFDF;">%rdx</span>), <span style="color: #DFDFDF;">%rcx</span>
-
-        <span style="color: #62686E;">;; </span><span style="color: #62686E;">rval = t2 * t5</span>
-        <span style="color: #62686E;">;; </span><span style="color: #62686E;">return rval</span>
-        <span style="color: #51afef;">imulq</span> <span style="color: #DFDFDF;">%rcx</span> <span style="color: #DFDFDF;">%rax</span>
-        <span style="color: #51afef;">ret</span> 
-</pre>
-</div>
-
-<p>
-用位运算实现的abs()
-</p>
-<div class="org-src-container">
-<pre class="src src-c"><span style="color: #FCCE7B;">long</span> <span style="color: #5cEfFF;">abs</span>(<span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">v</span>) {
-  <span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">mask</span> = v &gt;&gt; 8 * 8 -1;
-  <span style="color: #51afef;">return</span> (v+mask) ^ mask; 
+    ;; rval = t2 * t5
+    ;; return rval
+    imulq %rcx %rax
+    ret 
+</code></pre>
+<p>用位运算实现的abs()</p>
+<pre><code class="language-c">long abs(long v) {
+  long mask = v &gt;&gt; 8 * 8 -1;
+  return (v+mask) ^ mask; 
 }
-</pre>
-</div>
-
-<div class="org-src-container">
-<pre class="src src-asm"><span style="color: #5cEfFF;">movq</span> <span style="color: #51afef;">%rdi</span>, <span style="color: #DFDFDF;">%rdx</span>  
-<span style="color: #5cEfFF;">sarq</span> <span style="color: #51afef;">$63</span>, <span style="color: #DFDFDF;">%rdx</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">mask = v &gt;&gt; 63</span>
-<span style="color: #5cEfFF;">leaq</span> (<span style="color: #DFDFDF;">%rdx</span>,<span style="color: #DFDFDF;">%rdi</span>), <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">v + mask </span>
-<span style="color: #5cEfFF;">xorq</span> <span style="color: #51afef;">%rdx</span>, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">( v + mask ) ^ mask </span>
-<span style="color: #5cEfFF;">ret</span>             
-</pre>
-</div>
-
-
-<p>
-控制流相关指令
-</p>
-
-<p>
-控制流指令会改变 %rip, 即程序计数器.
-</p>
-
-<p>
-一些条件指令依赖于 eflags 寄存器的值. 其中有四个位是重点关注的:
-</p>
-
-<p>
-CF : 无符号溢出
-OF : 有符号溢出
-SF : 有符号数的符号位
-ZF : 是否为零 
-</p>
-
-
-<p>
-一些算术/逻辑指令会隐式地改变这些flags:
-</p>
-
-<p>
-addq src, dest
-</p>
-
-<p>
-CF 若最高位发生进位,则为1 
-ZF 若结果为零,则为1 
-SF 若结果&lt;0, 则为1 
-OF 若两个有符号数的和发生溢出(a&gt;0 b&gt;0 a+b &lt;0 || a&lt;0 b&lt;0 a+b&gt;0)
-</p>
-
-
-<p>
-cmpq src2, src1  
-=&gt;  src1 - src2
-</p>
-
-<p>
-CF: 最高位发生进位
-ZF: src1==src2
-SF: src1-src2 &lt; 0
-OF: (src1&gt;0, -src2&gt;0 =&gt; src1-src2&lt;0) || (src1&lt;0,-src2&lt;0 =&gt; src1-src2&gt;0)
-</p>
-
-
-<p>
-testq src2,src1
-src1&amp;src2
-</p>
-
-<p>
-ZF
-SF
-</p>
-
-<p>
-<code>testq reg, reg</code>
-</p>
-
-<p>
-可以用来判断 <code>reg</code> 的正负(SF ?= 0)
-</p>
-
-
-
-
-<p>
-使用分支的绝对值
-</p>
-<div class="org-src-container">
-<pre class="src src-c"><span style="color: #FCCE7B;">long</span> <span style="color: #5cEfFF;">abs</span>(<span style="color: #FCCE7B;">long</span> <span style="color: #DFDFDF;">v</span>) {
-  <span style="color: #51afef;">return</span> (v&lt;0)? -v : v ;
+</code></pre>
+<pre><code class="language-asm">movq %rdi, %rdx  
+sarq $63, %rdx ;; mask = v &gt;&gt; 63
+leaq (%rdx,%rdi), %rax ;; v + mask 
+xorq %rdx, %rax ;; ( v + mask ) ^ mask 
+ret       
+</code></pre>
+<p>控制流相关指令</p>
+<p>控制流指令会改变 %rip, 即程序计数器.</p>
+<p>一些条件指令依赖于 eflags 寄存器的值. 其中有四个位是重点关注的:</p>
+<p>CF : 无符号溢出 OF : 有符号溢出 SF : 有符号数的符号位 ZF : 是否为零</p>
+<p>一些算术/逻辑指令会隐式地改变这些flags:</p>
+<p>addq src, dest</p>
+<p>CF 若最高位发生进位,则为1 ZF 若结果为零,则为1 SF 若结果\&lt;0, 则为1 OF
+若两个有符号数的和发生溢出(a&gt;0 b&gt;0 a+b \&lt;0 || a\&lt;0 b\&lt;0 a+b&gt;0)</p>
+<p>cmpq src2, src1 =&gt; src1 - src2</p>
+<p>CF: 最高位发生进位 ZF: src1==src2 SF: src1-src2 \&lt; 0 OF: (src1&gt;0,
+-src2&gt;0 =&gt; src1-src2\&lt;0) || (src1\&lt;0,-src2\&lt;0 =&gt; src1-src2&gt;0)</p>
+<p>testq src2,src1 src1&amp;src2</p>
+<p>ZF SF</p>
+<p><code>testq reg, reg</code></p>
+<p>可以用来判断 <code>reg</code> 的正负(SF ?= 0)</p>
+<p>使用分支的绝对值</p>
+<pre><code class="language-c">long abs(long v) {
+  return (v&lt;0)? -v : v ;
 }
-</pre>
-</div>
+</code></pre>
+<p>testq实现abs:</p>
+<pre><code class="language-asm">
+</code></pre>
+<p>条件move指令: cmov?</p>
+<p>用cmovsq实现abs()</p>
+<pre><code class="language-asm">movq  %rdi, %rax  ;; %rdi = long v
+negq  %rax  ;; 目的是设置 SF
+cmovsq  %rdi, %rax ;; 有条件的mov: 若SF=1则mov
+retq  
+</code></pre>
+<p>cmovsq</p>
+<p>c: condition s: SF q: quad word</p>
+<p>循环的实现:</p>
+<pre><code class="language-c">
+</code></pre>
+<p>用系统调用打印字符串:</p>
+<pre><code class="language-asm">.LC0:
+    .string "hello\n" 
 
+    .text
+    .global _start
+_start:
+    movq $1,%rax  ;; 1号系统调用  sys_write
+    movq $1,%rdi  ;; fd == stdout == 1 
+    movq $.LC0, %rsi 
+    movq $7, %rdx ;; 字符串长度(包含尾零) 
+    syscall
 
-<p>
-testq实现abs:
-</p>
-<div class="org-src-container">
-<pre class="src src-asm">
-</pre>
-</div>
-
-
-
-<p>
-条件move指令: cmov?
-</p>
-
-
-
-
-<p>
-用cmovsq实现abs()
-</p>
-<div class="org-src-container">
-<pre class="src src-asm"><span style="color: #5cEfFF;">movq</span>    <span style="color: #51afef;">%rdi</span>, <span style="color: #DFDFDF;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">%rdi = long v</span>
-<span style="color: #5cEfFF;">negq</span>    <span style="color: #51afef;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">&#30446;&#30340;&#26159;&#35774;&#32622; SF</span>
-<span style="color: #5cEfFF;">cmovsq</span>  <span style="color: #51afef;">%rdi</span>, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">&#26377;&#26465;&#20214;&#30340;mov: &#33509;SF=1&#21017;mov</span>
-<span style="color: #5cEfFF;">retq</span>    
-</pre>
-</div>
-
-<p>
-cmovsq
-</p>
-
-<p>
-c: condition
-s: SF
-q: quad word
-</p>
-
-
-
-<p>
-循环的实现:
-</p>
-
-<div class="org-src-container">
-<pre class="src src-c">
-</pre>
-</div>
-
-
-
-
-
-<p>
-用系统调用打印字符串: 
-</p>
-<div class="org-src-container">
-<pre class="src src-asm"><span style="color: #5cEfFF;">.LC0</span>:
-        <span style="color: #51afef;">.string</span> <span style="color: #7bc275;">"hello\n"</span> 
-
-        <span style="color: #51afef;">.text</span>
-        <span style="color: #51afef;">.global</span> _start
-<span style="color: #5cEfFF;">_start</span>:
-        <span style="color: #51afef;">movq</span> $1,<span style="color: #DFDFDF;">%rax</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">1&#21495;&#31995;&#32479;&#35843;&#29992;  sys_write</span>
-        <span style="color: #51afef;">movq</span> $1,<span style="color: #DFDFDF;">%rdi</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">fd == stdout == 1 </span>
-        <span style="color: #51afef;">movq</span> $.LC0, <span style="color: #DFDFDF;">%rsi</span> 
-        <span style="color: #51afef;">movq</span> $7, <span style="color: #DFDFDF;">%rdx</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">&#23383;&#31526;&#20018;&#38271;&#24230;(&#21253;&#21547;&#23614;&#38646;) </span>
-        <span style="color: #51afef;">syscall</span>
-
-        <span style="color: #51afef;">movq</span> $60, <span style="color: #DFDFDF;">%rax</span> <span style="color: #62686E;">;; </span><span style="color: #62686E;">60&#21495;&#31995;&#32479;&#35843;&#29992;, exit</span>
-        <span style="color: #51afef;">movq</span> $0, <span style="color: #DFDFDF;">%rdi</span>  <span style="color: #62686E;">;; </span><span style="color: #62686E;">(&#21442;&#25968;)&#36864;&#20986;&#30721;&#20026; 0 </span>
-        <span style="color: #51afef;">syscall</span>
-</pre>
-</div>
-
-
-<p>
-合法的栈地址 &gt;= rsp
-因此rsp所指位置是有数据的.
-</p>
-
-
-<ul class="org-ul">
+    movq $60, %rax ;; 60号系统调用, exit
+    movq $0, %rdi  ;; (参数)退出码为 0 
+    syscall
+</code></pre>
+<p>合法的栈地址 &gt;= rsp 因此rsp所指位置是有数据的.</p>
+<ul>
 <li>pushq src</li>
 </ul>
-
-<p>
-rsp - 8字节
-</p>
-
-<ul class="org-ul">
+<p>rsp - 8字节</p>
+<ul>
 <li>pop</li>
 </ul>
-
-
-<ul class="org-ul">
-<li><p>
-call label
-</p>
-
-<p>
-push rip &amp;&amp; jump label
-</p></li>
+<ul>
+<li>call label</li>
 </ul>
-
-
-<ul class="org-ul">
-<li>retq 
-pop rip</li>
+<p>push rip &amp;&amp; jump label</p>
+<ul>
+<li>retq pop rip</li>
 </ul>
-
-
-
-
-<p>
-函数调用约定:(system V)
-</p>
-
-<ul class="org-ul">
-<li>返回值放在  <code>%rax</code> .长度在 64 - 128 之间的放在 <code>%rdx:%rax</code> 中
-浮点类型的返回值 <code>xmm</code> 
-更大的类型(eg结构体)放在栈中 , 也可以通过rax中存放指针进行返回.</li>
-
-<li>前6个参数 :(长度&lt;4字)</li>
+<p>函数调用约定:(system V)</p>
+<ul>
+<li>
+<p>返回值放在 <code>%rax</code> .长度在 64 - 128 之间的放在 <code>%rdx:%rax</code> 中
+  浮点类型的返回值 <code>xmm</code> 更大的类型(eg结构体)放在栈中 ,
+  也可以通过rax中存放指针进行返回.</p>
+</li>
+<li>
+<p>前6个参数 :(长度\&lt;4字)</p>
+</li>
 </ul>
-<p>
-<code>%rdi, %rsi, %rdx, %rcx, %r8, %r9</code>
-</p>
-
-
-<ul class="org-ul">
+<p><code>%rdi, %rsi, %rdx, %rcx, %r8, %r9</code></p>
+<ul>
 <li>剩下的参数/长度大于四字 放在stack中 :</li>
 </ul>
-<p>
-反向入栈: 后面的参数先入栈.
-</p>
-
-
-
-<ul class="org-ul">
+<p>反向入栈: 后面的参数先入栈.</p>
+<ul>
 <li>随后call将返回地址rip压入栈</li>
 </ul>
-
-
-<p>
-caller-saved: 在函数中修改后不负责还原, 因此caller调用别的函数之前自己要保存好(存放到stack/callee-saved寄存器)
-</p>
-
-<div class="org-src-container">
-<pre class="src src-sh">%rax, %rcx, %rdx, %rsi, %rdi,
+<p>caller-saved: 在函数中修改后不负责还原,
+因此caller调用别的函数之前自己要保存好(存放到stack/callee-saved寄存器)</p>
+<pre><code class="language-bash">%rax, %rcx, %rdx, %rsi, %rdi,
 %r8, %r9, %r10, %11
-</pre>
-</div>
-
-<p>
-callee-saved: 函数中修改后要负责还原
-</p>
-<div class="org-src-container">
-<pre class="src src-sh">%rbx, %rsp, %rbp,
+</code></pre>
+<p>callee-saved: 函数中修改后要负责还原</p>
+<pre><code class="language-bash">%rbx, %rsp, %rbp,
 %r12, %r13, %14, %15
-</pre>
-</div>
+</code></pre>
+<p><img alt="" src="org-images/screenshot_2022-09-12_23-05-01.png"/></p>
+</article>
+<button class="to-top" aria-label="回到顶部">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>
+hljs.highlightAll();
 
+(function() {
+  'use strict';
 
+  /* ---------- 阅读进度条 ---------- */
+  const bar = document.querySelector('.progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    bar.style.width = (total > 0 ? h.scrollTop / total * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
 
+  /* ---------- 回到顶部 ---------- */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
 
+  /* ---------- 全局折叠/展开(单 toggle 按钮) ---------- */
+  const foldBtn = document.querySelector('[data-action="toggle-fold"]');
+  function syncFoldBtnState() {
+    if (!foldBtn) return;
+    const all = document.querySelectorAll('details');
+    if (!all.length) return;
+    const open = Array.from(all).filter(d => d.open).length;
+    const expanded = open >= all.length / 2;
+    foldBtn.dataset.state = expanded ? 'expanded' : 'folded';
+    foldBtn.innerHTML = expanded
+      ? '<span class="chev">▾</span>折叠'
+      : '<span class="chev">▾</span>展开';
+    foldBtn.setAttribute('aria-label', expanded ? '折叠全部' : '展开全部');
+  }
+  if (foldBtn) {
+    foldBtn.addEventListener('click', () => {
+      const all = document.querySelectorAll('details');
+      const open = Array.from(all).filter(d => d.open).length;
+      const expanded = open >= all.length / 2;
+      all.forEach(d => { d.open = !expanded; });
+      syncFoldBtnState();
+    });
+    // 用户手动折叠/展开后,标签也跟着更新
+    document.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', syncFoldBtnState);
+    });
+    syncFoldBtnState();
+  }
 
-<div id="orgc3958b4" class="figure">
-<p><img src="org-images/screenshot_2022-09-12_23-05-01.png" alt="screenshot_2022-09-12_23-05-01.png" />
-</p>
-</div>
-</div>
+  /* ---------- 代码块:包成 .code-block + header(语言徽章 + 复制按钮) ---------- */
+  async function copyCode(text, btn) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '复制'; }, 1500);
+    }
+  }
+
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.closest('.code-block')) return;  // 已包装
+    const code = pre.querySelector('code');
+    let lang = '';
+    if (code) {
+      const m = (code.className || '').match(/language-([\w+-]+)/);
+      if (m) lang = m[1];
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
+
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    header.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>'
+                     + '<span class="code-lang">' + (lang || 'text') + '</span>';
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制代码');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = (code ? code.textContent : pre.textContent) || '';
+      copyCode(text, btn);
+    });
+    header.appendChild(btn);
+
+    pre.parentElement.insertBefore(wrap, pre);
+    wrap.appendChild(header);
+    wrap.appendChild(pre);
+  });
+
+  /* ---------- localStorage 记忆折叠 ---------- */
+  const noteId = document.body.getAttribute('data-note-id');
+  if (noteId) {
+    const KEY = 'md2html:state:' + noteId;
+    const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } })();
+    document.querySelectorAll('details.section').forEach((d) => {
+      const id = d.getAttribute('data-anchor');
+      if (!id) return;
+      if (saved[id] === false) d.open = false;
+      else if (saved[id] === true) d.open = true;
+    });
+    document.querySelectorAll('details.section').forEach((d) => {
+      const id = d.getAttribute('data-anchor');
+      if (!id) return;
+      d.addEventListener('toggle', () => {
+        saved[id] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch {}
+      });
+    });
+  }
+
+  /* ---------- org-mode 键盘:Tab / Shift+Tab / J K ---------- */
+  const isHeading = (el) => el && el.matches && el.matches('summary');
+  const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea')) return;
+    const meta = e.metaKey || e.ctrlKey;
+
+    // / 聚焦搜索
+    if (e.key === '/' && !meta) {
+      const s = document.querySelector('input.search');
+      if (s) { e.preventDefault(); s.focus(); return; }
+    }
+
+    // Tab / Shift+Tab 折叠当前聚焦的 summary
+    if (e.key === 'Tab') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        e.preventDefault();
+        const d = f.parentElement;
+        if (e.shiftKey) {
+          // Shift+Tab: 全局折叠/展开所有
+          const all = document.querySelectorAll('details');
+          const allOpen = Array.from(all).every(x => x.open);
+          all.forEach(x => { x.open = !allOpen; });
+        } else {
+          // Tab: 折叠/展开当前节点
+          d.open = !d.open;
+        }
+        return;
+      }
+    }
+
+    // J/K 或 ↓/↑ 跳转标题 — 已移除(行为不一致,容易让用户迷惑)
+
+    // Enter: 在 note-node 上是跟随标题链接;在 section 上是 toggle
+    if (e.key === 'Enter') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        const titleLink = f.querySelector('.title, .heading-text');
+        if (titleLink && titleLink.tagName === 'A') {
+          e.preventDefault();
+          titleLink.click();
+        }
+      }
+    }
+  });
+
+  /* ---------- 点击 caret 只 toggle,不让 summary 的默认 toggle 干扰; 点击 title 跟随链接 ---------- */
+  // 默认浏览器:点 summary 任意位置都会 toggle,点 <a> 会先 toggle 再 navigate。
+  // 我们让 title 链接的 click 阻止冒泡,避免 toggle 副作用(navigate 后虽然看不到,但保证一致性)。
+  document.querySelectorAll('details.note-node > summary > .title').forEach(link => {
+    if (link.tagName !== 'A') return;
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 让浏览器默认行为(navigate)发生
+    });
+  });
+  // caret 点击:默认也会 toggle,不用特殊处理
+
+  /* ---------- 搜索 ---------- */
+  const search = document.querySelector('input.search');
+  if (search && document.body.classList.contains('page-index')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const nodes = document.querySelectorAll('.note-node');
+      nodes.forEach(node => {
+        if (!q) {
+          node.classList.remove('hidden-by-search');
+          node.querySelectorAll('li').forEach(li => li.classList.remove('hidden-by-search'));
+          return;
+        }
+        const nodeText = node.textContent.toLowerCase();
+        if (!nodeText.includes(q)) {
+          node.classList.add('hidden-by-search');
+          return;
+        }
+        node.classList.remove('hidden-by-search');
+        let anyMatch = false;
+        node.querySelectorAll('li').forEach(li => {
+          const t = li.textContent.toLowerCase();
+          if (t.includes(q)) {
+            li.classList.remove('hidden-by-search');
+            anyMatch = true;
+          } else {
+            li.classList.add('hidden-by-search');
+          }
+        });
+        if (anyMatch) node.open = true;
+      });
+    });
+  }
+  if (search && document.body.classList.contains('page-note')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('details.section').forEach(s => {
+        if (!q) { s.style.opacity = ''; s.open = s.getAttribute('data-was-open') === '1'; return; }
+        const t = s.querySelector('summary').textContent.toLowerCase();
+        s.style.opacity = t.includes(q) ? '1' : '0.3';
+      });
+    });
+  }
+})();
+
+</script>
 </body>
 </html>

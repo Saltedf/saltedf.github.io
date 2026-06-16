@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>内存管理、mmap、brk/sbrk、软渲染与实践项目：完整整理</title>
+  <style>
+    :root {
+      --bg: #0f1115;
+      --panel: #161a22;
+      --panel2: #1c2230;
+      --text: #e6e9ef;
+      --muted: #a8b0c0;
+      --accent: #7aa2f7;
+      --accent2: #9ece6a;
+      --warn: #f7768e;
+      --border: #2a3142;
+      --code: #0b1020;
+      --shadow: rgba(0,0,0,.35);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #0b0e13 0%, #0f1115 100%);
+      color: var(--text);
+      font: 15px/1.75 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 20px 80px; }
+    header {
+      background: linear-gradient(135deg, rgba(122,162,247,.14), rgba(158,206,106,.10));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px 24px;
+      box-shadow: 0 18px 40px var(--shadow);
+      margin-bottom: 22px;
+    }
+    h1 { margin: 0 0 8px; font-size: 30px; line-height: 1.2; }
+    .subtitle { color: var(--muted); margin: 0; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px;
+      background: rgba(255,255,255,.03); color: var(--muted); font-size: 13px;
+    }
+    nav, section, .card {
+      background: rgba(22,26,34,.88);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px var(--shadow);
+    }
+    nav { padding: 18px 20px; margin-bottom: 22px; }
+    nav h2, section h2, section h3 { margin-top: 0; }
+    nav ul {
+      margin: 10px 0 0 20px; padding: 0; columns: 2; column-gap: 36px;
+    }
+    nav li { break-inside: avoid; margin: 3px 0; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    section { padding: 18px 20px; margin-bottom: 18px; }
+    h2 { font-size: 24px; margin: 0 0 12px; }
+    h3 { font-size: 18px; margin: 20px 0 10px; color: #dbe4ff; }
+    h4 { font-size: 16px; margin: 16px 0 8px; color: #d8f3dc; }
+    p { margin: 10px 0; }
+    ul, ol { margin: 8px 0 12px 24px; }
+    li { margin: 6px 0; }
+    pre {
+      background: var(--code); color: #d9e5ff;
+      border: 1px solid #22304a; border-radius: 14px;
+      padding: 14px 16px; overflow:auto; box-shadow: inset 0 1px 0 rgba(255,255,255,.03);
+      margin: 12px 0;
+    }
+    code {
+      background: rgba(122,162,247,.10);
+      color: #cfe3ff;
+      padding: 2px 6px; border-radius: 6px; font-size: 0.95em;
+    }
+    pre code { background: transparent; padding: 0; color: inherit; }
+    .note {
+      border-left: 4px solid var(--accent);
+      background: rgba(122,162,247,.08);
+      padding: 12px 14px; border-radius: 10px; margin: 12px 0;
+    }
+    .warn {
+      border-left-color: var(--warn);
+      background: rgba(247,118,142,.08);
+    }
+    .good {
+      border-left-color: var(--accent2);
+      background: rgba(158,206,106,.08);
+    }
+    details {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.02);
+      padding: 10px 14px;
+      margin: 12px 0;
+    }
+    summary { cursor: pointer; font-weight: 650; color: #eef2ff; }
+    .qa {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .q, .a {
+      border-radius: 12px; padding: 12px 14px; border: 1px solid var(--border);
+    }
+    .q { background: rgba(122,162,247,.06); }
+    .a { background: rgba(158,206,106,.06); }
+    .q b, .a b { display:block; margin-bottom: 6px; }
+    .small { font-size: 13px; color: var(--muted); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .table-wrap { overflow:auto; border-radius: 14px; border: 1px solid var(--border); margin: 12px 0; }
+    table { width: 100%; border-collapse: collapse; min-width: 700px; background: rgba(255,255,255,.02); }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { text-align: left; background: rgba(255,255,255,.04); color: #f2f4ff; }
+    tr:hover td { background: rgba(255,255,255,.015); }
+    .footer {
+      color: var(--muted); text-align:center; margin-top: 24px; font-size: 13px;
+    }
+    @media (max-width: 860px) {
+      nav ul { columns: 1; }
+      .grid2, .grid3 { grid-template-columns: 1fr; }
+      h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>内存管理、mmap、brk/sbrk、文件映射、软渲染与实践项目</h1>
+      <p class="subtitle">把整段对话中涉及的概念、问答、纠偏、例子和最终实践项目，整理成一份可离线阅读的单文件说明书。</p>
+      <div class="meta">
+        <span class="chip">主题：GDI / DC / GDI对象</span>
+        <span class="chip">主题：VirtualAlloc / HeapAlloc / mmap / brk / sbrk</span>
+        <span class="chip">主题：文件IO、page cache、DMA、zero-copy</span>
+        <span class="chip">主题：softbuffer、Handmade Hero风格软件渲染</span>
+        <span class="chip">目标：做一个真正有用的项目</span>
+      </div>
+    </header>
+
+    <nav>
+      <h2>目录</h2>
+      <ul>
+        <li><a href="#part1">1. GDI 对象、DeleteObject、DC 的生命周期</a></li>
+        <li><a href="#part2">2. Windows 虚拟内存：VirtualAlloc、HeapAlloc、MEM_RESERVE、MEM_COMMIT</a></li>
+        <li><a href="#part3">3. Linux 内存：brk/sbrk、mmap、malloc 的关系</a></li>
+        <li><a href="#part4">4. 文件映射 mmap：原型、偏移、长度、与 read 的差别</a></li>
+        <li><a href="#part5">5. 从 CPU 视角理解 read / mmap / DMA / page fault / zero-copy</a></li>
+        <li><a href="#part6">6. softbuffer 是什么，它在 Linux 上如何工作</a></li>
+        <li><a href="#part7">7. Handmade Hero 风格是否还能在 Linux 上实现</a></li>
+        <li><a href="#part8">8. Arch Linux 解压 rar</a></li>
+        <li><a href="#part9">9. 重要结论：碎片、层级、边界与误区</a></li>
+        <li><a href="#project">10. 最终实践项目：软件渲染图片查看器</a></li>
+        <li><a href="#appendix">11. 关键术语速查</a></li>
+      </ul>
+    </nav>
+
+    <section id="part1">
+      <h2>1. GDI 对象、DeleteObject、DC 的生命周期</h2>
+
+      <details open>
+        <summary>Q：DeleteObject 会释放句柄相关的所有资源吗？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>DeleteObject 是否会把“与这个句柄有关的一切”都释放掉？</div>
+          <div class="a"><b>回答</b>不会。<code>DeleteObject</code> 只负责销毁某些 GDI 对象本体（例如 bitmap、brush、font、pen），不负责你把它选进哪个 DC、不负责 DC 本身，也不负责你保存的旧句柄或外部缓冲区。正确理解是：它释放的是“对象本体生命周期”，不是“所有引用关系和外部绑定关系”。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：DC 需要释放吗？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>设备上下文 DC 是否要释放？</div>
+          <div class="a"><b>回答</b>需要，但要看来源。<code>CreateCompatibleDC</code> / <code>CreateDC</code> 产生的 DC 一般用 <code>DeleteDC</code> 释放；<code>GetDC</code> 拿到的 DC 用 <code>ReleaseDC</code> 归还；<code>BeginPaint</code> / <code>EndPaint</code> 里的 DC 由系统管理，不要 <code>DeleteDC</code>。核心原则是：谁创建，谁释放；系统借给你的，用系统 API 归还。</div>
+        </div>
+      </details>
+
+      <div class="note">
+        <b>核心统一理解</b>：GDI 对象、DC、DIB/bitmap buffer 是三层不同的资源。<code>DeleteObject</code>、<code>DeleteDC</code>、<code>ReleaseDC</code> 对应不同层级，不能互相替代。
+      </div>
+    </section>
+
+    <section id="part2">
+      <h2>2. Windows 虚拟内存：VirtualAlloc、HeapAlloc、MEM_RESERVE、MEM_COMMIT</h2>
+
+      <details open>
+        <summary>Q：VirtualAlloc 是什么？内存分配吗？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>VirtualAlloc 到底做了什么？</div>
+          <div class="a"><b>回答</b>它是 Windows 提供的虚拟内存分配 API，直接向操作系统申请进程虚拟地址空间中的一段区域。它比 <code>malloc/new</code> 更底层，工作在页级别，适合大块、连续、可控的内存管理。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：VirtualAlloc 和 HeapAlloc 的区别？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>HeapAlloc 与 VirtualAlloc 的区别是什么？</div>
+          <div class="a"><b>回答</b><code>HeapAlloc</code> 是“堆管理器分配”，通常用于小块内存，内部会做切分、复用和碎片管理；<code>VirtualAlloc</code> 是直接向 OS 要页，粒度更大，更适合大块、连续、可分区管理的内存。可以把 <code>HeapAlloc</code> 理解为“切蛋糕”，<code>VirtualAlloc</code> 理解为“拿地”。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：VirtualAlloc 总是返回页大小的内存块吗？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>它是不是每次只返回一页？</div>
+          <div class="a"><b>回答</b>不是。它返回的是页对齐的虚拟内存区域，长度可以是任意请求大小，但会向上按页对齐。地址也通常页对齐；reserve 还有更大的对齐粒度（Windows 上常见 64KB 的 allocation granularity）。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：MEM_COMMIT 和 MEM_RESERVE 是什么？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>这两个标志分别表示什么？</div>
+          <div class="a"><b>回答</b><code>MEM_RESERVE</code> 是在进程虚拟地址空间里“占坑”，只占地址，不一定占物理页；<code>MEM_COMMIT</code> 是让该虚拟页具备可访问资格，系统承诺未来访问时会有页可用。它们是不同层：reserve 解决地址布局，commit 解决页面可访问。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：可以只用 MEM_COMMIT，不要 MEM_RESERVE 吗？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>为什么不直接只用 MEM_COMMIT？</div>
+          <div class="a"><b>回答</b>通常可以，Windows 会在未 reserve 的情况下隐式 reserve。之所以还要分开，是为了先“圈地”再“按需盖房”，尤其适合要预留大块连续地址空间但不想马上占用大量物理页的场景。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：MEM_COMMIT 的意思是“真正可用”，但不一定立刻绑定物理页？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>是不是 commit 以后未必马上分配物理内存？</div>
+          <div class="a"><b>回答</b>对。commit 更准确的意思是“这段虚拟页已进入可访问承诺状态”。真实物理页通常在第一次访问触发 page fault 时才真正分配，这就是 demand paging / lazy allocation。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：MEM_RESERVE 的隔离级别是进程吗？如何取消？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>reserve 是不是只对当前进程有效？怎么撤销？</div>
+          <div class="a"><b>回答</b>是的，reserve 的作用域是当前进程虚拟地址空间。撤销用 <code>VirtualFree(ptr, 0, MEM_RELEASE)</code>。如果只是取消 commit 但保留占位，可以用 <code>MEM_DECOMMIT</code>。</div>
+        </div>
+      </details>
+
+      <div class="note">
+        <b>一条线性概括</b>：<code>MEM_RESERVE</code> 负责“地址空间布局”，<code>MEM_COMMIT</code> 负责“页面可访问”，而物理页是否立刻出现，往往由第一次访问时的 page fault 决定。
+      </div>
+    </section>
+
+    <section id="part3">
+      <h2>3. Linux 内存：brk/sbrk、mmap、malloc 的关系</h2>
+
+      <details open>
+        <summary>Q：Linux 上对应 HeapAlloc 和 VirtualAlloc 的是？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>Linux 上对应 Windows 的 HeapAlloc / VirtualAlloc 分别是什么？</div>
+          <div class="a"><b>回答</b>没有一模一样的对应，但近似上：<code>malloc</code> ≈ HeapAlloc 这一层的用户态分配器；<code>mmap</code> ≈ VirtualAlloc 这一层的 OS 虚拟内存映射接口。malloc 常常底层会再用 brk/sbrk 或 mmap。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：Linux 没有 malloc 吗？小内存 brk/sbrk，大内存 mmap 有何区别？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>Linux API 里没有 malloc 吗？brk/sbrk 与 mmap 的区别是什么？</div>
+          <div class="a"><b>回答</b><code>malloc</code> 是 C 标准库/运行时（如 glibc、musl、jemalloc）提供的用户态分配器，不是内核 API。底层小对象常从连续 heap（brk/sbrk 扩展）切分，大对象常直接用 mmap 创建独立 mapping。真正差别不是“有没有碎片”，而是“映射/回收的粒度与耦合方式”。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：mmap 是否比 brk 更不容易出现你说的回收问题？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>如果 mmap 也用在类似场景，是否也会遇到无法回收？</div>
+          <div class="a"><b>回答</b>对。只要 allocator 在一个大块里切小块，就会有碎片问题。区别不在于 mmap 是否“免碎片”，而在于 mmap 允许把不同生命周期的大块独立成不同 mapping，能否整体归还 OS 更容易；brk 的主 heap 则更耦合、回收更受限。碎片是动态内存模型的自然结果，不是 brk 独有。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：brk/sbrk 的惯用法是什么？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>brk/sbrk 一般怎么用？</div>
+          <div class="a"><b>回答</b>最典型是先 <code>sbrk(0)</code> 读出当前 break，再一次性扩一大段，然后自己用 bump pointer 在线性区里切分。这非常像 arena / stack-like allocator：大块拿到后，内部只前进指针，不做复杂 free。适合生命周期整体一致、批量释放的场景。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：brk 呢？brk(0)、brk(1)、brk(start) 分别怎样？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>brk 和 sbrk 的具体意义是什么？brk(0)/brk(1)/brk(start) 会怎样？</div>
+          <div class="a"><b>回答</b><code>brk(addr)</code> 是把 program break 直接设到绝对地址；<code>sbrk(delta)</code> 是相对移动。<code>brk(0)</code> 不是惯用写法，通常失败，因为它试图把 heap 末尾设为 NULL；<code>brk(1)</code> 也几乎一定失败；<code>brk(start)</code> 如果把 break 缩回去，会使新 break 之后的内存失效，之前分配出去但位于该边界后的对象就不再属于 heap 了。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：sbrk 里的 s 是什么？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>sbrk 的 s 到底代表什么？</div>
+          <div class="a"><b>回答</b>历史上它通常被理解为“increment/shift break”的意思，核心是：<code>brk</code> 是绝对设置；<code>sbrk</code> 是相对移动 program break。它本来就是对 brk 的包装。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：sbrk(1) 是否真的分配了一个 page？用户只能用新增的那个字节吗？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>sbrk(1) 是否意味着物理上分配了一个 page？</div>
+          <div class="a"><b>回答</b>逻辑上它把 heap end 向前移动 1 字节，但 VM 系统仍以页为单位工作，所以相关页可能已经映射或在第一次访问时才分配物理页。即使底层出现一个页，用户在语言/allocator 语义上只拥有 break 以内的有效范围；超出 break 的访问是未定义行为。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：sbrk 和 malloc 混用会不会让 malloc 异常？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>如果一个 C 项目里同时用了 malloc 和 sbrk，会怎样？</div>
+          <div class="a"><b>回答</b>非常危险。因为 malloc 本身通常就在管理同一个 heap 和 program break。你手动 sbrk 等于直接修改 allocator 的地基，可能导致 metadata 破坏、chunk 合并异常、heap corruption，甚至 glibc abort。一般不要混用，除非你完全掌控整个 allocator。</div>
+        </div>
+      </details>
+
+      <div class="note warn">
+        <b>关键结论</b>：<code>brk/sbrk</code> 操作的是“共享的进程主 heap 边界”，因此和 malloc 强耦合；<code>mmap</code> 是独立 mapping，所以用户自己用 mmap 通常不会干扰 malloc 的主 heap 状态。
+      </div>
+    </section>
+
+    <section id="part4">
+      <h2>4. 文件映射 mmap：原型、偏移、长度、与 read 的差别</h2>
+
+      <details open>
+        <summary>Q：mmap 文档里说了什么？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>POSIX 文档那段英文是什么意思？</div>
+          <div class="a"><b>回答</b>它在说：<code>mmap()</code> 会在进程地址空间中建立一段虚拟地址映射，把这段地址与一个 memory object（由文件描述符代表的对象）关联起来。返回的地址 <code>pa</code> 是一个实现定义的地址；映射的虚拟地址范围和文件偏移范围都必须在“可能的合法范围”之内。文档强调的重点是：mmap 建的是“合法的虚拟映射”，不等于立刻把整段都变成已驻留物理内存。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：mmap 原型每个参数是什么意思？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b><code>void *mmap(void *addr, size_t len, int prot, int flags, int fildes, off_t off);</code> 里的参数分别干什么？</div>
+          <div class="a"><b>回答</b><code>addr</code> 是你希望映射出现的位置，通常传 NULL 让 OS 自选；<code>len</code> 是长度；<code>prot</code> 是权限，如读写执行；<code>flags</code> 决定映射行为，如 <code>MAP_PRIVATE</code>、<code>MAP_SHARED</code>、<code>MAP_ANONYMOUS</code>、<code>MAP_FIXED</code>；<code>fildes</code> 是文件描述符；<code>off</code> 是文件偏移，从文件的哪个位置开始映射。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：如果文件大小 &gt; 映射大小或映射大小 &gt; 文件大小会怎样？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>文件大小与映射长度不一致时会怎样？</div>
+          <div class="a"><b>回答</b>如果映射长度超过文件大小，mmap 本身通常仍可成功，但越过 EOF 的部分在访问时可能触发 SIGBUS；如果文件比映射长度大，则只是映射了文件的一部分，非常正常。mmap 支持分段、窗口式映射，不要求一次映整个文件。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：mmap 和正常读文件有什么差别？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>它和 read 到 buffer 的方式有什么本质区别？</div>
+          <div class="a"><b>回答</b>read 是显式把数据从内核缓冲区复制到用户 buffer；mmap 则是把文件页直接映射到进程虚拟地址空间。read 是“复制”，mmap 是“映射”。mmap 省掉的是 kernel→user 的那次显式 memcpy，而不是让磁盘神奇地被 CPU 直接读取。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：mmap 违反第一性原理吗？CPU 怎么可能直接读磁盘？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>CPU load/store 为什么能读到磁盘文件？</div>
+          <div class="a"><b>回答</b>CPU 从来不直接读磁盘。mmap 的关键是 page fault：CPU 在访问某个虚拟页时，如果发现页表里没有对应物理页，就陷入内核；内核再去把对应文件页读入 RAM（通常由 DMA 完成），更新页表，然后让 CPU 重试这次 load。真正读磁盘的是内核+存储控制器，不是 CPU 指令本身。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：CPU 视角下 disk → DMA → kernel page cache → memcpy → user buffer 是怎样的？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>请从 CPU 视角拆解这个过程。</div>
+          <div class="a"><b>回答</b>用户调用 read 进入内核后，内核先查 page cache；命中则直接 memcpy 到用户 buffer，未命中则发起块设备 IO。IO 由控制器和 DMA 把文件页搬进 page cache 所在的 RAM，完成后中断 CPU；随后内核执行 RAM→RAM 的 memcpy，把数据拷贝到用户 buffer。也就是说，磁盘到 RAM 的搬运通常由 DMA 完成，额外的一次 CPU memcpy 才是 read 与 mmap 的主要差别之一。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：0 拷贝是不是不是真正零拷贝？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>zero-copy 真的“零”吗？</div>
+          <div class="a"><b>回答</b>不是“完全没有数据移动”，而是“避免不必要的额外拷贝”。数据仍然要从磁盘经 DMA 到 RAM；mmap/sendfile/splice 这类技术主要减少的是 CPU 参与的 buffer-to-buffer 复制、上下文切换和 cache 污染。更准确叫法是 zero extra copy。</div>
+        </div>
+      </details>
+
+      <div class="note">
+        <b>对 mmap 的最稳妥理解</b>：mmap 是“把文件页变成虚拟内存”，而 read 是“先读进内核，再复制给你”。前者更像“让文件成为地址空间的一部分”，后者更像“把文件内容搬到你的 buffer 里”。
+      </div>
+    </section>
+
+    <section id="part5">
+      <h2>5. 从 CPU 视角理解 read / mmap / DMA / page fault / zero-copy</h2>
+
+      <div class="grid2">
+        <div class="card" style="padding:14px 16px;">
+          <h3 style="margin-top:0;">read 的路径</h3>
+          <pre><code>user code
+  ↓ syscall
+kernel
+  ↓ check page cache
+  ↓ (miss) submit block IO
+storage controller + DMA
+  ↓
+RAM (page cache)
+  ↓ memcpy
+user buffer</code></pre>
+          <p>这里真正额外的 CPU 工作是 <code>memcpy</code>。磁盘页到 RAM 的搬运通常由 DMA 完成。</p>
+        </div>
+        <div class="card" style="padding:14px 16px;">
+          <h3 style="margin-top:0;">mmap 的路径</h3>
+          <pre><code>user code loads [p + i]
+  ↓ MMU lookup
+page not present?
+  ↓ page fault
+kernel loads file page into RAM
+  ↓ update page table
+retry load
+  ↓
+CPU reads RAM directly</code></pre>
+          <p>mmap 避免的是 <code>page cache → user buffer</code> 这一步显式复制，而不是让磁盘“跳过 RAM”。</p>
+        </div>
+      </div>
+
+      <details>
+        <summary>为什么 mmap 看起来像“普通内存访问”？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>为什么访问 mapped memory 像访问数组一样？</div>
+          <div class="a"><b>回答</b>因为页面第一次未命中时由 page fault 把文件页装入 RAM 并建立页表映射，之后 CPU 看到的就是正常 RAM 访问。mmap 把“文件 IO”隐藏到了“内存访问”后面。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>zero-copy 的意义</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>zero-copy 真正优化了什么？</div>
+          <div class="a"><b>回答</b>它优化的是 CPU 路径、cache 污染、上下文切换和多余缓冲区复制。它不是“没有物理移动”，而是“减少一层不必要的内存复制”。</div>
+        </div>
+      </details>
+    </section>
+
+    <section id="part6">
+      <h2>6. softbuffer 是什么，它在 Linux 上如何工作</h2>
+
+      <details open>
+        <summary>Q：softbuffer 是什么？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>softbuffer 到底提供什么？</div>
+          <div class="a"><b>回答</b>softbuffer 是一个 Rust 库，用来给你一块 CPU 内存 framebuffer，然后把它显示到窗口上。它本质上是 software framebuffer presentation：你自己写像素，它帮你提交到窗口系统。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>Q：softbuffer 在 Linux 上的原理是什么？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>Linux 上 softbuffer 靠什么实现显示？</div>
+          <div class="a"><b>回答</b>它通常依赖窗口系统与合成器，不直接控制 GPU。Linux 下会根据 X11 或 Wayland 选择相应路径：X11 下可通过 XImage / SHM image / XPutImage 类机制提交图像；Wayland 下常用 wl_shm 共享内存 buffer。核心仍是 CPU framebuffer 提交给窗口系统，而不是直接操作显卡。</div>
+        </div>
+      </details>
+
+      <details>
+        <summary>它和 Handmade Hero 是否冲突？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>用了 softbuffer 还能做 HandMade Hero 风格的学习吗？</div>
+          <div class="a"><b>回答</b>可以。Handmade Hero 的核心不是 Win32 或 GDI 的某个 API，而是：自己管理 framebuffer、自己生成像素、自己控制游戏循环与平台层。softbuffer 只是最后把像素显示出去，完全保留了“软件渲染 + 自己写像素”的核心体验。</div>
+        </div>
+      </details>
+    </section>
+
+    <section id="part7">
+      <h2>7. Handmade Hero 风格是否还能在 Linux 上实现</h2>
+
+      <div class="note good">
+        <b>结论</b>可以，而且很适合。平台层会不同，但“CPU 生成 framebuffer，最后提交到窗口系统”的思想完全一致。
+      </div>
+
+      <details>
+        <summary>核心不变的是什么？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>在 Linux 上做的话，哪些东西是核心，哪些只是平台差异？</div>
+          <div class="a"><b>回答</b>核心是：像素数组、渲染循环、内存布局、采样、资源管理、时间步进、输入响应、音频同步。平台差异只在“最后如何把 buffer 显示出来”，例如 Windows 用 StretchDIBits，Linux 用 softbuffer/X11/Wayland。</div>
+        </div>
+      </details>
+    </section>
+
+    <section id="part8">
+      <h2>8. Arch Linux 解压 rar</h2>
+
+      <details open>
+        <summary>Q：Arch 上如何解压 rar？</summary>
+        <div class="qa">
+          <div class="q"><b>问题</b>在 Arch Linux 上怎么打开 rar 文件？</div>
+          <div class="a"><b>回答</b>安装 <code>unrar</code> 后，用 <code>unrar x file.rar</code> 解压。也可以安装 <code>7zip</code>，用 <code>7z x file.rar</code>。<code>unrar</code> 对 RAR 支持更完整，<code>7z</code> 更通用。</div>
+        </div>
+      </details>
+    </section>
+
+    <section id="part9">
+      <h2>9. 重要结论：碎片、层级、边界与误区</h2>
+
+      <h3>9.1 碎片不是 bug，而是动态分配的自然代价</h3>
+      <p>只要允许任意大小、任意顺序 free、长短生命周期混合，就必然会出现空洞。外部碎片是“总空闲不少，但连续空间不够”；内部碎片是“按页对齐后多出来的浪费”。OS、allocator、brk、mmap、VirtualAlloc 都无法彻底消灭碎片，只能管理和缓解它。</p>
+
+      <h3>9.2 brk/sbrk 像 stack，但不是 stack</h3>
+      <p>brk/sbrk 维护的是一个连续、只会从末尾增长或缩小的 heap 边界，因此具有 stack-like 的线性特征：轻松处理末尾、难以处理中间。malloc/free 之所以复杂，是因为它在这块连续区域里自己维护空闲链表和块元数据，试图把线性区域变成“任意大小、任意顺序释放”的通用分配器。</p>
+
+      <h3>9.3 mmap 是独立 mapping，不是“自动免碎片”</h3>
+      <p>mmap 的优势不是没有碎片，而是可以把不同生命周期的大块区域独立成不同 mapping，整体释放更容易。若你自己再在一个大 mmap 区域里切小块，它同样会碎片化。真正决定碎片程度的是“生命周期是否统一、释放策略是否可整体回收”。</p>
+
+      <h3>9.4 不能把“物理页是否存在”与“逻辑上是否属于你”混为一谈</h3>
+      <p>一个页可能已经存在、已经映射、甚至已经有物理 RAM，但这不等于它对你的程序“合法”。相反，某些逻辑上“已经申请”的区域也可能尚未真正分配物理页。理解虚拟内存，必须同时分清：物理页、虚拟页、allocator 边界、语言对象有效范围。</p>
+    </section>
+
+    <section id="project">
+      <h2>10. 最终实践项目：软件渲染图片查看器</h2>
+
+      <div class="note good">
+        <b>项目目标</b>做出一个真正有用的软件：<code>viewer image.bmp</code>。它不仅是练习，而是能完整串起“文件 → 虚拟内存 → allocator → framebuffer → 窗口显示”的工具。
+      </div>
+
+      <h3>10.1 项目总目标</h3>
+      <p>你将做一个只用 CPU 软件渲染的图片查看器，支持 BMP 文件加载、mmap 读取、窗口显示、缩放、移动和基础性能分析。整个过程从文件 IO、虚拟内存、内存布局、像素写入、到窗口呈现，全部亲手实现。</p>
+
+      <h3>10.2 总体技术栈</h3>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>层级</th><th>技术</th><th>作用</th><th>为什么选它</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>语言</td><td>Rust stable</td><td>写底层、内存安全、跨平台</td><td>既能接近系统，又比 C 更稳</td></tr>
+            <tr><td>窗口</td><td>winit</td><td>创建窗口、输入事件、主循环</td><td>平台层薄，便于理解</td></tr>
+            <tr><td>显示</td><td>softbuffer</td><td>把 CPU framebuffer 提交到窗口</td><td>保留软件渲染风格</td></tr>
+            <tr><td>文件映射</td><td>libc::mmap / munmap</td><td>把 BMP 文件映射到虚拟内存</td><td>理解 page fault / page cache</td></tr>
+            <tr><td>内存分配</td><td>自写 arena allocator</td><td>临时对象、图像元数据、渲染缓冲</td><td>理解 brk/sbrk、碎片、线性分配</td></tr>
+            <tr><td>图像格式</td><td>24-bit BMP</td><td>最简单的裸像素图片格式</td><td>便于手写解析</td></tr>
+            <tr><td>性能分析</td><td>std::time / perf</td><td>测帧时间、观察 page fault、cache miss</td><td>让理解可验证</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>10.3 项目结构</h3>
+      <pre><code>src/
+  main.rs        // 程序入口：事件循环、命令行参数、整体编排
+  platform.rs    // 窗口、输入、softbuffer显示
+  renderer.rs    // CPU绘制：清屏、矩形、缩放、采样
+  bitmap.rs      // BMP解析、像素访问、文件头结构
+  memory.rs      // arena allocator、mmap封装、临时内存
+</code></pre>
+
+      <h3>10.4 阶段 1：窗口 + framebuffer</h3>
+      <p><b>目标</b>：创建窗口，在窗口中显示纯色或渐变的 CPU 像素缓冲区。</p>
+      <p><b>输入</b>：无，或先用代码生成的颜色值。</p>
+      <p><b>输出</b>：一个固定尺寸窗口（例如 480×270），内容为纯蓝、渐变或棋盘格。</p>
+      <p><b>技术</b>：winit 创建窗口，softbuffer 获取 buffer，直接写 <code>buffer[y * width + x]</code>。</p>
+      <p><b>关键实现思路</b>：先把窗口和像素内存跑通，不碰图片、不碰文件、不碰复杂状态。你要先证明“我能写像素并显示”。</p>
+      <p><b>需要观察的点</b>：宽高、stride、像素格式（如 0xAARRGGBB）、buffer 提交和窗口刷新之间的关系。</p>
+
+      <h3>10.5 阶段 2：软件绘图 API</h3>
+      <p><b>目标</b>：实现最小图元绘制：清屏、矩形、线段、简单填充。</p>
+      <p><b>输入</b>：函数调用，如 <code>draw_rect(x, y, w, h, color)</code>。</p>
+      <p><b>输出</b>：窗口中出现矩形、线段和渐变。</p>
+      <p><b>技术</b>：纯 CPU 写 buffer，不使用 GPU 图形 API。</p>
+      <p><b>关键实现思路</b>：把图形最终都还原成像素循环，明白 clipping、rasterization、行优先访问的 cache locality。</p>
+      <p><b>建议实验</b>：随机矩形压力测试、鼠标拖拽画线、不同扫描顺序的性能比较。</p>
+
+      <h3>10.6 阶段 3：BMP 解析器</h3>
+      <p><b>目标</b>：手写 24-bit BMP 文件解析器，先用普通文件读取实现，再扩展到 mmap 版本。</p>
+      <p><b>输入</b>：一个 BMP 文件（建议从最简单的未压缩 24-bit BMP 开始）。</p>
+      <p><b>输出</b>：得到宽、高、像素数组，正确显示 BMP 图像。</p>
+      <p><b>技术</b>：二进制头结构、字节对齐、little endian、scanline padding、bottom-up 存储。</p>
+      <p><b>关键实现思路</b>：先只支持最简单的 BMP 子集，明确文件头和像素区的内存布局，再逐步扩展。</p>
+      <p><b>建议实验</b>：翻转上下、做灰度化、验证每行 4 字节对齐的 padding。</p>
+
+      <h3>10.7 阶段 4：mmap 文件读取</h3>
+      <p><b>目标</b>：把 BMP 的加载从 <code>read()</code> 切换为 <code>mmap()</code>，直接从映射内存解析。</p>
+      <p><b>输入</b>：同一个 BMP 文件。</p>
+      <p><b>输出</b>：功能保持一致，但文件内容来自映射而不是拷贝出来的 Vec。</p>
+      <p><b>技术</b>：<code>libc::mmap</code>、<code>munmap</code>、页对齐、offset、page fault、page cache。</p>
+      <p><b>关键实现思路</b>：映射后不要先复制整文件，直接把头结构和像素区“当作内存”去读。这样你会非常直观地感受到“文件变成地址空间的一部分”。</p>
+      <p><b>建议实验</b>：大文件 mmap 观察“映射快、首次访问慢”；随机访问与顺序扫描的差别。</p>
+
+      <h3>10.8 阶段 5：arena allocator</h3>
+      <p><b>目标</b>：实现一个 bump / arena 分配器，用于临时对象、图像处理临时缓冲、字符串拼接等。</p>
+      <p><b>输入</b>：<code>arena_alloc(size)</code>、<code>arena_reset()</code>。</p>
+      <p><b>输出</b>：一块连续、可快速分配和整体重置的内存区域。</p>
+      <p><b>技术</b>：底层可由 <code>mmap(MAP_ANONYMOUS)</code> 提供大块连续内存，再在其上 bump pointer 分配。</p>
+      <p><b>关键实现思路</b>：把生命周期一致的临时对象放进 arena；帧结束时 reset，避免细粒度 free。</p>
+      <p><b>建议实验</b>：做一个每帧重置的 frame arena，用于临时字符串、临时图像转换数据。</p>
+
+      <h3>10.9 阶段 6：摄像机和平移/缩放</h3>
+      <p><b>目标</b>：让查看器能够移动、缩放、重采样。</p>
+      <p><b>输入</b>：键盘 WASD、鼠标滚轮、拖拽。</p>
+      <p><b>输出</b>：图片可自由平移缩放。</p>
+      <p><b>技术</b>：坐标变换、nearest-neighbor sampling、可选 bilinear sampling。</p>
+      <p><b>关键实现思路</b>：把显示坐标映射回图像坐标，再采样。这样你会真正理解 texture sampling 和 raster space。</p>
+      <p><b>建议实验</b>：16 倍像素放大、双线性过滤、观察锯齿和插值差异。</p>
+
+      <h3>10.10 阶段 7：性能分析</h3>
+      <p><b>目标</b>：理解软件渲染性能如何受缓存、分页和访问模式影响。</p>
+      <p><b>输入</b>：不同尺寸图片、不同缩放比例、不同绘制顺序。</p>
+      <p><b>输出</b>：帧时间统计、page fault 观察、cache locality 对比。</p>
+      <p><b>技术</b>：<code>std::time</code>、Linux <code>perf</code>、可选统计 page fault。</p>
+      <p><b>关键实现思路</b>：比较 row-major / column-major 访问，观察扫图时的连续访问优势；比较 mmap 大文件顺序访问和随机访问的差异。</p>
+
+      <h3>10.11 阶段 8：扩展为小型 2D 软件渲染器</h3>
+      <p><b>目标</b>：把图片查看器扩展成一个真正的小型 2D 软件渲染器。</p>
+      <p><b>功能</b>：sprite、tilemap、alpha blending、简单动画、UI 叠层。</p>
+      <p><b>技术</b>：依旧是 CPU 写像素；增加混合、遮罩、层级顺序、时间步进。</p>
+      <p><b>关键实现思路</b>：从“看图”扩展到“画图”，把查看器变成一个更完整的 2D 软件渲染实验台。</p>
+
+      <h3>10.12 为什么这个项目能“巩固整个会话”</h3>
+      <p>因为它会把下面这些概念串成一条链：</p>
+      <ul>
+        <li>GDI / DC / DeleteObject：资源生命周期管理的同类思维。</li>
+        <li>VirtualAlloc / HeapAlloc / MEM_RESERVE / MEM_COMMIT：页级虚拟内存和 allocator 边界。</li>
+        <li>brk / sbrk / mmap / malloc：连续 heap、独立 mapping 与碎片。</li>
+        <li>read / mmap / page cache / DMA / page fault：文件如何进入内存。</li>
+        <li>softbuffer / 窗口系统：CPU framebuffer 如何显示。</li>
+        <li>arena allocator：如何把生命周期统一，减少碎片。</li>
+        <li>Handmade Hero 思想：自己控制内存、像素、循环、平台层。</li>
+      </ul>
+
+      <div class="note">
+        <b>建议执行顺序</b>：先把“窗口 + framebuffer + 纯色渲染”打通，再做 BMP 读取；接着从 read 切换到 mmap；然后写 arena allocator；最后再加缩放、性能和 2D 扩展。不要先追求功能数量，要先追求每一层都能独立理解和验证。
+      </div>
+    </section>
+
+    <section id="appendix">
+      <h2>11. 关键术语速查</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>术语</th><th>一行解释</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>DeleteObject</td><td>释放某些 GDI 对象本体，不负责 DC、外部 buffer 或所有引用。</td></tr>
+            <tr><td>DeleteDC</td><td>释放 CreateDC / CreateCompatibleDC 得到的 DC。</td></tr>
+            <tr><td>ReleaseDC</td><td>归还从 GetDC 得到的 DC。</td></tr>
+            <tr><td>VirtualAlloc</td><td>Windows 页级虚拟内存 API，可 reserve / commit。</td></tr>
+            <tr><td>HeapAlloc</td><td>Windows 堆分配接口，面向小对象和复用。</td></tr>
+            <tr><td>MEM_RESERVE</td><td>预留虚拟地址空间，占坑不一定占物理页。</td></tr>
+            <tr><td>MEM_COMMIT</td><td>让页面具备可访问资格，物理页可按需出现。</td></tr>
+            <tr><td>brk / sbrk</td><td>Linux 传统 heap 边界控制，线性增长/缩小。</td></tr>
+            <tr><td>mmap</td><td>创建虚拟内存映射，文件映射或匿名内存都可。</td></tr>
+            <tr><td>page fault</td><td>访问未映射或未驻留页面时由 CPU 触发的异常。</td></tr>
+            <tr><td>page cache</td><td>内核中的文件页缓存，磁盘内容通常先进入这里。</td></tr>
+            <tr><td>DMA</td><td>设备控制器直接搬运数据到 RAM，CPU 不逐字节拷贝。</td></tr>
+            <tr><td>zero-copy</td><td>通常指减少额外 buffer copy，不代表没有任何物理搬运。</td></tr>
+            <tr><td>softbuffer</td><td>把 CPU framebuffer 提交到窗口系统的 Rust 库。</td></tr>
+            <tr><td>arena allocator</td><td>线性分配器，适合统一生命周期对象批量管理。</td></tr>
+            <tr><td>Handmade Hero</td><td>强调自己控制平台层、内存和软件渲染的学习路线。</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="note good">
+        <b>最终总括</b>：这整段对话的主线不是“记住很多 API”，而是建立一套从硬件页表、虚拟内存、文件映射、allocator 到 framebuffer 的完整心智模型。这个项目就是把这套心智模型做成一个可运行的软件。
+      </div>
+    </section>
+
+    <div class="footer">
+      这份文档是一个单文件离线整理版，适合以后直接打开回顾概念、对照实现和推进项目。
+    </div>
+  </div>
+</body>
+</html>

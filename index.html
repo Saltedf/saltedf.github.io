@@ -1,70 +1,2285 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Salted's blog</title>
-<meta name="generator" content="Org Mode" />
-<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/htmlize.css"/>
-<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/bigblow.css"/>
-<link rel="stylesheet" type="text/css" href="org-html-themes/src/bigblow_theme/css/hideshow.css"/>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery-ui-1.10.2.min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.localscroll-min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.scrollTo-1.4.3.1-min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/jquery.zclip.min.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/bigblow.js"></script>
-<script type="text/javascript" src="org-html-themes/src/bigblow_theme/js/hideshow.js"></script>
-<script type="text/javascript" src="org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Salted的笔记</title>
+<style>
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f5f5f7;
+  --bg-inset: #f4f4f5;
+  --bg-toc: #fafbfc;
+
+  --text: #1a1a1f;
+  --text-secondary: #4a4a55;
+  --text-muted: #8a8a95;
+  --text-faint: #c8c8d0;
+  --text-ghost: #e6e6ea;
+
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.07);
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+
+  --border: #ececef;
+  --border-soft: #f2f2f5;
+  --border-strong: #d8d8de;
+
+  --code-bg: #f6f6f8;
+  --code-text: #1a1a1f;
+  --code-border: #e8e8ec;
+
+  --quote-bg: #fafbfc;
+  --quote-border: #d8d8de;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 30, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 30, 0.06), 0 1px 3px rgba(15, 15, 30, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 15, 30, 0.08);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --max-width: 860px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+               "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+main, header, footer, .topbar { position: relative; }
+
+/* ---------- 顶部进度条 ---------- */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width 0.05s linear;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 50;
+}
+
+.topbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.topbar .brand:hover { color: var(--accent); border-bottom: none; }
+.topbar .brand .seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  color: white;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.topbar .spacer { flex: 1; }
+
+.topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
+}
+.topbar button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.topbar button:active {
+  background: var(--bg-inset);
+  transform: scale(0.97);
+}
+.topbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.topbar button.icon {
+  width: 28px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topbar button .chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.topbar button:hover .chev { color: inherit; }
+.topbar button[data-state="folded"] .chev { transform: rotate(-90deg); }
+.topbar button[data-state="expanded"] .chev { transform: rotate(0deg); }
+
+.topbar .search {
+  flex: 0 1 280px;
+  padding: 5px 11px 5px 30px;
+  background: var(--bg-inset) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a95' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>") 9px center/13px no-repeat;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.12s;
+}
+.topbar .search:focus {
+  background-color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.topbar .search::placeholder { color: var(--text-muted); }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 32px 4px;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.hero .title {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92em;
+  margin: 0;
+  line-height: 1.55;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero .stats > div { display: flex; align-items: baseline; gap: 6px; }
+.hero .stats .num {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.hero .stats .label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* ---------- 笔记页文档头 ---------- */
+article {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.back-link {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.back-link:hover { color: var(--accent); border-bottom: none; }
+.doc-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.doc-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-meta code { font-size: 12px; }
+.doc-meta .sep { color: var(--text-ghost); }
+
+/* ---------- 折叠节点 — 树形大纲 ---------- */
+.outline { padding: 0; margin: 0; list-style: none; }
+
+.section {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 行(标题区) */
+.section > summary,
+.node-row {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 0;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary:hover,
+.note-node > summary:hover { background: var(--bg-hover); }
+.section > summary:focus-visible,
+.note-node > summary:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 折叠图标 */
+.caret {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--text-faint);
+  transition: transform 0.15s ease, color 0.1s;
+  font-size: 9px;
+  line-height: 1;
+}
+details[open] > summary > .caret,
+.section[open] > summary > .caret {
+  transform: rotate(90deg);
+  color: var(--text-muted);
+}
+.section > summary:hover > .caret,
+.note-node > summary:hover > .caret { color: var(--text-secondary); }
+
+/* 圆点 — org-mode bullet */
+.bullet {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-ghost);
+  flex-shrink: 0;
+  transition: background 0.12s, transform 0.12s;
+  position: relative;
+}
+.section > summary:hover > .bullet,
+.note-node > summary:hover > .bullet { background: var(--accent); }
+.section[open] > summary > .bullet { background: var(--text-secondary); }
+.note-node[open] > summary > .bullet { background: var(--text-secondary); }
+
+/* 标题文字 */
+.heading-text,
+.note-node > summary > .title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.section > summary:hover > .heading-text,
+.note-node > summary:hover > .title { color: var(--accent); }
+
+.note-node > summary > .title {
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.005em;
+}
+
+/* 锚点链接 */
+.anchor-link {
+  opacity: 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.12s, background 0.12s;
+  border-bottom: none;
+}
+.section > summary:hover > .anchor-link { opacity: 1; }
+.anchor-link:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* 元数据(章节计数等) */
+.row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--bg-inset);
+  border-radius: 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 层级字号 ---------- */
+.section.level-1 > summary { padding: 12px 8px 12px 0; }
+.section.level-1 > summary > .heading-text {
+  font-size: 1.35em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.section.level-1 > summary > .bullet { width: 7px; height: 7px; }
+
+.section.level-2 > summary > .heading-text {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.section.level-2 > summary > .bullet { width: 6px; height: 6px; }
+
+.section.level-3 > summary > .heading-text {
+  font-size: 0.98em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section.level-3 > summary > .bullet { width: 5px; height: 5px; }
+
+.section.level-4 > summary,
+.section.level-5 > summary,
+.section.level-6 > summary { padding: 5px 8px 5px 0; }
+.section.level-4 > summary > .heading-text,
+.section.level-5 > summary > .heading-text,
+.section.level-6 > summary > .heading-text {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.section.level-4 > summary > .bullet,
+.section.level-5 > summary > .bullet,
+.section.level-6 > summary > .bullet { width: 4px; height: 4px; }
+
+/* 缩进 — 层级通过 padding-left */
+/* 层级缩进由 section-body padding-left 统一负责,这里不再额外加 */
+
+/* 标题前缩进对齐 caret+bullet,使内容左边缘整齐 */
+.section > summary {
+  position: relative;
+}
+
+/* 层级缩进:统一通过 section-body 的 padding-left 实现,每嵌套一层 +16px */
+.section-body {
+  padding: 6px 0 14px 16px;
+  margin-left: 0;
+}
+
+/* 折叠动画(用 interpolate-size,现代浏览器支持) */
+@supports (interpolate-size: allow-keywords) {
+  html { interpolate-size: allow-keywords; }
+  .section > .section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
+  }
+  .section:not([open]) > .section-body {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .section-body > * { overflow: hidden; min-height: 0; }
+}
+
+/* ---------- 内容样式 ---------- */
+.section-body > p { margin: 10px 0; }
+.section-body > p:first-child { margin-top: 6px; }
+.section-body > p:last-child { margin-bottom: 4px; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.12s;
+}
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+em, i { font-style: italic; }
+
+ul, ol { margin: 10px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+li > p { margin: 4px 0; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: var(--quote-bg);
+  border-left: 2px solid var(--quote-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.96em;
+}
+blockquote p { margin: 4px 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 0.93em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead { background: var(--bg-soft); }
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92em;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.08s; }
+tbody tr:hover { background: var(--bg-hover); }
+
+/* 行内代码 — 关键修复:无 border,纯净 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  font-feature-settings: "calt" 1, "zero" 1;
+  border: none;
+}
+
+/* 代码块容器 — 用 highlight.js 做高亮 */
+.code-block {
+  margin: 18px 0;
+  background: #f6f8fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 15, 30, 0.04);
+  position: relative;
+}
+.code-block + .code-block { margin-top: 18px; }
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 6px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid #eaecef;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  user-select: none;
+}
+.code-header .dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+.code-header .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e1e4e8;
+}
+.code-lang {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex: 1;
+  text-align: center;
+}
+.code-block pre {
+  display: block;
+  margin: 0;
+  padding: 13px 16px;
+  background: transparent;
+  color: #1f2328;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  word-break: normal;
+  tab-size: 4;
+}
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+}
+.code-block pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #1f2328;
+}
+
+/* 没被包成 .code-block 的裸 pre(理论上不会出现,留个 fallback) */
+pre:not(.code-block pre) {
+  display: block;
+  margin: 14px 0;
+  padding: 13px 16px;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  position: relative;
+}
+
+/* 复制按钮(放在 code-header 里,常驻显示) */
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  line-height: 1.4;
+}
+.code-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.code-copy-btn.copied {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.code-copy-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ---------- 主页:大纲树 ---------- */
+.outline-tree {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 8px 32px 120px;
+}
+
+.note-node {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-node:last-child { border-bottom: none; }
+
+.note-node > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.note-node > summary::-webkit-details-marker { display: none; }
+.note-node > summary > .caret {
+  width: 16px; height: 16px;
+  font-size: 10px;
+}
+.note-node > summary > .bullet {
+  width: 7px; height: 7px;
+}
+.note-node[open] > summary { padding-bottom: 8px; }
+.note-node > summary > .title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.note-node > summary > .desc {
+  flex: 0 1 40%;
+  font-size: 0.84em;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* 章节列表(在主页 note-node 展开时显示) */
+.note-children {
+  padding: 0 0 16px 30px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+.note-children::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 1px;
+  background: var(--border);
+}
+.note-children li { margin: 0; }
+.note-children a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.1s;
+  border-bottom: none;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note-children a::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  background: var(--border);
+}
+.note-children a:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-bottom: none;
+}
+.note-children .lvl-2 { font-weight: 600; color: var(--text); font-size: 14px; }
+.note-children .lvl-3 { padding-left: 26px; }
+.note-children .lvl-4,
+.note-children .lvl-5 { padding-left: 38px; color: var(--text-muted); font-size: 12px; }
+.note-children .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.note-children a:hover .dot { background: var(--accent); }
+
+/* 搜索过滤 */
+.hidden-by-search { display: none !important; }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+  font-size: 16px;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ---------- footer ---------- */
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+}
+footer a {
+  color: var(--link);
+  border-bottom: 1px dotted var(--text-muted);
+}
+footer a:hover { border-bottom-color: var(--accent); }
+footer code { font-size: 11px; }
+
+/* ---------- 快捷键提示 ---------- */
+.kbd-hints { display: none; }  /* 已废弃,保留以防漏改 */
+
+.help-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.help-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 100;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+.help-wrap:hover .help-popover,
+.help-wrap:focus-within .help-popover,
+.help-popover:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.help-row + .help-row { border-top: 1px solid var(--border-soft); }
+.help-row .keys {
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.help-row .desc {
+  flex: 1;
+  color: var(--text);
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+.help-row .dot-demo {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.help-row .link-demo {
+  color: var(--accent);
+  font-weight: 600;
+}
+.help-btn {
+  font-weight: 700;
+}
+.help-btn:hover {
+  color: var(--accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 720px) {
+  body { font-size: 14px; }
+  .hero { padding: 16px 20px 4px; }
+  .hero .title { font-size: 1.7em; }
+  .hero .stats { gap: 20px; flex-wrap: wrap; }
+  article, .outline-tree { padding: 24px 18px 80px; }
+  .section.level-1 > summary > .heading-text { font-size: 1.2em; }
+  .section.level-2 > summary > .heading-text { font-size: 1em; }
+  .note-node > summary > .desc { display: none; }
+  .note-children { padding-left: 22px; }
+  .note-children .lvl-3 { padding-left: 18px; }
+  table { font-size: 0.85em; }
+  th, td { padding: 8px 10px; }
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .topbar .search { flex: 1 1 100%; order: 10; }
+  .kbd-hints { padding: 0 18px 24px; font-size: 11px; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .to-top, .progress-bar, .kbd-hints { display: none; }
+  .section-body { padding-left: 0 !important; }
+  details > .section-body { display: block !important; }
+  .section { padding-left: 0 !important; }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* 代码块水平滚动条更细 */
+.code-block pre::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-block pre::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+</style>
 </head>
-<body>
-<div id="content" class="content">
-<h1 class="title">Salted's blog</h1>
+<body class="page-index">
+<div class="progress-bar"></div>
+<div class="topbar">
+  <a class="brand" href="#"><span class="seal">S</span> Salted的笔记</a>
+  <span class="spacer"></span>
+  <input type="search" class="search" placeholder="搜索笔记或章节 (按 / 聚焦)" autocomplete="off">
+  <div class="help-wrap">
+    <button class="help-btn icon" aria-label="快捷键">?</button>
+    <div class="help-popover">
+      <div class="help-row"><span class="keys"><kbd>Tab</kbd></span><span class="desc">折叠当前</span></div>
+      <div class="help-row"><span class="keys"><kbd>Shift</kbd>+<kbd>Tab</kbd></span><span class="desc">全局折叠</span></div>
+      <div class="help-row"><span class="keys"><kbd>/</kbd></span><span class="desc">搜索</span></div>
+      <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
+      <div class="help-row"><span class="keys"><span class="link-demo">T</span></span><span class="desc">点击标题进入</span></div>
+    </div>
+  </div>
+  <button data-action="toggle-fold" data-state="expanded"><span class="chev">▾</span>折叠</button>
+</div>
+<header class="hero">
+  <h1 class="title">Salted的笔记</h1>
+  <p class="subtitle"></p>
+</header>
+<main class="outline-tree">
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="elisp.html">+begin_src</a>
+    <span class="desc">指代从lisp对象的文本表示转换为实际lisp对象的程序reader 反之为printer</span>
+    
+    <span class="row-meta">43 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="elisp.html#_1"><span class="dot"></span>基本约定</a></li>
+<li><a class="lvl-3" href="elisp.html#the-lisp-readerprinter"><span class="dot"></span>&quot;the lisp reader/printer&quot;</a></li>
+<li><a class="lvl-3" href="elisp.html#nil"><span class="dot"></span>nil的语义</a></li>
+<li><a class="lvl-3" href="elisp.html#_2"><span class="dot"></span>真值的表示</a></li>
+<li><a class="lvl-3" href="elisp.html#nilt"><span class="dot"></span>nil和t都是常量</a></li>
+<li><a class="lvl-3" href="elisp.html#bool"><span class="dot"></span>判断是否为bool类型</a></li>
+<li><a class="lvl-2" href="elisp.html#require-provide"><span class="dot"></span>require / provide</a></li>
+<li><a class="lvl-3" href="elisp.html#_3"><span class="dot"></span>在文件末尾导出模块</a></li>
+<li><a class="lvl-3" href="elisp.html#_4"><span class="dot"></span>导入模块</a></li>
+<li><a class="lvl-3" href="elisp.html#emacsload-path"><span class="dot"></span>emacs的导入模块的寻找路径(load-path)</a></li>
+<li><a class="lvl-3" href="elisp.html#load-path"><span class="dot"></span>添加新的模块到load-path</a></li>
+<li><a class="lvl-3" href="elisp.html#loadpath"><span class="dot"></span>将当前目录下的每个目录的路径加入到loadpath中</a></li>
+<li><a class="lvl-2" href="elisp.html#interactive"><span class="dot"></span>interactive</a></li>
+<li><a class="lvl-3" href="elisp.html#_5"><span class="dot"></span>简介</a></li>
+<li><a class="lvl-3" href="elisp.html#d"><span class="dot"></span>以光标位置为参数 &quot;d&quot;</a></li>
+<li><a class="lvl-3" href="elisp.html#pp"><span class="dot"></span>前缀参数 &quot;P/p&quot;</a></li>
+<li><a class="lvl-2" href="elisp.html#_6"><span class="dot"></span>文件/目录相关</a></li>
+<li><a class="lvl-3" href="elisp.html#default-directory"><span class="dot"></span>当前目录 default-directory</a></li>
+<li><a class="lvl-3" href="elisp.html#locate-dominating-file"><span class="dot"></span>查找包含指定文件的父目录 locate-dominating-file</a></li>
+<li><a class="lvl-3" href="elisp.html#find-file"><span class="dot"></span>打开文件 find-file</a></li>
+<li><a class="lvl-3" href="elisp.html#file-exists-p"><span class="dot"></span>判断某文件是否存在 file-exists-p</a></li>
+<li><a class="lvl-3" href="elisp.html#directory-file-name"><span class="dot"></span>获取目录的名字 directory-file-name</a></li>
+<li><a class="lvl-3" href="elisp.html#file-name-directory"><span class="dot"></span>获取文件路径的目录部分 file-name-directory</a></li>
+<li><a class="lvl-3" href="elisp.html#_7"><span class="dot"></span>将路径转换为绝对路径</a></li>
+<li><a class="lvl-3" href="elisp.html#file-name-as-directory"><span class="dot"></span>返回目录形式的文件路径(加个斜线在最后) file-name-as-directory</a></li>
+<li><a class="lvl-2" href="elisp.html#list"><span class="dot"></span>list相关</a></li>
+<li><a class="lvl-3" href="elisp.html#note"><span class="dot"></span>note</a></li>
+<li><a class="lvl-3" href="elisp.html#listcons-cell"><span class="dot"></span>list和cons cell</a></li>
+<li><a class="lvl-3" href="elisp.html#list_1"><span class="dot"></span>和list相关的谓词</a></li>
+<li><a class="lvl-3" href="elisp.html#list_2"><span class="dot"></span>访问list中的元素</a></li>
+<li><a class="lvl-3" href="elisp.html#listcons-cell_1"><span class="dot"></span>创建list/cons-cell</a></li>
+<li><a class="lvl-3" href="elisp.html#list_3"><span class="dot"></span>修改list类型变量</a></li>
+<li><a class="lvl-3" href="elisp.html#list_4"><span class="dot"></span>修改已经存在的list结构</a></li>
+<li><a class="lvl-2" href="elisp.html#_8"><span class="dot"></span>数据类型</a></li>
+<li><a class="lvl-3" href="elisp.html#_9"><span class="dot"></span>简介</a></li>
+<li><a class="lvl-3" href="elisp.html#_10"><span class="dot"></span>对象的输出表示 &amp;&amp; 读取语法</a></li>
+<li><a class="lvl-3" href="elisp.html#_11"><span class="dot"></span>注释</a></li>
+<li><a class="lvl-3" href="elisp.html#_12"><span class="dot"></span>和编程相关的类型</a></li>
+<li><a class="lvl-2" href="elisp.html#_13"><span class="dot"></span>文本属性</a></li>
+<li><a class="lvl-2" href="elisp.html#buffer"><span class="dot"></span>buffer</a></li>
+<li><a class="lvl-3" href="elisp.html#current-buffer"><span class="dot"></span>current buffer</a></li>
+<li><a class="lvl-2" href="elisp.html#_14"><span class="dot"></span>操作系统接口</a></li>
+<li><a class="lvl-3" href="elisp.html#_15"><span class="dot"></span>空闲定时器</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="cs61a.html">CS61A</a>
+    <span class="desc">python解释器是你指下魔法咒语背后，默默付出的苦力。</span>
+    
+    <span class="row-meta">0 章</span>
+  </summary>
+  <p style="color: var(--text-muted); padding: 8px 0; font-size: 13px;">(无章节)</p>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="cs61b-ds.html">CS61B</a>
+    <span class="desc">(无描述)</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">0 章</span>
+  </summary>
+  <p style="color: var(--text-muted); padding: 8px 0; font-size: 13px;">(无章节)</p>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="unity_pokemon.html">Csharp</a>
+    <span class="desc">[System.Serializable]使得自定义类可序列化.</span>
+    
+    <span class="row-meta">10 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="unity_pokemon.html#_3"><span class="dot"></span>添加摄像机</a></li>
+<li><a class="lvl-3" href="unity_pokemon.html#_4"><span class="dot"></span>设置投影方式: 透视/正交?</a></li>
+<li><a class="lvl-2" href="unity_pokemon.html#_5"><span class="dot"></span>添加画布</a></li>
+<li><a class="lvl-3" href="unity_pokemon.html#_6"><span class="dot"></span>为其设置摄像机</a></li>
+<li><a class="lvl-3" href="unity_pokemon.html#ui_1"><span class="dot"></span>设置UI缩放方式</a></li>
+<li><a class="lvl-3" href="unity_pokemon.html#image"><span class="dot"></span>背景:Image</a></li>
+<li><a class="lvl-3" href="unity_pokemon.html#image_1"><span class="dot"></span>对话框:Image</a></li>
+<li><a class="lvl-3" href="unity_pokemon.html#image_2"><span class="dot"></span>玩家方(敌方)精灵贴图:Image</a></li>
+<li><a class="lvl-3" href="unity_pokemon.html#image_3"><span class="dot"></span>玩家方(敌方)状态框:Image</a></li>
+<li><a class="lvl-2" href="unity_pokemon.html#battlesystem"><span class="dot"></span>添加BattleSystem脚本</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="Handmade-Hero学习路线_增强版.html">Handmade Hero 学习路线Rust · Arch Linux · 全 667 集</a>
+    <span class="desc">Handmade Hero 是 Casey Muratori 历时两年,从空文件夹到一个完整可玩游戏,每行代码都在视频里讲清楚的项目。原作是 C/C++ + Win32 + DirectSound + OpenGL,但你讨厌平台特定 API,所以这份路线把所有平台相关代码翻译成 Rust 的跨平台等价物——winit管…</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">23 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>🎮 存档槽位?</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>总览</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>学习阶段</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>补充材料</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>从零到 Handmade Hero</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>这份路线在做什么</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>🧠 递归式心智模型：从总图到细节</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>总图层</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>流程层</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>原理层</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>实现层</a></li>
+<li><a class="lvl-4" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>🧭 这份路线的使用方式</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>🛠️ 起步指南(保姆级)</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>🔧 技术栈对照表</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>💡 核心概念卡(37 张)</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>⏱️ 每集工作流(单集 1.5–3 小时)</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>🎯 关键里程碑(庆祝点)</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>⚠️ 风险与应对</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>🧠游戏引擎的全局心智模型</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>Intro to C on Windows(穿插)</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>Handmade Ray(穿插,Phase 8 前热身)</a></li>
+<li><a class="lvl-2" href="Handmade-Hero学习路线_增强版.html#"><span class="dot"></span>Handmade Chat(穿插,深度话题)</a></li>
+<li><a class="lvl-3" href="Handmade-Hero学习路线_增强版.html#modal-title"><span class="dot"></span>导入进度 JSON</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="ece252-sysprog.html">L1: C</a>
+    <span class="desc">声明变量要尽量立即进行初始化(赋初值) , 这是很多bug的根源.</span>
+    
+    <span class="row-meta">42 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="ece252-sysprog.html#_1"><span class="dot"></span>全局变量</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_2"><span class="dot"></span>堆内存分配</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_3"><span class="dot"></span>数组</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_4"><span class="dot"></span>字符串</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_5"><span class="dot"></span>函数</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#errno"><span class="dot"></span>errno</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#printf"><span class="dot"></span>printf()</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_6"><span class="dot"></span>预处理</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_7"><span class="dot"></span>解析参数</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_8"><span class="dot"></span>中断</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#trap"><span class="dot"></span>Trap: &quot;软中断&quot;</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_9"><span class="dot"></span>文件的属性</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_10"><span class="dot"></span>文件操作</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#fopen"><span class="dot"></span>fopen</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#fseek"><span class="dot"></span>fseek()</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#remove"><span class="dot"></span>remove()</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#flock"><span class="dot"></span>文件锁 flock()</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#fprintf"><span class="dot"></span>写入 fprintf()</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#fscanf"><span class="dot"></span>读取 fscanf()</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_11"><span class="dot"></span>目录</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#symbolic-link"><span class="dot"></span>Symbolic Link</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#hard-link"><span class="dot"></span>Hard Link</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_12"><span class="dot"></span>文件权限:</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_13"><span class="dot"></span>访问权限:</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#pcb"><span class="dot"></span>进程控制块 PCB</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_14"><span class="dot"></span>进程切换</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_15"><span class="dot"></span>进程的创建</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_16"><span class="dot"></span>进程的销毁</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_17"><span class="dot"></span>进程树</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_18"><span class="dot"></span>僵尸进程</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_19"><span class="dot"></span>孤儿进程</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#7"><span class="dot"></span>7种进程状态</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#unix"><span class="dot"></span>Unix进程</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_20"><span class="dot"></span>信号</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_21"><span class="dot"></span>共享内存</a></li>
+<li><a class="lvl-2" href="ece252-sysprog.html#_22"><span class="dot"></span>消息传递</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#_23"><span class="dot"></span>信号是一种没有消息的消息传递</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#id"><span class="dot"></span>如何找出某进程的id</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#_24"><span class="dot"></span>屏蔽某个信号</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#sigset_t"><span class="dot"></span>对sigset_t的操作</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#_25"><span class="dot"></span>注册信号处理程序</a></li>
+<li><a class="lvl-3" href="ece252-sysprog.html#_26"><span class="dot"></span>消息队列</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="cmpt-295-sfu-计算机系统导论.html">Labs</a>
+    <span class="desc">tokenize</span>
+    
+    <span class="row-meta">6 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="cmpt-295-sfu-计算机系统导论.html#a1"><span class="dot"></span>A1</a></li>
+<li><a class="lvl-2" href="cmpt-295-sfu-计算机系统导论.html#l1"><span class="dot"></span>L1 数字系统</a></li>
+<li><a class="lvl-3" href="cmpt-295-sfu-计算机系统导论.html#-b"><span class="dot"></span>十进制 -&gt; B进制</a></li>
+<li><a class="lvl-2" href="cmpt-295-sfu-计算机系统导论.html#l2"><span class="dot"></span>L2 内存</a></li>
+<li><a class="lvl-3" href="cmpt-295-sfu-计算机系统导论.html#_1"><span class="dot"></span>对齐</a></li>
+<li><a class="lvl-3" href="cmpt-295-sfu-计算机系统导论.html#_2"><span class="dot"></span>字节序</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="my.html">My Notes</a>
+    <span class="desc">(无描述)</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">45 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="my.html#"><span class="dot"></span>Table of Contents</a></li>
+<li><a class="lvl-2" href="my.html#orgdf2aa4b"><span class="dot"></span>1emacs备忘</a></li>
+<li><a class="lvl-3" href="my.html#org9462cb7"><span class="dot"></span>1.1kill buffer: C-x k</a></li>
+<li><a class="lvl-3" href="my.html#org35fb91c"><span class="dot"></span>1.2</a></li>
+<li><a class="lvl-2" href="my.html#org3b66b46"><span class="dot"></span>2org 入门</a></li>
+<li><a class="lvl-3" href="my.html#orga1fb228"><span class="dot"></span>2.1S-tab 对整个文件进行缩进</a></li>
+<li><a class="lvl-3" href="my.html#orgd57b4a7"><span class="dot"></span>2.2Tab 对特定标题下的内容进行展开/折叠</a></li>
+<li><a class="lvl-3" href="my.html#org18c5db0"><span class="dot"></span>2.3C-&lt;RET&gt; 自动创建和上面相同的标题</a></li>
+<li><a class="lvl-3" href="my.html#org1387909"><span class="dot"></span>2.4M-左/右 对标题的缩进进行调整</a></li>
+<li><a class="lvl-3" href="my.html#org96695cb"><span class="dot"></span>2.5M-上/下 对标题所在行的位置进行调整</a></li>
+<li><a class="lvl-3" href="my.html#org3f08fa5"><span class="dot"></span>2.6用三组括号标记链接/图片</a></li>
+<li><a class="lvl-3" href="my.html#orgb08f5ea"><span class="dot"></span>2.7表格 行末按Tab</a></li>
+<li><a class="lvl-3" href="my.html#orgce02116"><span class="dot"></span>2.8任务状态切换 C-c C-t</a></li>
+<li><a class="lvl-4" href="my.html#org489ba5a"><span class="dot"></span>2.8.1TODOtask1</a></li>
+<li><a class="lvl-4" href="my.html#org66546ed"><span class="dot"></span>2.8.2TODOtask2</a></li>
+<li><a class="lvl-3" href="my.html#orgf1dd81a"><span class="dot"></span>2.9查看整个文件中的todo事项</a></li>
+<li><a class="lvl-3" href="my.html#org265e66e"><span class="dot"></span>2.10为todo事项添加子任务</a></li>
+<li><a class="lvl-4" href="my.html#orgc1297c1"><span class="dot"></span>2.10.1TODOsome hige task[0/3][0%](用C-c C-c来刷新任务进度)</a></li>
+<li><a class="lvl-3" href="my.html#orgc134042"><span class="dot"></span>2.11C-c [将文件加入agenda列表中</a></li>
+<li><a class="lvl-3" href="my.html#org8119705"><span class="dot"></span>2.12C-c ]将当前文件从agenda列表中移除</a></li>
+<li><a class="lvl-4" href="my.html#orgb33600d"><span class="dot"></span>2.12.1Mx org-agenda</a></li>
+<li><a class="lvl-3" href="my.html#orgae9b57f"><span class="dot"></span>2.13代码块</a></li>
+<li><a class="lvl-3" href="my.html#org04672da"><span class="dot"></span>2.14C-c d/s 为任务设定开始和截止日期</a></li>
+<li><a class="lvl-4" href="my.html#orgc3f6497"><span class="dot"></span>2.14.1TODOsometask</a></li>
+<li><a class="lvl-3" href="my.html#org2349df5"><span class="dot"></span>2.15agenda来查看任务时间表</a></li>
+<li><a class="lvl-3" href="my.html#org1547d24"><span class="dot"></span>2.16C-c C-e h将org导出为html</a></li>
+<li><a class="lvl-2" href="my.html#org6919f9a"><span class="dot"></span>3VSCode</a></li>
+<li><a class="lvl-3" href="my.html#org68e9e03"><span class="dot"></span>3.1C-S-p</a></li>
+<li><a class="lvl-4" href="my.html#orgd639cc0"><span class="dot"></span>3.1.1open file</a></li>
+<li><a class="lvl-4" href="my.html#orge7eb538"><span class="dot"></span>3.1.2close edit :关闭当前文件</a></li>
+<li><a class="lvl-4" href="my.html#orgbc4cbc6"><span class="dot"></span>3.1.3shortcuts</a></li>
+<li><a class="lvl-4" href="my.html#orgc506969"><span class="dot"></span>3.1.4new untitled file 创建新文件</a></li>
+<li><a class="lvl-4" href="my.html#orga7e4bd7"><span class="dot"></span>3.1.5new window</a></li>
+<li><a class="lvl-4" href="my.html#org8cf156d"><span class="dot"></span>3.1.6open Folder :打开文件夹</a></li>
+<li><a class="lvl-4" href="my.html#orgeb4e570"><span class="dot"></span>3.1.7open recent</a></li>
+<li><a class="lvl-4" href="my.html#orga5ea874"><span class="dot"></span>3.1.8add folder to workspace</a></li>
+<li><a class="lvl-4" href="my.html#org4cd5c36"><span class="dot"></span>3.1.9save workspace as</a></li>
+<li><a class="lvl-4" href="my.html#org1539a40"><span class="dot"></span>3.1.10prefer setting (ui/json) 设置</a></li>
+<li><a class="lvl-3" href="my.html#org2ef027e"><span class="dot"></span>3.2选中范围内查找替换</a></li>
+<li><a class="lvl-3" href="my.html#orge1a96db"><span class="dot"></span>3.3</a></li>
+<li><a class="lvl-2" href="my.html#orga9a4693"><span class="dot"></span>4Elisp</a></li>
+<li><a class="lvl-3" href="my.html#org8e51073"><span class="dot"></span>4.1eval-expression M-: 对表达式进行求值</a></li>
+<li><a class="lvl-3" href="my.html#orgfa263be"><span class="dot"></span>4.2eval-buffer</a></li>
+<li><a class="lvl-3" href="my.html#orgdd15c75"><span class="dot"></span>4.3variable</a></li>
+<li><a class="lvl-2" href="my.html#orga4ea3db"><span class="dot"></span>5hello</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="claude使用.html">claude使用</a>
+    <span class="desc">实用的 Claude Code 使用指南。</span>
+    
+    <span class="row-meta">3 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="claude使用.html#_1"><span class="dot"></span>如何进入指定的会话?</a></li>
+<li><a class="lvl-2" href="claude使用.html#clear"><span class="dot"></span>clear 命令是完全清除了对之前项目的记忆吗?</a></li>
+<li><a class="lvl-2" href="claude使用.html#_2"><span class="dot"></span>如何查看不同步骤的代码, 如何使用这份教程?</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="os-comp2023-record.html">day1 5.17</a>
+    <span class="desc">完成了rustlings的50%.</span>
+    
+    <span class="row-meta">2 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="os-comp2023-record.html#_1"><span class="dot"></span>环境配置</a></li>
+<li><a class="lvl-2" href="os-comp2023-record.html#rcore-tutorial-book"><span class="dot"></span>阅读rcore-tutorial-book第一章</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="elisp-insert-code-block.html">elisp 杂记</a>
+    <span class="desc">在org中插入一个代码块比起markdown要麻烦不少:</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">3 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="elisp-insert-code-block.html#"><span class="dot"></span>Table of Contents</a></li>
+<li><a class="lvl-2" href="elisp-insert-code-block.html#orga9c66a9"><span class="dot"></span>在org模式下快速插入代码块</a></li>
+<li><a class="lvl-2" href="elisp-insert-code-block.html#org1f8e3e4"><span class="dot"></span>生成相对路径来指向org的主题</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="org-learning.html">emacs备忘</a>
+    <span class="desc">(无描述)</span>
+    
+    <span class="row-meta">39 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="org-learning.html#kill-buffer-c-x-k"><span class="dot"></span>kill buffer: C-x k</a></li>
+<li><a class="lvl-3" href="org-learning.html#_1"><span class="dot"></span></a></li>
+<li><a class="lvl-2" href="org-learning.html#s-tab"><span class="dot"></span>S-tab 对整个文件进行缩进</a></li>
+<li><a class="lvl-2" href="org-learning.html#tab"><span class="dot"></span>Tab 对特定标题下的内容进行展开/折叠</a></li>
+<li><a class="lvl-2" href="org-learning.html#c-ret"><span class="dot"></span>C-\&lt;RET&gt; 自动创建和上面相同的标题</a></li>
+<li><a class="lvl-2" href="org-learning.html#m-"><span class="dot"></span>M-左/右 对标题的缩进进行调整</a></li>
+<li><a class="lvl-2" href="org-learning.html#m-_1"><span class="dot"></span>M-上/下 对标题所在行的位置进行调整</a></li>
+<li><a class="lvl-2" href="org-learning.html#_2"><span class="dot"></span>用三组括号标记链接/图片</a></li>
+<li><a class="lvl-2" href="org-learning.html#tab_1"><span class="dot"></span>表格 行末按Tab</a></li>
+<li><a class="lvl-2" href="org-learning.html#c-c-c-t"><span class="dot"></span>任务状态切换 C-c C-t</a></li>
+<li><a class="lvl-3" href="org-learning.html#todo-task1"><span class="dot"></span>TODOtask1</a></li>
+<li><a class="lvl-3" href="org-learning.html#todo-task2"><span class="dot"></span>TODOtask2</a></li>
+<li><a class="lvl-2" href="org-learning.html#todo"><span class="dot"></span>查看整个文件中的todo事项</a></li>
+<li><a class="lvl-2" href="org-learning.html#todo_1"><span class="dot"></span>为todo事项添加子任务</a></li>
+<li><a class="lvl-3" href="org-learning.html#todo-some-hige-task-03-0-c-c-c-c"><span class="dot"></span>TODOsome hige task [0/3] [0%] (用C-c C-c来刷新任务进度)</a></li>
+<li><a class="lvl-2" href="org-learning.html#c-c-agenda"><span class="dot"></span>C-c [将文件加入agenda列表中</a></li>
+<li><a class="lvl-2" href="org-learning.html#c-c-agenda_1"><span class="dot"></span>C-c ]将当前文件从agenda列表中移除</a></li>
+<li><a class="lvl-3" href="org-learning.html#mx-org-agenda"><span class="dot"></span>Mx org-agenda</a></li>
+<li><a class="lvl-2" href="org-learning.html#_3"><span class="dot"></span>代码块</a></li>
+<li><a class="lvl-2" href="org-learning.html#c-c-ds"><span class="dot"></span>C-c d/s 为任务设定开始和截止日期</a></li>
+<li><a class="lvl-3" href="org-learning.html#todo-sometask"><span class="dot"></span>TODOsometask</a></li>
+<li><a class="lvl-2" href="org-learning.html#agenda"><span class="dot"></span>agenda来查看任务时间表</a></li>
+<li><a class="lvl-2" href="org-learning.html#c-c-c-e-h-orghtml"><span class="dot"></span>C-c C-e h将org导出为html</a></li>
+<li><a class="lvl-2" href="org-learning.html#c-s-p"><span class="dot"></span>C-S-p</a></li>
+<li><a class="lvl-3" href="org-learning.html#open-file"><span class="dot"></span>open file</a></li>
+<li><a class="lvl-3" href="org-learning.html#close-edit"><span class="dot"></span>close edit :关闭当前文件</a></li>
+<li><a class="lvl-3" href="org-learning.html#shortcuts"><span class="dot"></span>shortcuts</a></li>
+<li><a class="lvl-3" href="org-learning.html#new-untitled-file"><span class="dot"></span>new untitled file 创建新文件</a></li>
+<li><a class="lvl-3" href="org-learning.html#new-window"><span class="dot"></span>new window</a></li>
+<li><a class="lvl-3" href="org-learning.html#open-folder"><span class="dot"></span>open Folder :打开文件夹</a></li>
+<li><a class="lvl-3" href="org-learning.html#open-recent"><span class="dot"></span>open recent</a></li>
+<li><a class="lvl-3" href="org-learning.html#add-folder-to-workspace"><span class="dot"></span>add folder to workspace</a></li>
+<li><a class="lvl-3" href="org-learning.html#save-workspace-as"><span class="dot"></span>save workspace as</a></li>
+<li><a class="lvl-3" href="org-learning.html#prefer-setting-uijson"><span class="dot"></span>prefer setting (ui/json) 设置</a></li>
+<li><a class="lvl-2" href="org-learning.html#_4"><span class="dot"></span>选中范围内查找替换</a></li>
+<li><a class="lvl-2" href="org-learning.html#_5"><span class="dot"></span></a></li>
+<li><a class="lvl-2" href="org-learning.html#eval-expression-m-"><span class="dot"></span>eval-expression M-: 对表达式进行求值</a></li>
+<li><a class="lvl-2" href="org-learning.html#eval-buffer"><span class="dot"></span>eval-buffer</a></li>
+<li><a class="lvl-2" href="org-learning.html#variable"><span class="dot"></span>variable</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="linux-note.html">fd (find)</a>
+    <span class="desc">在当前目录下的所有文件中寻找某字符串:\{\}表示fd找到的每个文件/路径, 将其传给-exec的子命令</span>
+    
+    <span class="row-meta">67 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="linux-note.html#_1"><span class="dot"></span>忽略错误继续执行</a></li>
+<li><a class="lvl-2" href="linux-note.html#exit-n"><span class="dot"></span>退出 exit n</a></li>
+<li><a class="lvl-2" href="linux-note.html#_2"><span class="dot"></span>判断文件是否存在</a></li>
+<li><a class="lvl-2" href="linux-note.html#_3"><span class="dot"></span>设置/取消代理</a></li>
+<li><a class="lvl-2" href="linux-note.html#clone"><span class="dot"></span>clone 子模块</a></li>
+<li><a class="lvl-2" href="linux-note.html#branch"><span class="dot"></span>指定需要克隆的branch</a></li>
+<li><a class="lvl-2" href="linux-note.html#_4"><span class="dot"></span>查看目录下的大文件</a></li>
+<li><a class="lvl-2" href="linux-note.html#debtap"><span class="dot"></span>debtap</a></li>
+<li><a class="lvl-2" href="linux-note.html#dpkg"><span class="dot"></span>dpkg</a></li>
+<li><a class="lvl-2" href="linux-note.html#ssh_1"><span class="dot"></span>重启ssh服务</a></li>
+<li><a class="lvl-2" href="linux-note.html#ssh_2"><span class="dot"></span>查看ssh服务是否启动</a></li>
+<li><a class="lvl-2" href="linux-note.html#_5"><span class="dot"></span>定义变量</a></li>
+<li><a class="lvl-2" href="linux-note.html#phony"><span class="dot"></span>伪目标 .PHONY</a></li>
+<li><a class="lvl-2" href="linux-note.html#_6"><span class="dot"></span>为整个项目添加宏定义</a></li>
+<li><a class="lvl-2" href="linux-note.html#_7"><span class="dot"></span>为目标链接上库</a></li>
+<li><a class="lvl-2" href="linux-note.html#_8"><span class="dot"></span>通配符</a></li>
+<li><a class="lvl-2" href="linux-note.html#_9"><span class="dot"></span>函数调用</a></li>
+<li><a class="lvl-3" href="linux-note.html#_10"><span class="dot"></span>当前目录下某一类型的所有文件形成的列表</a></li>
+<li><a class="lvl-3" href="linux-note.html#_11"><span class="dot"></span>将列表中的所有匹配项替换为指定形式</a></li>
+<li><a class="lvl-2" href="linux-note.html#_12"><span class="dot"></span>为可执行文件设置环境变量</a></li>
+<li><a class="lvl-2" href="linux-note.html#_13"><span class="dot"></span>为可执行程序传参</a></li>
+<li><a class="lvl-2" href="linux-note.html#_14"><span class="dot"></span>显示某文件源代码</a></li>
+<li><a class="lvl-2" href="linux-note.html#_15"><span class="dot"></span>添加断点</a></li>
+<li><a class="lvl-2" href="linux-note.html#_16"><span class="dot"></span>查看断点</a></li>
+<li><a class="lvl-2" href="linux-note.html#_17"><span class="dot"></span>禁用断点</a></li>
+<li><a class="lvl-2" href="linux-note.html#_18"><span class="dot"></span>重新启用断点</a></li>
+<li><a class="lvl-2" href="linux-note.html#_19"><span class="dot"></span>删除断点</a></li>
+<li><a class="lvl-2" href="linux-note.html#_20"><span class="dot"></span>保存断点到文件</a></li>
+<li><a class="lvl-2" href="linux-note.html#next"><span class="dot"></span>单步跳过 next</a></li>
+<li><a class="lvl-2" href="linux-note.html#_21"><span class="dot"></span>继续执行, 直至遇到断点</a></li>
+<li><a class="lvl-2" href="linux-note.html#_22"><span class="dot"></span>运行到某处,忽略期间的断点</a></li>
+<li><a class="lvl-2" href="linux-note.html#_23"><span class="dot"></span>进入到函数内部</a></li>
+<li><a class="lvl-2" href="linux-note.html#_24"><span class="dot"></span>从函数中跳出并暂停</a></li>
+<li><a class="lvl-2" href="linux-note.html#_25"><span class="dot"></span>强制从函数中返回特定值</a></li>
+<li><a class="lvl-2" href="linux-note.html#_26"><span class="dot"></span>跳转到指定位置继续执行</a></li>
+<li><a class="lvl-2" href="linux-note.html#_27"><span class="dot"></span>显示当前所有的局部变量</a></li>
+<li><a class="lvl-2" href="linux-note.html#_28"><span class="dot"></span>变量/表达式相关</a></li>
+<li><a class="lvl-3" href="linux-note.html#_29"><span class="dot"></span>打印变量/表达式</a></li>
+<li><a class="lvl-3" href="linux-note.html#_30"><span class="dot"></span>自动显示变量值</a></li>
+<li><a class="lvl-3" href="linux-note.html#_31"><span class="dot"></span>取消对变量的自动显示</a></li>
+<li><a class="lvl-3" href="linux-note.html#_32"><span class="dot"></span>显示变量/表达式类型</a></li>
+<li><a class="lvl-3" href="linux-note.html#_33"><span class="dot"></span>修改变量的值</a></li>
+<li><a class="lvl-3" href="linux-note.html#_34"><span class="dot"></span>监视某变量的值</a></li>
+<li><a class="lvl-2" href="linux-note.html#_35"><span class="dot"></span>栈相关</a></li>
+<li><a class="lvl-3" href="linux-note.html#bt"><span class="dot"></span>显示堆栈信息: bt</a></li>
+<li><a class="lvl-3" href="linux-note.html#_36"><span class="dot"></span>切换栈帧</a></li>
+<li><a class="lvl-2" href="linux-note.html#_37"><span class="dot"></span>调试已经运行的程序</a></li>
+<li><a class="lvl-2" href="linux-note.html#_38"><span class="dot"></span>检查点</a></li>
+<li><a class="lvl-3" href="linux-note.html#checkpoint"><span class="dot"></span>在当前位置添加checkpoint</a></li>
+<li><a class="lvl-3" href="linux-note.html#checkpoints"><span class="dot"></span>查看所有checkpoints</a></li>
+<li><a class="lvl-3" href="linux-note.html#checkpoint_1"><span class="dot"></span>删除指定checkpoint</a></li>
+<li><a class="lvl-2" href="linux-note.html#_39"><span class="dot"></span>线程</a></li>
+<li><a class="lvl-3" href="linux-note.html#_40"><span class="dot"></span>显示所有线程</a></li>
+<li><a class="lvl-3" href="linux-note.html#_41"><span class="dot"></span>切换到指定线程</a></li>
+<li><a class="lvl-2" href="linux-note.html#_42"><span class="dot"></span>以指定格式显示某地址处的内容</a></li>
+<li><a class="lvl-2" href="linux-note.html#_43"><span class="dot"></span>反向运行</a></li>
+<li><a class="lvl-2" href="linux-note.html#_44"><span class="dot"></span>无法使用, 报错</a></li>
+<li><a class="lvl-2" href="linux-note.html#c"><span class="dot"></span>配置纯C项目</a></li>
+<li><a class="lvl-2" href="linux-note.html#c_1"><span class="dot"></span>配置C++项目</a></li>
+<li><a class="lvl-2" href="linux-note.html#_45"><span class="dot"></span>组成</a></li>
+<li><a class="lvl-2" href="linux-note.html#_46"><span class="dot"></span>功能</a></li>
+<li><a class="lvl-2" href="linux-note.html#_47"><span class="dot"></span>接口</a></li>
+<li><a class="lvl-2" href="linux-note.html#eg-pids"><span class="dot"></span>eg: pids控制器</a></li>
+<li><a class="lvl-2" href="linux-note.html#cgroup"><span class="dot"></span>删除cgroup</a></li>
+<li><a class="lvl-2" href="linux-note.html#_48"><span class="dot"></span>控制器概览</a></li>
+<li><a class="lvl-3" href="linux-note.html#cpu"><span class="dot"></span>cpu</a></li>
+<li><a class="lvl-3" href="linux-note.html#cpuset-cpu"><span class="dot"></span>cpuset: 控制cpu和内存亲和度</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="git.html">git</a>
+    <span class="desc">(无描述)</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">2 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="git.html#撤销reset提交的几种模式"><span class="dot"></span>撤销reset提交的几种模式</a></li>
+<li><a class="lvl-2" href="git.html#强制恢复已被reset的提交"><span class="dot"></span>强制恢复已被reset的提交</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="learning.html">learning</a>
+    <span class="desc">核心哲学：学习不是被动的信息消费，而是一场主动的知识构建工程。本流程旨在将您从“观众”转变为“建筑师”。</span>
+    
+    <span class="row-meta">42 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="learning.html#sop"><span class="dot"></span>精通任何技术视频教程的终极 S.O.P. (标准作业流程)</a></li>
+<li><a class="lvl-3" href="learning.html#_1"><span class="dot"></span>彻底改变学习习惯的五句“心智箴言”</a></li>
+<li><a class="lvl-4" href="learning.html#1"><span class="dot"></span>1. 当你因为计划不够完美、工具不够好、时机不合适而迟迟不敢开始时，对自己说：</a></li>
+<li><a class="lvl-4" href="learning.html#2"><span class="dot"></span>2. 当你因为一个“工房项目”做得不够好、不够酷，而感到羞愧、不想示人时，对自己说：</a></li>
+<li><a class="lvl-4" href="learning.html#3-bug"><span class="dot"></span>3. 当你卡在一个Bug上数小时、肌肉紧绷、头疼欲裂、开始怀疑自己是不是“不适合编程”时，对自己说：</a></li>
+<li><a class="lvl-4" href="learning.html#4"><span class="dot"></span>4. 当你看到别人快速“刷完”一门课程，而自己进度缓慢，开始羡慕和焦虑时，对自己说：</a></li>
+<li><a class="lvl-4" href="learning.html#5"><span class="dot"></span>5. 当你感觉好像理解了一个概念，但不确定是否真的懂了时，对自己说：</a></li>
+<li><a class="lvl-3" href="learning.html#_2"><span class="dot"></span>第一部分：学习操作总流程</a></li>
+<li><a class="lvl-4" href="learning.html#_3"><span class="dot"></span>阶段〇：战略准备 (课程或大章节开始前)</a></li>
+<li><a class="lvl-4" href="learning.html#255"><span class="dot"></span>阶段一：学习执行 (每个专注时段，推荐以 25+5 的番茄钟为单位)</a></li>
+<li><a class="lvl-4" href="learning.html#_4"><span class="dot"></span>阶段二：课后固化 (学习时段结束后立即进行，至关重要)</a></li>
+<li><a class="lvl-4" href="learning.html#_5"><span class="dot"></span>阶段三：长期内化 (每日/每周坚持)</a></li>
+<li><a class="lvl-3" href="learning.html#_6"><span class="dot"></span>第二部分：笔记记录工作流</a></li>
+<li><a class="lvl-4" href="learning.html#_7"><span class="dot"></span>第一步：判断知识类型</a></li>
+<li><a class="lvl-4" href="learning.html#a"><span class="dot"></span>A. “工匠工具箱”工作流 (记录工具用法)</a></li>
+<li><a class="lvl-4" href="learning.html#b"><span class="dot"></span>B. “建筑师蓝图”工作流 (记录算法/数据结构)</a></li>
+<li><a class="lvl-4" href="learning.html#c"><span class="dot"></span>C. “四角色解构”工作流 (记录抽象思想)</a></li>
+<li><a class="lvl-4" href="learning.html#_8"><span class="dot"></span>通用：做作业/项目时的“侦探日志”</a></li>
+<li><a class="lvl-2" href="learning.html#_9"><span class="dot"></span>费曼学习法</a></li>
+<li><a class="lvl-4" href="learning.html#_10"><span class="dot"></span>第一步：放下“必须用比喻”的执念（核心心态转变）</a></li>
+<li><a class="lvl-4" href="learning.html#_11"><span class="dot"></span>第二步：启动“纯逻辑”降维打击（替代操作流）</a></li>
+<li><a class="lvl-5" href="learning.html#a-problem-first-narrative"><span class="dot"></span>A. 从“问题”出发，讲述一个“故事” (Problem-First Narrative)</a></li>
+<li><a class="lvl-5" href="learning.html#b-step-by-step-blueprint"><span class="dot"></span>B. 用“流程图”的方式讲话 (Step-by-Step Blueprint)</a></li>
+<li><a class="lvl-5" href="learning.html#c-concrete-example-walkthrough"><span class="dot"></span>C. 用一个“具体例子”贯穿始终 (Concrete Example Walkthrough)</a></li>
+<li><a class="lvl-4" href="learning.html#_12"><span class="dot"></span>第三步：如何“刻意练习”你的类比能力（长期策略）</a></li>
+<li><a class="lvl-2" href="learning.html#_13"><span class="dot"></span>何时开始费曼学习</a></li>
+<li><a class="lvl-3" href="learning.html#_14"><span class="dot"></span>第一部分：何时开始？—— 最佳时机</a></li>
+<li><a class="lvl-3" href="learning.html#_15"><span class="dot"></span>第二部分：如何应用于“操作性知识”？—— 讲解“工作流”而非“定义”</a></li>
+<li><a class="lvl-4" href="learning.html#1-explaining-a-black-box-workflow"><span class="dot"></span>1. 讲解一个“黑箱”的内部工作流 (Explaining a &quot;Black Box&quot; Workflow)</a></li>
+<li><a class="lvl-4" href="learning.html#2-explaining-a-decision-point"><span class="dot"></span>2. 讲解一个“决策点”的权衡取舍 (Explaining a &quot;Decision Point&quot;)</a></li>
+<li><a class="lvl-4" href="learning.html#3-explaining-a-standard-operating-procedure-sop"><span class="dot"></span>3. 讲解一个“标准操作程序” (Explaining a Standard Operating Procedure, S.O.P.)</a></li>
+<li><a class="lvl-3" href="learning.html#sop_1"><span class="dot"></span>第三部分：费曼学习法终极S.O.P. (一步步照做)</a></li>
+<li><a class="lvl-4" href="learning.html#target-prepare"><span class="dot"></span>第一步：锁定目标与准备 (Target &amp; Prepare)</a></li>
+<li><a class="lvl-4" href="learning.html#attempt-to-teach"><span class="dot"></span>第二步：尝试讲解 (Attempt to Teach)</a></li>
+<li><a class="lvl-4" href="learning.html#identify-sticking-points"><span class="dot"></span>第三步：识别“卡壳点” (Identify Sticking Points)</a></li>
+<li><a class="lvl-4" href="learning.html#go-back-research"><span class="dot"></span>第四步：回溯研究 (Go Back &amp; Research)</a></li>
+<li><a class="lvl-4" href="learning.html#simplify-refactor"><span class="dot"></span>第五步：简化与重构 (Simplify &amp; Refactor)</a></li>
+<li><a class="lvl-3" href="learning.html#_16"><span class="dot"></span>“代码复刻”的正确姿势：三遍阅读与实践法</a></li>
+<li><a class="lvl-4" href="learning.html#_17"><span class="dot"></span>第一遍：侦察兵模式 —— “只读不写，建立地图”</a></li>
+<li><a class="lvl-4" href="learning.html#-"><span class="dot"></span>第二遍：学徒模式 —— “预测-执行-注释”</a></li>
+<li><a class="lvl-4" href="learning.html#_18"><span class="dot"></span>第三遍：工匠模式 —— “闭卷重建与自由创作”</a></li>
+<li><a class="lvl-3" href="learning.html#_19"><span class="dot"></span>总结</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="sys-prog.html">linux 核心设计笔记</a>
+    <span class="desc">C + 算法 + 概率统计 + 编译器 + OS + 处理器</span>
+    
+    <span class="row-meta">3 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="sys-prog.html#2023-2-13"><span class="dot"></span>2023-2-13</a></li>
+<li><a class="lvl-2" href="sys-prog.html#_1"><span class="dot"></span>第一周课程</a></li>
+<li><a class="lvl-3" href="sys-prog.html#_2"><span class="dot"></span>二进制表示</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="how-to-learn.html">manateelazycat 2018 年12 月 11 日 07:10 #16</a>
+    <span class="desc">学习Emacs有几条曲线:</span>
+    
+    <span class="row-meta">0 章</span>
+  </summary>
+  <p style="color: var(--text-muted); padding: 8px 0; font-size: 13px;">(无章节)</p>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="x86-64.html">x86-64</a>
+    <span class="desc">运行结果为1</span>
+    
+    <span class="row-meta">0 章</span>
+  </summary>
+  <p style="color: var(--text-muted); padding: 8px 0; font-size: 13px;">(无章节)</p>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="cpp-idioms.html">不用#define</a>
+    <span class="desc">修饰返回类型 能修饰尽量修饰，除非是涉及返回引用/指针 （这种多出现于非const版本成员函数中）</span>
+    
+    <span class="row-meta">4 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="cpp-idioms.html#static-const-enum-int"><span class="dot"></span>static const / enum （int常量）</a></li>
+<li><a class="lvl-2" href="cpp-idioms.html#inline"><span class="dot"></span>模板inline函数</a></li>
+<li><a class="lvl-2" href="cpp-idioms.html#const_1"><span class="dot"></span>const的出现位置</a></li>
+<li><a class="lvl-2" href="cpp-idioms.html#const-exp"><span class="dot"></span>何处需要填入一个const exp</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="elisp-miscell.html">为函数添加别名</a>
+    <span class="desc">在org中插入一个代码块比起markdown要麻烦不少:</span>
+    
+    <span class="row-meta">0 章</span>
+  </summary>
+  <p style="color: var(--text-muted); padding: 8px 0; font-size: 13px;">(无章节)</p>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="rust通过返回类型判断传入参数类型是否合理.html">从“破防”到“顿悟”的 Rust 类型驱动设计思维全纪录</a>
+    <span class="desc">导读：在学习 Rust 的过程中，几乎每个从面向对象语言迁移过来的开发者都会经历一次关于“封装”的价值观崩塌。本文记录了一次由浅入深的硬核思维对线，揭示了 Rust 如何通过“公开类型签名”重新定义封装的边界，并展示了如何不看内部实现，仅凭签名就能秒杀内存生命周期的顶级超能力。</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">15 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>第一章 缘起：关于封装的“流氓罪”控诉</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>1. 痛点：为什么用 API 还要猜内部实现？</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>2. 传统语言的“伪封装”幕后真相</a></li>
+<li><a class="lvl-2" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>第二章 破局：类型签名就是不容欺骗的契约</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>1. “签名即契约”：肉眼看穿一切</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>2. 为什么内部怎么用它“不重要”？</a></li>
+<li><a class="lvl-2" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>第三章 深挖：为什么 Context 能够高抬贵手？</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>1. 两个引用的不同命运</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>2. 居委会大妈与结婚证的比喻</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>3. 泛型W的“特洛伊木马”本质与结构体声明</a></li>
+<li><a class="lvl-2" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>第四章 实战：盲读签名的超能力检测</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>关卡一：隐形轰炸机</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>关卡二：声东击西</a></li>
+<li><a class="lvl-3" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>关卡三：终极变态</a></li>
+<li><a class="lvl-2" href="rust通过返回类型判断传入参数类型是否合理.html#"><span class="dot"></span>结语：跨越 Rust 思维的断崖</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="memory_and_vm_conversation_compendium.html">内存管理、mmap、brk/sbrk、文件映射、软渲染与实践项目</a>
+    <span class="desc">把整段对话中涉及的概念、问答、纠偏、例子和最终实践项目，整理成一份可离线阅读的单文件说明书。</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">30 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>目录</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>1. GDI 对象、DeleteObject、DC 的生命周期</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>2. Windows 虚拟内存：VirtualAlloc、HeapAlloc、MEM_RESERVE、MEM_COMMIT</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>3. Linux 内存：brk/sbrk、mmap、malloc 的关系</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>4. 文件映射 mmap：原型、偏移、长度、与 read 的差别</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>5. 从 CPU 视角理解 read / mmap / DMA / page fault / zero-copy</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>read 的路径</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>mmap 的路径</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>6. softbuffer 是什么，它在 Linux 上如何工作</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>7. Handmade Hero 风格是否还能在 Linux 上实现</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>8. Arch Linux 解压 rar</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>9. 重要结论：碎片、层级、边界与误区</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>9.1 碎片不是 bug，而是动态分配的自然代价</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>9.2 brk/sbrk 像 stack，但不是 stack</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>9.3 mmap 是独立 mapping，不是“自动免碎片”</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>9.4 不能把“物理页是否存在”与“逻辑上是否属于你”混为一谈</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10. 最终实践项目：软件渲染图片查看器</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.1 项目总目标</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.2 总体技术栈</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.3 项目结构</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.4 阶段 1：窗口 + framebuffer</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.5 阶段 2：软件绘图 API</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.6 阶段 3：BMP 解析器</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.7 阶段 4：mmap 文件读取</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.8 阶段 5：arena allocator</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.9 阶段 6：摄像机和平移/缩放</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.10 阶段 7：性能分析</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.11 阶段 8：扩展为小型 2D 软件渲染器</a></li>
+<li><a class="lvl-3" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>10.12 为什么这个项目能“巩固整个会话”</a></li>
+<li><a class="lvl-2" href="memory_and_vm_conversation_compendium.html#"><span class="dot"></span>11. 关键术语速查</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="cmake-learning.html">基本的 cmake 命令</a>
+    <span class="desc">cmake -B build -D CMAKE_CXX_COMPILER=clang++</span>
+    
+    <span class="row-meta">5 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="cmake-learning.html#makefile"><span class="dot"></span>配置阶段:生成 makefile</a></li>
+<li><a class="lvl-2" href="cmake-learning.html#makefile_1"><span class="dot"></span>实际构建阶段:执行 makefile</a></li>
+<li><a class="lvl-2" href="cmake-learning.html#_9"><span class="dot"></span>定义变量</a></li>
+<li><a class="lvl-2" href="cmake-learning.html#_10"><span class="dot"></span>访问一个变量:</a></li>
+<li><a class="lvl-2" href="cmake-learning.html#set-list"><span class="dot"></span>可以用set()定义一个 list</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="algo.html">基础算法</a>
+    <span class="desc">代码</span>
+    
+    <span class="row-meta">23 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="algo.html#_2"><span class="dot"></span>排序</a></li>
+<li><a class="lvl-3" href="algo.html#-"><span class="dot"></span>快排 -&gt; 基于分治思想</a></li>
+<li><a class="lvl-3" href="algo.html#_3"><span class="dot"></span>归并</a></li>
+<li><a class="lvl-2" href="algo.html#_4"><span class="dot"></span>二分</a></li>
+<li><a class="lvl-3" href="algo.html#_5"><span class="dot"></span>整数二分</a></li>
+<li><a class="lvl-3" href="algo.html#_6"><span class="dot"></span>浮点数二分</a></li>
+<li><a class="lvl-2" href="algo.html#_7"><span class="dot"></span>大整数(高精度)</a></li>
+<li><a class="lvl-3" href="algo.html#_8"><span class="dot"></span>实现</a></li>
+<li><a class="lvl-3" href="algo.html#_9"><span class="dot"></span>大整数相加减</a></li>
+<li><a class="lvl-3" href="algo.html#_10"><span class="dot"></span>大整数 乘/除以 小整数</a></li>
+<li><a class="lvl-2" href="algo.html#_11"><span class="dot"></span>前缀和 &amp; 差分</a></li>
+<li><a class="lvl-3" href="algo.html#_12"><span class="dot"></span>计算前缀和</a></li>
+<li><a class="lvl-3" href="algo.html#_13"><span class="dot"></span>前缀和的应用: 求区间和</a></li>
+<li><a class="lvl-3" href="algo.html#_14"><span class="dot"></span>二维前缀和</a></li>
+<li><a class="lvl-3" href="algo.html#_15"><span class="dot"></span>二维前缀和的计算</a></li>
+<li><a class="lvl-2" href="algo.html#_16"><span class="dot"></span>双指针</a></li>
+<li><a class="lvl-2" href="algo.html#_17"><span class="dot"></span>位运算</a></li>
+<li><a class="lvl-2" href="algo.html#_18"><span class="dot"></span>离散化</a></li>
+<li><a class="lvl-2" href="algo.html#_19"><span class="dot"></span>区间合并</a></li>
+<li><a class="lvl-2" href="algo.html#dfs"><span class="dot"></span>DFS</a></li>
+<li><a class="lvl-3" href="algo.html#_22"><span class="dot"></span>回溯</a></li>
+<li><a class="lvl-2" href="algo.html#01"><span class="dot"></span>01背包</a></li>
+<li><a class="lvl-2" href="algo.html#_25"><span class="dot"></span>完全背包</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="font.html">字体包名中的附加术语：</a>
+    <span class="desc">更纱黑体（Sarasa Gothic）全字体包数量惊人。由于对字体术语研究不多，看来看去还是一头雾水不知道下载哪一个。 搜来搜去，看了个半懂，现在罗列如下：</span>
+    
+    <span class="row-meta">4 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="font.html#_2"><span class="dot"></span>首先看第一个连字符后的名称</a></li>
+<li><a class="lvl-2" href="font.html#_3"><span class="dot"></span>然后看第二个连字符后的名称</a></li>
+<li><a class="lvl-2" href="font.html#_4"><span class="dot"></span>附加术语</a></li>
+<li><a class="lvl-2" href="font.html#_5"><span class="dot"></span>然后看第三个连字符后的名称</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="C++迭代器.html">定义C++迭代器</a>
+    <span class="desc">所有的STL容器都定义了： - 该容器的迭代器类型，如：iterator、const_iterator - 该容器的begin() end() 方法</span>
+    
+    <span class="row-meta">15 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="C++迭代器.html#stl"><span class="dot"></span>来自被嵌套的STL容器的迭代器</a></li>
+<li><a class="lvl-2" href="C++迭代器.html#_1"><span class="dot"></span>指针实现迭代器</a></li>
+<li><a class="lvl-2" href="C++迭代器.html#_2"><span class="dot"></span>用已有迭代器来定义新迭代器</a></li>
+<li><a class="lvl-2" href="C++迭代器.html#_3"><span class="dot"></span>为新容器定义迭代器</a></li>
+<li><a class="lvl-2" href="C++迭代器.html#_4"><span class="dot"></span>环形队列</a></li>
+<li><a class="lvl-2" href="C++迭代器.html#_5"><span class="dot"></span>环形队列的迭代器</a></li>
+<li><a class="lvl-2" href="C++迭代器.html#c_1"><span class="dot"></span>一些要注意的C++语法细节</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#1"><span class="dot"></span>细节1：让容器和迭代器建立联系</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#2"><span class="dot"></span>细节2：使容器的迭代器易于使用</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#3beginend"><span class="dot"></span>细节3：begin()和end()</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#4"><span class="dot"></span>细节4：在迭代器中存储容器的引用</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#5operator"><span class="dot"></span>细节5：为迭代器定义operator!=()</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#6operator"><span class="dot"></span>细节6：为迭代器定义operator*()</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#7operator"><span class="dot"></span>细节7：为迭代器定义operator++()</a></li>
+<li><a class="lvl-3" href="C++迭代器.html#c_2"><span class="dot"></span>其它C++语法上的细节</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="cpp-iterator.html">定义C++迭代器</a>
+    <span class="desc">所有的STL容器都定义了：</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">15 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="cpp-iterator.html#来自被嵌套的stl容器的迭代器"><span class="dot"></span>来自被嵌套的STL容器的迭代器</a></li>
+<li><a class="lvl-2" href="cpp-iterator.html#指针实现迭代器"><span class="dot"></span>指针实现迭代器</a></li>
+<li><a class="lvl-2" href="cpp-iterator.html#用已有迭代器来定义新迭代器"><span class="dot"></span>用已有迭代器来定义新迭代器</a></li>
+<li><a class="lvl-2" href="cpp-iterator.html#为新容器定义迭代器"><span class="dot"></span>为新容器定义迭代器</a></li>
+<li><a class="lvl-2" href="cpp-iterator.html#环形队列"><span class="dot"></span>环形队列</a></li>
+<li><a class="lvl-2" href="cpp-iterator.html#环形队列的迭代器"><span class="dot"></span>环形队列的迭代器</a></li>
+<li><a class="lvl-2" href="cpp-iterator.html#一些要注意的c语法细节"><span class="dot"></span>一些要注意的C++语法细节</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#细节1让容器和迭代器建立联系"><span class="dot"></span>细节1：让容器和迭代器建立联系</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#细节2使容器的迭代器易于使用"><span class="dot"></span>细节2：使容器的迭代器易于使用</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#细节3begin和end"><span class="dot"></span>细节3：begin()和end()</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#细节4在迭代器中存储容器的引用"><span class="dot"></span>细节4：在迭代器中存储容器的引用</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#细节5为迭代器定义operator"><span class="dot"></span>细节5：为迭代器定义operator!=()</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#细节6为迭代器定义operator"><span class="dot"></span>细节6：为迭代器定义operator*()</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#细节7为迭代器定义operator"><span class="dot"></span>细节7：为迭代器定义operator++()</a></li>
+<li><a class="lvl-3" href="cpp-iterator.html#其它c语法上的细节"><span class="dot"></span>其它C++语法上的细节</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="cranelift.html">数据结构</a>
+    <span class="desc">//#+startup: content</span>
+    
+    <span class="row-meta">9 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="cranelift.html#entryindex"><span class="dot"></span>EntryIndex</a></li>
+<li><a class="lvl-2" href="cranelift.html#switchrs"><span class="dot"></span>switch.rs</a></li>
+<li><a class="lvl-3" href="cranelift.html#build_search_tree"><span class="dot"></span>build_search_tree()</a></li>
+<li><a class="lvl-3" href="cranelift.html#build_search_tree_1"><span class="dot"></span>继续build_search_tree()</a></li>
+<li><a class="lvl-3" href="cranelift.html#build_jump_tables"><span class="dot"></span>build_jump_tables()</a></li>
+<li><a class="lvl-2" href="cranelift.html#ssars"><span class="dot"></span>ssa.rs</a></li>
+<li><a class="lvl-3" href="cranelift.html#struct-function"><span class="dot"></span>struct Function</a></li>
+<li><a class="lvl-3" href="cranelift.html#ssabuilder-ssa"><span class="dot"></span>SSABuilder: 实施ssa构造算法所需要的中间信息</a></li>
+<li><a class="lvl-3" href="cranelift.html#program_with_loop"><span class="dot"></span>继续program_with_loop()</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="emacs-coding.html">文本文件显示异常( 中文utf-8编码 )</a>
+    <span class="desc">emacs 打开包含中文的文本文件后中文显示为8进制 但在vim等编辑器中却显示正常</span>
+    
+    <span class="row-meta">0 章</span>
+  </summary>
+  <p style="color: var(--text-muted); padding: 8px 0; font-size: 13px;">(无章节)</p>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="risc-v.html">特权级架构</a>
+    <span class="desc">广义上, M 和 S 都属于&quot;特权态&quot;.</span>
+    
+    <span class="row-meta">7 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="risc-v.html#_2"><span class="dot"></span>特权模式:</a></li>
+<li><a class="lvl-2" href="risc-v.html#mode"><span class="dot"></span>特定mode下的指令</a></li>
+<li><a class="lvl-2" href="risc-v.html#modecsr"><span class="dot"></span>特定mode下的CSR</a></li>
+<li><a class="lvl-2" href="risc-v.html#_3"><span class="dot"></span>虚拟内存</a></li>
+<li><a class="lvl-2" href="risc-v.html#_4"><span class="dot"></span>异常&amp;中断</a></li>
+<li><a class="lvl-3" href="risc-v.html#csr"><span class="dot"></span>和异常处理相关的CSR</a></li>
+<li><a class="lvl-3" href="risc-v.html#_5"><span class="dot"></span>发生异常时的行为</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="白斩鸡.html">白斩鸡</a>
+    <span class="desc">秘方重点是‘3落3起，细火煮12分钟，焗20分钟，浸冰水15分钟’。</span>
+    
+    <span class="row-meta">0 章</span>
+  </summary>
+  <p style="color: var(--text-muted); padding: 8px 0; font-size: 13px;">(无章节)</p>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="index0.html">目录</a>
+    <span class="desc">(无描述)</span>
+    
+    <span class="row-meta">12 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="index0.html#elisp"><span class="dot"></span>Elisp学习</a></li>
+<li><a class="lvl-2" href="index0.html#elisp_1"><span class="dot"></span>Elisp杂记</a></li>
+<li><a class="lvl-2" href="index0.html#emacs-org"><span class="dot"></span>Emacs org文件编码问题</a></li>
+<li><a class="lvl-2" href="index0.html#linux"><span class="dot"></span>linux命令杂记</a></li>
+<li><a class="lvl-2" href="index0.html#c-primer"><span class="dot"></span>C++ primer杂记</a></li>
+<li><a class="lvl-2" href="index0.html#cmake"><span class="dot"></span>CMake学习</a></li>
+<li><a class="lvl-2" href="index0.html#c"><span class="dot"></span>C++迭代器</a></li>
+<li><a class="lvl-2" href="index0.html#ocaml"><span class="dot"></span>OCaml杂记</a></li>
+<li><a class="lvl-2" href="index0.html#rust"><span class="dot"></span>Rust杂记</a></li>
+<li><a class="lvl-2" href="index0.html#crust-of-rust"><span class="dot"></span>crust-of-rust:生命周期</a></li>
+<li><a class="lvl-2" href="index0.html#_2"><span class="dot"></span>虎书</a></li>
+<li><a class="lvl-2" href="index0.html#_3"><span class="dot"></span>系统编程</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="org-mode.html">简介</a>
+    <span class="desc">desktop-save-mode</span>
+    
+    <span class="row-meta">18 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="org-mode.html#orgheader"><span class="dot"></span>org文件header</a></li>
+<li><a class="lvl-2" href="org-mode.html#2022-12-16-2300-2340"><span class="dot"></span>设置时间 \&lt;2022-12-16 五 23:00-23:40&gt;</a></li>
+<li><a class="lvl-3" href="org-mode.html#_2"><span class="dot"></span>开始时间&amp;截止时间</a></li>
+<li><a class="lvl-3" href="org-mode.html#org-set-effort"><span class="dot"></span>(org-set-effort) 预计持续时长</a></li>
+<li><a class="lvl-3" href="org-mode.html#_3"><span class="dot"></span>计时</a></li>
+<li><a class="lvl-2" href="org-mode.html#gtd"><span class="dot"></span>gtd简介</a></li>
+<li><a class="lvl-3" href="org-mode.html#_4"><span class="dot"></span>任务分类流程</a></li>
+<li><a class="lvl-3" href="org-mode.html#_5"><span class="dot"></span>工作流</a></li>
+<li><a class="lvl-2" href="org-mode.html#tag"><span class="dot"></span>设置tag</a></li>
+<li><a class="lvl-2" href="org-mode.html#agenda"><span class="dot"></span>agenda</a></li>
+<li><a class="lvl-2" href="org-mode.html#archieve"><span class="dot"></span>归档 archieve</a></li>
+<li><a class="lvl-2" href="org-mode.html#_6"><span class="dot"></span>动态生成图片</a></li>
+<li><a class="lvl-2" href="org-mode.html#refile"><span class="dot"></span>refile</a></li>
+<li><a class="lvl-2" href="org-mode.html#inbox"><span class="dot"></span>inbox</a></li>
+<li><a class="lvl-3" href="org-mode.html#rust-rust"><span class="dot"></span>读rust@rust</a></li>
+<li><a class="lvl-3" href="org-mode.html#cranelift-rust-compiler"><span class="dot"></span>看cranelift源码@rust@compiler</a></li>
+<li><a class="lvl-2" href="org-mode.html#mytask-2020-11-01"><span class="dot"></span>mytask [2020-11-01 日]</a></li>
+<li><a class="lvl-2" href="org-mode.html#mytask2-2022-12-16-1900"><span class="dot"></span>mytask2 \&lt;2022-12-16 五 19:00&gt;</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="todo.html">计划</a>
+    <span class="desc">好的，收到最终指令。</span>
+    
+    <span class="row-meta">150 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-3" href="todo.html#v130"><span class="dot"></span>终极蓝图V13.0：“学习之道”实战计划</a></li>
+<li><a class="lvl-4" href="todo.html#1-9"><span class="dot"></span>阶段一：计算的基石 —— 机器、语言与抽象 (第1 - 9个月)</a></li>
+<li><a class="lvl-3" href="todo.html#web-10-18"><span class="dot"></span>阶段二：现代Web“工具箱”的构建 (第10 - 18个月)</a></li>
+<li><a class="lvl-3" href="todo.html#rust-19-27"><span class="dot"></span>阶段三：Rust与后端“铸造” (第19 - 27个月)</a></li>
+<li><a class="lvl-3" href="todo.html#28-30"><span class="dot"></span>阶段四：跨平台与价值实现 (第28 - 30个月)</a></li>
+<li><a class="lvl-2" href="todo.html#inbox"><span class="dot"></span>inbox</a></li>
+<li><a class="lvl-2" href="todo.html#rust"><span class="dot"></span>清华 rust 课</a></li>
+<li><a class="lvl-2" href="todo.html#c-in-rust"><span class="dot"></span>C即时通讯 in Rust</a></li>
+<li><a class="lvl-2" href="todo.html#java-database-in-rust"><span class="dot"></span>java DataBase书 in rust</a></li>
+<li><a class="lvl-2" href="todo.html#rust_1"><span class="dot"></span>rust写预定系统</a></li>
+<li><a class="lvl-2" href="todo.html#sylar-in-rust"><span class="dot"></span>sylar服务器 in Rust</a></li>
+<li><a class="lvl-2" href="todo.html#muduo-in-rust"><span class="dot"></span>陈硕 muduo in Rust</a></li>
+<li><a class="lvl-2" href="todo.html#rust-lecture"><span class="dot"></span>rust lecture</a></li>
+<li><a class="lvl-2" href="todo.html#the-rust-book-todo-list"><span class="dot"></span>整理 the rust book 的 todo list</a></li>
+<li><a class="lvl-2" href="todo.html#self-referential-structs-in-rust-rust"><span class="dot"></span>Self Referential Structs in Rust@rust</a></li>
+<li><a class="lvl-2" href="todo.html#build-your-own-blockon-rust"><span class="dot"></span>Build your own blockon()@rust</a></li>
+<li><a class="lvl-2" href="todo.html#build-your-own-executor-rust"><span class="dot"></span>Build your own executor@rust</a></li>
+<li><a class="lvl-2" href="todo.html#green-threads-explained-in-200-lines-of-rust-rust"><span class="dot"></span>Green Threads Explained in 200 lines of rust@rust</a></li>
+<li><a class="lvl-2" href="todo.html#futures-explained-in-200-lines-of-rust-rust"><span class="dot"></span>Futures Explained in 200 Lines of Rust@rust</a></li>
+<li><a class="lvl-2" href="todo.html#rust-rust"><span class="dot"></span>rust数据结构@rust</a></li>
+<li><a class="lvl-2" href="todo.html#gtd"><span class="dot"></span>学习 gtd 书</a></li>
+<li><a class="lvl-2" href="todo.html#todo-rust"><span class="dot"></span>TODO 整理多线程代码@rust</a></li>
+<li><a class="lvl-3" href="todo.html#_2"><span class="dot"></span>抄一遍到笔记上.</a></li>
+<li><a class="lvl-2" href="todo.html#todo-c-linux-basic"><span class="dot"></span>TODO [#C] 学习linux basic</a></li>
+<li><a class="lvl-2" href="todo.html#todo-c-emacs-region"><span class="dot"></span>TODO [#C] 看emacs region这篇文</a></li>
+<li><a class="lvl-2" href="todo.html#todo-b-compiler"><span class="dot"></span>TODO [#B] 整理 compiler 计划</a></li>
+<li><a class="lvl-2" href="todo.html#todo-c-cpp-atomic-videos"><span class="dot"></span>TODO [#C] 看cpp atomic videos</a></li>
+<li><a class="lvl-2" href="todo.html#doing-a-eoc-compiler"><span class="dot"></span>DOING [#A] 完成Eoc课程@compiler</a></li>
+<li><a class="lvl-3" href="todo.html#done-l1"><span class="dot"></span>DONE L1</a></li>
+<li><a class="lvl-3" href="todo.html#done-l2"><span class="dot"></span>DONE L2</a></li>
+<li><a class="lvl-3" href="todo.html#done-l3"><span class="dot"></span>DONE L3</a></li>
+<li><a class="lvl-3" href="todo.html#done-l4"><span class="dot"></span>DONE L4</a></li>
+<li><a class="lvl-3" href="todo.html#done-l5"><span class="dot"></span>DONE L5</a></li>
+<li><a class="lvl-3" href="todo.html#done-l6"><span class="dot"></span>DONE L6</a></li>
+<li><a class="lvl-3" href="todo.html#done-l7"><span class="dot"></span>DONE L7</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l8"><span class="dot"></span>TODO L8</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l9"><span class="dot"></span>TODO L9</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l10"><span class="dot"></span>TODO L10</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l11"><span class="dot"></span>TODO L11</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l12"><span class="dot"></span>TODO L12</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l13"><span class="dot"></span>TODO L13</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l14"><span class="dot"></span>TODO L14</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l15"><span class="dot"></span>TODO L15</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l16"><span class="dot"></span>TODO L16</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l17"><span class="dot"></span>TODO L17</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l18"><span class="dot"></span>TODO L18</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l19"><span class="dot"></span>TODO L19</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l20"><span class="dot"></span>TODO L20</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l21"><span class="dot"></span>TODO L21</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l22"><span class="dot"></span>TODO L22</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l23"><span class="dot"></span>TODO L23</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l24"><span class="dot"></span>TODO L24</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l25"><span class="dot"></span>TODO L25</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l26"><span class="dot"></span>TODO L26</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l27"><span class="dot"></span>TODO L27</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l28"><span class="dot"></span>TODO L28</a></li>
+<li><a class="lvl-3" href="todo.html#todo-l29"><span class="dot"></span>TODO L29</a></li>
+<li><a class="lvl-2" href="todo.html#doing-a-unity-pokemon"><span class="dot"></span>DOING [#A] Unity Pokemon</a></li>
+<li><a class="lvl-3" href="todo.html#p1-p3"><span class="dot"></span>p1-p3</a></li>
+<li><a class="lvl-3" href="todo.html#p4-p6"><span class="dot"></span>p4-p6</a></li>
+<li><a class="lvl-3" href="todo.html#p7-p9"><span class="dot"></span>p7-p9</a></li>
+<li><a class="lvl-3" href="todo.html#p10-p12"><span class="dot"></span>p10-p12</a></li>
+<li><a class="lvl-3" href="todo.html#p13-p15"><span class="dot"></span>p13-p15</a></li>
+<li><a class="lvl-3" href="todo.html#p16-p18"><span class="dot"></span>p16-p18</a></li>
+<li><a class="lvl-3" href="todo.html#p19-p21"><span class="dot"></span>p19-p21</a></li>
+<li><a class="lvl-3" href="todo.html#p22-p24"><span class="dot"></span>p22-p24</a></li>
+<li><a class="lvl-3" href="todo.html#p25-27"><span class="dot"></span>p25-27</a></li>
+<li><a class="lvl-3" href="todo.html#p28-30"><span class="dot"></span>p28-30</a></li>
+<li><a class="lvl-3" href="todo.html#p31-33"><span class="dot"></span>p31-33</a></li>
+<li><a class="lvl-2" href="todo.html#doing-a-rust-rust"><span class="dot"></span>DOING [#A] rust语言圣经@rust</a></li>
+<li><a class="lvl-3" href="todo.html#done"><span class="dot"></span>DONE 多线程</a></li>
+<li><a class="lvl-3" href="todo.html#todo"><span class="dot"></span>TODO 全局变量</a></li>
+<li><a class="lvl-3" href="todo.html#_3"><span class="dot"></span>错误处理</a></li>
+<li><a class="lvl-3" href="todo.html#unsafe"><span class="dot"></span>unsafe</a></li>
+<li><a class="lvl-3" href="todo.html#macro"><span class="dot"></span>Macro</a></li>
+<li><a class="lvl-3" href="todo.html#asyncawait"><span class="dot"></span>async/await</a></li>
+<li><a class="lvl-3" href="todo.html#tokio"><span class="dot"></span>tokio</a></li>
+<li><a class="lvl-3" href="todo.html#_4"><span class="dot"></span>难点攻关</a></li>
+<li><a class="lvl-3" href="todo.html#_5"><span class="dot"></span>自动化测试</a></li>
+<li><a class="lvl-3" href="todo.html#cargo"><span class="dot"></span>cargo</a></li>
+<li><a class="lvl-3" href="todo.html#_6"><span class="dot"></span>实现链表</a></li>
+<li><a class="lvl-3" href="todo.html#_7"><span class="dot"></span>征服编译错误</a></li>
+<li><a class="lvl-2" href="todo.html#doing-a-cranelift-rust-compiler"><span class="dot"></span>DOING [#A] 分析cranelift源码@rust@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#doing-a-compiler-compiler"><span class="dot"></span>DOING [#A]印度compiler课程@compiler</a></li>
+<li><a class="lvl-3" href="todo.html#l18-machine-independent-opts"><span class="dot"></span>L18 machine independent opts</a></li>
+<li><a class="lvl-3" href="todo.html#l19-basic-block-cfg"><span class="dot"></span>L19 basic block, cfg</a></li>
+<li><a class="lvl-3" href="todo.html#l20-local-optimizition"><span class="dot"></span>L20 local optimizition</a></li>
+<li><a class="lvl-3" href="todo.html#l21-ssa"><span class="dot"></span>L21 ssa</a></li>
+<li><a class="lvl-3" href="todo.html#l22-dataflow-examples"><span class="dot"></span>L22 dataflow examples</a></li>
+<li><a class="lvl-3" href="todo.html#l23-liveness"><span class="dot"></span>L23 liveness</a></li>
+<li><a class="lvl-3" href="todo.html#l24-available"><span class="dot"></span>L24 available</a></li>
+<li><a class="lvl-3" href="todo.html#l25-llvm101"><span class="dot"></span>L25 llvm101</a></li>
+<li><a class="lvl-3" href="todo.html#l26-runtime"><span class="dot"></span>L26 runtime</a></li>
+<li><a class="lvl-3" href="todo.html#l27-code-gen"><span class="dot"></span>L27 code gen</a></li>
+<li><a class="lvl-3" href="todo.html#l29-local-reg-alloc"><span class="dot"></span>L29 local reg alloc</a></li>
+<li><a class="lvl-3" href="todo.html#l30-global-reg-alloc"><span class="dot"></span>L30 global reg alloc</a></li>
+<li><a class="lvl-2" href="todo.html#doing-b-sfml-rpg"><span class="dot"></span>DOING [#B] 抄个sfml rpg</a></li>
+<li><a class="lvl-3" href="todo.html#done-sfml-rpg-1113"><span class="dot"></span>DONE sfml rpg 11–13节</a></li>
+<li><a class="lvl-3" href="todo.html#done-sfml-rpg-1416"><span class="dot"></span>DONE sfml rpg 14–16节</a></li>
+<li><a class="lvl-3" href="todo.html#done-sfml-rpg-1719"><span class="dot"></span>DONE sfml rpg 17–19节</a></li>
+<li><a class="lvl-3" href="todo.html#todo-sfml-rpg-2022"><span class="dot"></span>TODO sfml rpg 20–22节</a></li>
+<li><a class="lvl-3" href="todo.html#todo-sfml-rpg-2325"><span class="dot"></span>TODO sfml rpg 23–25节</a></li>
+<li><a class="lvl-3" href="todo.html#todo-sfml-rpg-2628"><span class="dot"></span>TODO sfml rpg 26–28节</a></li>
+<li><a class="lvl-3" href="todo.html#todo-sfml-rpg-2931"><span class="dot"></span>TODO sfml rpg 29–31节</a></li>
+<li><a class="lvl-3" href="todo.html#todo-sfml-rpg-3234"><span class="dot"></span>TODO sfml rpg 32–34节</a></li>
+<li><a class="lvl-3" href="todo.html#todo-sfml-rpg-3537"><span class="dot"></span>TODO sfml rpg 35–37节</a></li>
+<li><a class="lvl-2" href="todo.html#todo-csep-501-eac-compiler"><span class="dot"></span>TODO CSEP 501 (EAC)@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#todo-a-compiler"><span class="dot"></span>TODO [#A] 北大编译课@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#a-rust-rust"><span class="dot"></span>[#A] Rust 秘典（死灵书）@rust</a></li>
+<li><a class="lvl-2" href="todo.html#a-eac-compiler"><span class="dot"></span>[#A] 学习EAC书的内容@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#b-async-book-rust"><span class="dot"></span>[#B] 阅读async book@rust</a></li>
+<li><a class="lvl-2" href="todo.html#rust-compiler"><span class="dot"></span>韩国编译课程@rust@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#todo-dc-888-compiler"><span class="dot"></span>TODO DC 888@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#todo-cse-231-advanced-compiler-compiler-cpp"><span class="dot"></span>TODO CSE 231 advanced compiler@compiler@cpp</a></li>
+<li><a class="lvl-2" href="todo.html#todo-c-ece459-rust-system"><span class="dot"></span>TODO [#C] ece459@rust@system</a></li>
+<li><a class="lvl-2" href="todo.html#todo-b-cs110l-rust-system"><span class="dot"></span>TODO [#B] cs110L@rust@system</a></li>
+<li><a class="lvl-2" href="todo.html#c-rust"><span class="dot"></span>[#C] 完成过程宏的几个实验@rust</a></li>
+<li><a class="lvl-2" href="todo.html#b-elisp-emacs"><span class="dot"></span>[#B] 学习elisp@emacs</a></li>
+<li><a class="lvl-2" href="todo.html#compilerai-compiler"><span class="dot"></span>compilerai课程@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#c-vulkan-game-engine-series"><span class="dot"></span>[#C]Vulkan Game Engine Series</a></li>
+<li><a class="lvl-2" href="todo.html#c-mydocker-system"><span class="dot"></span>[#C] mydocker@system</a></li>
+<li><a class="lvl-2" href="todo.html#c"><span class="dot"></span>[#C] 每天看一小节陈正康单词课</a></li>
+<li><a class="lvl-2" href="todo.html#python-cookbook"><span class="dot"></span>Python Cookbook</a></li>
+<li><a class="lvl-2" href="todo.html#mini-perl"><span class="dot"></span>看完mini perl</a></li>
+<li><a class="lvl-2" href="todo.html#eoc"><span class="dot"></span>编译器 eoc</a></li>
+<li><a class="lvl-2" href="todo.html#react-web"><span class="dot"></span>react + web 开发</a></li>
+<li><a class="lvl-2" href="todo.html#standford"><span class="dot"></span>standford 网络</a></li>
+<li><a class="lvl-2" href="todo.html#cmu-db"><span class="dot"></span>cmu db</a></li>
+<li><a class="lvl-2" href="todo.html#os-mit-lab-thu-os-in-rust"><span class="dot"></span>OS mit lab /thu os in rust</a></li>
+<li><a class="lvl-2" href="todo.html#csapp-lab"><span class="dot"></span>南京大学 &amp; csapp lab</a></li>
+<li><a class="lvl-2" href="todo.html#youtube-cpp-lab"><span class="dot"></span>youtube 静态分析 cpp lab</a></li>
+<li><a class="lvl-2" href="todo.html#llvm-compiler"><span class="dot"></span>llvm@compiler</a></li>
+<li><a class="lvl-2" href="todo.html#httpsvmmdevenrust-rust"><span class="dot"></span>https://vmm.dev/en/rust/@rust</a></li>
+<li><a class="lvl-3" href="todo.html#spinlock"><span class="dot"></span>spinlock</a></li>
+<li><a class="lvl-3" href="todo.html#data-structures"><span class="dot"></span>data structures</a></li>
+<li><a class="lvl-2" href="todo.html#build-a-os-system"><span class="dot"></span>build a os@system</a></li>
+<li><a class="lvl-2" href="todo.html#emacs-emacs"><span class="dot"></span>emacs文章@emacs</a></li>
+<li><a class="lvl-2" href="todo.html#org-mode-gtd-emacs"><span class="dot"></span>org mode gtd@emacs</a></li>
+<li><a class="lvl-2" href="todo.html#learn-c-cpp"><span class="dot"></span>learn C++@cpp</a></li>
+<li><a class="lvl-2" href="todo.html#rust-arc-rust"><span class="dot"></span>读懂 Rust 的Arc@rust</a></li>
+<li><a class="lvl-2" href="todo.html#a-guide-to-porting-cc-to-rust-rust-cpp"><span class="dot"></span>A Guide to Porting C/C++ to Rust@rust@cpp</a></li>
+<li><a class="lvl-2" href="todo.html#rust-cookbook-rust"><span class="dot"></span>rust cookbook@rust</a></li>
+<li><a class="lvl-2" href="todo.html#cs110l-lab-rust-system"><span class="dot"></span>cs110L lab@rust@system</a></li>
+<li><a class="lvl-2" href="todo.html#opengl-modern"><span class="dot"></span>opengl modern</a></li>
+<li><a class="lvl-2" href="todo.html#c-programming-basic-makefile"><span class="dot"></span>C programming + basic makefile</a></li>
+<li><a class="lvl-2" href="todo.html#react"><span class="dot"></span>React源码</a></li>
+<li><a class="lvl-2" href="todo.html#_8"><span class="dot"></span>职业编曲课</a></li>
+<li><a class="lvl-2" href="todo.html#done-org"><span class="dot"></span>DONE 配置org的番茄钟在界面上显示时间</a></li>
+<li><a class="lvl-2" href="todo.html#done-b-rust-atomic-video"><span class="dot"></span>DONE [#B] 看rust atomic video</a></li>
+<li><a class="lvl-2" href="todo.html#done-c-emacs-lisp-get-user-input"><span class="dot"></span>DONE [#C] Emacs Lisp: Get User Input</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="courses.html">计算机`系统基础csapp,</a>
+    <span class="desc">pythonhttps://automatetheboringstuff.com/</span>
+    
+    <span class="row-meta">2 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="courses.html#rust"><span class="dot"></span>特定于Rust</a></li>
+<li><a class="lvl-2" href="courses.html#_6"><span class="dot"></span>静态分析</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="compiler.html">语义分析 sematic analysis</a>
+    <span class="desc">在语义分析阶段我们要进行一些上下文相关的分析. 例:</span>
+    
+    <span class="row-meta">13 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="compiler.html#scope"><span class="dot"></span>Scope定义</a></li>
+<li><a class="lvl-2" href="compiler.html#static-scope-vs-dynamic-scope"><span class="dot"></span>Static Scope VS Dynamic Scope</a></li>
+<li><a class="lvl-2" href="compiler.html#ast"><span class="dot"></span>通过在AST上进行递归下降进行语义分析</a></li>
+<li><a class="lvl-3" href="compiler.html#symbol-table"><span class="dot"></span>符号表 symbol table</a></li>
+<li><a class="lvl-2" href="compiler.html#_1"><span class="dot"></span>理论动机</a></li>
+<li><a class="lvl-3" href="compiler.html#frame"><span class="dot"></span>frame指针</a></li>
+<li><a class="lvl-3" href="compiler.html#_2"><span class="dot"></span>保存寄存器</a></li>
+<li><a class="lvl-3" href="compiler.html#_3"><span class="dot"></span>优化参数传递</a></li>
+<li><a class="lvl-3" href="compiler.html#_4"><span class="dot"></span>返回地址</a></li>
+<li><a class="lvl-3" href="compiler.html#frame_1"><span class="dot"></span>驻留frame中的变量</a></li>
+<li><a class="lvl-3" href="compiler.html#_5"><span class="dot"></span>静态链</a></li>
+<li><a class="lvl-2" href="compiler.html#frame_2"><span class="dot"></span>frame概览</a></li>
+<li><a class="lvl-2" href="compiler.html#_6"><span class="dot"></span>实现思路</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="eoc.html">预备知识</a>
+    <span class="desc">在本章中我们回顾实现编译器所需要的基本工具, 程序通常被程序员以文本形式输入的,即一系列字符.</span>
+    
+    <span class="row-meta">6 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="eoc.html#_2"><span class="dot"></span>抽象语法树</a></li>
+<li><a class="lvl-2" href="eoc.html#grammars"><span class="dot"></span>Grammars (文法)</a></li>
+<li><a class="lvl-2" href="eoc.html#31"><span class="dot"></span>3.1</a></li>
+<li><a class="lvl-2" href="eoc.html#32"><span class="dot"></span>3.2 活跃分析</a></li>
+<li><a class="lvl-2" href="eoc.html#33"><span class="dot"></span>3.3 构建干涉图</a></li>
+<li><a class="lvl-2" href="eoc.html#_3"><span class="dot"></span>基于数独的图着色</a></li></ul>
+</details>
+</main>
+<button class="to-top" aria-label="回到顶部">↑</button>
+<script>
 
-<div id="outline-container-org155fbb6" class="outline-2">
-<h2 id="org155fbb6">目录</h2>
-<div class="outline-text-2" id="text-org155fbb6">
-</div>
-<div id="outline-container-org89e49c4" class="outline-3">
-<h3 id="org89e49c4"><a href="./elisp.html">Elisp学习</a></h3>
-</div>
-<div id="outline-container-org9e8bf5c" class="outline-3">
-<h3 id="org9e8bf5c"><a href="./elisp-miscell.html">Elisp杂记</a></h3>
-</div>
-<div id="outline-container-orgc260e1d" class="outline-3">
-<h3 id="orgc260e1d"><a href="./emacs-coding.html">Emacs org文件编码问题</a></h3>
-</div>
-<div id="outline-container-orgfa1478d" class="outline-3">
-<h3 id="orgfa1478d"><a href="./linux-note.html">linux命令杂记</a></h3>
-</div>
-<div id="outline-container-orgbb9764c" class="outline-3">
-<h3 id="orgbb9764c"><a href="./cpp-primer.html">C++ primer杂记</a></h3>
-</div>
-<div id="outline-container-orge4dfeec" class="outline-3">
-<h3 id="orge4dfeec"><a href="./cmake-learning.html">CMake学习</a></h3>
-</div>
-<div id="outline-container-org0711633" class="outline-3">
-<h3 id="org0711633"><a href="./cpp-iterator.html">C++迭代器</a></h3>
-</div>
-<div id="outline-container-orgd646f44" class="outline-3">
-<h3 id="orgd646f44"><a href="./ocaml-book/ocaml-book.html">OCaml杂记</a></h3>
-</div>
-<div id="outline-container-org8323d72" class="outline-3">
-<h3 id="org8323d72"><a href="./rust/rust.html">Rust杂记</a></h3>
-</div>
-<div id="outline-container-orgc91ca12" class="outline-3">
-<h3 id="orgc91ca12"><a href="./rust/crust-of-rust/lifetime.html">crust-of-rust:生命周期</a></h3>
-</div>
-<div id="outline-container-orgffbcc26" class="outline-3">
-<h3 id="orgffbcc26"><a href="./compiler.html">虎书</a></h3>
-</div>
+(function() {
+  'use strict';
 
-<div id="outline-container-org4399b64" class="outline-3">
-<h3 id="org4399b64"><a href="./sys-prog.html">系统编程</a></h3>
-</div>
-</div>
-</div>
+  /* ---------- 阅读进度条 ---------- */
+  const bar = document.querySelector('.progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    bar.style.width = (total > 0 ? h.scrollTop / total * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ---------- 回到顶部 ---------- */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  /* ---------- 全局折叠/展开(单 toggle 按钮) ---------- */
+  const foldBtn = document.querySelector('[data-action="toggle-fold"]');
+  function syncFoldBtnState() {
+    if (!foldBtn) return;
+    const all = document.querySelectorAll('details');
+    if (!all.length) return;
+    const open = Array.from(all).filter(d => d.open).length;
+    const expanded = open >= all.length / 2;
+    foldBtn.dataset.state = expanded ? 'expanded' : 'folded';
+    foldBtn.innerHTML = expanded
+      ? '<span class="chev">▾</span>折叠'
+      : '<span class="chev">▾</span>展开';
+    foldBtn.setAttribute('aria-label', expanded ? '折叠全部' : '展开全部');
+  }
+  if (foldBtn) {
+    foldBtn.addEventListener('click', () => {
+      const all = document.querySelectorAll('details');
+      const open = Array.from(all).filter(d => d.open).length;
+      const expanded = open >= all.length / 2;
+      all.forEach(d => { d.open = !expanded; });
+      syncFoldBtnState();
+    });
+    // 用户手动折叠/展开后,标签也跟着更新
+    document.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', syncFoldBtnState);
+    });
+    syncFoldBtnState();
+  }
+
+  /* ---------- 代码块:包成 .code-block + header(语言徽章 + 复制按钮) ---------- */
+  async function copyCode(text, btn) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '复制'; }, 1500);
+    }
+  }
+
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.closest('.code-block')) return;  // 已包装
+    const code = pre.querySelector('code');
+    let lang = '';
+    if (code) {
+      const m = (code.className || '').match(/language-([\w+-]+)/);
+      if (m) lang = m[1];
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
+
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    header.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>'
+                     + '<span class="code-lang">' + (lang || 'text') + '</span>';
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制代码');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = (code ? code.textContent : pre.textContent) || '';
+      copyCode(text, btn);
+    });
+    header.appendChild(btn);
+
+    pre.parentElement.insertBefore(wrap, pre);
+    wrap.appendChild(header);
+    wrap.appendChild(pre);
+  });
+
+  /* ---------- localStorage 记忆折叠 ---------- */
+  const noteId = document.body.getAttribute('data-note-id');
+  if (noteId) {
+    const KEY = 'md2html:state:' + noteId;
+    const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } })();
+    document.querySelectorAll('details.section').forEach((d) => {
+      const id = d.getAttribute('data-anchor');
+      if (!id) return;
+      if (saved[id] === false) d.open = false;
+      else if (saved[id] === true) d.open = true;
+    });
+    document.querySelectorAll('details.section').forEach((d) => {
+      const id = d.getAttribute('data-anchor');
+      if (!id) return;
+      d.addEventListener('toggle', () => {
+        saved[id] = d.open;
+        try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch {}
+      });
+    });
+  }
+
+  /* ---------- org-mode 键盘:Tab / Shift+Tab / J K ---------- */
+  const isHeading = (el) => el && el.matches && el.matches('summary');
+  const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea')) return;
+    const meta = e.metaKey || e.ctrlKey;
+
+    // / 聚焦搜索
+    if (e.key === '/' && !meta) {
+      const s = document.querySelector('input.search');
+      if (s) { e.preventDefault(); s.focus(); return; }
+    }
+
+    // Tab / Shift+Tab 折叠当前聚焦的 summary
+    if (e.key === 'Tab') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        e.preventDefault();
+        const d = f.parentElement;
+        if (e.shiftKey) {
+          // Shift+Tab: 全局折叠/展开所有
+          const all = document.querySelectorAll('details');
+          const allOpen = Array.from(all).every(x => x.open);
+          all.forEach(x => { x.open = !allOpen; });
+        } else {
+          // Tab: 折叠/展开当前节点
+          d.open = !d.open;
+        }
+        return;
+      }
+    }
+
+    // J/K 或 ↓/↑ 跳转标题 — 已移除(行为不一致,容易让用户迷惑)
+
+    // Enter: 在 note-node 上是跟随标题链接;在 section 上是 toggle
+    if (e.key === 'Enter') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        const titleLink = f.querySelector('.title, .heading-text');
+        if (titleLink && titleLink.tagName === 'A') {
+          e.preventDefault();
+          titleLink.click();
+        }
+      }
+    }
+  });
+
+  /* ---------- 点击 caret 只 toggle,不让 summary 的默认 toggle 干扰; 点击 title 跟随链接 ---------- */
+  // 默认浏览器:点 summary 任意位置都会 toggle,点 <a> 会先 toggle 再 navigate。
+  // 我们让 title 链接的 click 阻止冒泡,避免 toggle 副作用(navigate 后虽然看不到,但保证一致性)。
+  document.querySelectorAll('details.note-node > summary > .title').forEach(link => {
+    if (link.tagName !== 'A') return;
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 让浏览器默认行为(navigate)发生
+    });
+  });
+  // caret 点击:默认也会 toggle,不用特殊处理
+
+  /* ---------- 搜索 ---------- */
+  const search = document.querySelector('input.search');
+  if (search && document.body.classList.contains('page-index')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const nodes = document.querySelectorAll('.note-node');
+      nodes.forEach(node => {
+        if (!q) {
+          node.classList.remove('hidden-by-search');
+          node.querySelectorAll('li').forEach(li => li.classList.remove('hidden-by-search'));
+          return;
+        }
+        const nodeText = node.textContent.toLowerCase();
+        if (!nodeText.includes(q)) {
+          node.classList.add('hidden-by-search');
+          return;
+        }
+        node.classList.remove('hidden-by-search');
+        let anyMatch = false;
+        node.querySelectorAll('li').forEach(li => {
+          const t = li.textContent.toLowerCase();
+          if (t.includes(q)) {
+            li.classList.remove('hidden-by-search');
+            anyMatch = true;
+          } else {
+            li.classList.add('hidden-by-search');
+          }
+        });
+        if (anyMatch) node.open = true;
+      });
+    });
+  }
+  if (search && document.body.classList.contains('page-note')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('details.section').forEach(s => {
+        if (!q) { s.style.opacity = ''; s.open = s.getAttribute('data-was-open') === '1'; return; }
+        const t = s.querySelector('summary').textContent.toLowerCase();
+        s.style.opacity = t.includes(q) ? '1' : '0.3';
+      });
+    });
+  }
+})();
+
+</script>
 </body>
 </html>

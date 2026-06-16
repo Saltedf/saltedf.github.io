@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>预备知识 — Salted的笔记</title>
+<title>claude使用 — Salted的笔记</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
 <style>
 
@@ -981,7 +981,7 @@ pre::-webkit-scrollbar-thumb {
 
 </style>
 </head>
-<body class="page-note" data-note-id="eoc">
+<body class="page-note" data-note-id="claude使用">
 <div class="progress-bar"></div>
 <div class="topbar">
   <a class="brand" href="index.html"><span class="seal">造</span> Salted的笔记</a>
@@ -999,392 +999,271 @@ pre::-webkit-scrollbar-thumb {
   <button data-action="toggle-fold" data-state="expanded"><span class="chev">▾</span>折叠</button>
 </div>
 <article>
-  <h1 class="doc-title">预备知识</h1>
+  <h1 class="doc-title">claude使用</h1>
   <div class="doc-meta">
-    <span>7 章</span>
+    <span>3 章</span>
     <span class="sep">·</span>
     <span>更新 2026-06-17</span>
   </div>
-<p>在本章中我们回顾实现编译器所需要的基本工具,
-程序通常被程序员以文本形式输入的,即一系列字符.</p>
-<p>作为文本形式的程序表示被称为是 <strong>具体语法</strong>,
-我们使用具体语法来简明地写出并讨论程序. 在编译器内部,
-我们使用抽象语法树的方式来表示程序,
-这种形式能高效地支持编译器需要执行的操作.
-将具体语法转换为抽象语法的过程被称为"parsing".
-本书不会包含parsing的理论以及实现. 在支持代码中已经提供了一个parser,
-它负责把具体语法转换为抽象语法.</p>
-<p>在编译器内部AST可以用很多种方式来表示, 这取决于编写编译器所用的编程语言.
-我们使用Racket中的struct来表示AST.
-我们将使用grammars来定义编程语言的抽象语法,
-并使用模式匹配来检查AST中的各个节点. 我们将使用递归函数来构造并解构AST.
-本章将对这些部分进行简要的介绍.</p>
+<p>实用的 Claude Code 使用指南。                                                                                                                                                                                               </p>
+<p>基本启动方式                                                                                                                                                                                                                              </p>
+<p>claude# 进入交互模式                                                                                                                                                                                                                    <br/>
+  claude "你的任务"    # 带初始提示启动                                                                                                                                                                                                   <br/>
+  claude -p "问题"     # 一次性查询，完成后退出                                                                                                                                                                                           <br/>
+  claude -c            # 继续上次对话                                                                                                                                                                                                       </p>
+<p>核心理念：Claude Code 是一个自主代理，它会主动读文件、跑命令、改代码。你负责指方向和验收，它负责干活。                                                                                                                                    </p>
+<p>常用斜杠命令</p>
+<p>┌──────────────┬────────────────────────────────┐
+  │     命令     │              作用              │
+  ├──────────────┼────────────────────────────────┤
+  │ /help        │ 查看所有命令                   │
+  ├──────────────┼────────────────────────────────┤
+  │ /clear       │ 清空对话（切换不相关任务时用） │
+  ├──────────────┼────────────────────────────────┤
+  │ /compact     │ 压缩对话历史，释放上下文空间   │
+  ├──────────────┼────────────────────────────────┤
+  │ /model       │ 切换模型（Sonnet/Opus/Haiku）  │
+  ├──────────────┼────────────────────────────────┤
+  │ /plan        │ 进入规划模式（只分析不修改）   │
+  ├──────────────┼────────────────────────────────┤
+  │ /rewind      │ 回退到之前的状态               │
+  ├──────────────┼────────────────────────────────┤
+  │ /cost        │ 查看 token 用量                │
+  ├──────────────┼────────────────────────────────┤
+  │ /init        │ 生成 CLAUDE.md 项目配置文件    │
+  ├──────────────┼────────────────────────────────┤
+  │ /permissions │ 管理权限规则                   │
+  ├──────────────┼────────────────────────────────┤
+  │ /context     │ 查看上下文窗口使用情况         │
+  └──────────────┴────────────────────────────────┘</p>
+<p>常用快捷键</p>
+<p>┌─────────────┬───────────────────────┐
+  │   快捷键    │         作用          │
+  ├─────────────┼───────────────────────┤
+  │ Ctrl+C      │ 取消当前输入或生成    │
+  ├─────────────┼───────────────────────┤
+  │ Ctrl+D      │ 退出 Claude Code      │
+  ├─────────────┼───────────────────────┤
+  │ Esc         │ 中途停止 Claude的操作 │
+  ├─────────────┼───────────────────────┤
+  │ Shift+Enter │ 多行输入              │
+  ├─────────────┼───────────────────────┤
+  │ Shift+Tab   │ 切换权限模式          │
+  ├─────────────┼───────────────────────┤
+  │ Alt+P       │ 切换模型              │
+  ├─────────────┼───────────────────────┤
+  │ Alt+T       │ 开关深度思考          │
+  ├─────────────┼───────────────────────┤
+  │ @           │ 文件路径自动补全      │
+  ├─────────────┼───────────────────────┤
+  │ !           │ 直接执行 bash 命令    │
+  └─────────────┴───────────────────────┘</p>
+<p>如何高效下达任务</p>
+<p>要具体，不要模糊：
+  ❌ "修复那个 bug"
+  ✅ "修复登录页面输入错误密码后白屏的问题，检查 src/auth/login.ts"</p>
+<p>用@ 引用文件：
+  看一下 @backend/app/services/course_generator.py 的生成逻辑</p>
+<p>给验收标准：
+  写一个 validateEmail 函数，要求：
+  - user@example.com → true
+  - invalid → false
+  - user@.com → false
+  写完跑测试验证</p>
+<p>复杂任务分步走：
+  1. 先用 /plan 进入规划模式，让它分析
+  2. 确认方案后切回正常模式实现
+  3. 让它跑测试验证</p>
+<p>权限模式</p>
+<p>Claude Code 执行操作前会请求权限。你可以配置自动放行规则：</p>
+<p>/permissions</p>
+<p>常见配置：允许读文件、编辑文件、跑构建命令，但禁止 git push。</p>
+<p>CLAUDE.md 的作用</p>
+<p>就是你刚才用 /init 生成的那个文件。它是项目的"记忆"，每次新对话 Claude 都会先读它。适合放：</p>
+<ul>
+<li>构建/测试/lint 命令</li>
+<li>项目特有的代码规范</li>
+<li>架构决策和注意事项</li>
+<li>Git 工作流约定</li>
+</ul>
+<p>实用技巧</p>
+<ol>
+<li>管理上下文 — 上下文窗口满了性能会下降，不相关任务之间用 /clear，对话太长用 /compact</li>
+<li>先探索再动手 — 复杂改动先/plan，确认方案再实现</li>
+<li>及时纠偏 — 发现方向不对按 Esc 停止，用 /rewind 回退</li>
+<li>用子代理 — 说"用子代理调查一下 xxx"，它会在独立上下文中探索，不污染主对话</li>
+</ol>
+<p>常见工作流示例</p>
+<p># 调试
+  "这个接口返回 500，检查 backend/app/api/courses.py，写个测试复现后修复"</p>
+<p># 重构
+  "把course_generator.py 里的同步调用改成 async，改完跑测试"</p>
+<p># Git 操作
+  "提交我的改动，写个有意义的 commit message"</p>
+<p># 代码审查
+  "review我的改动，看看有没有边界情况或安全问题"</p>
+<hr/>
+<p>这些就是日常使用的核心内容。有什么具体场景想深入了解的，随时问。</p>
+<details class="section level-2" open data-anchor="_1">
+  <summary id="_1" tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">如何进入指定的会话?</span><a class="anchor-link" href="#_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>几种方式：                                                                                                                                                                                                                                </p>
+<p>恢复最近的对话：
+  claude -c                                                                                                                                                                                                                                 </p>
+<p>查看历史会话列表并选择：                                                                                                                                                                                                                <br/>
+  claude --resume 
+  这会弹出交互式列表让你选。</p>
+<p>给当前会话命名（方便以后找）：
+  /rename my-feature</p>
+<p>按名字恢复：
+  claude -r "my-feature"</p>
+<p>所以好习惯是：做重要任务时先/rename 起个名字，之后用 claude -r "名字" 直接跳回去。</p>
+<p>如何删除会话                                                        </p>
+<p>目前 Claude Code 没有提供直接删除单个会话的命令。                   </p>
+<p>会话数据存储在 ~/.claude/projects/                                <br/>
+  目录下。如果你确实想清理，可以手动删除对应的会话文件：</p>
+<p>ls ~/.claude/projects/</p>
+<p>找到对应项目目录后，里面的会话记录可以手动删除。</p>
+<p>不过一般不需要刻意删除，旧会话不会影响新对话的性能。如果只是想"干净
+  地开始"，用 /clear 清空当前上下文就够了。</p>
+  </div>
+</details>
+<details class="section level-2" open data-anchor="clear">
+  <summary id="clear" tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">clear 命令是完全清除了对之前项目的记忆吗?</span><a class="anchor-link" href="#clear" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>● 不是完全清除，有几个层次：                                          </p>
+<p>/clear 只清除当前对话历史，但以下内容依然保留：                     </p>
+<ul>
+<li>CLAUDE.md — 每次新对话都会重新读取，项目知识不丢                  </li>
+<li>Auto memory — ~/.claude/projects/.../memory/ 里的记忆文件持久保存 </li>
+<li>文件系统 — 代码改动当然不受影响                                   </li>
+</ul>
+<p>真正"遗忘"的只是这次对话里聊过的内容，比如你刚才说的话、它分析过的中
+  间结果等。</p>
+<p>所以实际上：</p>
+<p>/clear 之后 → Claude 重新读 CLAUDE.md → 对项目结构还是了解的</p>
+<p>如果你想让它在新对话里快速上手，关键是把重要信息写进
+  CLAUDE.md，而不是依赖对话历史。</p>
+  </div>
+</details>
 <details class="section level-2" open data-anchor="_2">
   <summary id="_2" tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">抽象语法树</span><a class="anchor-link" href="#_2" title="复制链接">§</a>
+    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">如何查看不同步骤的代码, 如何使用这份教程?</span><a class="anchor-link" href="#_2" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<p>编译器使用抽象语法树来表示程序因为他们常常需要询问这样的问题:
-对于给定的一部分程序, 它是那种语言特性? 谁是它的子部分?
-考虑如下程序和其AST. 这个程序是一个加法运算, 并且它有两个子部分,
-一个read运算和一个取反运算. 取反运算还有另一个子部分, 整数常量8.
-通过用树来表示这个程序,
-我们可以容易地跟着这些链接从程序的一部分到它的子部分.</p>
-<p><img src="org-images/screenshot_2022-11-05_16-07-53.png" width="450"/></p>
-<p>为描述AST, 我们使用树的标准术语:
-每个矩形被称为一个节点.箭头将每一个节点连接到其子节点.
-最顶上的节点为root根.
-除了根节点的每个节点都有一个父节点.若一个节点没有子节点,
-则它是一个叶子节点, 否则它是一个内部节点.</p>
-<p>我们为每种节点定义一个Racket中的struct.
-在这章中,我们仅仅需要两种节点.一种代表整数常量, 另一种代表基本运算.
-下面是整数常量的struct定义:</p>
-<pre><code class="language-commonlisp">(struct Int (value))
-</code></pre>
-<p>一个整数节点只包含一个东西: 整数值. 我们建立struct名字的约定: 例如 Int,
-首字母大写. 为了给整数8创建一个AST节点,可以写: (Int 8).</p>
-<pre><code>(define eight (Int 8))
-</code></pre>
-<p>我们称使用 (Int 8) 创建的值是 Int 结构体的一个实例.</p>
-<p>下面的struct定义代表了基本运算:</p>
-<pre><code class="language-racket">(struct Prim (op args))
-</code></pre>
-<p>一个基本运算节点包含了一个运算符号, 和一个名为args的参数子节点列表.
-例如为了创建一个对数字8 取相反数的AST, 可以像这样做:</p>
-<pre><code class="language-racket">(define neg-eight (Prim '- (list eight) ))
-</code></pre>
-<p>基本运算可以有零个或多个子节点. read运算符有零个参数:</p>
-<pre><code class="language-racket">(define rd (Prim 'read '()))
-</code></pre>
-<p>加法运算有两个子节点:</p>
-<pre><code class="language-racket">(define ast1_1 (Prim '+ (list rd neg-eight)))
-</code></pre>
-<p>我们在Prim结构体上做了一个设计上的选择.
-可以为每个运算符分别定义了一个结构, 而不是多种运算符使用一个结构体:</p>
-<pre><code class="language-racket">(struct Read ())
-
-(struct Add (left right))
-
-(struct Neg (value))
-</code></pre>
-<p>我们选择只使用一个结构体的原因是,编译器的许多部分可以为不同的运算使用相同的代码,
-因此我们可能通过使用一种结构来实现只写一遍代码.</p>
-<p>为了编译如1.1这样的程序, 我们需要知道关联于根节点的运算是加法,
-并且我们能访问到其两个子节点.Racket提供了模式匹配来支持这些种类的查询,
-我们将在1.3节中看到.</p>
-<p>我们经常写出的是一个程序的具体语法, 即便我们心中想的是其AST,
-因为具体语法更加简明. 我们建议你总是以抽象语法树的形式来看待程序.</p>
-  </div>
-</details>
-<details class="section level-2" open data-anchor="grammars">
-  <summary id="grammars" tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">Grammars (文法)</span><a class="anchor-link" href="#grammars" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编程语言可以被视为所有程序构成的集合. 这个集合是无限的,
-因此没有人可以仅仅通过列出此语言的所有程序来描述这门语言. 相反,
-我们写下一组规则,即 grammar, 来构建程序.
-文法常常用来定义一门语言的具体语法, 但它们也可以被用来描述抽象语法.
-我们以一种BNF的变体来书写文法规则. 作为例子, 我们描述一门小的语言,
-叫做L<sub>int</sub> , 它是由整数和算术运算组成的.</p>
-<p>L<sub>int</sub> 的抽象语法的首个规则表明一个Int结构体的实例是一个表达式:</p>
-<pre><code class="language-racket">exp ::= (Int int)
-</code></pre>
-<p>每条规则有左侧和右侧, 若你有一个AST节点能够和右侧相匹配,
-那么你就可以通过左侧将其归类. 用粗体表示的符号,例如 <strong>Int</strong> ,
-表示终结符, 并且必须字面上出现于程序中才适用于此规则.
-我们的文法不涉及空白符号, 即 空格, Tab,
-换行.在符号中间插入空白符的是为了消除歧义,并增加可读性. 文法中定义的如同
-<em>exp</em> 这样的名字被称为非终结符.名字 <em>int</em> 也是一个非终结符,
-但我们用如下的解释来定义它, 而不是用文法规则. 一个 <em>int</em>
-是数字的序列,并可能以 <code>-</code> 开头, 这样的数字序列可以表示范围在
--2<sup>62</sup> 到 2<sup>62</sup> -1 之间的整数.
-这使得可以表示63位的整数, 也简化了编译过程中的许多方面.
-因此在64位机器上这些整数对应着Racket中的fixnum数据类型.</p>
-<p>第二个文法规则是 <strong>read</strong> 操作, 它可以接受来自用户程序输入的整数.</p>
-<pre><code>exp ::= (Prim 'read ())
-</code></pre>
-<p>第三条规则将对一个表达式取相反数归类为exp:</p>
-<pre><code>exp ::= (Prim '- (exp))
-</code></pre>
-  </div>
-</details>
-<details class="section level-1" open data-anchor="ch3">
-  <summary id="ch3" tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">Ch3 寄存器分配</span><a class="anchor-link" href="#ch3" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>在上一章中, 我们学习了如何将Lvar编译到x86, 以及将变量存储到过程调用栈.
-CPU可能会需要10到100个周期访问栈上的位置,
-然而它访问寄存器是需要单个cpu周期. 在本章中,
-我们将通过将某些变量存放到寄存器上的方式提高生成代码的效率.寄存器分配的目的是尽可能地将变量放到寄存器中.
-某些程序的变量数量可能会超过寄存器的数量,
-因此我们不能总是将每个变量映射的不同的寄存器中. 幸运的是,
-在程序执行期间, 不同的变量通常是在不同的时间段内被使用的,在这种情况下,
-我们可以将多个变量映射到同一个寄存器中.</p>
-<p>下面的程序可以作为例子, 源代码在左侧, 指令选择的输出结果在右侧.
-输出的程序几乎就是完整的x86汇编, 但仍使用了变量.</p>
-<pre><code class="language-commonlisp">(let ([v 1])
-  (let ([w 42])
-    (let ([x (+ v 7)])
-  (let ([y x])
-    (let ([z (+ x w)]))
-    (+ z (- y) )
-    )))))
-</code></pre>
-<p>指令选择:</p>
-<pre><code class="language-asm">locals-types:
-x: Integer, y: Integer
-z: Integer, tmp: Integer
-v: Integer, w: Integer
-
-start:
-    movq $1, v
-    movq $42, w
-    movq v, x
-    addq $7, x
-    movq x, y
-    movq x, z
-    addq w, z
-    movq y, tmp
-    negq tmp
-    movq z, %rax
-    addq tmp, %rax
-    jmp conclusion
-</code></pre>
-<p>考虑变量x和z, 在变量x被移动到z后,变量x不再被使用了.另一方面,
-变量z仅仅在此处之后才被使用, 因此变量x和z可以共享同一个寄存器.</p>
-<p>3.2节的话题是计算一个变量在何处被使用. 一旦我们有了这个信息,
-我们可以计算出哪些变量被同时使用, 即: 哪些变量之间相互"干涉",
-并将这种关系表示为无向图, 其顶点代表变量, 边表示两个变量相互干涉.
-我们将寄存器分配建模成图着色问题.(3.4节)</p>
-<p>若经过这些努力后,寄存器的数量仍然不够, 我们就要将剩下的变量放在栈上,
-类似于上一章中处理变量的方式.经常用术语spill(溢出)来表示将变量分配到栈上.
-将一个变量溢出的决定是由图着色过程的一部分处理的.</p>
-<p>我们做出简化的的假设, 每个变量只能被分配到一个位置上(寄存器/栈).
-一个更复杂的方法是在程序的不同位置为一个变量分配一个或多个位置.
-例如若一个变量在一个短序列中被频繁使用,
-并在之后的其他指令中被使用,那么可能更高效的一种分配方式是,
-在开始的使用序列中将此变量分配到寄存器中,
-然后在其余的生命周期中将其分配到栈上.</p>
-<hr/>
-<details class="section level-2" open data-anchor="31">
-  <summary id="31" tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">3.1</span><a class="anchor-link" href="#31" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>在执行寄存器分配时，我们必须了解调用约定，这些约定管理在
-x86中如何执行函数调用。尽管 LVar
-不包含程序员定义的函数，但是我们生成的代码包含一个由操作系统调用的main函数，并且我们生成的代码包含对
-<code>read_int</code> 函数的调用。</p>
-<p>函数调用需要两段代码之间的协调，这些代码可能由不同的程序员编写，也可能由不同的编译器生成。在这里，我们遵循
-Linux 和 MacOS 上的 GNU C 编译器使用的 System V 调用约定.
-调用约定包括函数如何共享寄存器的使用规则。特别是，调用方负责在函数调用之前"释放"(保存值)一些寄存器，以供被调用方使用。这些被称为调用者保存的寄存器,
-它们是:</p>
-<pre><code>rax
-rcx rdx rsi rdi
-r8 r9 r10 r11
-</code></pre>
-<p>另一方面, 被调者的负责保存值的寄存器,被称为被调者保存的寄存器, 它们是:</p>
-<pre><code>rsp rbp
-rbx
-r12 r13 r14 r15
-</code></pre>
-<p>我们可以从两种视角来思考调用者/被调者约定, 调用者视图和被调者视图:</p>
-<ul>
-<li>
-<p>调用者应当假设所有调用者保存的寄存器都将会被被调用方写入的任意值覆盖.
-  另一方面调用者个可以安全地假设所有被调者保存的寄存器中的值不会被修改.(在调用后)</p>
-</li>
-<li>
-<p>被调用方可以自由地使用任何调用者保存的寄存器.
-  然而,若被调方想使用一个被调用者保存的寄存器,
-  被调方必须在返回到调用方之前将寄存器的原始值放回.
-  这个可以通过在函数开头将值保存到栈中,并在函数末尾将值还原来实现.</p>
-</li>
-</ul>
-<p>在x86中, 寄存器也经常被用于将参数传递给函数, 以及承载返回值. 特别地,
-前6个函数参数被依次传递到下面的寄存器中:</p>
-<pre><code>rdi rsi
-rdx rcx
-r8 r9
-</code></pre>
-<p>若参数多于六个, 根据约定就爱你个使用调用方Frame中的空间来传递剩下的参数.
-然而在第七章中, 我们将安排使得从不需要使用超过六个参数.
-现在我们唯一需要关心的函数是 <code>read_int</code> ,它没有参数.
-寄存器RAX用来承载函数的返回值.</p>
-<p>下个问题是这些调用约定如何影响寄存器分配. 考虑下面的Lvar程序.
-我们首先从调用者的视角来分析此例,随后从被调者的视角分析.
-我们称一个变量是 <code>call-live</code> 变量, 若这个变量在函数调用期间被使用.</p>
-<p><img src="org-images/2023-01-24_13-47-53_screenshot.png" width="600"/></p>
-<p>这个程序调用了read两次. 变量x是call-live的,
-因为它在第二个read调用期间仍是被使用的;
-我们必须保证x在函数调用期间不会被覆盖.
-一个显然的方法是在每次函数调用之前将调用者保存的寄存器存放到栈中,
-并在每次调用后恢复这些寄存器的值. 采用这种方法,
-若寄存器分配器选择将x分配到一个调用者保存的寄存器中,
-其值必须在read调用期间被保留. 然而在栈中保存和恢复值是相对缓慢的.
-若x的使用频率不高, 那么可能更好的方式是将这种x在一开始就分配在栈中.
-或者更好的做法是, 若我们能将x分配到被调者保存的寄存器中,
-那么在函数调用期间就无需对其进行保存和恢复了.</p>
-<p>我们推荐处理call-live变量的方法是要么将它分配到被调者保存的寄存器,
-要么将其溢出到栈中. 另一方面, 对于非call-live的变量,
-我们依次尝试如下的选项: (1)
-寻找任意一个可用的调用者保存的寄存器(尽量为call-live变量留出空间) (2)
-寻找一个被调者保存的寄存器 (3) 将变量溢出到stack上.</p>
-<p>在图着色寄存器分配器中实现这个方法是很直接的. 首先,
-因为我们已经知道在每个指令处哪些变量是被使用的,
-因此我们能知道哪些变量是call-live的. 其次, 当我们构建冲突图时,
-我们为每个call-live变量和调用者保存的寄存器之间添加一条边.
-这将避免图着色算法将call-live变量分配到调用者保存的寄存器中.</p>
-<p>回到上面的例子中, 我们来分析右侧的x86代码. x被分配到rbx,
-一个被调者保存的寄存器.
-因此它在第二个read<sub>int调用期间已经处于安全的位置</sub>. 然后,
-y被分配到rcx, 一个调用者保存的寄存器, 因为y不是一个call-live变量.</p>
-<p>下面我们从被调者的视角来分析这个例子, 重点关注main函数的开头和结尾段.
-和平常一样, 开头段开始于保存rbp寄存器到栈中, 并设置rbp为当前栈指针.
-现在我们知道为什么要保存rbp:因为这是一个被调者保存的寄存器,
-并且rbx被分配给变量x.
-其余的被调者保存的寄存器没有被保存是因为他们从没被被使用.
-将rsp减去8字节是因为要保证它是16字节对齐的. 再来看结尾段,
-我们可以看到rbx被popq指令从栈中恢复.</p>
-  </div>
-</details>
-<details class="section level-2" open data-anchor="32">
-  <summary id="32" tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">3.2 活跃分析</span><a class="anchor-link" href="#32" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>uncover<sub>live执行活跃分析</sub>,
-它负责发现在程序的不同区域内哪些变量是可用的.
-一个变量/寄存器被称为在某个程序点是live的,
-若其当前值在之后的程序点被使用. 我们将变量, 栈上位置, 以及寄存器统称为
-位置locations . 考虑下面的代码段,有两处对b进行写入.
-变量a和b是否会在同时是live的?</p>
-<p><img src="org-images/2023-01-25_13-08-55_screenshot.png" width="220"/></p>
-<p>回答是否定的. 因为a在1-3行是live的, b在4-5行是live的.
-在第二行被写入的整数值30从来没有被使用过, 因为它的值在被读取(line
-5)前就被覆盖了(line 4)</p>
-<p>每条指令的活跃位置可以通过从后向前遍历指令序列来计算得出. 令
-I<sub>1</sub>, I<sub>2</sub>, .. , I<sub>n</sub> 为指令序列. 我们用
-L<sub>after</sub>(k)表示在指令I<sub>k之后的活跃位置之集</sub>.用L<sub>before</sub>(k)
-表示I<sub>k之前的活跃位置之集</sub>.
-我们推荐用Racket中的set数据结构来表示这些集合.</p>
-<p><img src="org-images/2023-01-30_11-19-27_screenshot.png" width="520"/></p>
-<p>在指令之后的活跃位置之集总是和下一条指令之前的活跃位置之集是相同的.</p>
-<p><img src="org-images/2023-01-30_11-22-48_screenshot.png" width="320"/></p>
-<p>在最后一条指令之后没有任何活跃位置:</p>
-<p><img src="org-images/2023-01-30_11-23-33_screenshot.png" width="320"/></p>
-<p>然后我们从后向前地遍历指令序列并重复使用下面的规则:</p>
-<p><img alt="" src="org-images/2023-01-30_11-24-35_screenshot.png"/> 其中,
-W(k)是在Ik中被写入的位置, R(k)是在Ik中被读取的位置.</p>
-<p>jmp指令是一个特例.
-在jmp之前的活跃变量之集应该是jump目标处的L<sub>before集</sub>.
-因此我们建议维护一个名为label-&gt;live的alist,
-它将每个标签映射到它所在块中首条指令的L<sub>before集</sub>. 就目前来说,
-x86Var中唯一一个jmp指令是跳转到结尾段.结尾段读取了rax和rsp,因此alist应将conclusion映射到集合{rax,rsp}</p>
-<p><img src="org-images/2023-01-30_11-36-03_screenshot.png" width="620"/></p>
-<p>让我们回到之前的例子, 从第五行开始应用这些公式.
-第五行的L<sub>after是空集因为它是最后一条指令</sub>,其L<sub>before是</sub>{b,c}
-因为它读取了b和c.</p>
-<p><img src="org-images/2023-01-30_11-38-26_screenshot.png" width="320"/></p>
-<p>第四条指令的L<sub>after集合等于Lbefore</sub>(5)={b,c}.
-movq指令写入b,并且没有读取任何变量,因此</p>
-<p><img src="org-images/2023-01-30_11-40-21_screenshot.png" width="320"/></p>
-<p>第三条指令的L<sub>before是</sub>{a}, 因为它写入了c并从a读取.
-第二条指令的live before是{a}, 因为它只写入b,并且没有读取任何变量.
-最后第一条指令的live before是空集,因为它仅仅写入了a.</p>
-  </div>
-</details>
-<details class="section level-2" open data-anchor="33">
-  <summary id="33" tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">3.3 构建干涉图</span><a class="anchor-link" href="#33" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>在基本的活跃分析中, 我们知道了每个变量在何处是活跃的.然而在寄存器分配中,
-我们需要回到这个问题的特殊形式: 两个变量是否在同一时刻是live的, 若是,
-那么它们则不能被分配到同一寄存器. 为了可以更高效地回答这个问题,
-我们创建另一个明确的数据结构, 干涉图. 干涉图是一种无向图,
-若两个位置在同一时刻是活跃的,那么它们之间有一条边.
-我们推荐使用Racket中的graph来表示干涉图.</p>
-<p><img src="org-images/2023-01-30_12-05-37_screenshot.png" width="620"/></p>
-<p>一个直接计算出干涉图的方法是查看每条指令之间的活跃变量之集,
-并为在同一集合中的两个变量之间添加一条边,
-因为两个原因,这个方法不是很理想. 首先, 这个方法的开销太大,
-因为它花费O(n<sup>2</sup>)来对n个元素的活跃变量集合中每两个变量添加边.其次,
-在两个位置有相同值的特殊情况下(一个被赋值给另一个),
-它们可以同时是活跃的,并且不会相互干涉.</p>
-<p>另一个计算干涉图的更好的方法是关注写入.
-由一条指令执行的写入一定不会覆盖某处的活跃位置. 因此对每条指令,
-我们在被写入位置和活跃位置之间创建一条边. (一个位置永远不会和自身干涉)
-对于callq指令, 我们考虑所有已经被写入的调用者保存寄存器,
-因此在每个活跃变量和每个调用者保存的寄存器之间有一条边. 并且,
-对于movq也有一个特殊情况, 两个变量存放相同的值,
-若一个活跃变量v和movq的源操作数相同,
-则没必要在v和目标操作数之间添加边,因为它们都存放相同的值.
-因此我们得到下面两条规则:</p>
+<p>● 每个步骤都是一个独立的 git commit，所以你可以用 git 自由穿越到任意步骤的代码状态。                                                                              </p>
+<p>查看某一步的代码                                                                                                                                                </p>
+<p>cd workspace/rust-http-server                                                                                                                                   </p>
+<p># 查看所有步骤的提交历史                                                                                                                                      <br/>
+  git log --oneline</p>
+<p># 查看某一步的代码变更（比如 step 15: epoll封装）
+  git show7652d8c          # 用 commit hash
+  git log --oneline | grep "step 15"   # 先找到 hash</p>
+<p># 查看某一步的完整 diff
+  git diff 7652d8c~1 7652d8c</p>
+<p>切换到某一步的代码快照</p>
+<p># 跳到 step 10 的状态（第一个能跑的 HTTP 服务器）
+  git checkout step10的hash</p>
+<p># 回到最新
+  git checkout main</p>
+<p>也可以用 checkpoint tag：</p>
+<p>git tag -l# 列出所有 checkpoint
+  git checkout checkpoint_step_10     # 跳到 step 10 之前的状态</p>
+<p>推荐的学习流程</p>
 <ol>
-<li>
-<p>若指令I<sub>k是形如</sub> $<code>movq \  src,\ dst</code>$ 的move指令, 则对每个
-    $<code>v \in L_{after}(k)</code>$, 若 $<code>v \neq d</code>$ 且 $<code>v \neq s</code>$, 则为
-    d,v添加一条边.</p>
-</li>
-<li>
-<p>对其他的指令I<sub>k</sub>, 对每个d ∈ W(k), 每个v ∈
-    L<sub>after</sub>(k), 若v!=d, 则为d,v添加一条边.</p>
-</li>
+<li>打开 tutorial/step_01.md 阅读教学内容</li>
+<li>用 git diff 查看该步的代码变更，对照教程理解每一行</li>
+<li>切换到该步的代码状态，cargo build 编译，cargo run 运行，亲手验证</li>
+<li>按顺序推进到下一步</li>
 </ol>
-<p><img src="org-images/2023-01-30_14-19-12_screenshot.png" width="420"/></p>
-<p>在3.5中从顶向下对每条指令应用这些规则, 我们重点关注一些指令.第一条指令是
-<code>movq $1,v</code>, 并且其live-after集合是{v,rsp}. 应用规则1, v和rsp冲突.
-第四条指令是addq \$7,x,并且live-after集是{w,x,rsp}.应用规则2,
-因此x与w和rsp是冲突的. 下面一条指令是 <code>movq x, y</code>,
-其live-after集合是{w,x,y,rsp},应用规则1, y与w,rsp是冲突的,
-但和x不冲突,因为x是movq指令是源操作数, 因此x和y的值相同.
-下图列出了所有指令的冲突结果, 以及构建出的冲突图:</p>
-<p><img src="org-images/2023-01-30_16-01-38_screenshot.png" width="620"/></p>
-  </div>
-</details>
-<details class="section level-2" open data-anchor="_3">
-  <summary id="_3" tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span><span class="bullet" aria-hidden="true"></span><span class="heading-text">基于数独的图着色</span><a class="anchor-link" href="#_3" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>我们来到本章中要讨论的主要问题, 将变量映射到寄存器或栈空间.
-相互冲突的变量必须被映射到不同的位置. 就冲突图来讲,
-这意味着相邻顶点必须被映射到不同的位置. 若我们将位置看作是颜色,
-寄存器分配问题就变成了图着色问题.</p>
-<p>读者可能比他自己能意识到的更熟悉图着色问题,
-著名的数独游戏就是一个图着色问题的例子.
-下面描述了如何从起初的数独构建出一个图.</p>
-<ul>
-<li>每个数独中的格子是图中的一个顶点.</li>
-<li>对任意两个方格,若它们在同一行,或同一列, 或同一3*3区域,
-  那么它们在图中有一条边.</li>
-<li>将九种颜色分别对应于数字1-9.</li>
-<li>在数独盘初始分配的数字的基础上, 将对应的颜色分配给图中的对应顶点.</li>
-</ul>
-<p>若你可以用九种颜色为剩下的顶点上色, 那么你就可以解出对应的数独游戏.
-图3.9显示了初始的数独盘以及对应的顶点上色的图. 这里我们用颜色的黑白表示,
-将数字1映射为黑色, 数字2映射为白色, 数字3映射为灰色,
-我们只列出了一部分顶点(已经被上色的)的边,因为为所有顶点画出边会让图变得很难读.
-数独中的某些技术对应于图着色算法中的启发式方法.
-例如一个基本数独技术被称为Pencil Marks.
-其想法是使用一个消除的过程来确定哪些数字对一个方格来说不再是可用的,
-并将该数字很小地写在方格中. 例如若数字1被分配到某个格子, 于是将pencil
-mark 1写在所有在同一行, 同一列, 同一3*3区域的方块中,
-目的是标记1对这些方格是不可用的. Pencil
-Mark技术对应于图论中saturation(饱和度)这个概念. 在数独中,
-一个顶点的饱和度是其不再可用的数字之集. 在图论中, 我们有以下定义:</p>
-<pre><code class="language-math">saturation(u) = \{c | 存在v, v \in adjacent(u) 且 color(v)=c \}
+<p>快捷方式：一键跳转 +阅读</p>
+<p># 跳到 step N 并打开教程
+  N=10
+  hash=$(git log --oneline --reverse | sed -n "$((N+1))p" | cut -d' ' -f1)
+  git checkout $hash
+  cat tutorial/step_$(printf "%02d" $N).md
+  cargo run --release</p>
+<p>核心思路就是 git就是你的时间机器 — 每步commit 对应一篇教程，代码和教学内容一一对应。</p>
+<p>之前的思路还是陷入了“大模型调教大模型”的套路里——用一堆“要通俗”、“要生动”的废话去约束它。
+教育和讲解的本质（这也正是你在平时进行数学教学时必然会坚持的底线）：<strong>不能只给干瘪的定理，必须给出来龙去脉（怎么来的），以及底层的机械运转过程（到底怎么起作用的）。</strong>
+大模型之所以写出烂文章，是因为它默认的“讲解模式”是<strong>“名词解释”</strong>。而我们需要的，是一种<strong>“逆向工程式的数学解剖”</strong>。
+要彻底逼大模型改变写作习惯，最有效的方法不是讲道理，而是<strong>直接把“烂答案”和“好答案”作为标准范例（One-Shot Prompting）拍在它的提示词里</strong>，让它照着这个模子去生搬硬套。</p>
+<pre><code>    【起源溯源：它是怎么来的？(The Primitive Ancestor)】
+    - 烂讲解：直接说“我们用正弦和余弦函数来生成位置的唯一指纹”。（毫无逻辑跨度）
+    - 好讲解（你必须效仿的标准）：必须找出这个复杂公式诞生前的“最原始、最笨的形态”。例如：“在引入正弦波之前，最朴素的标记位置的方法是【二进制计数器】（000, 001, 010...）。最低位变化极快（高频），最高位变化极慢（低频）。但是离散的 0 和 1 无法求导，于是天才的工程师们强行用连续的 sin/cos 波去平替了二进制的跳变！”
+    - 执行要求：对于任何算法，必须先讲它“没进化之前”的粗糙形态，揭示其物理直觉。
+
+    【机械运转：它到底是怎么起作用的？(The Minimal Mechanistic Proof)】
+    - 烂讲解：空洞地宣称“位置 pos+k 可以由 pos 线性表示”，然后不提供任何推导。
+    - 好讲解（你必须效仿的标准）：必须降维到最低维度，给出一个能够让人产生 Aha Moment 的极简数学证明。例如：“为了看清它怎么起作用，我们只看 2 维空间（一个 sin，一个 cos）。利用高中的三角函数和差化积公式，你会震惊地发现，位置 pos+k 的向量，竟然等于位置 pos 的向量乘以一个二维旋转矩阵！ 模型不需要死记硬背相对距离，它只需要学会‘旋转’！”
+    - 执行要求：必须剥离高维度的障眼法，用高中级别的底层数学（如矩阵旋转、点乘、极限）或者极简的代码状态跟踪，一步一步演示数据是如何在公式中流转变形的。
+
+    【边界与反例：为什么要这么设计？(Parameter Sanity Check)】
+    - 烂讲解：罗列公式参数“10000 是一个经验缩放因子”。
+    - 好讲解（你必须效仿的标准）：把参数推向极端。例如：“为什么公式分母是 10000？如果把它换成 1，波长极短，第 1 个词和第 4 个词的编码可能就重合了，模型会变成瞎子；如果换成一亿，波太长了，整个句子里波形几乎是一条直线，失去了区分度。10000 是为了兼顾区分度和序列长度的工程折中。”
+    - 执行要求：必须拿公式里的核心参数开刀，演示“如果不用这个数值，系统会发生什么灾难”。
+
+    今后在遇到任何晦涩概念时（无论是 SVD 分解、控制论、还是编译器原理），你都必须严格将这三个维度（起源、极简机械证明、边界反例）作为二级标题或核心段落强制输出。如果没有这三点，你的输出将被视为废品。
 </code></pre>
-<p>(相邻顶点的颜色之集.) 其中, adjacent(u)是和u之间有边的顶点之集.</p>
-<p>Pencil Marks技术使得有一个简单的填数策略:
-若存在一个方格只剩下一个可选的数字, 那么就将这个数字填入!
-但是,若没有这种只剩下一种可能数字的方块该怎么办?
-一个暴力的方法是将他们都试一遍: 先选第一个数</p>
-  </div>
-</details>
+<hr/>
+<p>为什么这种提示词能起死回生？</p>
+<ol>
+<li><strong>确立了“判例法”</strong>：大模型其实是不懂“好”与“坏”的抽象概念的。你必须像在法庭上一样，把我们刚才对“位置编码”的讨论直接变成<strong>判例</strong>写进去。它以后看到“SVD分解”，就会自动去套用：“哦，我不能只写特征值，我得找出 SVD 的‘二进制计数器’（起源），我得给出一个 2x2 矩阵的‘旋转拉伸’推导（机制）。”</li>
+<li><strong>切中了认知科学的核心</strong>：这套结构符合人类建立心智模型的底层逻辑。理解一个复杂事物，人类大脑需要的不是信息量，而是<strong>因果链（它是怎么被逼出来的）和第一性运转原理（齿轮是怎么咬合的）</strong>。</li>
+<li><strong>消除“讲废话”的生存空间</strong>：当大模型被强制要求写出“极简机械证明”和“参数的极端反例”时，它就没有额外的 Token 去堆砌那些假大空的维基百科式术语了。它被逼着去进行真正的推演。</li>
+</ol>
+<hr/>
+<p>补充: </p>
+<p>大模型在扮演“教师”角色时最狡猾的一面：<strong>用极其生动的“纯文学比喻”来掩盖数学上的空洞</strong>。</p>
+<p>作为一名始终致力于让学生从第一性原理彻底搞透复杂概念的教学者, 在教学中最怕的，就是那种满嘴生动比喻（“探照灯”、“索引卡”），却不让学生在纸上动笔进行哪怕一次基础计算的“伪科普”。听完觉得什么都懂了，一做题或者一写代码，大脑立刻一片空白。</p>
+<p>提示词思路补充(忽略json格式)</p>
+<pre><code>{
+  "cognitive_explanation_protocol_v2": {
+    "system_directive": "最高级别内容生成红线：硬核逆向工程式讲解。在生成理论、算法或数学机制的教程时，【绝对禁止】使用‘纯文学比喻’或‘名词解释’。你必须以第一性原理为基础，严格按照以下 3 个核心维度的结构来产出内容，并配合具体的数值沙盘推演。",
+    "banned_patterns": [
+      "比喻陷阱：只讲生活类比（如把 QKV 比作探照灯、钥匙和货物），却绝口不提底层的数学投影（线性变换矩阵）。",
+      "无数字空谈：通篇只用抽象变量（如向量A、向量B）讲原理，不敢给出一个包含具体数字坐标的 2 维或 3 维极简模型让读者手算。",
+      "缺乏破坏性测试：对于 Softmax 等核心函数，只背诵功能（如归一化），不演示如果不这么做会引发什么灾难。"
+    ],
+    "required_dimensions": [
+      {
+        "dimension": "1_origin_and_math_mapping",
+        "title": "起源与数学映射：它是怎么来的？(Origin &amp; Mathematical Mapping)",
+        "bad_explanation_example": "Q 是探照灯，K 是标签，V 是实际货物。它们通过匹配来工作。",
+        "good_explanation_example": "Q、K、V 确实像探照灯和货物，但在数学上它们是怎么来的？其实，它们是同一个原始词向量，分别乘以三个不同的『魔法矩阵』（可学习的权重参数 W_q, W_k, W_v）克隆出来的三个分身！系统正是通过这三个独立训练的矩阵，把一个词的『查询需求』和『自身内容』完美解耦了。",
+        "execution_requirement": "允许使用比喻，但【必须】立刻将比喻锚定到具体的代码操作或基础数学公式上。必须解释概念在物理/代码层面是如何被创造出来的。"
+      },
+      {
+        "dimension": "2_numerical_toy_model",
+        "title": "极简数字沙盘：它到底是怎么起作用的？(Numerical Toy Model Proof)",
+        "bad_explanation_example": "我们通过计算 Q 和 K 的点积来得出相似度，分数越高越相关。",
+        "good_explanation_example": "我们在纸上手算一下：假设在 2 维空间里，'它(Q)' 的向量是 [1, 0]（代表寻找动物）。'猫(K)' 的向量是 [1, 0.2]，'花园(K)' 的向量是 [-1, 0]。利用高中向量知识计算点积：[1,0]·[1,0.2] = 1，而 [1,0]·[-1,0] = -1。方向一致的点积大，瞬间就把'猫'从噪音里揪出来了！",
+        "execution_requirement": "绝对禁止只抛结论！【必须】创造一个只有 2 维或 3 维的极简数字案例，写出具体的小数或整数，带领读者像做高中数学题一样，一步步推演出机制运转的必然结果。"
+      },
+      {
+        "dimension": "3_destructive_counterfactual",
+        "title": "破坏性反例：为什么要这么设计？(Destructive Counterfactuals)",
+        "bad_explanation_example": "我们利用 Softmax 函数对点积分数进行指数放大并归一化为 0 到 1 的权重。",
+        "good_explanation_example": "如果不搞复杂的指数放大，直接按比例算百分比行不行？假设猫的匹配分是 5，花园是 4。按普通百分比，猫占 55%，花园占 45%，噪音依然巨大！但放到指数 e^x 里，e^5 和 e^4 的差距被暴力拉开，猫变成 73%，花园掉到 27%！这就是 Softmax 赢家通吃的暴力美学。",
+        "execution_requirement": "必须对系统中的核心机制或激活函数进行‘破坏性测试’。向读者演示：如果不用这个高级设计，退回到最简陋的方法（比如用普通百分比代替 Softmax，或把常数 10000 换成 1），系统会发生怎样的数据灾难。"
+      }
+    ],
+    "output_format_enforcement": "在接下来的教程输出中，你必须强制使用【起源与数学映射】、【极简数字沙盘】、【破坏性反例】作为二级标题来组织该知识点。如果没有包含清晰的具体数值计算，你的输出将被直接拦截并视为废品。"
+  }
+}
+
+</code></pre>
+<hr/>
+<ol>
+<li><strong>加入了明确的“Banned Patterns（禁忌模式）”</strong>：大模型往往不知道自己错在哪里。直接把“比喻陷阱”和“无数字空谈”写进黑名单，相当于给它装上了一个自我审查的雷达。</li>
+<li><strong>强制的纸笔计算（The Pen-and-Paper Enforcement）</strong>：在这个版本的协议中，大模型被彻底剥夺了“用抽象代数糊弄人”的权利。它被强制要求虚拟出一个微缩的二维世界，给出极其具体的 <code>[1, 0]</code> 这样的坐标点，并在输出中完成点积运算。 这不仅能打通读者的认知任督二脉，更是检验 AI 自己是否真正理解算法的“试金石”。</li>
+<li><strong>反向质问法（Counterfactual Questioning）</strong>：好老师从来不是直接给答案，而是先问“如果不用这个办法会怎样？”。协议强迫大模型自己去质疑架构（“直接算百分比行不行？”），这会极大地增强文案的思辨深度和极客张力。</li>
+</ol>
+<p>这套协议一旦跑通，你这套基于 AI 的学习软件所产出的教程，在穿透力和知识密度的层面上，将直接超越市面上 90% 的水文博客和机械翻译教材。</p>
   </div>
 </details>
 </article>

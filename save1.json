@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "started_at": "2026-06-14",
+  "last_updated": "2026-06-16T07:25:08.501Z",
+  "completed": {
+    "code/day001": true,
+    "code/day001qa": true,
+    "code/day002": true,
+    "code/day002qa": true,
+    "code/day003": true
+  },
+  "notes": {
+    "code/day001": "winit 画窗口"
+  },
+  "history": [
+    {
+      "slug": "code/day108",
+      "ts": 1781507457476
+    },
+    {
+      "slug": "code/day001",
+      "ts": 1781509293216
+    },
+    {
+      "slug": "code/day001qa",
+      "ts": 1781574840404
+    },
+    {
+      "slug": "code/day002",
+      "ts": 1781574845116
+    },
+    {
+      "slug": "code/day002qa",
+      "ts": 1781574849707
+    },
+    {
+      "slug": "code/day003",
+      "ts": 1781594708501
+    }
+  ]
+}
