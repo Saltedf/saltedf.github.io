@@ -1258,6 +1258,61 @@ pre::-webkit-scrollbar-thumb {
   <summary tabindex="0">
     <span class="caret" aria-hidden="true">▶</span>
     <span class="bullet" aria-hidden="true"></span>
+    <a class="title" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html">Rust辨析: Deref、AsRef、Borrow、From、Into</a>
+    <span class="desc">在现代系统级编程中，类型系统的严密性直接决定了程序的安全边界。Rust 摒弃了传统语言的隐式垃圾回收（GC），开创性地利用生命周期与借用检查器来实现零成本抽象。然而，这一设计带来了极其复杂的引用转换机制：Deref、AsRef、Borrow、From、Into等。本手册致力于剥离所有伪名词和学术包装，用第一性原理与直观…</span>
+    <span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>
+    <span class="row-meta">45 章</span>
+  </summary>
+  <ul class="note-children"><li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>目录大纲</a></li>
+<li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>解引用家族的核心底牌 (Deref &amp; DerefMut)</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>1.1 痛点引入：为什么需要解引用？</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>1.2 心智模型：智能指针的“隐形披风”</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>1.3 底层机制与内存物理布局</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>1.4 相似与不同：Deref 与 DerefMut 的约束继承</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>1.5 工业级代码实例</a></li>
+<li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>借用视角的化身协议 (AsRef, AsMut &amp; Borrow)</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>2.1 痛点引入：多重视角切换与函数入参爆炸</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>2.2 心智模型：多功能的“观察窗口（Viewing Port）”</a></li>
+<li><a class="lvl-4" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>🎯 核心对比：AsRef 与 Borrow 的细微差别</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>2.3 物理内存布局</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>2.4 工业界选型指南</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>2.5 工业级代码实例：通杀路径的公共文件处理器</a></li>
+<li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>所有权转换的钢铁鸿沟 (From &amp; Into 及其变体)</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>3.1 痛点引入：深浅拷贝的混乱与所有权毁灭</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>3.2 心智模型：原子重组舱</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>3.3 物理内存布局与零拷贝退化</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>3.4 相似与不同：深度厘清 4 对黄金转换特征</a></li>
+<li><a class="lvl-4" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>1. From &amp; Into vs TryFrom &amp; TryInto</a></li>
+<li><a class="lvl-4" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>2. FromStr vs TryFrom&lt;&amp;str&gt;</a></li>
+<li><a class="lvl-4" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>3. Display vs From&lt;MyType&gt; for String</a></li>
+<li><a class="lvl-4" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>4. From vs Into 的自动推导机制</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>3.5 工业级代码实例</a></li>
+<li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>孤儿规则与泛型特赦</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>4.1 痛点引入：下游依赖的混乱地狱</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>4.2 心智模型：原住民优先保障政策</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>4.3 底层机制与泛型特赦漏洞</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>4.4 工业界选型指南</a></li>
+<li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>借用生命周期的微观生死 (Reborrowing)</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>5.1 痛点引入：可变借用的独占性灾难</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>5.2 心智模型：唯一的特权车钥匙与临时分包</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>5.3 底层机制与借用检查器的微观工作链条</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>5.4 工业级代码演示：探索可变引用的生死边界</a></li>
+<li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>坐标与索引的工业设计哲学</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>6.1 痛点引入：数据解构的职责混乱</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>6.2 心智模型：视口的专属翻译官</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>6.3 物理内存布局与 Index 语法糖</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>6.4 工业级代码演示：零成本网格索引器</a></li>
+<li><a class="lvl-2" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>Map 映射操作的万物生化</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>7.1 痛点引入：命令式循环与临时状态污染</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>7.2 心智模型：无水的流式管道线</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>7.3 物理底牌与寄存器级内联优化</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>7.4 工业级代码演示：从数据提取到高精度映射</a></li>
+<li><a class="lvl-3" href="Rust辨析: Deref、AsRef、Borrow、From、Into.html#"><span class="dot"></span>🎯 结语：Rust 极简思维的终极回归</a></li></ul>
+</details>
+<details class="note-node">
+  <summary tabindex="0">
+    <span class="caret" aria-hidden="true">▶</span>
+    <span class="bullet" aria-hidden="true"></span>
     <a class="title" href="claude使用.html">claude使用</a>
     <span class="desc">实用的 Claude Code 使用指南。</span>
     
