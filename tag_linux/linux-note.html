@@ -1,0 +1,2811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fd (find) — Salted的笔记</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
+<style>
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f5f5f7;
+  --bg-inset: #f4f4f5;
+  --bg-toc: #fafbfc;
+
+  --text: #1a1a1f;
+  --text-secondary: #4a4a55;
+  --text-muted: #8a8a95;
+  --text-faint: #c8c8d0;
+  --text-ghost: #e6e6ea;
+
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.07);
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+
+  --border: #ececef;
+  --border-soft: #f2f2f5;
+  --border-strong: #d8d8de;
+
+  --code-bg: #f6f6f8;
+  --code-text: #1a1a1f;
+  --code-border: #e8e8ec;
+
+  --quote-bg: #fafbfc;
+  --quote-border: #d8d8de;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 30, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 30, 0.06), 0 1px 3px rgba(15, 15, 30, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 15, 30, 0.08);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --max-width: 860px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+               "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+main, header, footer, .topbar { position: relative; }
+
+/* ---------- 顶部进度条 ---------- */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width 0.05s linear;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 50;
+}
+
+.topbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.topbar .brand:hover { color: var(--accent); border-bottom: none; }
+.topbar .brand .seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  color: white;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.topbar .spacer { flex: 1; }
+
+.topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
+}
+.topbar button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.topbar button:active {
+  background: var(--bg-inset);
+  transform: scale(0.97);
+}
+.topbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.topbar button.icon {
+  width: 28px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topbar button .chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.topbar button:hover .chev { color: inherit; }
+.topbar button[data-state="folded"] .chev { transform: rotate(-90deg); }
+.topbar button[data-state="expanded"] .chev { transform: rotate(0deg); }
+
+.topbar .search {
+  flex: 0 1 280px;
+  padding: 5px 11px 5px 30px;
+  background: var(--bg-inset) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a95' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>") 9px center/13px no-repeat;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.12s;
+}
+.topbar .search:focus {
+  background-color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.topbar .search::placeholder { color: var(--text-muted); }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 32px 4px;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.hero .title {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92em;
+  margin: 0;
+  line-height: 1.55;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero .stats > div { display: flex; align-items: baseline; gap: 6px; }
+.hero .stats .num {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.hero .stats .label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* ---------- 笔记页文档头 ---------- */
+article {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.back-link {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.back-link:hover { color: var(--accent); border-bottom: none; }
+.doc-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.doc-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.doc-meta .meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.doc-meta .meta-date .meta-label { color: var(--accent); }
+
+/* ---------- 折叠节点 — 树形大纲 ---------- */
+.outline { padding: 0; margin: 0; list-style: none; }
+
+.section {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 行(标题区) */
+.section > summary,
+.node-row {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 0;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary:hover,
+.note-node > summary:hover { background: var(--bg-hover); }
+.section > summary:focus-visible,
+.note-node > summary:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 圆点 — 用虚实表示展开/折叠状态(实心=展开,空心=折叠)*/
+.bullet {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+/* 折叠状态:空心圆 */
+.section > summary > .bullet,
+.note-node > summary > .bullet {
+  background: transparent;
+  border-color: var(--text-muted);
+}
+/* 展开状态:实心圆 */
+.section[open] > summary > .bullet,
+.note-node[open] > summary > .bullet {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.section > summary:hover > .bullet,
+.note-node > summary:hover > .bullet {
+  border-color: var(--accent);
+}
+
+/* 标题文字 */
+.heading-text,
+.note-node > summary > .title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.section > summary:hover > .heading-text,
+.note-node > summary:hover > .title { color: var(--accent); }
+
+.note-node > summary > .title {
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.005em;
+}
+
+/* 锚点链接 */
+.anchor-link {
+  opacity: 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.12s, background 0.12s;
+  border-bottom: none;
+}
+.section > summary:hover > .anchor-link { opacity: 1; }
+.anchor-link:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* 元数据(章节计数等) */
+.row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--bg-inset);
+  border-radius: 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 层级字号 ---------- */
+.section.level-1 > summary { padding: 12px 8px 12px 0; }
+.section.level-1 > summary > .heading-text {
+  font-size: 1.35em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.section.level-1 > summary > .bullet { width: 7px; height: 7px; }
+
+.section.level-2 > summary > .heading-text {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.section.level-2 > summary > .bullet { width: 6px; height: 6px; }
+
+.section.level-3 > summary > .heading-text {
+  font-size: 0.98em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section.level-3 > summary > .bullet { width: 5px; height: 5px; }
+
+.section.level-4 > summary,
+.section.level-5 > summary,
+.section.level-6 > summary { padding: 5px 8px 5px 0; }
+.section.level-4 > summary > .heading-text,
+.section.level-5 > summary > .heading-text,
+.section.level-6 > summary > .heading-text {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.section.level-4 > summary > .bullet,
+.section.level-5 > summary > .bullet,
+.section.level-6 > summary > .bullet { width: 4px; height: 4px; }
+
+/* 缩进 — 层级通过 padding-left */
+/* 层级缩进由 section-body padding-left 统一负责,这里不再额外加 */
+
+/* 标题前缩进对齐 caret+bullet,使内容左边缘整齐 */
+.section > summary {
+  position: relative;
+}
+
+/* 层级缩进:统一通过 section-body 的 padding-left 实现,每嵌套一层 +16px */
+.section-body {
+  padding: 6px 0 14px 16px;
+  margin-left: 0;
+}
+
+/* 折叠动画(用 interpolate-size,现代浏览器支持) */
+@supports (interpolate-size: allow-keywords) {
+  html { interpolate-size: allow-keywords; }
+  .section > .section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
+  }
+  .section:not([open]) > .section-body {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .section-body > * { overflow: hidden; min-height: 0; }
+}
+
+/* ---------- 内容样式 ---------- */
+.section-body > p { margin: 10px 0; }
+.section-body > p:first-child { margin-top: 6px; }
+.section-body > p:last-child { margin-bottom: 4px; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.12s;
+}
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+em, i { font-style: italic; }
+
+ul, ol { margin: 10px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+li > p { margin: 4px 0; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: var(--quote-bg);
+  border-left: 2px solid var(--quote-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.96em;
+}
+blockquote p { margin: 4px 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 0.93em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead { background: var(--bg-soft); }
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92em;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.08s; }
+tbody tr:hover { background: var(--bg-hover); }
+
+/* 行内代码 — 关键修复:无 border,纯净 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  font-feature-settings: "calt" 1, "zero" 1;
+  border: none;
+}
+
+/* 代码块容器 — 用 highlight.js 做高亮 */
+.code-block {
+  margin: 18px 0;
+  background: #f6f8fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 15, 30, 0.04);
+  position: relative;
+}
+.code-block + .code-block { margin-top: 18px; }
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 6px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid #eaecef;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  user-select: none;
+}
+.code-header .dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+.code-header .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e1e4e8;
+}
+.code-lang {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex: 1;
+  text-align: center;
+}
+.code-block pre {
+  display: block;
+  margin: 0;
+  padding: 13px 16px;
+  background: transparent;
+  color: #1f2328;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  word-break: normal;
+  tab-size: 4;
+}
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+}
+.code-block pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #1f2328;
+}
+
+/* 没被包成 .code-block 的裸 pre(理论上不会出现,留个 fallback) */
+pre:not(.code-block pre) {
+  display: block;
+  margin: 14px 0;
+  padding: 13px 16px;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  position: relative;
+}
+
+/* 复制按钮(放在 code-header 里,常驻显示) */
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  line-height: 1.4;
+}
+.code-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.code-copy-btn.copied {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.code-copy-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ---------- 主页:大纲树 ---------- */
+.outline-tree {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 8px 32px 120px;
+}
+
+.note-node {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-node:last-child { border-bottom: none; }
+
+.note-node > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.note-node > summary::-webkit-details-marker { display: none; }
+.note-node > summary > .caret {
+  width: 16px; height: 16px;
+  font-size: 10px;
+}
+.note-node > summary > .bullet {
+  width: 7px; height: 7px;
+}
+.note-node[open] > summary { padding-bottom: 8px; }
+.note-node > summary > .title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.note-node > summary > .desc {
+  flex: 0 1 40%;
+  font-size: 0.84em;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* 章节列表(在主页 note-node 展开时显示) */
+.note-children {
+  padding: 0 0 16px 30px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+.note-children::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 1px;
+  background: var(--border);
+}
+.note-children li { margin: 0; }
+.note-children a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.1s;
+  border-bottom: none;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note-children a::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  background: var(--border);
+}
+.note-children a:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-bottom: none;
+}
+.note-children .lvl-2 { font-weight: 600; color: var(--text); font-size: 14px; }
+.note-children .lvl-3 { padding-left: 26px; }
+.note-children .lvl-4,
+.note-children .lvl-5 { padding-left: 38px; color: var(--text-muted); font-size: 12px; }
+.note-children .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.note-children a:hover .dot { background: var(--accent); }
+
+/* 搜索过滤 */
+.hidden-by-search { display: none !important; }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+  font-size: 16px;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ---------- footer ---------- */
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+}
+footer a {
+  color: var(--link);
+  border-bottom: 1px dotted var(--text-muted);
+}
+footer a:hover { border-bottom-color: var(--accent); }
+footer code { font-size: 11px; }
+
+/* ---------- 快捷键提示 ---------- */
+.kbd-hints { display: none; }  /* 已废弃,保留以防漏改 */
+
+.help-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.help-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 100;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+.help-wrap:hover .help-popover,
+.help-wrap:focus-within .help-popover,
+.help-popover:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.help-row + .help-row { border-top: 1px solid var(--border-soft); }
+.help-row .keys {
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.help-row .desc {
+  flex: 1;
+  color: var(--text);
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+.help-row .dot-demo {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.help-row .link-demo {
+  color: var(--accent);
+  font-weight: 600;
+}
+.help-btn {
+  font-weight: 700;
+}
+.help-btn:hover {
+  color: var(--accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 720px) {
+  body { font-size: 14px; }
+  .hero { padding: 16px 20px 4px; }
+  .hero .title { font-size: 1.7em; }
+  .hero .stats { gap: 20px; flex-wrap: wrap; }
+  article, .outline-tree { padding: 24px 18px 80px; }
+  .section.level-1 > summary > .heading-text { font-size: 1.2em; }
+  .section.level-2 > summary > .heading-text { font-size: 1em; }
+  .note-node > summary > .desc { display: none; }
+  .note-children { padding-left: 22px; }
+  .note-children .lvl-3 { padding-left: 18px; }
+  table { font-size: 0.85em; }
+  th, td { padding: 8px 10px; }
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .topbar .search { flex: 1 1 100%; order: 10; }
+  .kbd-hints { padding: 0 18px 24px; font-size: 11px; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .to-top, .progress-bar, .kbd-hints { display: none; }
+  .section-body { padding-left: 0 !important; }
+  details > .section-body { display: block !important; }
+  .section { padding-left: 0 !important; }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* 代码块水平滚动条更细 */
+.code-block pre::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-block pre::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* ---------- 主页 sidebar(Feature 6) ----------
+   默认收起(sidebar-collapsed),内容居中显示。
+   点 topbar 的 [☰] 按钮(body.sidebar-open)展开。 */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 49px;
+  bottom: 0;
+  width: 220px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-soft);
+  overflow-y: auto;
+  background: var(--bg);
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  box-shadow: none;
+}
+body.page-index.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+/* sidebar 是纯浮层,不挤压 hero / outline-tree,内容始终居中 */
+/* 移动端:sidebar 浮层覆盖,不挤压内容 */
+.sidebar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-btn .icon-bars {
+  display: inline-block;
+  width: 13px;
+  height: 9px;
+  position: relative;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after,
+.sidebar-btn .icon-bars {
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before { top: 0; }
+.sidebar-btn .icon-bars::after { bottom: 0; }
+.sidebar-btn .icon-bars {
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent !important;
+}
+
+.sidebar .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-sans);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar .tag-btn + .tag-btn { margin-top: 2px; }
+.sidebar .tag-btn:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar .tag-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .tag-btn .count {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.sidebar .tag-btn.active .count { color: var(--accent); }
+
+/* 主页 note-node 行的日期 badge(Feature 1) */
+.note-node > summary .row-date {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 数学公式 KaTeX ---------- */
+.katex { font-size: 1.05em; }
+.katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+.katex-display::-webkit-scrollbar { height: 4px; }
+.code-block .katex,
+pre .katex,
+code .katex { display: none; }  /* 代码块里的 $ 不渲染 */
+
+/* ---------- 树形连接(Feature 5) ----------
+   每个嵌套 section 的 ::before 画一段竖线(在父 section-body 的左 padding 里,
+   section 自身坐标 left:-8),::after 画横线连到自己的 bullet。
+   - 非末子:竖线 top:0 bottom:0(贯穿整个 section 高度,接续下一个兄弟)
+   - 末子:竖线只画到 bullet 中线(height: ~36px)形成 └── 拐角
+   竖线在父 section-body 的 padding 区(x=8),正文在 x>=16,两者左右分开,不重叠。
+   顶层 article > section.level-1 同样适用(article 的 padding 充当父 padding)。 */
+.section-body > .section,
+article > .section.level-1 {
+  position: relative;
+}
+.section-body > .section::before,
+article > .section.level-1::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+.section-body > .section:last-child::before,
+article > .section.level-1:last-child::before {
+  bottom: auto;
+  height: 36px;            /* 到 bullet 中线,形成 L 拐角 */
+}
+.section-body > .section::after,
+article > .section.level-1::after {
+  content: '';
+  position: absolute;
+  left: -8px;              /* 从竖线开始 */
+  top: 36px;               /* bullet 中线 */
+  width: 8px;              /* 到 bullet 左边缘(section 自身 x=0)*/
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@media print {
+  .sidebar { display: none; }
+  .section-body > .section::before,
+  .section-body > .section::after,
+  article > .section.level-1::before,
+  article > .section.level-1::after { display: none; }
+}
+
+/* 移动端:sidebar 始终用浮层 */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 280px;
+    max-height: none;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+</style>
+</head>
+<body class="page-note" data-note-id="linux-note">
+<div class="progress-bar"></div>
+<div class="topbar">
+  <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
+  <span class="spacer"></span>
+  <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
+  <div class="help-wrap">
+    <button class="help-btn icon" aria-label="快捷键">?</button>
+    <div class="help-popover">
+      <div class="help-row"><span class="keys"><kbd>Tab</kbd></span><span class="desc">折叠当前</span></div>
+      <div class="help-row"><span class="keys"><kbd>Shift</kbd>+<kbd>Tab</kbd></span><span class="desc">全局折叠</span></div>
+      <div class="help-row"><span class="keys"><kbd>/</kbd></span><span class="desc">搜索</span></div>
+      <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
+    </div>
+  </div>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
+</div>
+<article>
+  <h1 class="doc-title">fd (find)</h1>
+  <div class="doc-meta">
+    <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>93</span>
+  </div>
+<p>在当前目录下的所有文件中寻找某字符串: <code>\{\}</code> 表示fd找到的每个文件/路径,
+将其传给 <code>-exec</code> 的子命令</p>
+<pre><code class="language-bash">fd . --type f # 文件类型 f, d ..
+     --exec grep --color=always -nH  -e rust  \{\}  # -exec 对每个查找出来的文件路径执行命令
+   #  其中{}代表路径, \{\} 是为了防止歧义
+</code></pre>
+<p>使用 <code>-e</code> 可以指定文件拓展名:</p>
+<pre><code>-e rs
+-e cpp
+-e c
+</code></pre>
+<pre><code class="language-bash">fd . --type f  -e c -e rs -e cpp -x grep --color=always -i -nH -e hello \{\}
+</code></pre>
+<pre><code class="language-bash">find -type f -exec grep --color=always -nH -e hello \{\} +  # 对于find 的-exec子命令, {}后面需要接上加号+ !!
+</code></pre>
+<pre><code class="language-bash">grep --color=always -nH -i -e hello &lt;FILE&gt;
+# -n 行号
+# -H 文件名
+# -e 正则表达式
+# -i 忽略大小写
+# --color=always 给查询结果上色
+# --null 在文件名后面加上尾零.
+</code></pre>
+<details class="section level-1" data-anchor="shell">
+  <summary id="shell" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">shell</span><a class="anchor-link" href="#shell" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="_1">
+  <summary id="_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">忽略错误继续执行</span><a class="anchor-link" href="#_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">set +e 
+</code></pre>
+<p>恢复默认:</p>
+<pre><code class="language-bash">set -e
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="exit-n">
+  <summary id="exit-n" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">退出 exit n</span><a class="anchor-link" href="#exit-n" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="_2">
+  <summary id="_2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">判断文件是否存在</span><a class="anchor-link" href="#_2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">if [ -f $1 ]
+then
+
+else
+
+fi
+</code></pre>
+<p>n* git</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="git">
+  <summary id="git" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">git</span><a class="anchor-link" href="#git" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="_3">
+  <summary id="_3" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">设置/取消代理</span><a class="anchor-link" href="#_3" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash"># 设置ss
+git config --global http.proxy 'socks5://127.0.0.1:1080'
+
+git config --global https.proxy 'socks5://127.0.0.1:1080'
+
+# 设置代理
+git config --global https.proxy http://127.0.0.1:1080
+
+git config --global https.proxy https://127.0.0.1:1080
+
+# 取消代理
+git config --global --unset http.proxy
+
+git config --global --unset https.proxy
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="clone">
+  <summary id="clone" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">clone 子模块</span><a class="anchor-link" href="#clone" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code>git submodule update --init --recursive
+</code></pre>
+<p>此命令经常无速度, 可能需要手动clone, 见 <code>.gitmodules</code></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="branch">
+  <summary id="branch" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">指定需要克隆的branch</span><a class="anchor-link" href="#branch" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code>git clone  -b fsf-gdb-10.1-with-sim&lt;分支&gt;   https://github.com/riscv-collab/riscv-binutils-gdb.git riscv-gdb&lt;别名&gt;
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="grep-i">
+  <summary id="grep-i" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">grep -i 忽略大小写</span><a class="anchor-link" href="#grep-i" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-1" data-anchor="fc-list">
+  <summary id="fc-list" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">fc-list 显示已安装字体</span><a class="anchor-link" href="#fc-list" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-1" data-anchor="docker">
+  <summary id="docker" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">docker</span><a class="anchor-link" href="#docker" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>恢复容器的运行 :</p>
+<pre><code class="language-bash">sudo docker start `sudo docker ps -a -q`
+sudo docker attach `sudo docker ps -aq`
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="tar-fvx-xxx">
+  <summary id="tar-fvx-xxx" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">tar fvx XXX</span><a class="anchor-link" href="#tar-fvx-xxx" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-1" data-anchor="du-h">
+  <summary id="du-h" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">du -h 以可读形式显示文件大小</span><a class="anchor-link" href="#du-h" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">$ du -h linux-note.org 
+
+12K linux-note.org
+</code></pre>
+<details class="section level-2" data-anchor="_4">
+  <summary id="_4" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">查看目录下的大文件</span><a class="anchor-link" href="#_4" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code>du -sh .* * | grep G
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="test">
+  <summary id="test" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">test命令</span><a class="anchor-link" href="#test" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">test `命令` = 'str' 
+test `命令` = 'string' -a `命令` = 'string'
+test `命令` = "string" -o `命令` = 'string'
+</code></pre>
+<p>E.g</p>
+<pre><code class="language-bash"># 判断当前平台是否是linux
+test `uname -s` = 'Linux'
+echo $? # 返回零表示无错误发生 
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="pstree">
+  <summary id="pstree" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">pstree 查看进程树</span><a class="anchor-link" href="#pstree" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><code>pstree -ap | grep mysql/redis ...</code></p>
+<p>在emacs中的shell运行pstree.</p>
+<pre><code>sun@Salted-PC:saltedf.github.io [main] $ pstree -ap | grep emacs
+
+  |           `-emacs,65 -nw .
+  |               |   |-grep,217 --color=auto emacs
+  |               `-{emacs},66
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="strace">
+  <summary id="strace" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">strace 追踪程序的系统调用</span><a class="anchor-link" href="#strace" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>用于debug和理解程序的流程.</p>
+<pre><code class="language-bash">strace -f -s 65535 -i -t -T  -p &lt;pid&gt;    -o 输出文件 
+</code></pre>
+<p>有时候会输出大量信息, 根本无法分析, 若只是需要特定的系统调用,可以使用
+<code>-e trace=</code> 进行过滤, 如:负责读取/接收这类的系统调用.</p>
+<p><code>-e trace=recvfrom,read,recv,recvmsg</code></p>
+<pre><code>strace -f -s 65535 -i -t -T -e trace=write,sendto,send  -p &lt;PID&gt;
+</code></pre>
+<p>统计各个系统调用总耗时:</p>
+<pre><code class="language-bash">strace -c &lt;程序&gt;
+
+strace -c -p &lt;PID&gt;
+</code></pre>
+<p>结果显示了各个系统调用所花费总时间以及所占百分比, 调用次数,
+以及出错次数. 出错越多一般代码质量越差.</p>
+<pre><code class="language-bash">
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 49.27    0.009506           7      1281           clock_gettime
+ 18.75    0.003617           9       390           rt_sigprocmask
+  9.05    0.001747           9       175           ioctl
+  8.12    0.001567          17        92           write
+  5.40    0.001042          23        45           pselect6
+  2.48    0.000478          28        17           fcntl
+  2.38    0.000459          13        35           rt_sigreturn
+  1.37    0.000265           6        38           read
+  1.37    0.000264           7        35           timerfd_settime
+  1.29    0.000249          27         9           poll
+  0.37    0.000071          35         2           kill
+  0.16    0.000030          15         2           getpid
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           openat
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.019295                  2125           total
+
+</code></pre>
+<p>代码分析组合拳: strace看关键调用. ==&gt;
+用calltree找出关键系统调用的调用关系. ==&gt;用IDE细看这条调用链</p>
+  </div>
+</details>
+<details class="section level-1" data-anchor="objdump-d">
+  <summary id="objdump-d" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">objdump -D 显示可执行文件/库文件的反汇编</span><a class="anchor-link" href="#objdump-d" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">objdump -D XXX | less 
+</code></pre>
+<p>不加less会显示太多!</p>
+  </div>
+</details>
+<details class="section level-1" data-anchor="ldd">
+  <summary id="ldd" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">ldd 显示链接信息</span><a class="anchor-link" href="#ldd" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">$ ldd ./build/udpclient 
+
+    linux-vdso.so.1 (0x00007ffcb2d85000)
+    libstdc++.so.6 =&gt; /lib/x86_64-linux-gnu/libstdc++.so.6 (0x00007f4c64e2a000)
+    libgcc_s.so.1 =&gt; /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f4c64e0f000)
+    libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f4c64c1d000)
+    libm.so.6 =&gt; /lib/x86_64-linux-gnu/libm.so.6 (0x00007f4c64ace000)
+    /lib64/ld-linux-x86-64.so.2 (0x00007f4c65024000)
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="code2html">
+  <summary id="code2html" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><a href="https://github.com/agentzh/code2ebook/">code2html</a> 的使用</span><a class="anchor-link" href="#code2html" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>先进入项目根目录:</p>
+<ol>
+<li>代码转html</li>
+</ol>
+<pre><code class="language-bash">src2html.pl --tab-width 4 --color --cross-reference \
+            --navigator --line-numbers . &lt;项目名&gt;
+</code></pre>
+<ol>
+<li>html合成pdf</li>
+</ol>
+<pre><code class="language-bash">ebook-convert html_out/index.html llvm_release_1.pdf \
+        --use-profile-size \
+        --paper-size a3 \
+        --pdf-default-font-size 13 \
+        --pdf-mono-font-size 13 \
+        --margin-left 5 --margin-right 5 \
+        --margin-top 5 --margin-bottom 5 \
+        --page-breaks-before='/'  
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="wget">
+  <summary id="wget" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">wget 保存整个网站</span><a class="anchor-link" href="#wget" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://github.com/lujun9972/linux-document/blob/master/examples/10%20wget%20command%20examples.org">https://github.com/lujun9972/linux-document/blob/master/examples/10%20wget%20command%20examples.org</a></p>
+<pre><code>wget --mirror --convert-links --page-requisites --no-parent -P /path/to/download https://example-domain.com
+</code></pre>
+<p>但这样可能会下载不全，原因可能有很多。这里遇到的问题是默认是不跨域名下载的。</p>
+<p>需要运行第二次，并附加上多个选项</p>
+<pre><code>wget --mirror --convert-links -r -D "www.seas.upenn.edu,www.cis.upenn.edu"  -A.pdf -A.zip -A.shtml --tries=1 --timeout=8  --span-hosts  -l 5  --page-requisites --no-parent -P ./  https://www.seas.upenn.edu/\~cis341/17sp/
+</code></pre>
+<ul>
+<li>
+<p>-A 指定那些没有被下载的文件类型 （需要观察网站特征获知）</p>
+</li>
+<li>
+<p>–span-hosts 跨主机名下载。</p>
+</li>
+<li>
+<p>-D 指定域名/主机名
+  list，否则将遍历大量无用的域名（需要观察网站特征获知）</p>
+</li>
+<li>
+<p>–tries=1 重试一次，因为有些域名无法访问，也不含要下载的文件。</p>
+</li>
+<li>
+<p>–timeout=10 设定超时时间，防止等待太长时间。</p>
+</li>
+</ul>
+  </div>
+</details>
+<details class="section level-1" data-anchor="apt">
+  <summary id="apt" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">配置apt软件源</span><a class="anchor-link" href="#apt" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">sudo vim /etc/apt/source.list
+
+sudo apt-get update
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="archlinuxdeb">
+  <summary id="archlinuxdeb" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">在ArchLinux中安装deb</span><a class="anchor-link" href="#archlinuxdeb" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="debtap">
+  <summary id="debtap" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">debtap</span><a class="anchor-link" href="#debtap" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="dpkg">
+  <summary id="dpkg" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">dpkg</span><a class="anchor-link" href="#dpkg" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">yay -Sy dpkg
+
+dpkg -i  xxx.deb
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="xterm">
+  <summary id="xterm" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><code>Xterm</code> 配置文件</span><a class="anchor-link" href="#xterm" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">cat ~/.Xresources
+</code></pre>
+<p>修改后使配置生效:</p>
+<pre><code class="language-bash">xrdb  ~/.Xresources
+# or: 
+xrdb -merge ~/.Xresources 
+</code></pre>
+<p>最后重启xterm.</p>
+<pre><code class="language-xml">
+! font and locale
+xterm.locale: true
+xterm.utf8: true
+xterm*utf8Title: true
+xterm*fontMenu*fontdefault*Label: Default
+! 斜体在最后添加`:italic`
+xterm*faceName: Sarasa Mono SC:antialias=true:style=Book
+xterm*faceSize: 15
+xterm*faceNameDoublesize: Sarasa Mono SC  ! Noto Sans CJK SC
+xterm*renderFont: true
+xterm*xftAntialias: true
+xterm*cjk_width: true
+
+! 窗口设置
+! 窗口大小及位置
+xterm*geometry: 80x25
+xterm*dynamicColors: true
+xterm*saveLines: 2048
+xterm*scrollKey: true
+xterm*scrollTtyOutput: false
+xterm*scrollBar: true
+xterm*rightScrollBar: true
+xterm*jumpScroll: true
+xterm*multiScroll: true
+xterm*toolBar: false
+xterm*Scrollbar*thickness: 10
+xterm*Scrollbar*background: black
+xterm*Scrollbar*foreground: gray90
+xterm*background: rgb:1a/1a/1a
+xterm*foreground: rgb:d6/d6/d6
+xterm*cursorColor: rgb:d6/d6/d6
+
+! 提供xterm-256color类型支持
+! 如果修改后，没有得到正确的结果，说明你可能需要安装ncurses-term包来提供xterm-256color类型支持
+xterm*termName: xterm-256color
+
+! 启用 Sixel 图形支持
+xterm*decTerminalID: vt340
+
+! 配置选择文本自动复制到剪贴板
+! https://askubuntu.com/questions/237942/how-does-copy-paste-work-with-xterm
+xterm*selectToClipboard: true
+
+! 启用“Ctrl+v”来复制
+xterm*VT100.Translations: #override \
+&lt;Btn1Up&gt;: select-end(CLIPBOARD,PRIMARY,CUT_BUFFER0) \n\
+Ctrl &lt;KeyPress&gt; V: insert-selection(CLIPBOARD,PRIMARY,CUT_BUFFER0)
+
+! 解决Alt键不好使
+xterm*eightBitInput: false
+xterm*altSendsEscape: true
+
+! 配置主题
+! -- Tango color scheme
+xterm*color0: #2e3436
+xterm*color1: #cc0000
+xterm*color2: #4e9a06
+xterm*color3: #c4a000
+xterm*color4: #3465a4
+xterm*color5: #75507b
+xterm*color6: #0b939b
+xterm*color7: #d3d7cf
+xterm*color8: #555753
+xterm*color9: #ef2929
+xterm*color10: #8ae234
+xterm*color11: #fce94f
+xterm*color12: #729fcf
+xterm*color13: #ad7fa8
+xterm*color14: #00f5e9
+xterm*color15: #eeeeec
+
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="ssh">
+  <summary id="ssh" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">ssh</span><a class="anchor-link" href="#ssh" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="ssh_1">
+  <summary id="ssh_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">重启ssh服务</span><a class="anchor-link" href="#ssh_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">sudo service ssh restart
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="ssh_2">
+  <summary id="ssh_2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">查看ssh服务是否启动</span><a class="anchor-link" href="#ssh_2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">sudo lsof -i :22 
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="owner">
+  <summary id="owner" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">递归改变文件owner</span><a class="anchor-link" href="#owner" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">chown -R sun:sun ./dir
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="s">
+  <summary id="s" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">汇编文件(.s)的结构</span><a class="anchor-link" href="#s" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code>.text: 代码段
+.data: 常量 字符串 初始化的全局变量
+.bss: 不占用实际空间, 仅仅标记那些局部变量和未初始化的全局变量.
+</code></pre>
+<p>因为已知初值的且生命周期长的变量才有提前为它们分配空间的必要,因此data段才占用空间.
+bss段中记录的是局部变量/未初始化的全局变量,
+没必要一开始就为这些量准备好空间, 只要在程序实际运行时为其准备空间即可.</p>
+  </div>
+</details>
+<details class="section level-1" data-anchor="makefile">
+  <summary id="makefile" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">makefile</span><a class="anchor-link" href="#makefile" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="_5">
+  <summary id="_5" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">定义变量</span><a class="anchor-link" href="#_5" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-makefile">CC := gcc # 定义常量, 后续不能用+=
+OBJS = hello.o world.o # 定义变量, 后续可以用+=增加
+ObJS += fuck.o  
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="phony">
+  <summary id="phony" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">伪目标 .PHONY</span><a class="anchor-link" href="#phony" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>通常是指那些不生成文件的. 只负责执行某些命令的.</p>
+<pre><code class="language-makefile">.PHONY: clean  # 这个之后的target都是伪目标
+
+clean: 
+    -${RM} *.o ${target}
+    echo "finish"
+
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_6">
+  <summary id="_6" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">为整个项目添加宏定义</span><a class="anchor-link" href="#_6" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-makefile">
+DEFS = -D_DEBUG -D_POSIX_SOURCE
+
+FLAGS = -g ${DEFS}
+
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_7">
+  <summary id="_7" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">为目标链接上库</span><a class="anchor-link" href="#_7" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-makefile">LIBS = -lpthread -lqt
+
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_8">
+  <summary id="_8" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">通配符</span><a class="anchor-link" href="#_8" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">* 所有
+% :任意一个文件
+? :
+</code></pre>
+<pre><code class="language-bash">$@ 目标
+$^ 全部的依赖文件
+$&lt; 首个依赖项 
+</code></pre>
+<pre><code class="language-makefile">${target} : ${OBJS}
+    ${CC} ${FLAGS} -o $@ $^ ${LIBS}
+
+
+%.o : %.c
+    ${CC} -o $@  $^ 
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_9">
+  <summary id="_9" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">函数调用</span><a class="anchor-link" href="#_9" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-makefile">$(my_func arg1,arg2,arg3)
+</code></pre>
+<details class="section level-3" data-anchor="_10">
+  <summary id="_10" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">当前目录下某一类型的所有文件形成的列表</span><a class="anchor-link" href="#_10" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-makefile">SRC = $(wildcard *.c)  ==&gt; hello.c world.c fuck.c  
+</code></pre>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_11">
+  <summary id="_11" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">将列表中的所有匹配项替换为指定形式</span><a class="anchor-link" href="#_11" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-makefile">OBJS = $(patsubset %.c,%.o,${SRC} ) 
+
+# 将 SRC = hello.c fuck.c 替换成 hello.o fuck.o 
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="gdb">
+  <summary id="gdb" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">GDB</span><a class="anchor-link" href="#gdb" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>gef/cgdb/emacs gdb-many-windows</p>
+<details class="section level-2" data-anchor="_12">
+  <summary id="_12" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">为可执行文件设置环境变量</span><a class="anchor-link" href="#_12" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>set environment FOO = XX unset environment FOO</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_13">
+  <summary id="_13" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">为可执行程序传参</span><a class="anchor-link" href="#_13" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li>进入gdb shell后:</li>
+</ul>
+<p><code>run arg1 arg2 ...</code></p>
+<p><code>set args arg1 arg2 arg3</code></p>
+<ul>
+<li>启动gdb时通过命令行传参:</li>
+</ul>
+<p><code>gdb ./main --args ./main a1 a2 a3 ...</code></p>
+<p>这种方式需要额外再写一次可执行文件的路径.</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_14">
+  <summary id="_14" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">显示某文件源代码</span><a class="anchor-link" href="#_14" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">l / list &lt;函数&gt; 
+</code></pre>
+<p>默认显示10行</p>
+<p>当有多个文件时, 为了显示其中一个文件要在文件名后加 <code>:N</code> ,
+否则会被视作函数名.</p>
+<pre><code>list myfile.cc:1
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_15">
+  <summary id="_15" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">添加断点</span><a class="anchor-link" href="#_15" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>用break可以添加断点, 既能在指定行上添加,
+也能为指定函数添加断点.(经常用在一行中有多个函数时)</p>
+<pre><code class="language-gdb">break myfile.cc:100
+=====================
+break myfunc
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_16">
+  <summary id="_16" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">查看断点</span><a class="anchor-link" href="#_16" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>显示了断点是否被禁用, 以及断点打在何处. 每个断点都有一个ID,
+对断点的操作都基于此ID</p>
+<pre><code>(gdb) info breakpoints
+Num     Type           Disp Enb Address            What
+1       breakpoint     keep y   0x0000000000408d60 in test_scanner_hello_Test::TestBody() at /home/sun/src/my_compiler/mytest/test_scanner.cc:10
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_17">
+  <summary id="_17" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">禁用断点</span><a class="anchor-link" href="#_17" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-gdb">(gdb) disable breakpoints 4 
+(gdb) i b
+Num     Type           Disp Enb Address            What
+4       breakpoint     keep n   0x0000000000408d60 in test_scanner_hello_Test::TestBody() at /home/sun/src/my_compiler/mytest/test_scanner.cc:10
+
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_18">
+  <summary id="_18" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">重新启用断点</span><a class="anchor-link" href="#_18" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code>(gdb) enable 4
+(gdb) i b 
+Num     Type           Disp Enb Address            What
+4       breakpoint     keep y   0x0000000000408d60 in test_scanner_hello_Test::TestBody() at /home/sun/src/my_compiler/mytest/test_scanner.cc:10
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_19">
+  <summary id="_19" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">删除断点</span><a class="anchor-link" href="#_19" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>用断点序号指定要删除的断点</p>
+<pre><code class="language-gdb">(gdb) delete breakpoints 1
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_20">
+  <summary id="_20" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">保存断点到文件</span><a class="anchor-link" href="#_20" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>这个功能本身很简陋, 使用前提是源代码不能修改过. save breakpoints myfile</p>
+<p>恢复断点: source \&lt;myfile&gt;</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="next">
+  <summary id="next" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">单步跳过 next</span><a class="anchor-link" href="#next" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>不会进入函数内部.</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_21">
+  <summary id="_21" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">继续执行, 直至遇到断点</span><a class="anchor-link" href="#_21" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>continue</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_22">
+  <summary id="_22" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">运行到某处,忽略期间的断点</span><a class="anchor-link" href="#_22" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>until \&lt;N行&gt; 运行下面N行, 忽略之间的断点.</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_23">
+  <summary id="_23" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">进入到函数内部</span><a class="anchor-link" href="#_23" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>step</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_24">
+  <summary id="_24" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">从函数中跳出并暂停</span><a class="anchor-link" href="#_24" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>finish</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_25">
+  <summary id="_25" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">强制从函数中返回特定值</span><a class="anchor-link" href="#_25" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>return 相当于一种特殊的jump, 并不会将函数体执行完.并指定一个返回值</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_26">
+  <summary id="_26" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">跳转到指定位置继续执行</span><a class="anchor-link" href="#_26" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>jump linenum</p>
+<p>跳转后不会自动暂停, 需要断点.</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_27">
+  <summary id="_27" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">显示当前所有的局部变量</span><a class="anchor-link" href="#_27" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>info loacls</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_28">
+  <summary id="_28" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">变量/表达式相关</span><a class="anchor-link" href="#_28" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="_29">
+  <summary id="_29" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">打印变量/表达式</span><a class="anchor-link" href="#_29" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-gdb">(gdb)  print tk.kind_
+$2 = mycompiler::Token::INT
+</code></pre>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_30">
+  <summary id="_30" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">自动显示变量值</span><a class="anchor-link" href="#_30" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>display 每次都将这些变量的值打印处理.</p>
+<pre><code>(gdb) info display
+Auto-display expressions now in effect:
+Num Enb Expression
+1:   y  tk.kind_
+</code></pre>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_31">
+  <summary id="_31" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">取消对变量的自动显示</span><a class="anchor-link" href="#_31" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>undisplay + N</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_32">
+  <summary id="_32" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">显示变量/表达式类型</span><a class="anchor-link" href="#_32" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>用what/whatis</p>
+<pre><code class="language-gdb">(gdb) what tk.kind_
+type = mycompiler::Token::Kind
+(gdb) what 1+3
+type = int
+(gdb) whatis tk.kind_
+type = mycompiler::Token::Kind
+</code></pre>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_33">
+  <summary id="_33" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">修改变量的值</span><a class="anchor-link" href="#_33" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>可以在不修改源码的情况下对一些值进行设置.</p>
+<pre><code>(gdb) set var tk.kind_ = mycompiler::Token::END
+</code></pre>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_34">
+  <summary id="_34" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">监视某变量的值</span><a class="anchor-link" href="#_34" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>只要这个值发生改变就会自动暂停,并显示新值和旧值.</p>
+<p>watch tk.kind_</p>
+<p>显示所有watchpoints info watchpoints</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_35">
+  <summary id="_35" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">栈相关</span><a class="anchor-link" href="#_35" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="bt">
+  <summary id="bt" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">显示堆栈信息: bt</span><a class="anchor-link" href="#bt" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="_36">
+  <summary id="_36" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">切换栈帧</span><a class="anchor-link" href="#_36" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>up/down: 上一层栈帧/下一层栈帧</p>
+<p><code>frame N</code> / <code>f N</code> 切换到指定栈帧中</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_37">
+  <summary id="_37" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">调试已经运行的程序</span><a class="anchor-link" href="#_37" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>首先需要获得其进程pid</p>
+<p>attach PID</p>
+<p>detach</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_38">
+  <summary id="_38" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">检查点</span><a class="anchor-link" href="#_38" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>通过fork出新的进程来保存当前运行位置和状态.</p>
+<details class="section level-3" data-anchor="checkpoint">
+  <summary id="checkpoint" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">在当前位置添加checkpoint</span><a class="anchor-link" href="#checkpoint" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>checkpoint</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="checkpoints">
+  <summary id="checkpoints" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">查看所有checkpoints</span><a class="anchor-link" href="#checkpoints" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>info checkpoints</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="checkpoint_1">
+  <summary id="checkpoint_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">删除指定checkpoint</span><a class="anchor-link" href="#checkpoint_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>delete checkpoint N</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_39">
+  <summary id="_39" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">线程</span><a class="anchor-link" href="#_39" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="_40">
+  <summary id="_40" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">显示所有线程</span><a class="anchor-link" href="#_40" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>info threads</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_41">
+  <summary id="_41" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">切换到指定线程</span><a class="anchor-link" href="#_41" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>thread N</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_42">
+  <summary id="_42" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">以指定格式显示某地址处的内容</span><a class="anchor-link" href="#_42" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>x/格式+长度 \&lt;地址&gt;</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_43">
+  <summary id="_43" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">反向运行</span><a class="anchor-link" href="#_43" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>记录反向运行所需信息</p>
+<p>target record-full</p>
+<p>reverse-next reverse-XXX</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="valgrind">
+  <summary id="valgrind" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">valgrind</span><a class="anchor-link" href="#valgrind" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="_44">
+  <summary id="_44" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">无法使用, 报错</span><a class="anchor-link" href="#_44" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>首先尝试更新系统到最新, 然后重启</li>
+</ol>
+<pre><code>sudo pacman -Syu
+
+sudo reboot
+</code></pre>
+<ol>
+<li>否则可以试下安装 <code>glibc-debug</code></li>
+</ol>
+<p>在 <code>/etc/pacman.conf</code> 中临时启用:</p>
+<pre><code>[system-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[world-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[galaxy-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+[lib32-debug]
+Server = https://debuginfod.artixlinux.org/$repo/os/$arch
+</code></pre>
+<p><a href="https://www.reddit.com/r/artixlinux/comments/wpji7m/valgrind_cant_load_debug_info/">https://www.reddit.com/r/artixlinux/comments/wpji7m/valgrind_cant_load_debug_info/</a></p>
+<pre><code>sudo pacman -Sy glibc-debug
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="cmake">
+  <summary id="cmake" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><a href="./cmake-learning.org">CMake</a></span><a class="anchor-link" href="#cmake" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-cmake">cmake_minimum_required(VERSION 3.21)
+project(word-count C)
+
+# 设置编译器
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_COMPILER clang)
+
+add_compile_options(
+"-ggdb" # gdb调试支持
+"-m64"  
+) 
+# add_compile_definitions(LINE_COUNT) # 宏定义
+## add_compile_definitions(MACRO_CONSTANT_NAME=macro_value)
+
+# 生成 compile_commands.json 文件  for clangd
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+include_directories(./include) # 头文件目录
+
+add_executable(test_strcmp.bin)
+target_sources(test_strcmp.bin PRIVATE
+  ./test_strcmp.c
+  ./str_cmp.c
+)
+
+# target_compile_options(test_strcmp.bin PRIVATE -ggdb)
+# target_include_directories(YourExecutableName PRIVATE include)
+
+
+add_executable(tokenize.bin)
+target_sources(tokenize.bin PRIVATE
+  ./tokenize.c
+  ./vector_char.c
+)
+
+
+add_executable(dictionary.bin)
+target_sources(dictionary.bin PRIVATE
+  ./dictionary.c
+  ./vector_char.c
+  ./vector_string.c
+  ./str_cmp.c
+)
+
+# add_executable(wordcount.bin)
+# target_sources(wordcount.bin PRIVATE
+#   ./wordcount.c
+#   ./vector_char.c
+#   ./table_string.c
+#   ./str_cmp.c
+# )
+
+
+add_executable(linecount.bin)
+target_sources(linecount.bin PRIVATE
+  ./linecount.c
+  ./vector_char.c
+  ./table_string.c
+  ./str_cmp.c
+)
+
+
+add_executable(duplicate.bin)
+target_sources(duplicate.bin PRIVATE
+  ./dedup.c
+  ./vector_char.c
+  ./table_string.c
+  ./duplicate.c
+  ./str_cmp.c
+)
+
+
+add_executable(unit_test_vector_char.bin)
+target_sources(unit_test_vector_char.bin PRIVATE
+  ./unit_test_vector_char.c
+  ./vector_char.c
+)
+
+
+# add_executable(unit_test_vector_string.bin)
+# target_sources(unit_test_vector_string.bin PRIVATE
+#   ./unit_test_vector_string.c
+#   ./vector_string.c
+#   ./str_cmp.c
+# )
+
+add_executable(unit_test_table_string.bin)
+target_sources(unit_test_table_string.bin PRIVATE
+  ./unit_test_table_string.c
+  ./table_string.c
+  ./vector_char.c
+  ./str_cmp.c
+)
+
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="clangd">
+  <summary id="clangd" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">clangd 配置</span><a class="anchor-link" href="#clangd" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>在项目根目录下添加文件: <code>.clangd</code> 参考:
+<a href="https://clangd.llvm.org/config#compileflags">https://clangd.llvm.org/config#compileflags</a></p>
+<details class="section level-2" data-anchor="c">
+  <summary id="c" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">配置纯C项目</span><a class="anchor-link" href="#c" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code>CompileFlags:
+  Add: [-xc,-std=c99]
+  Compiler: clang
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="c_1">
+  <summary id="c_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">配置C++项目</span><a class="anchor-link" href="#c_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code>CompileFlags:                        # Tweak the parse settings
+  Add: [-xc++, -std=c++20]           # treat all files as C++
+  Compiler: clang++                  # Change argv[0] of compile flags to `clang++`
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="cgroup-v2">
+  <summary id="cgroup-v2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">cgroup v2</span><a class="anchor-link" href="#cgroup-v2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>查看cgroup 版本:</p>
+<pre><code class="language-bash">cat /proc/mounts | grep cgroup
+</code></pre>
+<p>cgroup2(伪)文件系统位于:</p>
+<pre><code class="language-bash">/sys/fs/cgroup
+</code></pre>
+<p>其文件系统类型是 <code>cgroup2</code> 其接口是通过文件系统来提供的.</p>
+<details class="section level-2" data-anchor="_45">
+  <summary id="_45" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">组成</span><a class="anchor-link" href="#_45" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>control groups 由两个部分组成:</p>
+<ol>
+<li>一组进程</li>
+<li>控制器(subsystem), 对进程组进行控制.</li>
+</ol>
+<p>control group:
+一组进程出于资源管理的目的被绑在一起.这组进程共享同一个内存分配或者cpu</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_46">
+  <summary id="_46" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">功能</span><a class="anchor-link" href="#_46" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li>
+<p>限制组的资源使用 限制某个组的cpu可用百分比/ 可用内存的百分比</p>
+</li>
+<li>
+<p>调整组的资源分配优先级 例如网络带宽</p>
+</li>
+<li>
+<p>测量资源使用情况</p>
+</li>
+<li>
+<p>冻结一个组 通过不给这个组CPU时间, 并且在之后可以恢复他们.</p>
+</li>
+</ul>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_47">
+  <summary id="_47" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">接口</span><a class="anchor-link" href="#_47" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>mkdir/rmdir 创建cgroups</p>
+<p>每个子目录包含了被自动创建出的文件.一些文件是用来管理cgroup自身的.(eg哪些进程属于这个cgroup)
+另一些是和特定的控制器相关的.</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="eg-pids">
+  <summary id="eg-pids" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">eg: pids控制器</span><a class="anchor-link" href="#eg-pids" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-bash">sudo bash
+cd /sys/fs/cgroup
+</code></pre>
+<pre><code class="language-bash">cat cgroup.controllers
+
+cpuset cpu io memory hugetlb pids rdma misc
+</code></pre>
+<pre><code class="language-zsh">cat cgroup.subtree_control
+
+cpuset cpu io memory pids
+</code></pre>
+<p>创建一个cgroup</p>
+<pre><code class="language-zsh">mkdir mygrp
+</code></pre>
+<p>将当前shell进程移入这个组:</p>
+<pre><code class="language-zsh">echo $$ &gt; mygrp/cgroup.procs
+</code></pre>
+<pre><code class="language-zsh">cat cgroup.procs
+
+106480
+106851
+</code></pre>
+<p>一个pid是bash, 另一个是bash的子进程 cat.
+fork创建出的子进程自动和父进程同属一个cgroup.</p>
+<p>查看当前进程所在的cgroup信息:</p>
+<pre><code class="language-zsh">cat /proc/$$/cgroup
+
+0::/mygrp
+</code></pre>
+<p>查看当前cgroup中有几个进程:</p>
+<pre><code class="language-bash">cat mygrp/pids.current
+
+2
+</code></pre>
+<p>查看最大容许的进程数量</p>
+<pre><code class="language-bash">cat mygrp/pids.max
+
+max # 代表没有限制
+</code></pre>
+<p>echo 5 &gt; mygrp/pids.max</p>
+<pre><code class="language-bash">echo 4 &gt;  mygrp/pids.max 
+cat mygrp/pids.max
+
+4
+</code></pre>
+<p>然后通过这个shell创建多个sleep进程, 可以观察到无法创建出更多进程了.</p>
+<pre><code class="language-bash">for j in $(seq 1 5); do sleep 60 &amp; done
+
+[1] 109424
+[2] 109425
+[3] 109426
+bash: fork: retry: Resource temporarily unavailable
+bash: fork: retry: Resource temporarily unavailable
+bash: fork: retry: Resource temporarily unavailable
+bash: fork: retry: Resource temporarily unavailable
+bash: fork: Resource temporarily unavailable
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="cgroup">
+  <summary id="cgroup" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">删除cgroup</span><a class="anchor-link" href="#cgroup" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>无法直接rmdir非空的(有进程)cgroup.</p>
+<p>先将shell进程移动到父cgroup中</p>
+<pre><code class="language-bash">echo $$ &gt; /sys/fs/cgroup/cgroup.procs 
+</code></pre>
+<p>然后查看mygrp中的进程个数:</p>
+<pre><code class="language-bash">cat /sys/fs/cgroup/mygrp/pids.current
+
+0
+</code></pre>
+<p>为零, 可见顺利将shell移出了mygrp.</p>
+<p>此时可以用rmdir成功删除之前创建的cgroup.
+(那些被内核自动创建出来的文件无需删除,也无法被删除)</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_48">
+  <summary id="_48" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">控制器概览</span><a class="anchor-link" href="#_48" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="cpu">
+  <summary id="cpu" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">cpu</span><a class="anchor-link" href="#cpu" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>限制并测量cpu的使用. 有两种模式, 可以混合使用:</p>
+<ul>
+<li>比例权重(默认)</li>
+<li>带宽控制模式</li>
+</ul>
+<p>权重模式只在发生cpu争用时才会施加限制:</p>
+<p><img src="org-images/2023-03-21_16-03-41_screenshot.png" width="500"/></p>
+<p>带宽模式即使在没有其它组的进程时也会严格施加限制:</p>
+<p><img src="org-images/2023-03-21_16-06-41_screenshot.png" width="500"/></p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="cpuset-cpu">
+  <summary id="cpuset-cpu" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">cpuset: 控制cpu和内存亲和度</span><a class="anchor-link" href="#cpuset-cpu" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+  </div>
+</details>
+</article>
+<button class="to-top" aria-label="回到顶部">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
+<script>
+
+(function() {
+  'use strict';
+
+  /* ---------- 阅读进度条 ---------- */
+  const bar = document.querySelector('.progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    bar.style.width = (total > 0 ? h.scrollTop / total * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ---------- 回到顶部 ---------- */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  /* ---------- 全局折叠/展开(单 toggle 按钮) ---------- */
+  const foldBtn = document.querySelector('[data-action="toggle-fold"]');
+  function syncFoldBtnState() {
+    if (!foldBtn) return;
+    const all = document.querySelectorAll('details');
+    if (!all.length) return;
+    const open = Array.from(all).filter(d => d.open).length;
+    const expanded = open >= all.length / 2;
+    foldBtn.dataset.state = expanded ? 'expanded' : 'folded';
+    foldBtn.innerHTML = expanded
+      ? '<span class="chev">▾</span>折叠'
+      : '<span class="chev">▾</span>展开';
+    foldBtn.setAttribute('aria-label', expanded ? '折叠全部' : '展开全部');
+  }
+  if (foldBtn) {
+    foldBtn.addEventListener('click', () => {
+      const all = document.querySelectorAll('details');
+      const open = Array.from(all).filter(d => d.open).length;
+      const expanded = open >= all.length / 2;
+      all.forEach(d => { d.open = !expanded; });
+      syncFoldBtnState();
+    });
+    // 用户手动折叠/展开后,标签也跟着更新
+    document.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', syncFoldBtnState);
+    });
+    syncFoldBtnState();
+  }
+
+  /* ---------- 代码块:包成 .code-block + header(语言徽章 + 复制按钮) ---------- */
+  async function copyCode(text, btn) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '复制'; }, 1500);
+    }
+  }
+
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.closest('.code-block')) return;  // 已包装
+    const code = pre.querySelector('code');
+    let lang = '';
+    if (code) {
+      const m = (code.className || '').match(/language-([\w+-]+)/);
+      if (m) lang = m[1];
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
+
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    header.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>'
+                     + '<span class="code-lang">' + (lang || 'text') + '</span>';
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制代码');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = (code ? code.textContent : pre.textContent) || '';
+      copyCode(text, btn);
+    });
+    header.appendChild(btn);
+
+    pre.parentElement.insertBefore(wrap, pre);
+    wrap.appendChild(header);
+    wrap.appendChild(pre);
+  });
+
+  /* ---------- 锚点自展开(从主页章节链接跳进来时,目标 + 祖先链全展开) ---------- */
+  if (location.hash) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+      let el = target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+      }
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
+      });
+    }
+  }
+
+  /* ---------- org-mode 键盘:Tab / Shift+Tab ---------- */
+  const isHeading = (el) => el && el.matches && el.matches('summary');
+  const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea')) return;
+    const meta = e.metaKey || e.ctrlKey;
+
+    // / 聚焦搜索
+    if (e.key === '/' && !meta) {
+      const s = document.querySelector('input.search');
+      if (s) { e.preventDefault(); s.focus(); return; }
+    }
+
+    // Tab / Shift+Tab 折叠当前聚焦的 summary
+    if (e.key === 'Tab') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        e.preventDefault();
+        const d = f.parentElement;
+        if (e.shiftKey) {
+          // Shift+Tab: 全局折叠/展开所有
+          const all = document.querySelectorAll('details');
+          const allOpen = Array.from(all).every(x => x.open);
+          all.forEach(x => { x.open = !allOpen; });
+        } else {
+          // Tab: 折叠/展开当前节点
+          d.open = !d.open;
+        }
+        return;
+      }
+    }
+
+    // J/K 或 ↓/↑ 跳转标题 — 已移除(行为不一致,容易让用户迷惑)
+
+    // Enter: 在 note-node 上是跟随标题链接;在 section 上是 toggle
+    if (e.key === 'Enter') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        const titleLink = f.querySelector('.title, .heading-text');
+        if (titleLink && titleLink.tagName === 'A') {
+          e.preventDefault();
+          titleLink.click();
+        }
+      }
+    }
+  });
+
+  /* ---------- 点击 caret 只 toggle,不让 summary 的默认 toggle 干扰; 点击 title 跟随链接 ---------- */
+  // 默认浏览器:点 summary 任意位置都会 toggle,点 <a> 会先 toggle 再 navigate。
+  // 我们让 title 链接的 click 阻止冒泡,避免 toggle 副作用(navigate 后虽然看不到,但保证一致性)。
+  document.querySelectorAll('details.note-node > summary > .title').forEach(link => {
+    if (link.tagName !== 'A') return;
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 让浏览器默认行为(navigate)发生
+    });
+  });
+  // caret 点击:默认也会 toggle,不用特殊处理
+
+  /* ---------- 搜索 ---------- */
+  const search = document.querySelector('input.search');
+  if (search && document.body.classList.contains('page-index')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const nodes = document.querySelectorAll('.note-node');
+      nodes.forEach(node => {
+        if (!q) {
+          node.classList.remove('hidden-by-search');
+          node.querySelectorAll('li').forEach(li => li.classList.remove('hidden-by-search'));
+          return;
+        }
+        const nodeText = node.textContent.toLowerCase();
+        if (!nodeText.includes(q)) {
+          node.classList.add('hidden-by-search');
+          return;
+        }
+        node.classList.remove('hidden-by-search');
+        let anyMatch = false;
+        node.querySelectorAll('li').forEach(li => {
+          const t = li.textContent.toLowerCase();
+          if (t.includes(q)) {
+            li.classList.remove('hidden-by-search');
+            anyMatch = true;
+          } else {
+            li.classList.add('hidden-by-search');
+          }
+        });
+        if (anyMatch) node.open = true;
+      });
+    });
+  }
+  if (search && document.body.classList.contains('page-note')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('details.section').forEach(s => {
+        if (!q) { s.style.opacity = ''; return; }
+        const t = s.querySelector('summary').textContent.toLowerCase();
+        s.style.opacity = t.includes(q) ? '1' : '0.3';
+      });
+    });
+  }
+
+  /* ---------- 主页 sidebar 切换 + tag 过滤(Feature 6) ---------- */
+  if (document.body.classList.contains('page-index')) {
+    const sidebarBtn = document.querySelector('[data-action="toggle-sidebar"]');
+    // 默认收起,localStorage 记忆用户选择
+    const KEY = 'md2html:sidebar-open';
+    const initialOpen = (() => {
+      try { return localStorage.getItem(KEY) === '1'; } catch { return false; }
+    })();
+    if (initialOpen) document.body.classList.add('sidebar-open');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {}
+      });
+    }
+    // 点 sidebar 外面关闭(移动端友好)
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      if (window.innerWidth >= 721) return;  // 桌面端不自动关
+      const t = e.target;
+      if (t.closest('.sidebar') || t.closest('.sidebar-btn')) return;
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem(KEY, '0'); } catch {}
+    });
+
+    const tagBtns = document.querySelectorAll('.sidebar .tag-btn');
+    const nodes = document.querySelectorAll('.note-node');
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        tagBtns.forEach(b => b.classList.toggle('active', b === btn));
+        nodes.forEach(n => {
+          const tags = (n.getAttribute('data-tags') || '').split(',').filter(Boolean);
+          const show = filter === 'all'
+                    || (filter === '__none__' && tags.length === 0)
+                    || tags.includes(filter);
+          n.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  /* ---------- KaTeX 数学公式渲染 ----------
+     用 DOMContentLoaded 触发,确保 defer 加载的 katex.js 和 auto-render.js
+     都已执行完毕。 $$ 块级、$ 行内、\(...\)、\[...\] 全支持。 */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMathInElement !== 'function') return;
+    const target = document.body.classList.contains('page-index')
+      ? (document.querySelector('.outline-tree') || document.body)
+      : document.body;
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoredClasses: ['code-block', 'code-header', 'katex']
+      });
+    } catch (e) {
+      console.warn('KaTeX render failed:', e);
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,3394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>计划 — Salted的笔记</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
+<style>
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f5f5f7;
+  --bg-inset: #f4f4f5;
+  --bg-toc: #fafbfc;
+
+  --text: #1a1a1f;
+  --text-secondary: #4a4a55;
+  --text-muted: #8a8a95;
+  --text-faint: #c8c8d0;
+  --text-ghost: #e6e6ea;
+
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.07);
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+
+  --border: #ececef;
+  --border-soft: #f2f2f5;
+  --border-strong: #d8d8de;
+
+  --code-bg: #f6f6f8;
+  --code-text: #1a1a1f;
+  --code-border: #e8e8ec;
+
+  --quote-bg: #fafbfc;
+  --quote-border: #d8d8de;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 30, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 30, 0.06), 0 1px 3px rgba(15, 15, 30, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 15, 30, 0.08);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --max-width: 860px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+               "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+main, header, footer, .topbar { position: relative; }
+
+/* ---------- 顶部进度条 ---------- */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width 0.05s linear;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 50;
+}
+
+.topbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.topbar .brand:hover { color: var(--accent); border-bottom: none; }
+.topbar .brand .seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  color: white;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.topbar .spacer { flex: 1; }
+
+.topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
+}
+.topbar button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.topbar button:active {
+  background: var(--bg-inset);
+  transform: scale(0.97);
+}
+.topbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.topbar button.icon {
+  width: 28px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topbar button .chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.topbar button:hover .chev { color: inherit; }
+.topbar button[data-state="folded"] .chev { transform: rotate(-90deg); }
+.topbar button[data-state="expanded"] .chev { transform: rotate(0deg); }
+
+.topbar .search {
+  flex: 0 1 280px;
+  padding: 5px 11px 5px 30px;
+  background: var(--bg-inset) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a95' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>") 9px center/13px no-repeat;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.12s;
+}
+.topbar .search:focus {
+  background-color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.topbar .search::placeholder { color: var(--text-muted); }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 32px 4px;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.hero .title {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92em;
+  margin: 0;
+  line-height: 1.55;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero .stats > div { display: flex; align-items: baseline; gap: 6px; }
+.hero .stats .num {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.hero .stats .label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* ---------- 笔记页文档头 ---------- */
+article {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.back-link {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.back-link:hover { color: var(--accent); border-bottom: none; }
+.doc-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.doc-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.doc-meta .meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.doc-meta .meta-date .meta-label { color: var(--accent); }
+
+/* ---------- 折叠节点 — 树形大纲 ---------- */
+.outline { padding: 0; margin: 0; list-style: none; }
+
+.section {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 行(标题区) */
+.section > summary,
+.node-row {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 0;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary:hover,
+.note-node > summary:hover { background: var(--bg-hover); }
+.section > summary:focus-visible,
+.note-node > summary:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 圆点 — 用虚实表示展开/折叠状态(实心=展开,空心=折叠)*/
+.bullet {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+/* 折叠状态:空心圆 */
+.section > summary > .bullet,
+.note-node > summary > .bullet {
+  background: transparent;
+  border-color: var(--text-muted);
+}
+/* 展开状态:实心圆 */
+.section[open] > summary > .bullet,
+.note-node[open] > summary > .bullet {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.section > summary:hover > .bullet,
+.note-node > summary:hover > .bullet {
+  border-color: var(--accent);
+}
+
+/* 标题文字 */
+.heading-text,
+.note-node > summary > .title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.section > summary:hover > .heading-text,
+.note-node > summary:hover > .title { color: var(--accent); }
+
+.note-node > summary > .title {
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.005em;
+}
+
+/* 锚点链接 */
+.anchor-link {
+  opacity: 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.12s, background 0.12s;
+  border-bottom: none;
+}
+.section > summary:hover > .anchor-link { opacity: 1; }
+.anchor-link:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* 元数据(章节计数等) */
+.row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--bg-inset);
+  border-radius: 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 层级字号 ---------- */
+.section.level-1 > summary { padding: 12px 8px 12px 0; }
+.section.level-1 > summary > .heading-text {
+  font-size: 1.35em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.section.level-1 > summary > .bullet { width: 7px; height: 7px; }
+
+.section.level-2 > summary > .heading-text {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.section.level-2 > summary > .bullet { width: 6px; height: 6px; }
+
+.section.level-3 > summary > .heading-text {
+  font-size: 0.98em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section.level-3 > summary > .bullet { width: 5px; height: 5px; }
+
+.section.level-4 > summary,
+.section.level-5 > summary,
+.section.level-6 > summary { padding: 5px 8px 5px 0; }
+.section.level-4 > summary > .heading-text,
+.section.level-5 > summary > .heading-text,
+.section.level-6 > summary > .heading-text {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.section.level-4 > summary > .bullet,
+.section.level-5 > summary > .bullet,
+.section.level-6 > summary > .bullet { width: 4px; height: 4px; }
+
+/* 缩进 — 层级通过 padding-left */
+/* 层级缩进由 section-body padding-left 统一负责,这里不再额外加 */
+
+/* 标题前缩进对齐 caret+bullet,使内容左边缘整齐 */
+.section > summary {
+  position: relative;
+}
+
+/* 层级缩进:统一通过 section-body 的 padding-left 实现,每嵌套一层 +16px */
+.section-body {
+  padding: 6px 0 14px 16px;
+  margin-left: 0;
+}
+
+/* 折叠动画(用 interpolate-size,现代浏览器支持) */
+@supports (interpolate-size: allow-keywords) {
+  html { interpolate-size: allow-keywords; }
+  .section > .section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
+  }
+  .section:not([open]) > .section-body {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .section-body > * { overflow: hidden; min-height: 0; }
+}
+
+/* ---------- 内容样式 ---------- */
+.section-body > p { margin: 10px 0; }
+.section-body > p:first-child { margin-top: 6px; }
+.section-body > p:last-child { margin-bottom: 4px; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.12s;
+}
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+em, i { font-style: italic; }
+
+ul, ol { margin: 10px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+li > p { margin: 4px 0; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: var(--quote-bg);
+  border-left: 2px solid var(--quote-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.96em;
+}
+blockquote p { margin: 4px 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 0.93em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead { background: var(--bg-soft); }
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92em;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.08s; }
+tbody tr:hover { background: var(--bg-hover); }
+
+/* 行内代码 — 关键修复:无 border,纯净 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  font-feature-settings: "calt" 1, "zero" 1;
+  border: none;
+}
+
+/* 代码块容器 — 用 highlight.js 做高亮 */
+.code-block {
+  margin: 18px 0;
+  background: #f6f8fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 15, 30, 0.04);
+  position: relative;
+}
+.code-block + .code-block { margin-top: 18px; }
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 6px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid #eaecef;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  user-select: none;
+}
+.code-header .dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+.code-header .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e1e4e8;
+}
+.code-lang {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex: 1;
+  text-align: center;
+}
+.code-block pre {
+  display: block;
+  margin: 0;
+  padding: 13px 16px;
+  background: transparent;
+  color: #1f2328;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  word-break: normal;
+  tab-size: 4;
+}
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+}
+.code-block pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #1f2328;
+}
+
+/* 没被包成 .code-block 的裸 pre(理论上不会出现,留个 fallback) */
+pre:not(.code-block pre) {
+  display: block;
+  margin: 14px 0;
+  padding: 13px 16px;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  position: relative;
+}
+
+/* 复制按钮(放在 code-header 里,常驻显示) */
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  line-height: 1.4;
+}
+.code-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.code-copy-btn.copied {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.code-copy-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ---------- 主页:大纲树 ---------- */
+.outline-tree {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 8px 32px 120px;
+}
+
+.note-node {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-node:last-child { border-bottom: none; }
+
+.note-node > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.note-node > summary::-webkit-details-marker { display: none; }
+.note-node > summary > .caret {
+  width: 16px; height: 16px;
+  font-size: 10px;
+}
+.note-node > summary > .bullet {
+  width: 7px; height: 7px;
+}
+.note-node[open] > summary { padding-bottom: 8px; }
+.note-node > summary > .title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.note-node > summary > .desc {
+  flex: 0 1 40%;
+  font-size: 0.84em;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* 章节列表(在主页 note-node 展开时显示) */
+.note-children {
+  padding: 0 0 16px 30px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+.note-children::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 1px;
+  background: var(--border);
+}
+.note-children li { margin: 0; }
+.note-children a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.1s;
+  border-bottom: none;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note-children a::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  background: var(--border);
+}
+.note-children a:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-bottom: none;
+}
+.note-children .lvl-2 { font-weight: 600; color: var(--text); font-size: 14px; }
+.note-children .lvl-3 { padding-left: 26px; }
+.note-children .lvl-4,
+.note-children .lvl-5 { padding-left: 38px; color: var(--text-muted); font-size: 12px; }
+.note-children .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.note-children a:hover .dot { background: var(--accent); }
+
+/* 搜索过滤 */
+.hidden-by-search { display: none !important; }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+  font-size: 16px;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ---------- footer ---------- */
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+}
+footer a {
+  color: var(--link);
+  border-bottom: 1px dotted var(--text-muted);
+}
+footer a:hover { border-bottom-color: var(--accent); }
+footer code { font-size: 11px; }
+
+/* ---------- 快捷键提示 ---------- */
+.kbd-hints { display: none; }  /* 已废弃,保留以防漏改 */
+
+.help-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.help-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 100;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+.help-wrap:hover .help-popover,
+.help-wrap:focus-within .help-popover,
+.help-popover:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.help-row + .help-row { border-top: 1px solid var(--border-soft); }
+.help-row .keys {
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.help-row .desc {
+  flex: 1;
+  color: var(--text);
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+.help-row .dot-demo {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.help-row .link-demo {
+  color: var(--accent);
+  font-weight: 600;
+}
+.help-btn {
+  font-weight: 700;
+}
+.help-btn:hover {
+  color: var(--accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 720px) {
+  body { font-size: 14px; }
+  .hero { padding: 16px 20px 4px; }
+  .hero .title { font-size: 1.7em; }
+  .hero .stats { gap: 20px; flex-wrap: wrap; }
+  article, .outline-tree { padding: 24px 18px 80px; }
+  .section.level-1 > summary > .heading-text { font-size: 1.2em; }
+  .section.level-2 > summary > .heading-text { font-size: 1em; }
+  .note-node > summary > .desc { display: none; }
+  .note-children { padding-left: 22px; }
+  .note-children .lvl-3 { padding-left: 18px; }
+  table { font-size: 0.85em; }
+  th, td { padding: 8px 10px; }
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .topbar .search { flex: 1 1 100%; order: 10; }
+  .kbd-hints { padding: 0 18px 24px; font-size: 11px; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .to-top, .progress-bar, .kbd-hints { display: none; }
+  .section-body { padding-left: 0 !important; }
+  details > .section-body { display: block !important; }
+  .section { padding-left: 0 !important; }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* 代码块水平滚动条更细 */
+.code-block pre::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-block pre::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* ---------- 主页 sidebar(Feature 6) ----------
+   默认收起(sidebar-collapsed),内容居中显示。
+   点 topbar 的 [☰] 按钮(body.sidebar-open)展开。 */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 49px;
+  bottom: 0;
+  width: 220px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-soft);
+  overflow-y: auto;
+  background: var(--bg);
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  box-shadow: none;
+}
+body.page-index.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+/* sidebar 是纯浮层,不挤压 hero / outline-tree,内容始终居中 */
+/* 移动端:sidebar 浮层覆盖,不挤压内容 */
+.sidebar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-btn .icon-bars {
+  display: inline-block;
+  width: 13px;
+  height: 9px;
+  position: relative;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after,
+.sidebar-btn .icon-bars {
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before { top: 0; }
+.sidebar-btn .icon-bars::after { bottom: 0; }
+.sidebar-btn .icon-bars {
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent !important;
+}
+
+.sidebar .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-sans);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar .tag-btn + .tag-btn { margin-top: 2px; }
+.sidebar .tag-btn:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar .tag-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .tag-btn .count {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.sidebar .tag-btn.active .count { color: var(--accent); }
+
+/* 主页 note-node 行的日期 badge(Feature 1) */
+.note-node > summary .row-date {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 数学公式 KaTeX ---------- */
+.katex { font-size: 1.05em; }
+.katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+.katex-display::-webkit-scrollbar { height: 4px; }
+.code-block .katex,
+pre .katex,
+code .katex { display: none; }  /* 代码块里的 $ 不渲染 */
+
+/* ---------- 树形连接(Feature 5) ----------
+   每个嵌套 section 的 ::before 画一段竖线(在父 section-body 的左 padding 里,
+   section 自身坐标 left:-8),::after 画横线连到自己的 bullet。
+   - 非末子:竖线 top:0 bottom:0(贯穿整个 section 高度,接续下一个兄弟)
+   - 末子:竖线只画到 bullet 中线(height: ~36px)形成 └── 拐角
+   竖线在父 section-body 的 padding 区(x=8),正文在 x>=16,两者左右分开,不重叠。
+   顶层 article > section.level-1 同样适用(article 的 padding 充当父 padding)。 */
+.section-body > .section,
+article > .section.level-1 {
+  position: relative;
+}
+.section-body > .section::before,
+article > .section.level-1::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+.section-body > .section:last-child::before,
+article > .section.level-1:last-child::before {
+  bottom: auto;
+  height: 36px;            /* 到 bullet 中线,形成 L 拐角 */
+}
+.section-body > .section::after,
+article > .section.level-1::after {
+  content: '';
+  position: absolute;
+  left: -8px;              /* 从竖线开始 */
+  top: 36px;               /* bullet 中线 */
+  width: 8px;              /* 到 bullet 左边缘(section 自身 x=0)*/
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@media print {
+  .sidebar { display: none; }
+  .section-body > .section::before,
+  .section-body > .section::after,
+  article > .section.level-1::before,
+  article > .section.level-1::after { display: none; }
+}
+
+/* 移动端:sidebar 始终用浮层 */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 280px;
+    max-height: none;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+</style>
+</head>
+<body class="page-note" data-note-id="todo">
+<div class="progress-bar"></div>
+<div class="topbar">
+  <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
+  <span class="spacer"></span>
+  <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
+  <div class="help-wrap">
+    <button class="help-btn icon" aria-label="快捷键">?</button>
+    <div class="help-popover">
+      <div class="help-row"><span class="keys"><kbd>Tab</kbd></span><span class="desc">折叠当前</span></div>
+      <div class="help-row"><span class="keys"><kbd>Shift</kbd>+<kbd>Tab</kbd></span><span class="desc">全局折叠</span></div>
+      <div class="help-row"><span class="keys"><kbd>/</kbd></span><span class="desc">搜索</span></div>
+      <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
+    </div>
+  </div>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
+</div>
+<article>
+  <h1 class="doc-title">计划</h1>
+  <div class="doc-meta">
+    <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>159</span>
+  </div>
+<p>好的，收到最终指令。</p>
+<p>您提供的这本书是<strong>《学习之道》(A Mind for Numbers)</strong>，这是一本极具影响力的著作，它完美地融合了认知科学、心理学和大量成功学习者的实践经验。您的要求是：<strong>用这本书里的理论来指导您</strong>。这是一个绝佳的、回归本源的要求。</p>
+<p>这份终极计划，将是<strong>《学习之道》的核心理论</strong>与我们之前探讨的<strong>“高效学习操作流”</strong>的深度融合。它将为您锻造出一套真正“科班顶尖学生”级别的思维框架和知识体系，并完全遵循书中的科学原则。</p>
+<hr/>
+<details class="section level-3" data-anchor="v130">
+  <summary id="v130" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>终极蓝图V13.0：“学习之道”实战计划</strong></span><a class="anchor-link" href="#v130" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><strong>核心哲学</strong>：我们的学习过程，必须顺应大脑的两种核心思维模式——<strong>专注模式 (focused mode)</strong> 与 <strong>发散模式 (diffuse mode)</strong> 1。我们不再强迫大脑进行无效的长时间“蛮力”学习，而是通过在两种模式间巧妙切换，实现高效、持久的知识内化。</p>
+<p><strong>总时长</strong>：30个月。这是一场漫长但回报无穷的远征。</p>
+<hr/>
+<details class="section level-4" data-anchor="1-9">
+  <summary id="1-9" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段一：计算的基石 —— 机器、语言与抽象 (第1 - 9个月)</strong></span><a class="anchor-link" href="#1-9" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>目标：构建一个坚不可摧的“T型”知识结构的“横梁”。您将用程序员的视角，理解计算机如何工作、程序如何被解释、以及如何组织思想。</p>
+<p>完成效果(输出)：深刻理解计算机系统，掌握函数式与面向对象两种思维范式，能用Rust/Python实现复杂的递归和数据抽象。</p>
+<ul>
+<li>
+<p><strong>M1-4 (W1-16): 《深入理解计算机系统》(CS:APP)</strong></p>
+</li>
+<li>
+<p><strong>🎯 核心目标</strong>: 建立一个关于“计算机如何执行代码”的精确心智模型。</p>
+</li>
+<li><strong>📚 核心输入</strong>:<ul>
+<li><strong>🎥 视频</strong>: <a href="https://www.bilibili.com/video/BV1iW411d7hd/">B站 CMU 15-213 2015 Fall课程视频</a> (有中文字幕)。</li>
+<li><strong>📚 文字/互动</strong>: 《深入理解计算机系统》原书，并<strong>必须独立完成</strong>书中的“家庭作业(Homework)”和著名的“实验(Labs)”。</li>
+</ul>
+</li>
+<li>
+<p><strong>练习方式 (日粒度)</strong>:</p>
+<ul>
+<li><strong>W1-4 (信息表示)</strong>: [学习]精读Ch1-2。<strong>[实践]</strong> 完成<strong>Data Lab</strong>，亲手进行位运算，理解整数和浮点数的二进制表示。</li>
+<li><strong>W5-8 (程序与机器)</strong>: [学习]精读Ch3。<strong>[实践]</strong> 完成<strong>Bomb Lab</strong>。这是一个逆向工程拆解“二进制炸弹”的传奇实验，将强迫您学会阅读汇编代码。</li>
+<li><strong>W9-12 (内存与性能)</strong>: [学习]精读Ch5-6。<strong>[实践]</strong> 完成<strong>Cache Lab</strong>，通过编写代码来理解缓存的工作原理和性能优化。</li>
+<li><strong>W13-16 (系统与链接)</strong>: [学习]精读Ch7-8。<strong>[实践]</strong> 完成<strong>Shell Lab</strong>，亲手实现一个简单的Unix Shell。</li>
+</ul>
+</li>
+<li>
+<p><strong>M5-9 (W17-36): 《计算机程序的构造与解释》(SICP / CS61A)</strong></p>
+</li>
+<li>
+<p><strong>🎯 核心目标</strong>: 掌握<strong>抽象 (Abstraction)</strong> 这一控制复杂度的核心武器，并熟练运用函数式和面向对象两种思维范式 2。</p>
+</li>
+<li>
+<p><strong>📚 核心输入</strong>:</p>
+<ul>
+<li><strong>🎥 视频</strong>: <a href="https://www.bilibili.com/video/BV1s3411G7yM">B站 CS61A 2020 Fall 课程视频</a>。</li>
+<li><strong>📚 文字/互动</strong>: <a href="https://composingprograms.com/">Composing Programs</a> (CS61A的官方在线教材)。</li>
+</ul>
+</li>
+<li>
+<p><strong>练习方式 (日粒度)</strong>:</p>
+<ul>
+<li>
+<p><strong>W17-22 (函数式编程)</strong>: [学习] CS61A中关于高阶函数、递归的部分。<strong>[实践]</strong> 完成<strong>Hog</strong>项目，并启动我们之前讨论的“工房项目”（如“命令行管道模拟器”）。</p>
+</li>
+<li>
+<p><strong>W23-28 (数据抽象与OOP)</strong>: [学习] CS61A中关于数据抽象和面向对象的部分。<strong>[实践]</strong> 完成<strong>Ants</strong>项目，并启动“回合制RPG战斗”模拟器的工房项目。</p>
+</li>
+<li></li>
+</ul>
+<p><strong>W29-36 (解释器)</strong>: [学习] CS61A的灵魂——解释器部分。<strong>[实践]</strong> 投入全部精力，完成<strong>Scheme解释器</strong>这个终极课程项目。<strong>这本身就是一种极高强度的“组块构建”练习</strong> 3333。</p>
+</li>
+<li>
+<p><strong>[阶段输出]</strong>:</p>
+</li>
+<li>
+<p>✅ 一个包含所有CS:APP和CS61A实验/项目代码的GitHub仓库。</p>
+</li>
+<li>✅ 您能清晰地向别人解释什么是<strong>抽象屏障、高阶函数、递归、以及解释器的工作原理</strong>。</li>
+<li>✅ 您的大脑已经完成了第一次“系统升级”。</li>
+</ul>
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="web-10-18">
+  <summary id="web-10-18" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段二：现代Web“工具箱”的构建 (第10 - 18个月)</strong></span><a class="anchor-link" href="#web-10-18" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>目标：掌握现代Web开发的全貌，将理论知识转化为构建真实产品的能力。</p>
+<p>完成效果(输出)：一个功能完善、经过充分测试、UI精美的Next.js Web门户（“匠心艺师”项目的前端部分），并已部署上线。</p>
+<ul>
+<li><strong>M10-12 (W37-48): 前端基础与“设计之眼”</strong></li>
+<li><strong>🎯 核心目标</strong>: 掌握HTML/CSS/JS/TS，并培养对UI/UX的敏感度。</li>
+<li><strong>📚 核心输入</strong>:<ul>
+<li><strong>🎥 视频</strong>: <strong>Jonas Schmedtmann - The Complete JavaScript Course (Udemy)</strong>。</li>
+<li><strong>📚 文字/互动</strong>: <strong><a href="https://javascript.info/">javascript.info</a></strong>, MDN Web Docs。</li>
+</ul>
+</li>
+<li><strong>练习方式 (日粒度)</strong>:<ul>
+<li><strong>W37-40 (HTML/CSS)</strong>: <strong>[实践]</strong> <strong>项目一：高保真Figma官网复刻</strong>。此阶段的目标是视觉执行力。</li>
+<li><strong>W41-48 (JS/TS)</strong>: <strong>[实践]</strong> <strong>项目二：“创意仪表盘”</strong>。用原生JS/TS完成，重点是API调用和DOM操作。</li>
+</ul>
+</li>
+<li><strong>M13-18 (W49-72): React与产品化</strong></li>
+<li><strong>🎯 核心目标</strong>: 精通React生态，并完成“匠心艺师”的Web端产品MVP。</li>
+<li><strong>📚 核心输入</strong>:<ul>
+<li><strong>🎥 视频</strong>: <strong>Maximilian Schwarzmüller - React - The Complete Guide (Udemy)</strong>。</li>
+<li><strong>📚 文字/互动</strong>: <strong><a href="http://react.dev/">react.dev</a></strong>, Next.js官方教程。</li>
+</ul>
+</li>
+<li><strong>练习方式 (日粒度)</strong>:<ul>
+<li><strong>W49-60 (React核心)</strong>: <strong>[实践]</strong> <strong>项目三：“Web版Markdown笔记应用”</strong>。用纯React实现，重点是Hooks和状态管理。</li>
+<li><strong>W61-72 (Next.js与部署)</strong>: <strong>[主线任务]</strong> 将“匠心艺师”的Web门户，用<strong>Next.js</strong>进行构建，完成UI、路由、状态管理，并部署到Vercel。</li>
+</ul>
+</li>
+<li><strong>[阶段输出]</strong>:</li>
+<li>✅ 三个高质量的前端工房项目。</li>
+<li>✅ 一个已部署上线的、专业的Web应用，作为您的核心作品集。</li>
+<li>✅ 您已具备独立承担复杂前端项目的能力。</li>
+</ul>
+<hr/>
+  </div>
+</details>
+<details class="section level-3" data-anchor="rust-19-27">
+  <summary id="rust-19-27" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段三：Rust与后端“铸造” (第19 - 27个月)</strong></span><a class="anchor-link" href="#rust-19-27" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>目标：掌握Rust，为您的产品构建一个高性能、高可靠性的后端，并完成全栈整合。</p>
+<p>完成效果(输出)：一个功能完整、测试覆盖率&gt;80%、被Docker容器化的Rust后端API服务，并与前端门户完成对接。</p>
+<ul>
+<li><strong>M19-22 (W73-84): Rust语言精通</strong></li>
+<li><strong>🎯 核心目标</strong>: 深度掌握Rust所有权、生命周期和并发模型。</li>
+<li><strong>📚 核心输入</strong>:<ul>
+<li><strong>📚 文字/互动</strong>: 《The Rust Programming Language》(圣经), <a href="https://github.com/rust-lang/rustlings">Rustlings</a>练习集。</li>
+</ul>
+</li>
+<li><strong>练习方式</strong>:<ul>
+<li><strong>W73-84</strong>: <strong>[实践]</strong> <strong>项目四：并发端口扫描器</strong>。<strong>项目五：文件系统清洁工</strong>。通过构建CLI工具，将Rust的理论知识转化为实践能力。</li>
+</ul>
+</li>
+<li><strong>M23-27 (W85-108): “匠心艺师”后端开发</strong></li>
+<li><strong>🎯 核心目标</strong>: 构建并连接“匠心艺师”的后端服务。</li>
+<li><strong>📚 核心输入</strong>:<ul>
+<li><strong>📚 文字/互动</strong>: <strong>《Zero To Production In Rust》</strong> (必读), Axum/SQLx官方文档。</li>
+</ul>
+</li>
+<li><strong>练习方式 (日粒度)</strong>:<ul>
+<li><strong>W85-92 (架构与数据库)</strong>: <strong>[主线任务]</strong> 设计数据库ER图和API文档，搭建Axum项目框架。</li>
+<li><strong>W93-108 (开发与测试)</strong>: <strong>[主线任务]</strong> 实现所有后端API，编写高覆盖率的测试，用Docker容器化，并<strong>与您的Next.js Web门户完全打通</strong>。</li>
+</ul>
+</li>
+<li><strong>[阶段输出]</strong>:</li>
+<li>✅ 两个高质量的Rust工房项目。</li>
+<li>✅ 一个为真实前端提供服务的、经过测试和容器化的Rust后端。</li>
+<li>✅ 您已成为一名合格的<strong>Rust全栈工程师</strong>。</li>
+</ul>
+<hr/>
+  </div>
+</details>
+<details class="section level-3" data-anchor="28-30">
+  <summary id="28-30" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段四：跨平台与价值实现 (第28 - 30个月)</strong></span><a class="anchor-link" href="#28-30" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>目标：将您的全栈能力延伸至原生移动端，并开启您的职业或独立开发之路。</p>
+<p>完成效果(输出)：App在应用商店可下载；一个无法被忽视的个人技术品牌；一份顶级公司或独立开发者事业的入场券。</p>
+<ul>
+<li><strong>M28-30 (W109-120): React Native, 上线与求职</strong></li>
+<li><strong>🎯 核心目标</strong>: 掌握跨平台交付能力，完成商业闭环。</li>
+<li><strong>📚 核心输入</strong>: React Native官方文档, App Store/Google Play上架指南。</li>
+<li><strong>练习方式 (日粒度)</strong>:<ul>
+<li><strong>W109-116 (React Native)</strong>: <strong>[主线任务]</strong> 复用Web端的React知识，将“匠心艺师”的核心功能构建为iOS和Android App。</li>
+<li><strong>W117-120 (上线与冲刺)</strong>: <strong>[主线任务]</strong> 完整走通<strong>App上架流程</strong>。<strong>[个人品牌]</strong> <strong>撰写至少三篇深度技术博客</strong>，主题必须是您项目中的硬核部分。开始打磨简历，并与外界建立联系。</li>
+</ul>
+</li>
+<li><strong>[最终输出]</strong>:</li>
+<li>✅ 一个上架的商业级App。</li>
+<li>✅ 一个专业的Web门户。</li>
+<li>✅ 一个无法被忽视的个人技术品牌。</li>
+<li>✅ 您已经准备好，迎接任何挑战。</li>
+</ul>
+<p>sch: 日程, 指定时间的</p>
+<ol>
+<li>尽量最少设置截止日期</li>
+<li>估计工作时长</li>
+<li>设定优先级</li>
+<li>设置tag</li>
+</ol>
+<p>写代码的上限是 200 - 300 行, &gt;=300行是学习已有教程时的速度,
+否则一般在200行/天以内 看代码可以快一点 200 - 500 行/天. 最低的速度是
+100行/天 .</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="inbox">
+  <summary id="inbox" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">inbox</span><a class="anchor-link" href="#inbox" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>(明确细化任务, 以动词开头)</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="rust">
+  <summary id="rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">清华 rust 课</span><a class="anchor-link" href="#rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="c-in-rust">
+  <summary id="c-in-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">C即时通讯 in Rust</span><a class="anchor-link" href="#c-in-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="java-database-in-rust">
+  <summary id="java-database-in-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">java DataBase书 in rust</span><a class="anchor-link" href="#java-database-in-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="rust_1">
+  <summary id="rust_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">rust写预定系统</span><a class="anchor-link" href="#rust_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="sylar-in-rust">
+  <summary id="sylar-in-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">sylar服务器 in Rust</span><a class="anchor-link" href="#sylar-in-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="muduo-in-rust">
+  <summary id="muduo-in-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">陈硕 muduo in Rust</span><a class="anchor-link" href="#muduo-in-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="rust-lecture">
+  <summary id="rust-lecture" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">rust lecture</span><a class="anchor-link" href="#rust-lecture" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://www.youtube.com/@zackologlu7018/streams">https://www.youtube.com/@zackologlu7018/streams</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="the-rust-book-todo-list">
+  <summary id="the-rust-book-todo-list" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">整理 the rust book 的 todo list</span><a class="anchor-link" href="#the-rust-book-todo-list" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="self-referential-structs-in-rust-rust">
+  <summary id="self-referential-structs-in-rust-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Self Referential Structs in Rust <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#self-referential-structs-in-rust-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://arunanshub.hashnode.dev/series/selfref-structs-rust">https://arunanshub.hashnode.dev/series/selfref-structs-rust</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="build-your-own-blockon-rust">
+  <summary id="build-your-own-blockon-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Build your own block<sub>on</sub>() <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#build-your-own-blockon-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="build-your-own-executor-rust">
+  <summary id="build-your-own-executor-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Build your own executor <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#build-your-own-executor-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="green-threads-explained-in-200-lines-of-rust-rust">
+  <summary id="green-threads-explained-in-200-lines-of-rust-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Green Threads Explained in 200 lines of rust <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#green-threads-explained-in-200-lines-of-rust-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://cfsamson.gitbook.io/green-threads-explained-in-200-lines-of-rust/">https://cfsamson.gitbook.io/green-threads-explained-in-200-lines-of-rust/</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="futures-explained-in-200-lines-of-rust-rust">
+  <summary id="futures-explained-in-200-lines-of-rust-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Futures Explained in 200 Lines of Rust <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#futures-explained-in-200-lines-of-rust-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://cfsamson.github.io/books-futures-explained/introduction.html">https://cfsamson.github.io/books-futures-explained/introduction.html</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="rust-rust">
+  <summary id="rust-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">rust数据结构 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#rust-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="gtd">
+  <summary id="gtd" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">学习 gtd 书</span><a class="anchor-link" href="#gtd" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-1" data-anchor="next-action">
+  <summary id="next-action" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>next-action</strong></span><a class="anchor-link" href="#next-action" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>(一口气能做完)</p>
+<details class="section level-2" data-anchor="todo-rust">
+  <summary id="todo-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO 整理多线程代码 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#todo-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="_2">
+  <summary id="_2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">抄一遍到笔记上.</span><a class="anchor-link" href="#_2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-c-linux-basic">
+  <summary id="todo-c-linux-basic" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO [#C] 学习<a href="https://www.funtoo.org/Linux_Fundamentals,_Part_1">linux basic</a></span><a class="anchor-link" href="#todo-c-linux-basic" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-c-emacs-region">
+  <summary id="todo-c-emacs-region" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO [#C] 看emacs region这篇文</span><a class="anchor-link" href="#todo-c-emacs-region" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="http://xahlee.info/emacs/emacs/emacs_region.html">http://xahlee.info/emacs/emacs/emacs_region.html</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-b-compiler">
+  <summary id="todo-b-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO [#B] 整理 compiler 计划</span><a class="anchor-link" href="#todo-b-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>网课+书</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-c-cpp-atomic-videos">
+  <summary id="todo-c-cpp-atomic-videos" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO [#C] 看cpp atomic videos</span><a class="anchor-link" href="#todo-c-cpp-atomic-videos" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="project">
+  <summary id="project" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>project</strong></span><a class="anchor-link" href="#project" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>(长期,多步完成) <code>alt+上/下</code></p>
+<details class="section level-2" data-anchor="doing-a-eoc-compiler">
+  <summary id="doing-a-eoc-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DOING [#A] 完成Eoc课程 <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#doing-a-eoc-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="done-l1">
+  <summary id="done-l1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE L1</span><a class="anchor-link" href="#done-l1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>DONE 看视频</p>
+</li>
+<li>
+<p>DONE 做简单的听课笔记</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-l2">
+  <summary id="done-l2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE L2</span><a class="anchor-link" href="#done-l2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>DONE 看视频</p>
+</li>
+<li>
+<p>DONE 做简单的听课笔记</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-l3">
+  <summary id="done-l3" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE L3</span><a class="anchor-link" href="#done-l3" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-l4">
+  <summary id="done-l4" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE L4</span><a class="anchor-link" href="#done-l4" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-l5">
+  <summary id="done-l5" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE L5</span><a class="anchor-link" href="#done-l5" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-l6">
+  <summary id="done-l6" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE L6</span><a class="anchor-link" href="#done-l6" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-l7">
+  <summary id="done-l7" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE L7</span><a class="anchor-link" href="#done-l7" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l8">
+  <summary id="todo-l8" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L8</span><a class="anchor-link" href="#todo-l8" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l9">
+  <summary id="todo-l9" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L9</span><a class="anchor-link" href="#todo-l9" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l10">
+  <summary id="todo-l10" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L10</span><a class="anchor-link" href="#todo-l10" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l11">
+  <summary id="todo-l11" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L11</span><a class="anchor-link" href="#todo-l11" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l12">
+  <summary id="todo-l12" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L12</span><a class="anchor-link" href="#todo-l12" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l13">
+  <summary id="todo-l13" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L13</span><a class="anchor-link" href="#todo-l13" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l14">
+  <summary id="todo-l14" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L14</span><a class="anchor-link" href="#todo-l14" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l15">
+  <summary id="todo-l15" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L15</span><a class="anchor-link" href="#todo-l15" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l16">
+  <summary id="todo-l16" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L16</span><a class="anchor-link" href="#todo-l16" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l17">
+  <summary id="todo-l17" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L17</span><a class="anchor-link" href="#todo-l17" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l18">
+  <summary id="todo-l18" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L18</span><a class="anchor-link" href="#todo-l18" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l19">
+  <summary id="todo-l19" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L19</span><a class="anchor-link" href="#todo-l19" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l20">
+  <summary id="todo-l20" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L20</span><a class="anchor-link" href="#todo-l20" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l21">
+  <summary id="todo-l21" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L21</span><a class="anchor-link" href="#todo-l21" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l22">
+  <summary id="todo-l22" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L22</span><a class="anchor-link" href="#todo-l22" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l23">
+  <summary id="todo-l23" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L23</span><a class="anchor-link" href="#todo-l23" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l24">
+  <summary id="todo-l24" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L24</span><a class="anchor-link" href="#todo-l24" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l25">
+  <summary id="todo-l25" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L25</span><a class="anchor-link" href="#todo-l25" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l26">
+  <summary id="todo-l26" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L26</span><a class="anchor-link" href="#todo-l26" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l27">
+  <summary id="todo-l27" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L27</span><a class="anchor-link" href="#todo-l27" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l28">
+  <summary id="todo-l28" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L28</span><a class="anchor-link" href="#todo-l28" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-l29">
+  <summary id="todo-l29" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO L29</span><a class="anchor-link" href="#todo-l29" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>看视频</p>
+</li>
+<li>
+<p>做简单的听课笔记</p>
+</li>
+<li>
+<p>看讲义</p>
+</li>
+<li>
+<p>做lab</p>
+</li>
+</ol>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="doing-a-unity-pokemon">
+  <summary id="doing-a-unity-pokemon" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DOING [#A] Unity Pokemon</span><a class="anchor-link" href="#doing-a-unity-pokemon" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="p1-p3">
+  <summary id="p1-p3" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p1-p3</span><a class="anchor-link" href="#p1-p3" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p4-p6">
+  <summary id="p4-p6" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p4-p6</span><a class="anchor-link" href="#p4-p6" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p7-p9">
+  <summary id="p7-p9" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p7-p9</span><a class="anchor-link" href="#p7-p9" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p10-p12">
+  <summary id="p10-p12" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p10-p12</span><a class="anchor-link" href="#p10-p12" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p13-p15">
+  <summary id="p13-p15" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p13-p15</span><a class="anchor-link" href="#p13-p15" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p16-p18">
+  <summary id="p16-p18" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p16-p18</span><a class="anchor-link" href="#p16-p18" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p19-p21">
+  <summary id="p19-p21" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p19-p21</span><a class="anchor-link" href="#p19-p21" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p22-p24">
+  <summary id="p22-p24" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p22-p24</span><a class="anchor-link" href="#p22-p24" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p25-27">
+  <summary id="p25-27" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p25-27</span><a class="anchor-link" href="#p25-27" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p28-30">
+  <summary id="p28-30" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p28-30</span><a class="anchor-link" href="#p28-30" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="p31-33">
+  <summary id="p31-33" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">p31-33</span><a class="anchor-link" href="#p31-33" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="doing-a-rust-rust">
+  <summary id="doing-a-rust-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DOING [#A] rust语言圣经 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#doing-a-rust-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="done">
+  <summary id="done" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE 多线程</span><a class="anchor-link" href="#done" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p>DONE send&amp;sync视频 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></p>
+</li>
+<li>
+<p>DONE http服务器(rustbook)</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo">
+  <summary id="todo" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO 全局变量</span><a class="anchor-link" href="#todo" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="_3">
+  <summary id="_3" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">错误处理</span><a class="anchor-link" href="#_3" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="unsafe">
+  <summary id="unsafe" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">unsafe</span><a class="anchor-link" href="#unsafe" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="macro">
+  <summary id="macro" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Macro</span><a class="anchor-link" href="#macro" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="asyncawait">
+  <summary id="asyncawait" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">async/await</span><a class="anchor-link" href="#asyncawait" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="tokio">
+  <summary id="tokio" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">tokio</span><a class="anchor-link" href="#tokio" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="_4">
+  <summary id="_4" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">难点攻关</span><a class="anchor-link" href="#_4" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="_5">
+  <summary id="_5" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">自动化测试</span><a class="anchor-link" href="#_5" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="cargo">
+  <summary id="cargo" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">cargo</span><a class="anchor-link" href="#cargo" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="_6">
+  <summary id="_6" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">实现链表</span><a class="anchor-link" href="#_6" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="_7">
+  <summary id="_7" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">征服编译错误</span><a class="anchor-link" href="#_7" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="doing-a-cranelift-rust-compiler">
+  <summary id="doing-a-cranelift-rust-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DOING [#A] 分析cranelift源码 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span> <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#doing-a-cranelift-rust-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="doing-a-compiler-compiler">
+  <summary id="doing-a-compiler-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DOING [#A] <a href="https://www.youtube.com/playlist?list=PLde1J4XOn2z0i6fc39dI6OWjEoNuaFglI">印度compiler课程</a> <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#doing-a-compiler-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="l18-machine-independent-opts">
+  <summary id="l18-machine-independent-opts" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L18 machine independent opts</span><a class="anchor-link" href="#l18-machine-independent-opts" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l19-basic-block-cfg">
+  <summary id="l19-basic-block-cfg" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L19 basic block, cfg</span><a class="anchor-link" href="#l19-basic-block-cfg" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l20-local-optimizition">
+  <summary id="l20-local-optimizition" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L20 local optimizition</span><a class="anchor-link" href="#l20-local-optimizition" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l21-ssa">
+  <summary id="l21-ssa" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L21 ssa</span><a class="anchor-link" href="#l21-ssa" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l22-dataflow-examples">
+  <summary id="l22-dataflow-examples" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L22 dataflow examples</span><a class="anchor-link" href="#l22-dataflow-examples" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l23-liveness">
+  <summary id="l23-liveness" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L23 liveness</span><a class="anchor-link" href="#l23-liveness" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l24-available">
+  <summary id="l24-available" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L24 available</span><a class="anchor-link" href="#l24-available" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l25-llvm101">
+  <summary id="l25-llvm101" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L25 llvm101</span><a class="anchor-link" href="#l25-llvm101" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l26-runtime">
+  <summary id="l26-runtime" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L26 runtime</span><a class="anchor-link" href="#l26-runtime" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l27-code-gen">
+  <summary id="l27-code-gen" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L27 code gen</span><a class="anchor-link" href="#l27-code-gen" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l29-local-reg-alloc">
+  <summary id="l29-local-reg-alloc" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L29 local reg alloc</span><a class="anchor-link" href="#l29-local-reg-alloc" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="l30-global-reg-alloc">
+  <summary id="l30-global-reg-alloc" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">L30 global reg alloc</span><a class="anchor-link" href="#l30-global-reg-alloc" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="doing-b-sfml-rpg">
+  <summary id="doing-b-sfml-rpg" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DOING [#B] 抄个sfml rpg</span><a class="anchor-link" href="#doing-b-sfml-rpg" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="done-sfml-rpg-1113">
+  <summary id="done-sfml-rpg-1113" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE sfml rpg 11–13节</span><a class="anchor-link" href="#done-sfml-rpg-1113" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-sfml-rpg-1416">
+  <summary id="done-sfml-rpg-1416" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE sfml rpg 14–16节</span><a class="anchor-link" href="#done-sfml-rpg-1416" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="done-sfml-rpg-1719">
+  <summary id="done-sfml-rpg-1719" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE sfml rpg 17–19节</span><a class="anchor-link" href="#done-sfml-rpg-1719" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-sfml-rpg-2022">
+  <summary id="todo-sfml-rpg-2022" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO sfml rpg 20–22节</span><a class="anchor-link" href="#todo-sfml-rpg-2022" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-sfml-rpg-2325">
+  <summary id="todo-sfml-rpg-2325" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO sfml rpg 23–25节</span><a class="anchor-link" href="#todo-sfml-rpg-2325" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-sfml-rpg-2628">
+  <summary id="todo-sfml-rpg-2628" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO sfml rpg 26–28节</span><a class="anchor-link" href="#todo-sfml-rpg-2628" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-sfml-rpg-2931">
+  <summary id="todo-sfml-rpg-2931" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO sfml rpg 29–31节</span><a class="anchor-link" href="#todo-sfml-rpg-2931" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-sfml-rpg-3234">
+  <summary id="todo-sfml-rpg-3234" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO sfml rpg 32–34节</span><a class="anchor-link" href="#todo-sfml-rpg-3234" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-sfml-rpg-3537">
+  <summary id="todo-sfml-rpg-3537" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO sfml rpg 35–37节</span><a class="anchor-link" href="#todo-sfml-rpg-3537" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-csep-501-eac-compiler">
+  <summary id="todo-csep-501-eac-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO CSEP 501 (EAC) <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#todo-csep-501-eac-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-a-compiler">
+  <summary id="todo-a-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO [#A] 北大编译课 <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#todo-a-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="a-rust-rust">
+  <summary id="a-rust-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#A] Rust 秘典（死灵书） <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#a-rust-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="a-eac-compiler">
+  <summary id="a-eac-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#A] 学习EAC书的内容 <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#a-eac-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="b-async-book-rust">
+  <summary id="b-async-book-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#B] 阅读async book <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#b-async-book-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html">https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="rust-compiler">
+  <summary id="rust-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">韩国编译课程 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span> <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#rust-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-dc-888-compiler">
+  <summary id="todo-dc-888-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO DC 888 <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#todo-dc-888-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-cse-231-advanced-compiler-compiler-cpp">
+  <summary id="todo-cse-231-advanced-compiler-compiler-cpp" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO CSE 231 advanced compiler <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span> <span class="tag" tag-name="@cpp"><span class="smallcaps">@cpp</span></span></span><a class="anchor-link" href="#todo-cse-231-advanced-compiler-compiler-cpp" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-c-ece459-rust-system">
+  <summary id="todo-c-ece459-rust-system" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO [#C] ece459 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span> <span class="tag" tag-name="@system"><span class="smallcaps">@system</span></span></span><a class="anchor-link" href="#todo-c-ece459-rust-system" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="todo-b-cs110l-rust-system">
+  <summary id="todo-b-cs110l-rust-system" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">TODO [#B] cs110L <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span> <span class="tag" tag-name="@system"><span class="smallcaps">@system</span></span></span><a class="anchor-link" href="#todo-b-cs110l-rust-system" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="c-rust">
+  <summary id="c-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#C] 完成过程宏的几个实验 <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#c-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="b-elisp-emacs">
+  <summary id="b-elisp-emacs" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#B] 学习elisp <span class="tag" tag-name="@emacs"><span class="smallcaps">@emacs</span></span></span><a class="anchor-link" href="#b-elisp-emacs" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="http://smacs.github.io/elisp/12-buffer.html">http://smacs.github.io/elisp/12-buffer.html</a>
+<a href="http://xahlee.info/emacs/emacs/emacs_region.html">http://xahlee.info/emacs/emacs/emacs_region.html</a>
+<a href="https://www.jianshu.com/p/bba1e3149b2b">https://www.jianshu.com/p/bba1e3149b2b</a>
+<a href="https://www.jianshu.com/p/65b271c1dabf">https://www.jianshu.com/p/65b271c1dabf</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="compilerai-compiler">
+  <summary id="compilerai-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">compilerai课程 <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#compilerai-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="c-vulkan-game-engine-series">
+  <summary id="c-vulkan-game-engine-series" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#C] <a href="https://www.youtube.com/playlist?list=PLv8Ddw9K0JPg1BEO-RS-0MYs423cvLVtj">Vulkan Game Engine Series</a></span><a class="anchor-link" href="#c-vulkan-game-engine-series" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="c-mydocker-system">
+  <summary id="c-mydocker-system" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#C] mydocker <span class="tag" tag-name="@system"><span class="smallcaps">@system</span></span></span><a class="anchor-link" href="#c-mydocker-system" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="c">
+  <summary id="c" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">[#C] 每天看一小节陈正康单词课</span><a class="anchor-link" href="#c" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="python-cookbook">
+  <summary id="python-cookbook" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Python Cookbook</span><a class="anchor-link" href="#python-cookbook" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html">https://python3-cookbook.readthedocs.io/zh_CN/latest/index.html</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="mini-perl">
+  <summary id="mini-perl" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">看完mini perl</span><a class="anchor-link" href="#mini-perl" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="appointment">
+  <summary id="appointment" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><em>appointment</em></span><a class="anchor-link" href="#appointment" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>(特定时间才能开始做的)</p>
+  </div>
+</details>
+<details class="section level-1" data-anchor="waiting-for">
+  <summary id="waiting-for" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><em>waiting-for</em></span><a class="anchor-link" href="#waiting-for" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-1" data-anchor="ref">
+  <summary id="ref" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><em>ref</em></span><a class="anchor-link" href="#ref" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="eoc">
+  <summary id="eoc" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">编译器 eoc</span><a class="anchor-link" href="#eoc" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="react-web">
+  <summary id="react-web" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">react + web 开发</span><a class="anchor-link" href="#react-web" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="standford">
+  <summary id="standford" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">standford 网络</span><a class="anchor-link" href="#standford" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>crust tcp/ip</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="cmu-db">
+  <summary id="cmu-db" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">cmu db</span><a class="anchor-link" href="#cmu-db" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>rust db databend</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="os-mit-lab-thu-os-in-rust">
+  <summary id="os-mit-lab-thu-os-in-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">OS mit lab /thu os in rust</span><a class="anchor-link" href="#os-mit-lab-thu-os-in-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="csapp-lab">
+  <summary id="csapp-lab" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">南京大学 & csapp lab</span><a class="anchor-link" href="#csapp-lab" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="youtube-cpp-lab">
+  <summary id="youtube-cpp-lab" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">youtube 静态分析 cpp lab</span><a class="anchor-link" href="#youtube-cpp-lab" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="llvm-compiler">
+  <summary id="llvm-compiler" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">llvm <span class="tag" tag-name="@compiler"><span class="smallcaps">@compiler</span></span></span><a class="anchor-link" href="#llvm-compiler" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://zhqli.com/post/1634083200">https://zhqli.com/post/1634083200</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="httpsvmmdevenrust-rust">
+  <summary id="httpsvmmdevenrust-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><a href="https://vmm.dev/en/rust/">https://vmm.dev/en/rust/</a> <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#httpsvmmdevenrust-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="spinlock">
+  <summary id="spinlock" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">spinlock</span><a class="anchor-link" href="#spinlock" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="data-structures">
+  <summary id="data-structures" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">data structures</span><a class="anchor-link" href="#data-structures" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="build-a-os-system">
+  <summary id="build-a-os-system" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">build a os <span class="tag" tag-name="@system"><span class="smallcaps">@system</span></span></span><a class="anchor-link" href="#build-a-os-system" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://xiayingp.gitbook.io/build_a_os/lock/locking-in-xv6">https://xiayingp.gitbook.io/build_a_os/lock/locking-in-xv6</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="emacs-emacs">
+  <summary id="emacs-emacs" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">emacs文章 <span class="tag" tag-name="@emacs"><span class="smallcaps">@emacs</span></span></span><a class="anchor-link" href="#emacs-emacs" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://segmentfault.com/a/1190000039828140">https://segmentfault.com/a/1190000039828140</a>
+<a href="https://www.jianshu.com/p/65b271c1dabf">https://www.jianshu.com/p/65b271c1dabf</a>
+<a href="https://www.jianshu.com/p/bba1e3149b2b">https://www.jianshu.com/p/bba1e3149b2b</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="org-mode-gtd-emacs">
+  <summary id="org-mode-gtd-emacs" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">org mode gtd <span class="tag" tag-name="@emacs"><span class="smallcaps">@emacs</span></span></span><a class="anchor-link" href="#org-mode-gtd-emacs" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://devalot.com/articles/2008/07/project-planning">https://devalot.com/articles/2008/07/project-planning</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="learn-c-cpp">
+  <summary id="learn-c-cpp" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">learn C++ <span class="tag" tag-name="@cpp"><span class="smallcaps">@cpp</span></span></span><a class="anchor-link" href="#learn-c-cpp" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://www.learncpp.com/cpp-tutorial/dependencies/">https://www.learncpp.com/cpp-tutorial/dependencies/</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="rust-arc-rust">
+  <summary id="rust-arc-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">读懂 Rust 的Arc <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#rust-arc-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://qiita.com/qnighy/items/b3b728adf5e4a3f1a841#%E6%9C%AC%E7%A8%BF%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%88%E3%83%9F%E3%83%83%E3%82%AF%E6%93%8D%E4%BD%9C%E3%81%AE%E5%9B%B3%E7%A4%BA">https://qiita.com/qnighy/items/b3b728adf5e4a3f1a841#%E6%9C%AC%E7%A8%BF%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%88%E3%83%9F%E3%83%83%E3%82%AF%E6%93%8D%E4%BD%9C%E3%81%AE%E5%9B%B3%E7%A4%BA</a>
+还有一本rust atomic书</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="a-guide-to-porting-cc-to-rust-rust-cpp">
+  <summary id="a-guide-to-porting-cc-to-rust-rust-cpp" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">A Guide to Porting C/C++ to Rust <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span> <span class="tag" tag-name="@cpp"><span class="smallcaps">@cpp</span></span></span><a class="anchor-link" href="#a-guide-to-porting-cc-to-rust-rust-cpp" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/">https://locka99.gitbooks.io/a-guide-to-porting-c-to-rust/content/</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="rust-cookbook-rust">
+  <summary id="rust-cookbook-rust" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">rust cookbook <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span></span><a class="anchor-link" href="#rust-cookbook-rust" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://rustwiki.org/zh-CN/rust-cookbook/intro.html">https://rustwiki.org/zh-CN/rust-cookbook/intro.html</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="cs110l-lab-rust-system">
+  <summary id="cs110l-lab-rust-system" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">cs110L lab <span class="tag" tag-name="@rust"><span class="smallcaps">@rust</span></span> <span class="tag" tag-name="@system"><span class="smallcaps">@system</span></span></span><a class="anchor-link" href="#cs110l-lab-rust-system" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://lza852.com/posts/2021-10-19-cs110l-proj2/">https://lza852.com/posts/2021-10-19-cs110l-proj2/</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="opengl-modern">
+  <summary id="opengl-modern" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">opengl modern</span><a class="anchor-link" href="#opengl-modern" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://learnopengl.com/">https://learnopengl.com/</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="c-programming-basic-makefile">
+  <summary id="c-programming-basic-makefile" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">C programming + basic makefile</span><a class="anchor-link" href="#c-programming-basic-makefile" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://www.youtube.com/watch?v=5wzmEKjNqiU&amp;list=PLnpfWqvEvRCchcCM-373x2630drhtdWEw">https://www.youtube.com/watch?v=5wzmEKjNqiU&amp;list=PLnpfWqvEvRCchcCM-373x2630drhtdWEw</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="react">
+  <summary id="react" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">React源码</span><a class="anchor-link" href="#react" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://kasong.gitee.io/just-react/">https://kasong.gitee.io/just-react/</a></p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_8">
+  <summary id="_8" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">职业编曲课</span><a class="anchor-link" href="#_8" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="https://space.bilibili.com/27365679/video?tid=0&amp;page=1&amp;keyword=&amp;order=click">https://space.bilibili.com/27365679/video?tid=0&amp;page=1&amp;keyword=&amp;order=click</a></p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="completed">
+  <summary id="completed" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">completed</span><a class="anchor-link" href="#completed" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><code>C-c C-w</code></p>
+<details class="section level-2" data-anchor="done-org">
+  <summary id="done-org" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE 配置org的番茄钟在界面上显示时间</span><a class="anchor-link" href="#done-org" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="done-b-rust-atomic-video">
+  <summary id="done-b-rust-atomic-video" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE [#B] 看rust atomic video</span><a class="anchor-link" href="#done-b-rust-atomic-video" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-2" data-anchor="done-c-emacs-lisp-get-user-input">
+  <summary id="done-c-emacs-lisp-get-user-input" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">DONE [#C] Emacs Lisp: Get User Input</span><a class="anchor-link" href="#done-c-emacs-lisp-get-user-input" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><a href="http://xahlee.info/emacs/emacs/elisp_idioms_prompting_input.html">http://xahlee.info/emacs/emacs/elisp_idioms_prompting_input.html</a></p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="daily-review">
+  <summary id="daily-review" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Daily Review</span><a class="anchor-link" href="#daily-review" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Headline</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>ALL <strong>Total time</strong></td>
+<td><strong>0:00</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Clock summary at [2022-12-29 四 16:16], for 星期四, 十二月 29, 2022.</p>
+  </div>
+</details>
+<details class="section level-1" data-anchor="weekly-review">
+  <summary id="weekly-review" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Weekly Review</span><a class="anchor-link" href="#weekly-review" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Headline</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>ALL <strong>Total time</strong></td>
+<td><strong>0:00</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Clock summary at [2022-12-29 四 16:16], for week 2022-W52.</p>
+  </div>
+</details>
+<details class="section level-1" data-anchor="monthly-review">
+  <summary id="monthly-review" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Monthly Review</span><a class="anchor-link" href="#monthly-review" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Headline</th>
+<th>Time</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>ALL <strong>Total time</strong></td>
+<td><strong>6:52</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>todo.org</td>
+<td><strong>File time</strong></td>
+<td><strong>6:52</strong></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><strong>project</strong></td>
+<td>2:28</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>\ 抄个sfml rpg</td>
+<td></td>
+<td>2:28</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>\ sfml rpg 11–13节</td>
+<td></td>
+<td></td>
+<td>2:28</td>
+</tr>
+<tr>
+<td></td>
+<td>completed</td>
+<td>4:24</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>\ 配置org的番茄钟在界面上显示时间</td>
+<td></td>
+<td>0:33</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>\ 看rust atomic video</td>
+<td></td>
+<td>3:51</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Clock summary at [2022-12-25 日 11:55], for 十二月 2022.</p>
+  </div>
+</details>
+</article>
+<button class="to-top" aria-label="回到顶部">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
+<script>
+
+(function() {
+  'use strict';
+
+  /* ---------- 阅读进度条 ---------- */
+  const bar = document.querySelector('.progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    bar.style.width = (total > 0 ? h.scrollTop / total * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ---------- 回到顶部 ---------- */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  /* ---------- 全局折叠/展开(单 toggle 按钮) ---------- */
+  const foldBtn = document.querySelector('[data-action="toggle-fold"]');
+  function syncFoldBtnState() {
+    if (!foldBtn) return;
+    const all = document.querySelectorAll('details');
+    if (!all.length) return;
+    const open = Array.from(all).filter(d => d.open).length;
+    const expanded = open >= all.length / 2;
+    foldBtn.dataset.state = expanded ? 'expanded' : 'folded';
+    foldBtn.innerHTML = expanded
+      ? '<span class="chev">▾</span>折叠'
+      : '<span class="chev">▾</span>展开';
+    foldBtn.setAttribute('aria-label', expanded ? '折叠全部' : '展开全部');
+  }
+  if (foldBtn) {
+    foldBtn.addEventListener('click', () => {
+      const all = document.querySelectorAll('details');
+      const open = Array.from(all).filter(d => d.open).length;
+      const expanded = open >= all.length / 2;
+      all.forEach(d => { d.open = !expanded; });
+      syncFoldBtnState();
+    });
+    // 用户手动折叠/展开后,标签也跟着更新
+    document.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', syncFoldBtnState);
+    });
+    syncFoldBtnState();
+  }
+
+  /* ---------- 代码块:包成 .code-block + header(语言徽章 + 复制按钮) ---------- */
+  async function copyCode(text, btn) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '复制'; }, 1500);
+    }
+  }
+
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.closest('.code-block')) return;  // 已包装
+    const code = pre.querySelector('code');
+    let lang = '';
+    if (code) {
+      const m = (code.className || '').match(/language-([\w+-]+)/);
+      if (m) lang = m[1];
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
+
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    header.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>'
+                     + '<span class="code-lang">' + (lang || 'text') + '</span>';
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制代码');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = (code ? code.textContent : pre.textContent) || '';
+      copyCode(text, btn);
+    });
+    header.appendChild(btn);
+
+    pre.parentElement.insertBefore(wrap, pre);
+    wrap.appendChild(header);
+    wrap.appendChild(pre);
+  });
+
+  /* ---------- 锚点自展开(从主页章节链接跳进来时,目标 + 祖先链全展开) ---------- */
+  if (location.hash) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+      let el = target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+      }
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
+      });
+    }
+  }
+
+  /* ---------- org-mode 键盘:Tab / Shift+Tab ---------- */
+  const isHeading = (el) => el && el.matches && el.matches('summary');
+  const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea')) return;
+    const meta = e.metaKey || e.ctrlKey;
+
+    // / 聚焦搜索
+    if (e.key === '/' && !meta) {
+      const s = document.querySelector('input.search');
+      if (s) { e.preventDefault(); s.focus(); return; }
+    }
+
+    // Tab / Shift+Tab 折叠当前聚焦的 summary
+    if (e.key === 'Tab') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        e.preventDefault();
+        const d = f.parentElement;
+        if (e.shiftKey) {
+          // Shift+Tab: 全局折叠/展开所有
+          const all = document.querySelectorAll('details');
+          const allOpen = Array.from(all).every(x => x.open);
+          all.forEach(x => { x.open = !allOpen; });
+        } else {
+          // Tab: 折叠/展开当前节点
+          d.open = !d.open;
+        }
+        return;
+      }
+    }
+
+    // J/K 或 ↓/↑ 跳转标题 — 已移除(行为不一致,容易让用户迷惑)
+
+    // Enter: 在 note-node 上是跟随标题链接;在 section 上是 toggle
+    if (e.key === 'Enter') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        const titleLink = f.querySelector('.title, .heading-text');
+        if (titleLink && titleLink.tagName === 'A') {
+          e.preventDefault();
+          titleLink.click();
+        }
+      }
+    }
+  });
+
+  /* ---------- 点击 caret 只 toggle,不让 summary 的默认 toggle 干扰; 点击 title 跟随链接 ---------- */
+  // 默认浏览器:点 summary 任意位置都会 toggle,点 <a> 会先 toggle 再 navigate。
+  // 我们让 title 链接的 click 阻止冒泡,避免 toggle 副作用(navigate 后虽然看不到,但保证一致性)。
+  document.querySelectorAll('details.note-node > summary > .title').forEach(link => {
+    if (link.tagName !== 'A') return;
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 让浏览器默认行为(navigate)发生
+    });
+  });
+  // caret 点击:默认也会 toggle,不用特殊处理
+
+  /* ---------- 搜索 ---------- */
+  const search = document.querySelector('input.search');
+  if (search && document.body.classList.contains('page-index')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const nodes = document.querySelectorAll('.note-node');
+      nodes.forEach(node => {
+        if (!q) {
+          node.classList.remove('hidden-by-search');
+          node.querySelectorAll('li').forEach(li => li.classList.remove('hidden-by-search'));
+          return;
+        }
+        const nodeText = node.textContent.toLowerCase();
+        if (!nodeText.includes(q)) {
+          node.classList.add('hidden-by-search');
+          return;
+        }
+        node.classList.remove('hidden-by-search');
+        let anyMatch = false;
+        node.querySelectorAll('li').forEach(li => {
+          const t = li.textContent.toLowerCase();
+          if (t.includes(q)) {
+            li.classList.remove('hidden-by-search');
+            anyMatch = true;
+          } else {
+            li.classList.add('hidden-by-search');
+          }
+        });
+        if (anyMatch) node.open = true;
+      });
+    });
+  }
+  if (search && document.body.classList.contains('page-note')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('details.section').forEach(s => {
+        if (!q) { s.style.opacity = ''; return; }
+        const t = s.querySelector('summary').textContent.toLowerCase();
+        s.style.opacity = t.includes(q) ? '1' : '0.3';
+      });
+    });
+  }
+
+  /* ---------- 主页 sidebar 切换 + tag 过滤(Feature 6) ---------- */
+  if (document.body.classList.contains('page-index')) {
+    const sidebarBtn = document.querySelector('[data-action="toggle-sidebar"]');
+    // 默认收起,localStorage 记忆用户选择
+    const KEY = 'md2html:sidebar-open';
+    const initialOpen = (() => {
+      try { return localStorage.getItem(KEY) === '1'; } catch { return false; }
+    })();
+    if (initialOpen) document.body.classList.add('sidebar-open');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {}
+      });
+    }
+    // 点 sidebar 外面关闭(移动端友好)
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      if (window.innerWidth >= 721) return;  // 桌面端不自动关
+      const t = e.target;
+      if (t.closest('.sidebar') || t.closest('.sidebar-btn')) return;
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem(KEY, '0'); } catch {}
+    });
+
+    const tagBtns = document.querySelectorAll('.sidebar .tag-btn');
+    const nodes = document.querySelectorAll('.note-node');
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        tagBtns.forEach(b => b.classList.toggle('active', b === btn));
+        nodes.forEach(n => {
+          const tags = (n.getAttribute('data-tags') || '').split(',').filter(Boolean);
+          const show = filter === 'all'
+                    || (filter === '__none__' && tags.length === 0)
+                    || tags.includes(filter);
+          n.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  /* ---------- KaTeX 数学公式渲染 ----------
+     用 DOMContentLoaded 触发,确保 defer 加载的 katex.js 和 auto-render.js
+     都已执行完毕。 $$ 块级、$ 行内、\(...\)、\[...\] 全支持。 */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMathInElement !== 'function') return;
+    const target = document.body.classList.contains('page-index')
+      ? (document.querySelector('.outline-tree') || document.body)
+      : document.body;
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoredClasses: ['code-block', 'code-header', 'katex']
+      });
+    } catch (e) {
+      console.warn('KaTeX render failed:', e);
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

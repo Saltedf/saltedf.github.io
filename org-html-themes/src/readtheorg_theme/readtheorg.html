@@ -1,0 +1,3070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Overview — Salted的笔记</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
+<style>
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f5f5f7;
+  --bg-inset: #f4f4f5;
+  --bg-toc: #fafbfc;
+
+  --text: #1a1a1f;
+  --text-secondary: #4a4a55;
+  --text-muted: #8a8a95;
+  --text-faint: #c8c8d0;
+  --text-ghost: #e6e6ea;
+
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.07);
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+
+  --border: #ececef;
+  --border-soft: #f2f2f5;
+  --border-strong: #d8d8de;
+
+  --code-bg: #f6f6f8;
+  --code-text: #1a1a1f;
+  --code-border: #e8e8ec;
+
+  --quote-bg: #fafbfc;
+  --quote-border: #d8d8de;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 30, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 30, 0.06), 0 1px 3px rgba(15, 15, 30, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 15, 30, 0.08);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --max-width: 860px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+               "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+main, header, footer, .topbar { position: relative; }
+
+/* ---------- 顶部进度条 ---------- */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width 0.05s linear;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 50;
+}
+
+.topbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.topbar .brand:hover { color: var(--accent); border-bottom: none; }
+.topbar .brand .seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  color: white;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.topbar .spacer { flex: 1; }
+
+.topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
+}
+.topbar button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.topbar button:active {
+  background: var(--bg-inset);
+  transform: scale(0.97);
+}
+.topbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.topbar button.icon {
+  width: 28px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topbar button .chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.topbar button:hover .chev { color: inherit; }
+.topbar button[data-state="folded"] .chev { transform: rotate(-90deg); }
+.topbar button[data-state="expanded"] .chev { transform: rotate(0deg); }
+
+.topbar .search {
+  flex: 0 1 280px;
+  padding: 5px 11px 5px 30px;
+  background: var(--bg-inset) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a95' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>") 9px center/13px no-repeat;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.12s;
+}
+.topbar .search:focus {
+  background-color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.topbar .search::placeholder { color: var(--text-muted); }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 32px 4px;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.hero .title {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92em;
+  margin: 0;
+  line-height: 1.55;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero .stats > div { display: flex; align-items: baseline; gap: 6px; }
+.hero .stats .num {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.hero .stats .label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* ---------- 笔记页文档头 ---------- */
+article {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.back-link {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.back-link:hover { color: var(--accent); border-bottom: none; }
+.doc-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.doc-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.doc-meta .meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.doc-meta .meta-date .meta-label { color: var(--accent); }
+
+/* ---------- 折叠节点 — 树形大纲 ---------- */
+.outline { padding: 0; margin: 0; list-style: none; }
+
+.section {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 行(标题区) */
+.section > summary,
+.node-row {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 0;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary:hover,
+.note-node > summary:hover { background: var(--bg-hover); }
+.section > summary:focus-visible,
+.note-node > summary:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 圆点 — 用虚实表示展开/折叠状态(实心=展开,空心=折叠)*/
+.bullet {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+/* 折叠状态:空心圆 */
+.section > summary > .bullet,
+.note-node > summary > .bullet {
+  background: transparent;
+  border-color: var(--text-muted);
+}
+/* 展开状态:实心圆 */
+.section[open] > summary > .bullet,
+.note-node[open] > summary > .bullet {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.section > summary:hover > .bullet,
+.note-node > summary:hover > .bullet {
+  border-color: var(--accent);
+}
+
+/* 标题文字 */
+.heading-text,
+.note-node > summary > .title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.section > summary:hover > .heading-text,
+.note-node > summary:hover > .title { color: var(--accent); }
+
+.note-node > summary > .title {
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.005em;
+}
+
+/* 锚点链接 */
+.anchor-link {
+  opacity: 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.12s, background 0.12s;
+  border-bottom: none;
+}
+.section > summary:hover > .anchor-link { opacity: 1; }
+.anchor-link:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* 元数据(章节计数等) */
+.row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--bg-inset);
+  border-radius: 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 层级字号 ---------- */
+.section.level-1 > summary { padding: 12px 8px 12px 0; }
+.section.level-1 > summary > .heading-text {
+  font-size: 1.35em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.section.level-1 > summary > .bullet { width: 7px; height: 7px; }
+
+.section.level-2 > summary > .heading-text {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.section.level-2 > summary > .bullet { width: 6px; height: 6px; }
+
+.section.level-3 > summary > .heading-text {
+  font-size: 0.98em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section.level-3 > summary > .bullet { width: 5px; height: 5px; }
+
+.section.level-4 > summary,
+.section.level-5 > summary,
+.section.level-6 > summary { padding: 5px 8px 5px 0; }
+.section.level-4 > summary > .heading-text,
+.section.level-5 > summary > .heading-text,
+.section.level-6 > summary > .heading-text {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.section.level-4 > summary > .bullet,
+.section.level-5 > summary > .bullet,
+.section.level-6 > summary > .bullet { width: 4px; height: 4px; }
+
+/* 缩进 — 层级通过 padding-left */
+/* 层级缩进由 section-body padding-left 统一负责,这里不再额外加 */
+
+/* 标题前缩进对齐 caret+bullet,使内容左边缘整齐 */
+.section > summary {
+  position: relative;
+}
+
+/* 层级缩进:统一通过 section-body 的 padding-left 实现,每嵌套一层 +16px */
+.section-body {
+  padding: 6px 0 14px 16px;
+  margin-left: 0;
+}
+
+/* 折叠动画(用 interpolate-size,现代浏览器支持) */
+@supports (interpolate-size: allow-keywords) {
+  html { interpolate-size: allow-keywords; }
+  .section > .section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
+  }
+  .section:not([open]) > .section-body {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .section-body > * { overflow: hidden; min-height: 0; }
+}
+
+/* ---------- 内容样式 ---------- */
+.section-body > p { margin: 10px 0; }
+.section-body > p:first-child { margin-top: 6px; }
+.section-body > p:last-child { margin-bottom: 4px; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.12s;
+}
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+em, i { font-style: italic; }
+
+ul, ol { margin: 10px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+li > p { margin: 4px 0; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: var(--quote-bg);
+  border-left: 2px solid var(--quote-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.96em;
+}
+blockquote p { margin: 4px 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 0.93em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead { background: var(--bg-soft); }
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92em;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.08s; }
+tbody tr:hover { background: var(--bg-hover); }
+
+/* 行内代码 — 关键修复:无 border,纯净 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  font-feature-settings: "calt" 1, "zero" 1;
+  border: none;
+}
+
+/* 代码块容器 — 用 highlight.js 做高亮 */
+.code-block {
+  margin: 18px 0;
+  background: #f6f8fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 15, 30, 0.04);
+  position: relative;
+}
+.code-block + .code-block { margin-top: 18px; }
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 6px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid #eaecef;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  user-select: none;
+}
+.code-header .dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+.code-header .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e1e4e8;
+}
+.code-lang {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex: 1;
+  text-align: center;
+}
+.code-block pre {
+  display: block;
+  margin: 0;
+  padding: 13px 16px;
+  background: transparent;
+  color: #1f2328;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  word-break: normal;
+  tab-size: 4;
+}
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+}
+.code-block pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #1f2328;
+}
+
+/* 没被包成 .code-block 的裸 pre(理论上不会出现,留个 fallback) */
+pre:not(.code-block pre) {
+  display: block;
+  margin: 14px 0;
+  padding: 13px 16px;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  position: relative;
+}
+
+/* 复制按钮(放在 code-header 里,常驻显示) */
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  line-height: 1.4;
+}
+.code-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.code-copy-btn.copied {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.code-copy-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ---------- 主页:大纲树 ---------- */
+.outline-tree {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 8px 32px 120px;
+}
+
+.note-node {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-node:last-child { border-bottom: none; }
+
+.note-node > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.note-node > summary::-webkit-details-marker { display: none; }
+.note-node > summary > .caret {
+  width: 16px; height: 16px;
+  font-size: 10px;
+}
+.note-node > summary > .bullet {
+  width: 7px; height: 7px;
+}
+.note-node[open] > summary { padding-bottom: 8px; }
+.note-node > summary > .title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.note-node > summary > .desc {
+  flex: 0 1 40%;
+  font-size: 0.84em;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* 章节列表(在主页 note-node 展开时显示) */
+.note-children {
+  padding: 0 0 16px 30px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+.note-children::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 1px;
+  background: var(--border);
+}
+.note-children li { margin: 0; }
+.note-children a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.1s;
+  border-bottom: none;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note-children a::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  background: var(--border);
+}
+.note-children a:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-bottom: none;
+}
+.note-children .lvl-2 { font-weight: 600; color: var(--text); font-size: 14px; }
+.note-children .lvl-3 { padding-left: 26px; }
+.note-children .lvl-4,
+.note-children .lvl-5 { padding-left: 38px; color: var(--text-muted); font-size: 12px; }
+.note-children .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.note-children a:hover .dot { background: var(--accent); }
+
+/* 搜索过滤 */
+.hidden-by-search { display: none !important; }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+  font-size: 16px;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ---------- footer ---------- */
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+}
+footer a {
+  color: var(--link);
+  border-bottom: 1px dotted var(--text-muted);
+}
+footer a:hover { border-bottom-color: var(--accent); }
+footer code { font-size: 11px; }
+
+/* ---------- 快捷键提示 ---------- */
+.kbd-hints { display: none; }  /* 已废弃,保留以防漏改 */
+
+.help-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.help-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 100;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+.help-wrap:hover .help-popover,
+.help-wrap:focus-within .help-popover,
+.help-popover:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.help-row + .help-row { border-top: 1px solid var(--border-soft); }
+.help-row .keys {
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.help-row .desc {
+  flex: 1;
+  color: var(--text);
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+.help-row .dot-demo {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.help-row .link-demo {
+  color: var(--accent);
+  font-weight: 600;
+}
+.help-btn {
+  font-weight: 700;
+}
+.help-btn:hover {
+  color: var(--accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 720px) {
+  body { font-size: 14px; }
+  .hero { padding: 16px 20px 4px; }
+  .hero .title { font-size: 1.7em; }
+  .hero .stats { gap: 20px; flex-wrap: wrap; }
+  article, .outline-tree { padding: 24px 18px 80px; }
+  .section.level-1 > summary > .heading-text { font-size: 1.2em; }
+  .section.level-2 > summary > .heading-text { font-size: 1em; }
+  .note-node > summary > .desc { display: none; }
+  .note-children { padding-left: 22px; }
+  .note-children .lvl-3 { padding-left: 18px; }
+  table { font-size: 0.85em; }
+  th, td { padding: 8px 10px; }
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .topbar .search { flex: 1 1 100%; order: 10; }
+  .kbd-hints { padding: 0 18px 24px; font-size: 11px; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .to-top, .progress-bar, .kbd-hints { display: none; }
+  .section-body { padding-left: 0 !important; }
+  details > .section-body { display: block !important; }
+  .section { padding-left: 0 !important; }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* 代码块水平滚动条更细 */
+.code-block pre::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-block pre::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* ---------- 主页 sidebar(Feature 6) ----------
+   默认收起(sidebar-collapsed),内容居中显示。
+   点 topbar 的 [☰] 按钮(body.sidebar-open)展开。 */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 49px;
+  bottom: 0;
+  width: 220px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-soft);
+  overflow-y: auto;
+  background: var(--bg);
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  box-shadow: none;
+}
+body.page-index.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+/* sidebar 是纯浮层,不挤压 hero / outline-tree,内容始终居中 */
+/* 移动端:sidebar 浮层覆盖,不挤压内容 */
+.sidebar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-btn .icon-bars {
+  display: inline-block;
+  width: 13px;
+  height: 9px;
+  position: relative;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after,
+.sidebar-btn .icon-bars {
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before { top: 0; }
+.sidebar-btn .icon-bars::after { bottom: 0; }
+.sidebar-btn .icon-bars {
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent !important;
+}
+
+.sidebar .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-sans);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar .tag-btn + .tag-btn { margin-top: 2px; }
+.sidebar .tag-btn:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar .tag-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .tag-btn .count {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.sidebar .tag-btn.active .count { color: var(--accent); }
+
+/* 主页 note-node 行的日期 badge(Feature 1) */
+.note-node > summary .row-date {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 数学公式 KaTeX ---------- */
+.katex { font-size: 1.05em; }
+.katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+.katex-display::-webkit-scrollbar { height: 4px; }
+.code-block .katex,
+pre .katex,
+code .katex { display: none; }  /* 代码块里的 $ 不渲染 */
+
+/* ---------- 树形连接(Feature 5) ----------
+   每个嵌套 section 的 ::before 画一段竖线(在父 section-body 的左 padding 里,
+   section 自身坐标 left:-8),::after 画横线连到自己的 bullet。
+   - 非末子:竖线 top:0 bottom:0(贯穿整个 section 高度,接续下一个兄弟)
+   - 末子:竖线只画到 bullet 中线(height: ~36px)形成 └── 拐角
+   竖线在父 section-body 的 padding 区(x=8),正文在 x>=16,两者左右分开,不重叠。
+   顶层 article > section.level-1 同样适用(article 的 padding 充当父 padding)。 */
+.section-body > .section,
+article > .section.level-1 {
+  position: relative;
+}
+.section-body > .section::before,
+article > .section.level-1::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+.section-body > .section:last-child::before,
+article > .section.level-1:last-child::before {
+  bottom: auto;
+  height: 36px;            /* 到 bullet 中线,形成 L 拐角 */
+}
+.section-body > .section::after,
+article > .section.level-1::after {
+  content: '';
+  position: absolute;
+  left: -8px;              /* 从竖线开始 */
+  top: 36px;               /* bullet 中线 */
+  width: 8px;              /* 到 bullet 左边缘(section 自身 x=0)*/
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@media print {
+  .sidebar { display: none; }
+  .section-body > .section::before,
+  .section-body > .section::after,
+  article > .section.level-1::before,
+  article > .section.level-1::after { display: none; }
+}
+
+/* 移动端:sidebar 始终用浮层 */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 280px;
+    max-height: none;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+</style>
+</head>
+<body class="page-note" data-note-id="readtheorg">
+<div class="progress-bar"></div>
+<div class="topbar">
+  <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
+  <span class="spacer"></span>
+  <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
+  <div class="help-wrap">
+    <button class="help-btn icon" aria-label="快捷键">?</button>
+    <div class="help-popover">
+      <div class="help-row"><span class="keys"><kbd>Tab</kbd></span><span class="desc">折叠当前</span></div>
+      <div class="help-row"><span class="keys"><kbd>Shift</kbd>+<kbd>Tab</kbd></span><span class="desc">全局折叠</span></div>
+      <div class="help-row"><span class="keys"><kbd>/</kbd></span><span class="desc">搜索</span></div>
+      <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
+    </div>
+  </div>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
+</div>
+<article>
+  <h1 class="doc-title">Overview</h1>
+  <div class="doc-meta">
+    <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>25</span>
+  </div>
+<p>Get the lowdown on the key pieces of ReadTheOrg's infrastructure,
+including our approach to better HTML export.</p>
+<details class="section level-1" data-anchor="typography">
+  <summary id="typography" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Typography</span><a class="anchor-link" href="#typography" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">@import url("https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700");
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+</code></pre>
+<details class="section level-2" data-anchor="headings">
+  <summary id="headings" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Headings</span><a class="anchor-link" href="#headings" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">h1,h2,h3,h4,h5,h6,legend{
+    font-family:"Roboto Slab","ff-tisa-web-pro","Georgia",Arial,sans-serif;
+    font-weight:700;
+    margin-top:0;
+}
+
+h1{
+    font-size:175%;
+    text-align: left !important;
+    margin-bottom: 0.83em !important;
+}
+
+.subtitle{
+    font-size:95%; /* of h1 */
+}
+
+h2{
+    font-size:150%;
+}
+
+h3{
+    font-size:125%;
+}
+
+h4{
+    font-size:115%;
+}
+
+h5{
+    font-size:110%;
+}
+
+h6{
+    font-size:100%;
+}
+
+h4,h5,h6{
+    color:#2980B9;
+    font-weight:300;
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="body">
+  <summary id="body" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Body</span><a class="anchor-link" href="#body" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">html{
+    -ms-text-size-adjust:100%;
+    -webkit-text-size-adjust:100%;
+    font-size:100%;
+    height:100%;
+    overflow-x:hidden;
+}
+
+body{
+    background:#edf0f2;
+    color:#404040;
+    font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+    font-weight:normal;
+    margin:0;
+    min-height:100%;
+    overflow-x:hidden;
+}
+
+#content{
+    background:#fcfcfc;
+    height:100%;
+    margin-left:300px;
+    /* margin:auto; */
+    max-width:800px;
+    min-height:100%;
+    padding:1.618em 3.236em;
+}
+
+p{
+    font-size:16px;
+    line-height:24px;
+    margin:0px 0px 24px 0px;
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="bold">
+  <summary id="bold" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Bold</span><a class="anchor-link" href="#bold" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">b,strong{
+    font-weight:bold}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="blockquotes">
+  <summary id="blockquotes" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Blockquotes</span><a class="anchor-link" href="#blockquotes" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">blockquote{
+    background-color: #F0F0F0;
+    border-left:5px solid #CCCCCC;
+    font-style:italic;
+    line-height:24px;
+    margin:0px 0px 24px 0px;
+    /* margin-left:24px; */
+    padding: 6px 20px;
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="lists">
+  <summary id="lists" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Lists</span><a class="anchor-link" href="#lists" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">ul,ol,dl{
+    line-height:24px;
+    list-style-image:none;
+    /* list-style:none; */
+    margin:0px 0px 24px 0px;
+    padding:0;
+}
+</code></pre>
+<pre><code class="language-css">li{
+    margin-left: 24px;
+}
+
+dd{
+    margin:0;
+}
+</code></pre>
+<pre><code class="language-css">#content .section ul,#content .toctree-wrapper ul,article ul{
+    list-style:disc;
+    line-height:24px;
+    margin-bottom:24px}
+
+#content .section ul li,#content .toctree-wrapper ul li,article ul li{
+    list-style:disc;
+    margin-left:24px}
+
+#content .section ul li p:last-child,#content .toctree-wrapper ul li p:last-child,article ul li p:last-child{
+                                                                                                                                  margin-bottom:0}
+
+#content .section ul li ul,#content .toctree-wrapper ul li ul,article ul li ul{
+    margin-bottom:0}
+
+#content .section ul li li,#content .toctree-wrapper ul li li,article ul li li{
+    list-style:circle}
+
+#content .section ul li li li,#content .toctree-wrapper ul li li li,article ul li li li{
+    list-style:square}
+
+#content .section ul li ol li,#content .toctree-wrapper ul li ol li,article ul li ol li{
+    list-style:decimal}
+
+#content .section ol,#content ol,article ol{
+    list-style:decimal;
+    line-height:24px;
+    margin-bottom:24px}
+
+#content .section ol li,#content ol li,article ol li{
+    list-style:decimal;
+    margin-left:24px}
+
+#content .section ol li p:last-child,#content ol li p:last-child,article ol li p:last-child{
+                                                                                                                           margin-bottom:0}
+
+#content .section ol li ul,#content ol li ul,article ol li ul{
+    margin-bottom:0}
+
+#content .section ol li ul li,#content ol li ul li,article ol li ul li{
+    list-style:disc}
+</code></pre>
+<details class="section level-3" data-anchor="unordered">
+  <summary id="unordered" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Unordered</span><a class="anchor-link" href="#unordered" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="ordered">
+  <summary id="ordered" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Ordered</span><a class="anchor-link" href="#ordered" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+
+  </div>
+</details>
+<details class="section level-3" data-anchor="description">
+  <summary id="description" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Description</span><a class="anchor-link" href="#description" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">dl dt{
+    font-weight:bold;
+}
+
+dl p,dl table,dl ul,dl ol{
+    margin-bottom:12px !important;
+}
+
+dl dd{
+    margin:0 0 12px 24px;
+}
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="media-queries">
+  <summary id="media-queries" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Media queries</span><a class="anchor-link" href="#media-queries" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">@media print{
+    .codeblock,pre.src{
+        white-space:pre.src-wrap}
+}
+
+@media print{
+    html,body,section{
+        background:none !important}
+
+    *{
+        box-shadow:none !important;
+        text-shadow:none !important;
+        filter:none !important;
+        -ms-filter:none !important}
+
+    a,a:visited{
+          text-decoration:underline}
+
+    pre.src,blockquote{
+        page-break-inside:avoid}
+
+    thead{
+        display:table-header-group}
+
+    tr,img{
+        page-break-inside:avoid}
+
+    img{
+        max-width:100% !important}
+
+    @page{
+        margin:0.5cm}
+
+    p,h2,h3{
+        orphans:3;
+        widows:3}
+
+    h2,h3{
+        page-break-after:avoid}
+}
+
+@media print{
+    #postamble{
+        display:none}
+
+    #content{
+        margin-left:0}
+}
+
+@media print{
+    #table-of-contents{
+        display:none}
+
+    @page{
+        size: auto;
+        margin: 25mm 25mm 25mm 25mm;}
+
+    body {
+        margin: 0px;}
+}
+</code></pre>
+<pre><code class="language-css">@media screen and (max-width: 768px){
+}
+</code></pre>
+<pre><code class="language-css">@media only screen and (max-width: 480px){
+}
+
+@media screen and (max-width: 768px){
+    .tablet-hide{
+        display:none}
+}
+
+@media screen and (max-width: 480px){
+    .mobile-hide{
+        display:none}
+}
+</code></pre>
+<pre><code class="language-css">@media screen and (max-width: 480px){
+}
+</code></pre>
+<pre><code class="language-css">@media screen and (max-width: 768px){
+    #content{
+        margin-left:0}
+
+    #content #content{
+        padding:1.618em}
+
+    #content.shift{
+        position:fixed;
+        min-width:100%;
+        left:85%;
+        top:0;
+        height:100%;
+        overflow:hidden}
+}
+
+@media screen and (min-width: 1400px){
+    #content{
+        background:rgba(0,0,0,0.05)}
+
+    #content{
+        background:#fcfcfc}
+}
+</code></pre>
+<pre><code class="language-css">@media screen and (max-width: 768px){
+    #copyright{
+        width:85%;
+        display:none}
+
+    #copyright.shift{
+        display:block}
+
+    img{
+        width:100%;
+        height:auto}
+}
+</code></pre>
+<pre><code class="language-css">@media screen and (max-width: 480px){
+    #content .sidebar{
+        width:100%}
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="code">
+  <summary id="code" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Code</span><a class="anchor-link" href="#code" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="inline">
+  <summary id="inline" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Inline</span><a class="anchor-link" href="#inline" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">code{
+    background:#fff;
+    border:solid 1px #e1e4e5;
+    /* color:#000;  for clickable code */
+    font-family:Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+    font-size:75%;
+    max-width:100%;
+    overflow-x:auto;
+    padding:0 5px;
+    white-space:nowrap;
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="basic-block">
+  <summary id="basic-block" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Basic block</span><a class="anchor-link" href="#basic-block" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">.codeblock-example{
+    border:1px solid #e1e4e5;
+    border-bottom:none;
+    padding:24px;
+    padding-top:48px;
+    font-weight:500;
+    background:#fff;
+    position:relative}
+
+.codeblock-example:after{
+    content:"Example";
+    position:absolute;
+    top:0px;
+    left:0px;
+    background:#9B59B6;
+    color:#fff;
+    padding:6px 12px}
+
+.codeblock-example.prettyprint-example-only{
+    border:1px solid #e1e4e5;
+    margin-bottom:24px}
+
+.codeblock,pre.src,#content .literal-block{
+    border:1px solid #e1e4e5;
+    padding:12px;
+    overflow-x:auto;
+    background:#fff;
+    margin:1px 0 24px 0}
+
+pre.src{
+    /* color:#404040; */
+    display:block;
+    font-family:Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+    font-size:12px;
+    line-height:1.5;
+    margin:1px 0px 24px 0px;
+    overflow:auto;
+    padding:12px;
+    white-space:pre;
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="sample-output">
+  <summary id="sample-output" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Sample output</span><a class="anchor-link" href="#sample-output" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">.example{
+    background:#f3f6f6;
+    border:1px solid #e1e4e5;
+    color:#404040;
+    font-size: 12px;
+    line-height: 1.5;
+    margin-bottom:24px;
+    padding:12px;
+}
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="tables">
+  <summary id="tables" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Tables</span><a class="anchor-link" href="#tables" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="basic-example">
+  <summary id="basic-example" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Basic example</span><a class="anchor-link" href="#basic-example" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">table{
+    border-collapse:collapse;
+    border-spacing:0;
+    empty-cells:show;
+    margin-bottom:24px;
+    border-bottom:1px solid #e1e4e5;
+}
+
+td{
+    vertical-align:top}
+
+table td,table th{
+    font-size:90%;
+    margin:0;
+    overflow:visible;
+    padding:8px 16px;
+    background-color:white;
+    border:1px solid #e1e4e5;
+}
+
+table thead th{
+    font-weight:bold;
+    border-top:3px solid #e1e4e5;
+    border-bottom:1px solid #e1e4e5;
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="optional-table-caption">
+  <summary id="optional-table-caption" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Optional table caption</span><a class="anchor-link" href="#optional-table-caption" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">table caption{
+    color:#000;
+    font:italic 85%/1 arial,sans-serif;
+    padding:1em 0;
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-2" data-anchor="striped-rows">
+  <summary id="striped-rows" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Striped rows</span><a class="anchor-link" href="#striped-rows" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">table tr:nth-child(2n-1) td{
+    background-color:#f3f6f6;
+}
+
+table tr:nth-child(2n) td{
+    background-color:white;
+}
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="images">
+  <summary id="images" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Images</span><a class="anchor-link" href="#images" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="optional-image-caption">
+  <summary id="optional-image-caption" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Optional image caption</span><a class="anchor-link" href="#optional-image-caption" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">.figure p{
+    color:#000;
+    font:italic 85%/1 arial,sans-serif;
+    padding:1em 0;
+}
+</code></pre>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="helper-classes">
+  <summary id="helper-classes" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Helper classes</span><a class="anchor-link" href="#helper-classes" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">.rotate-90{
+    -webkit-transform:rotate(90deg);
+    -moz-transform:rotate(90deg);
+    -ms-transform:rotate(90deg);
+    -o-transform:rotate(90deg);
+    transform:rotate(90deg);
+}
+
+.rotate-270{
+    -webkit-transform:rotate(270deg);
+    -moz-transform:rotate(270deg);
+    -ms-transform:rotate(270deg);
+    -o-transform:rotate(270deg);
+    transform:rotate(270deg);
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="responsive-utilities">
+  <summary id="responsive-utilities" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Responsive utilities</span><a class="anchor-link" href="#responsive-utilities" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>Responsive for sidebar:</p>
+<pre><code class="language-css">#toggle-sidebar,
+#table-of-contents .close-sidebar {
+    display: none;
+}
+
+@media screen and (max-width: 768px) {
+    #table-of-contents {
+        display: none;
+        width: 60%;
+    }
+
+    #table-of-contents h2 a {
+        display: block;
+    }
+
+    #table-of-contents:target {
+        display: block;
+    }
+
+    #copyright, #postamble {
+        display: none;
+    }
+
+    #toggle-sidebar {
+        display: block;
+        margin-bottom: 1.6em;
+        padding: 0.6em;
+        text-align: center;
+    }
+
+    #toggle-sidebar h2 {
+        background-color:#2980B9;
+        width:100%;
+        height:50px;
+        left:0;
+        top:0;
+        color: white;
+        font-size: 100%;
+        line-height: 50px;
+        position:fixed;
+        margin: 0;
+        padding: 0;
+        opacity:0.7;
+        z-index: 10;
+    }
+
+    #table-of-contents .close-sidebar {
+       color: rgba(255, 255, 255, 0.3);
+       display: inline-block;
+       margin: 0px 10px 0px 45px;
+       padding: 10px;
+    }
+}
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="css">
+  <summary id="css" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">CSS</span><a class="anchor-link" href="#css" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">*{
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+figcaption,figure,footer,header,hgroup,nav{
+    display:block}
+</code></pre>
+<pre><code class="language-css">ins{
+    background:#ff9;
+    color:#000;
+    text-decoration:none}
+
+mark{
+    background:#ff0;
+    color:#000;
+    font-style:italic;
+    font-weight:bold}
+</code></pre>
+<pre><code class="language-css">small{
+    font-size:85%}
+
+sub,sup{
+    font-size:75%;
+    line-height:0;
+    position:relative;
+    vertical-align:baseline}
+
+sup{
+    top:-0.5em}
+
+sub{
+    bottom:-0.25em}
+</code></pre>
+<pre><code class="language-css">img{
+    -ms-interpolation-mode:bicubic;
+    vertical-align:middle;
+    max-width:100%}
+
+svg:not(:root){
+    overflow:hidden}
+
+figure{
+    margin:0}
+
+label{
+    cursor:pointer}
+
+legend{
+    border:0;
+    margin-left:-7px;
+    padding:0;
+    white-space:normal}
+</code></pre>
+<pre><code class="language-css">.fa:before,#content .admonition-title:before,#content h1 .headerlink:before,#content h2 .headerlink:before,#content h3 .headerlink:before,#content h4 .headerlink:before,#content h5 .headerlink:before,#content h6 .headerlink:before,#content dl dt .headerlink:before,.icon:before,.wy-dropdown .caret:before,.wy-inline-validate.wy-inline-validate-success .wy-input-context:before,.wy-inline-validate.wy-inline-validate-danger .wy-input-context:before,.wy-inline-validate.wy-inline-validate-warning .wy-input-context:before,.wy-inline-validate.wy-inline-validate-info .wy-input-context:before,.wy-alert,#content .note,#content .attention,#content .caution,#content .danger,#content .error,#content .hint,#content .important,#content .tip,#content .warning,#content .seealso,#content .admonitiontodo,.btn,input[type="text"],input[type="password"],input[type="email"],input[type="url"],input[type="date"],input[type="month"],input[type="time"],input[type="datetime"],input[type="datetime-local"],input[type="week"],input[type="number"],input[type="search"],input[type="tel"],input[type="color"],select,textarea,#table-of-contents li.on a,#table-of-contents li.current&gt;a,.wy-side-nav-search&gt;a,.wy-side-nav-search .wy-dropdown&gt;a,.wy-nav-top a{
+    -webkit-font-smoothing:antialiased}
+
+/*!
+ *  Font Awesome 4.1.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
+ */@font-face{
+    font-family:'FontAwesome';
+    src:url("../fonts/fontawesome-webfont.eot?v=4.1.0");
+    src:url("../fonts/fontawesome-webfont.eot?#iefix&amp;v=4.1.0") format("embedded-opentype"),url("../fonts/fontawesome-webfont.woff?v=4.1.0") format("woff"),url("../fonts/fontawesome-webfont.ttf?v=4.1.0") format("truetype"),url("../fonts/fontawesome-webfont.svg?v=4.1.0#fontawesomeregular") format("svg");
+    font-weight:normal;
+    font-style:normal}
+
+.fa,#content .admonition-title,.icon{
+    display:inline-block;
+    font-family:FontAwesome;
+    font-style:normal;
+    font-weight:normal;
+    line-height:1;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale}
+
+.fa-ul{
+    padding-left:0;
+    margin-left:2.14286em;
+    list-style-type:none}
+
+.fa-ul&gt;li{
+    position:relative}
+
+.fa-li{
+    position:absolute;
+    left:-2.14286em;
+    width:2.14286em;
+    top:0.14286em;
+    text-align:center}
+
+.fa-li.fa-lg{
+    left:-1.85714em}
+
+.fa-border{
+    padding:.2em .25em .15em;
+    border:solid 0.08em #eee;
+    border-radius:.1em}
+
+.fa,#content .admonition-title{
+    font-family:inherit}
+
+.fa:before,#content .admonition-title:before{
+    font-family:"FontAwesome";
+    display:inline-block;
+    font-style:normal;
+    font-weight:normal;
+    line-height:1;
+    text-decoration:inherit}
+
+a .fa,a #content .admonition-title,#content a .admonition-title{
+    display:inline-block;
+    text-decoration:inherit}
+
+.nav #content .admonition-title,#content .nav .admonition-title,.nav .icon{
+    display:inline}
+
+.wy-alert,#content .note,#content .attention,#content .caution,#content .danger,#content .error,#content .hint,#content .important,#content .tip,#content .warning,#content .seealso,#content .admonitiontodo{
+    padding:12px;
+    line-height:24px;
+    margin-bottom:24px;
+    /* background:#e7f2fa; */
+}
+
+.wy-alert-title,#content .admonition-title{
+    color:#fff;
+    font-weight:bold;
+    display:block;
+    color:#fff;
+    /* background:#6ab0de; */
+    /* margin:-12px; */
+    padding:6px 12px;
+    margin-bottom:0px}
+
+#content .danger,#content .error{
+    background:#fdf3f2}
+
+.wy-alert.wy-alert-warning,#content .wy-alert-warning.note,#content .attention,#content .caution,#content .wy-alert-warning.danger,#content .wy-alert-warning.error,#content .wy-alert-warning.hint,#content .wy-alert-warning.important,#content .wy-alert-warning.tip,#content .warning,#content .wy-alert-warning.seealso,#content .admonitiontodo{
+    background:#ffedcc}
+
+#content .admonition-title.note:before, #content .admonition-title.seealso:before,
+#content .admonition-title.warning:before, #content .admonition-title.caution:before,
+#content .admonition-title.attention:before,
+#content .admonition-title.tip:before, #content .admonition-title.hint:before,
+#content .admonition-title.important:before,
+#content .admonition-title.error:before, #content .admonition-title.danger:before{
+    font-family:FontAwesome;
+    content: "";}
+
+#content .note,#content .seealso{
+    background:#e7f2fa}
+
+.wy-alert p:last-child,#content .note p:last-child,#content .attention p:last-child,#content .caution p:last-child,#content .danger p:last-child,#content .error p:last-child,#content .hint p:last-child,#content .important p:last-child,#content .tip p:last-child,#content .warning p:last-child,#content .seealso p:last-child,#content .admonitiontodo p:last-child{
+    margin-bottom:0}
+
+#content .admonition-title.tip,#content .admonition-title.important,#content .admonition-title.hint{
+    line-height: 1;
+    background:#1abc9c}
+
+#content .important,#content .tip,#content .hint{
+    background:#dbfaf4}
+
+#content .admonition-title.note,#content .admonition-title.seealso{
+    line-height: 1;
+    background:#6ab0de}
+
+#content .admonition-title.warning,#content .admonition-title.caution,#content .admonition-title.attention{
+    line-height: 1;
+    background:#F0B37E}
+
+#content .admonition-title.error,#content .admonition-title.danger{
+    line-height: 1;
+    background:#f29f97}
+</code></pre>
+<pre><code class="language-css">legend{
+    display:block;
+    width:100%;
+    border:0;
+    padding:0;
+    white-space:normal;
+    margin-bottom:24px;
+    font-size:150%;
+    *margin-left:-7px}
+
+label{
+    display:block;
+    margin:0 0 0.3125em 0;
+    color:#333;
+    font-size:90%}
+</code></pre>
+<pre><code class="language-css">a{
+    color:#2980B9;
+    text-decoration:none;
+    cursor:pointer}
+
+
+a:hover,a:active{
+    outline:0;
+}
+
+a:hover{
+    color:#3091d1}
+
+a:visited{
+    color:#9B59B6}
+</code></pre>
+<pre><code class="language-css">.left{
+    text-align:left}
+
+.center{
+    text-align:center}
+
+.right{
+    text-align:right}
+</code></pre>
+<pre><code class="language-css">hr{
+    display:block;
+    height:1px;
+    border:0;
+    border-top:1px solid #e1e4e5;
+    margin:24px 0;
+    padding:0}
+</code></pre>
+<pre><code class="language-css">#table-of-contents li{
+    list-style:none;
+    margin-left: 0px;
+}
+
+#table-of-contents header{
+    height:32px;
+    display:inline-block;
+    line-height:32px;
+    padding:0 1.618em;
+    display:block;
+    font-weight:bold;
+    text-transform:uppercase;
+    font-size:80%;
+    color:#2980B9;
+    white-space:nowrap}
+
+#table-of-contents ul{
+    margin-bottom:0}
+
+#table-of-contents li.divide-top{
+    border-top:solid 1px #404040}
+
+#table-of-contents li.divide-bottom{
+    border-bottom:solid 1px #404040}
+
+#table-of-contents li.current{
+    background:#e3e3e3}
+
+#table-of-contents li.current a{
+    color:gray;
+    border-right:solid 1px #c9c9c9;
+    padding:0.4045em 2.427em}
+
+#table-of-contents li.current a:hover{
+    background:#d6d6d6}
+
+#table-of-contents li a{
+    /* color:#404040; */
+    padding:0.4045em 1.618em;
+    position:relative;
+    /* background:#fcfcfc; */
+    border:none;
+    /* border-bottom:solid 1px #c9c9c9; */
+    /* border-top:solid 1px #c9c9c9; */
+    padding-left:1.618em -4px}
+
+#table-of-contents li.on a:hover,#table-of-contents li.current&gt;a:hover{
+    background:#fcfcfc}
+
+#table-of-contents li ul li a{
+    /* background:#c9c9c9; */
+    padding:0.4045em 2.427em}
+
+#table-of-contents li ul li ul li a{
+    padding:0.4045em 3.236em}
+
+#table-of-contents li.current ul{
+    display:block}
+
+/* #table-of-contents li ul{ */
+/*     margin-bottom:0; */
+/*     display:none} */
+
+#table-of-contents .local-toc li ul{
+    display:block}
+
+#table-of-contents li ul li a{
+    margin-bottom:0;
+    color:#b3b3b3;
+    font-weight:normal}
+
+#table-of-contents a{
+    display:inline-block;
+    line-height:18px;
+    padding:0.4045em 1.618em;
+    display:block;
+    position:relative;
+    font-size:90%;
+    color:#b3b3b3;
+    direction: ltr;
+}
+
+#table-of-contents a:hover{
+    color: #ffffff !important;
+    background-color:#4e4a4a;
+    cursor:pointer}
+
+/* #text-table-of-contents { */
+/*     overflow:scroll; */
+/* } */
+
+#table-of-contents{
+    position:fixed;
+    top:0;
+    left:0;
+    width:300px;
+    overflow-x:hidden;
+    overflow-y:scroll;
+    height:100%;
+    background:#343131;
+    z-index:200;
+    scrollbar-base-color: #1F1D1D;
+    scrollbar-arrow-color: #b3b3b3;
+    scrollbar-shadow-color: #1F1D1D;
+    scrollbar-track-color : #343131;
+}
+
+#table-of-contents h2{
+    z-index:200;
+    background-color:#2980B9;
+    text-align:center;
+    padding:0.809em;
+    display:block;
+    color:#fcfcfc;
+    font-size: 100%;
+    margin-bottom:0.809em}
+</code></pre>
+<pre><code class="language-css">ul.nav &gt; li ul {
+    display: none;
+}
+
+li.active {
+    background-color: #e3e3e3;
+}
+
+li.active&gt;a {
+    color: black !important;
+}
+
+ul.nav&gt;li.active a {
+    color: #404040 !important;
+}
+
+ul.nav&gt;li.active li.active {
+    background-color: #c9c9c9;
+}
+
+ul.nav&gt;li.active li.active&gt;a {
+    color: black !important;
+    border-right:solid 1px #c9c9c9 !important;
+    font-weight: bold !important;
+    display: block !important;
+}
+
+ul.nav&gt;li.active&gt;a {
+    background-color: #fcfcfc;
+    color: black !important;
+    border-bottom:solid 1px #c9c9c9 !important; /* XXX Restrict it to 2nd level */
+    border-right:solid 1px #c9c9c9 !important;
+    font-weight: bold !important;
+    display: block !important;
+}
+
+li.active&gt;ul {
+    display: inline !important;
+}
+/* ul.nav li ul li { */
+/*     display: none; */
+/* } */
+
+/* ul.nav li ul li ul li { */
+/*     display: none; */
+/* } */
+
+/* ul.nav li.active ul li { */
+/*     display: inline; */
+/* } */
+
+/* ul.nav li.active ul li ul li { */
+/*     display: inline; */
+/* } */
+
+/* ul.nav li.active ul li a { */
+/*     background-color: #E3E3E3; */
+/*     color: #8099B0; */
+/*     border-right:solid 1px #c9c9c9 !important; */
+/* } */
+
+/* ul.nav li.active ul li.active a { */
+/*     background-color: #C9C9C9; */
+/*     color: black !important; */
+/*     font-weight: bold !important; */
+/* } */
+
+/* ul.nav li.active ul li.active ul li.active a { */
+    /* color: black !important; */
+    /* font-weight: bold !important; */
+    /* display: block !important; */
+/* } */
+
+/* ul.nav li.active ul li.active ul li a { */
+/*     color: #808080 !important; */
+/*     font-weight: normal !important; */
+/*     display: block !important; */
+/* } */
+
+/* ul.nav li.active ul li ul li a { */
+/*     display: none !important; */
+/* } */
+
+/* ul.nav li ul li ul li { */
+/*     display: none !important; /\* as long as nav is on multiple levels of ul *\/ */
+/*     /\* display: none; /\* as long as nav is on multiple levels of ul *\\/ *\/ */
+/* } */
+
+/* ul.nav li ul li ul li ul li { */
+/*     display: none !important; /\* as long as nav is on multiple levels of ul *\/ */
+/*     /\* display: none; /\* as long as nav is on multiple levels of ul *\\/ *\/ */
+/* } */
+
+/* ul.nav li.active &gt; a { */
+    /* border-bottom:solid 1px #c9c9c9 !important; /\* XXX Restrict it to 2nd level *\/ */
+    /* border-right:solid 1px #c9c9c9 !important; */
+/* } */
+
+/* ul.nav li.active a { */
+/*     color: gray !important; */
+/*     font-weight:bold; */
+/*     background-color: white; */
+/*     border-right:solid 0px white !important; */
+/* } */
+
+/* ul.nav &gt; li.active &gt; a { */
+/*     color: black !important; */
+/* } */
+</code></pre>
+<pre><code class="language-css">footer{
+    color:#999}
+
+footer p{
+    margin-bottom:12px}
+</code></pre>
+<pre><code class="language-css">#copyright, #postamble{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:300px;
+    color:#fcfcfc;
+    background:#1f1d1d;
+    border-top:solid 10px #343131;
+    font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+    font-size: 90%;
+    z-index:400;
+    padding:12px;
+}
+
+#postamble .author {
+    font-size: 100%;
+    margin-bottom: 0px;
+}
+
+#postamble .date {
+    font-size: 90%;
+    margin-bottom: 0px;
+    color: #27AE60;
+}
+
+#postamble .creator,#postamble .validation {
+    display:none;
+}
+
+#copyright a{
+    color:#2980B9;
+    text-decoration:none}
+
+#copyright .rst-current-version{
+    padding:12px;
+    background-color:#272525;
+    display:block;
+    text-align:right;
+    font-size:90%;
+    cursor:pointer;
+    color:#27AE60;
+    *zoom:1}
+</code></pre>
+<pre><code class="language-css">#content img{
+    max-width:100%;
+}
+
+#content div.figure{
+    margin-bottom:24px}
+
+#content div.figure.align-center{
+    text-align:center}
+
+#content .section&gt;img,#content .section&gt;a&gt;img{
+    margin-bottom:24px}
+
+.verse{
+    border-left:5px solid #6AB0DE;
+    background-color: #E7F2FA;
+    padding: 6px 20px;
+    font-style:italic;
+}
+
+#content .note .last,#content .attention .last,#content .caution .last,#content .danger .last,#content .error .last,#content .hint .last,#content .important .last,#content .tip .last,#content .warning .last,#content .seealso .last,#content .admonitiontodo .last{
+    margin-bottom:0}
+
+#content .admonition-title:before{
+    margin-right:4px}
+
+#content .section ol p,#content .section ul p{
+    margin-bottom:12px}
+
+#content h1 .headerlink,#content h2 .headerlink,#content h3 .headerlink,#content h4 .headerlink,#content h5 .headerlink,#content h6 .headerlink,#content dl dt .headerlink{
+    display:none;
+    visibility:hidden;
+    font-size:14px}
+
+#content h1 .headerlink:after,#content h2 .headerlink:after,#content h3 .headerlink:after,#content h4 .headerlink:after,#content h5 .headerlink:after,#content h6 .headerlink:after,#content dl dt .headerlink:after{
+    visibility:visible;
+    content:"";
+    font-family:FontAwesome;
+    display:inline-block}
+
+#content h1:hover .headerlink,#content h2:hover .headerlink,#content h3:hover .headerlink,#content h4:hover .headerlink,#content h5:hover .headerlink,#content h6:hover .headerlink,#content dl dt:hover .headerlink{
+    display:inline-block}
+
+#content .sidebar{
+    float:right;
+    width:40%;
+    display:block;
+    margin:0 0 24px 24px;
+    padding:24px;
+    background:#f3f6f6;
+    border:solid 1px #e1e4e5}
+
+#content .sidebar p,#content .sidebar ul,#content .sidebar dl{
+    font-size:90%}
+
+#content .sidebar .last{
+    margin-bottom:0}
+
+#content .sidebar .sidebar-title{
+    display:block;
+    font-family:"Roboto Slab","ff-tisa-web-pro","Georgia",Arial,sans-serif;
+    font-weight:bold;
+    background:#e1e4e5;
+    padding:6px 12px;
+    margin:-24px;
+    margin-bottom:24px;
+    font-size:100%}
+
+#content .highlighted{
+    background:#F1C40F;
+    display:inline-block;
+    font-weight:bold;
+    padding:0 6px}
+
+#content .footnote-reference,#content .citation-reference{
+    vertical-align:super;
+    font-size:90%}
+</code></pre>
+<pre><code class="language-css">span[id*='MathJax-Span']{
+    color:#404040}
+
+.math{
+    text-align:center}
+
+#footnotes{
+    border-top:1px solid #e1e4e5;
+    padding-top: 36px;
+}
+
+h2.footnotes{
+    display:none;
+}
+
+.footnum, .footref{
+    color: #2980b9;
+    font-size: 90%;
+    font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+}
+
+.footnum:before, .footref:before{
+    content:"[";
+}
+
+.footnum:after, .footref:after{
+    content:"]";
+}
+
+.footpara {
+    color: #999;
+    font-size: 90%;
+    font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+    padding-bottom: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    line-height: 1.25em;
+    /* display: inline; */
+}
+</code></pre>
+<pre><code class="language-css">.todo{
+    background-color: #f29f97;
+    padding: 0px 4px;
+    color: #fff;
+}
+
+.WAIT, .nilWAIT{
+    background-color: #6AB097;
+}
+
+.done{
+    background-color: #6ab0de;
+    padding: 0px 4px;
+    color: #fff;
+}
+
+.tag span {
+    background-color: #EDEDED;
+    border: 1px solid #EDEDED;
+    color: #939393;
+    cursor: pointer;
+    display: block;
+    float: right;
+    font-size: 80%;
+    font-weight: normal;
+    margin: 0 3px;
+    padding: 1px 2px;
+    border-radius: 10px;
+}
+
+.tag .FLAGGED {
+    background-color: #DB2D27;
+    border: 1px solid #DB2D27;
+    color: white;
+    font-weight: bold;
+}
+
+.timestamp {
+    font-family: Consolas,"Andale Mono WT","Andale Mono","Lucida Console","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
+    font-size: 90%;
+    color: navy;
+}
+
+.nav .timestamp {
+    color: inherit;
+}
+</code></pre>
+<p>See
+<a href="http://stackoverflow.com/questions/10535432/tmux-man-page-search-highlighting">http://stackoverflow.com/questions/10535432/tmux-man-page-search-highlighting</a>
+for nice yellow or orange boxes.</p>
+<pre><code class="language-css">.inlinetask {
+    background: #FFF9E3;  /* url(dialog-todo.png) no-repeat 10px 8px; */
+    border: 3px solid #FFEB8E;
+    /* border-right-style: none; */
+    /* border-left-style: none; */
+    /* padding: 10px 20px 10px 60px; */
+    padding: 9px 12px;
+    margin-bottom: 24px;
+    font-family:"Roboto Slab","ff-tisa-web-pro","Georgia",Arial,sans-serif}
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="htmlize">
+  <summary id="htmlize" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Htmlize</span><a class="anchor-link" href="#htmlize" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-css">.org-bold { /* bold */ font-weight: bold; }
+.org-bold-italic { /* bold-italic */ font-weight: bold; font-style: italic; }
+.org-buffer-menu-buffer { /* buffer-menu-buffer */ font-weight: bold; }
+.org-builtin { /* font-lock-builtin-face */ color: #7a378b; }
+.org-button { /* button */ text-decoration: underline; }
+.org-calendar-today { /* calendar-today */ text-decoration: underline; }
+.org-change-log-acknowledgement { /* change-log-acknowledgement */ color: #b22222; }
+.org-change-log-conditionals { /* change-log-conditionals */ color: #a0522d; }
+.org-change-log-date { /* change-log-date */ color: #8b2252; }
+.org-change-log-email { /* change-log-email */ color: #a0522d; }
+.org-change-log-file { /* change-log-file */ color: #0000ff; }
+.org-change-log-function { /* change-log-function */ color: #a0522d; }
+.org-change-log-list { /* change-log-list */ color: #a020f0; }
+.org-change-log-name { /* change-log-name */ color: #008b8b; }
+.org-comint-highlight-input { /* comint-highlight-input */ font-weight: bold; }
+.org-comint-highlight-prompt { /* comint-highlight-prompt */ color: #00008b; }
+.org-comment { /* font-lock-comment-face */ color: #999988; font-style: italic; }
+.org-comment-delimiter { /* font-lock-comment-delimiter-face */ color: #999988; font-style: italic; }
+.org-completions-annotations { /* completions-annotations */ font-style: italic; }
+.org-completions-common-part { /* completions-common-part */ color: #000000; background-color: #ffffff; }
+.org-completions-first-difference { /* completions-first-difference */ font-weight: bold; }
+.org-constant { /* font-lock-constant-face */ color: #008b8b; }
+.org-diary { /* diary */ color: #ff0000; }
+.org-diff-context { /* diff-context */ color: #7f7f7f; }
+.org-diff-file-header { /* diff-file-header */ background-color: #b3b3b3; font-weight: bold; }
+.org-diff-function { /* diff-function */ background-color: #cccccc; }
+.org-diff-header { /* diff-header */ background-color: #cccccc; }
+.org-diff-hunk-header { /* diff-hunk-header */ background-color: #cccccc; }
+.org-diff-index { /* diff-index */ background-color: #b3b3b3; font-weight: bold; }
+.org-diff-nonexistent { /* diff-nonexistent */ background-color: #b3b3b3; font-weight: bold; }
+.org-diff-refine-change { /* diff-refine-change */ background-color: #d9d9d9; }
+.org-dired-directory { /* dired-directory */ color: #0000ff; }
+.org-dired-flagged { /* dired-flagged */ color: #ff0000; font-weight: bold; }
+.org-dired-header { /* dired-header */ color: #228b22; }
+.org-dired-ignored { /* dired-ignored */ color: #7f7f7f; }
+.org-dired-mark { /* dired-mark */ color: #008b8b; }
+.org-dired-marked { /* dired-marked */ color: #ff0000; font-weight: bold; }
+.org-dired-perm-write { /* dired-perm-write */ color: #b22222; }
+.org-dired-symlink { /* dired-symlink */ color: #a020f0; }
+.org-dired-warning { /* dired-warning */ color: #ff0000; font-weight: bold; }
+.org-doc { /* font-lock-doc-face */ color: #8b2252; }
+.org-escape-glyph { /* escape-glyph */ color: #a52a2a; }
+.org-file-name-shadow { /* file-name-shadow */ color: #7f7f7f; }
+.org-flyspell-duplicate { /* flyspell-duplicate */ color: #cdad00; font-weight: bold; text-decoration: underline; }
+.org-flyspell-incorrect { /* flyspell-incorrect */ color: #ff4500; font-weight: bold; text-decoration: underline; }
+.org-fringe { /* fringe */ background-color: #f2f2f2; }
+.org-function-name { /* font-lock-function-name-face */ color: teal; }
+.org-header-line { /* header-line */ color: #333333; background-color: #e5e5e5; }
+.org-help-argument-name { /* help-argument-name */ font-style: italic; }
+.org-highlight { /* highlight */ background-color: #b4eeb4; }
+.org-holiday { /* holiday */ background-color: #ffc0cb; }
+.org-isearch { /* isearch */ color: #b0e2ff; background-color: #cd00cd; }
+.org-isearch-fail { /* isearch-fail */ background-color: #ffc1c1; }
+.org-italic { /* italic */ font-style: italic; }
+.org-keyword { /* font-lock-keyword-face */ color: #0086b3; }
+.org-lazy-highlight { /* lazy-highlight */ background-color: #afeeee; }
+.org-link { /* link */ color: #0000ff; text-decoration: underline; }
+.org-link-visited { /* link-visited */ color: #8b008b; text-decoration: underline; }
+.org-log-edit-header { /* log-edit-header */ color: #a020f0; }
+.org-log-edit-summary { /* log-edit-summary */ color: #0000ff; }
+.org-log-edit-unknown-header { /* log-edit-unknown-header */ color: #b22222; }
+.org-match { /* match */ background-color: #ffff00; }
+.org-next-error { /* next-error */ background-color: #eedc82; }
+.org-nobreak-space { /* nobreak-space */ color: #a52a2a; text-decoration: underline; }
+.org-org-archived { /* org-archived */ color: #7f7f7f; }
+.org-org-block { /* org-block */ color: #7f7f7f; }
+.org-org-block-begin-line { /* org-block-begin-line */ color: #b22222; }
+.org-org-block-end-line { /* org-block-end-line */ color: #b22222; }
+.org-org-checkbox { /* org-checkbox */ font-weight: bold; }
+.org-org-checkbox-statistics-done { /* org-checkbox-statistics-done */ color: #228b22; font-weight: bold; }
+.org-org-checkbox-statistics-todo { /* org-checkbox-statistics-todo */ color: #ff0000; font-weight: bold; }
+.org-org-clock-overlay { /* org-clock-overlay */ background-color: #ffff00; }
+.org-org-code { /* org-code */ color: #7f7f7f; }
+.org-org-column { /* org-column */ background-color: #e5e5e5; }
+.org-org-column-title { /* org-column-title */ background-color: #e5e5e5; font-weight: bold; text-decoration: underline; }
+.org-org-date { /* org-date */ color: #a020f0; text-decoration: underline; }
+.org-org-document-info { /* org-document-info */ color: #191970; }
+.org-org-document-info-keyword { /* org-document-info-keyword */ color: #7f7f7f; }
+.org-org-document-title { /* org-document-title */ color: #191970; font-size: 144%; font-weight: bold; }
+.org-org-done { /* org-done */ color: #228b22; font-weight: bold; }
+.org-org-drawer { /* org-drawer */ color: #0000ff; }
+.org-org-ellipsis { /* org-ellipsis */ color: #b8860b; text-decoration: underline; }
+.org-org-footnote { /* org-footnote */ color: #a020f0; text-decoration: underline; }
+.org-org-formula { /* org-formula */ color: #b22222; }
+.org-org-headline-done { /* org-headline-done */ color: #bc8f8f; }
+.org-org-hide { /* org-hide */ color: #ffffff; }
+.org-org-latex-and-export-specials { /* org-latex-and-export-specials */ color: #8b4513; }
+.org-org-level-1 { /* org-level-1 */ color: #0000ff; }
+.org-org-level-2 { /* org-level-2 */ color: #a0522d; }
+.org-org-level-3 { /* org-level-3 */ color: #a020f0; }
+.org-org-level-4 { /* org-level-4 */ color: #b22222; }
+.org-org-level-5 { /* org-level-5 */ color: #228b22; }
+.org-org-level-6 { /* org-level-6 */ color: #008b8b; }
+.org-org-level-7 { /* org-level-7 */ color: #7a378b; }
+.org-org-level-8 { /* org-level-8 */ color: #8b2252; }
+.org-org-link { /* org-link */ color: #0000ff; text-decoration: underline; }
+.org-org-meta-line { /* org-meta-line */ color: #b22222; }
+.org-org-mode-line-clock { /* org-mode-line-clock */ color: #000000; background-color: #bfbfbf; }
+.org-org-mode-line-clock-overrun { /* org-mode-line-clock-overrun */ color: #000000; background-color: #ff0000; }
+.org-org-quote { /* org-quote */ color: #7f7f7f; }
+.org-org-scheduled { /* org-scheduled */ color: #006400; }
+.org-org-scheduled-previously { /* org-scheduled-previously */ color: #b22222; }
+.org-org-scheduled-today { /* org-scheduled-today */ color: #006400; }
+.org-org-sexp-date { /* org-sexp-date */ color: #a020f0; }
+.org-org-special-keyword { /* org-special-keyword */ color: #a020f0; }
+.org-org-table { /* org-table */ color: #0000ff; }
+.org-org-tag { /* org-tag */ font-weight: bold; }
+.org-org-target { /* org-target */ text-decoration: underline; }
+.org-org-time-grid { /* org-time-grid */ color: #b8860b; }
+.org-org-todo { /* org-todo */ color: #ff0000; font-weight: bold; }
+.org-org-upcoming-deadline { /* org-upcoming-deadline */ color: #b22222; }
+.org-org-verbatim { /* org-verbatim */ color: #7f7f7f; }
+.org-org-verse { /* org-verse */ color: #7f7f7f; }
+.org-org-warning { /* org-warning */ color: #ff0000; font-weight: bold; }
+.org-outline-1 { /* outline-1 */ color: #0000ff; }
+.org-outline-2 { /* outline-2 */ color: #a0522d; }
+.org-outline-3 { /* outline-3 */ color: #a020f0; }
+.org-outline-4 { /* outline-4 */ color: #b22222; }
+.org-outline-5 { /* outline-5 */ color: #228b22; }
+.org-outline-6 { /* outline-6 */ color: #008b8b; }
+.org-outline-7 { /* outline-7 */ color: #7a378b; }
+.org-outline-8 { /* outline-8 */ color: #8b2252; }
+.org-preprocessor { /* font-lock-preprocessor-face */ color: #7a378b; }
+.org-query-replace { /* query-replace */ color: #b0e2ff; background-color: #cd00cd; }
+.org-regexp-grouping-backslash { /* font-lock-regexp-grouping-backslash */ font-weight: bold; }
+.org-regexp-grouping-construct { /* font-lock-regexp-grouping-construct */ font-weight: bold; }
+.org-region { /* region */ background-color: #eedc82; }
+.org-secondary-selection { /* secondary-selection */ background-color: #ffff00; }
+.org-shadow { /* shadow */ color: #7f7f7f; }
+.org-show-paren-match { /* show-paren-match */ background-color: #40e0d0; }
+.org-show-paren-mismatch { /* show-paren-mismatch */ color: #ffffff; background-color: #a020f0; }
+.org-string { /* font-lock-string-face */ color: #dd1144; }
+.org-tool-bar { /* tool-bar */ color: #000000; background-color: #bfbfbf; }
+.org-tooltip { /* tooltip */ color: #000000; background-color: #ffffe0; }
+.org-trailing-whitespace { /* trailing-whitespace */ background-color: #ff0000; }
+.org-type { /* font-lock-type-face */ color: #228b22; }
+.org-underline { /* underline */ text-decoration: underline; }
+.org-variable-name { /* font-lock-variable-name-face */ color: teal; }
+.org-warning { /* font-lock-warning-face */ color: #ff0000; font-weight: bold; }
+.org-widget-button { /* widget-button */ font-weight: bold; }
+.org-widget-button-pressed { /* widget-button-pressed */ color: #ff0000; }
+.org-widget-documentation { /* widget-documentation */ color: #006400; }
+.org-widget-field { /* widget-field */ background-color: #d9d9d9; }
+.org-widget-inactive { /* widget-inactive */ color: #7f7f7f; }
+.org-widget-single-line-field { /* widget-single-line-field */ background-color: #d9d9d9; }
+</code></pre>
+  </div>
+</details>
+<details class="section level-1" data-anchor="js">
+  <summary id="js" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">JS</span><a class="anchor-link" href="#js" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-javascript">function collapse_toc_elements_on_click (nav_li_a){
+    /*
+      When an `a' element in the TOC is clicked, its parent
+      `li' element's active attribute is toggled.  This causes
+      the element to toggle between minimized and maximized
+      states.  The active attribute is documented in bootstrap.
+      https://getbootstrap.com/docs/4.0/components/navbar/#nav
+    */
+    $(nav_li_a).parent().toggleClass("active");
+}
+
+$( document ).ready(function() {
+    // When the document is loaded and ready, bind the
+    // function `collapse_toc_elements_on_click' to the
+    // `a' elements in the table of contents.
+    $("#text-table-of-contents a").click(function() {
+        collapse_toc_elements_on_click(this);
+    });
+});
+
+$(function() {
+    $('.note').before("&lt;p class='admonition-title note'&gt;Note&lt;/p&gt;");
+    $('.seealso').before("&lt;p class='admonition-title seealso'&gt;See also&lt;/p&gt;");
+    $('.warning').before("&lt;p class='admonition-title warning'&gt;Warning&lt;/p&gt;");
+    $('.caution').before("&lt;p class='admonition-title caution'&gt;Caution&lt;/p&gt;");
+    $('.attention').before("&lt;p class='admonition-title attention'&gt;Attention&lt;/p&gt;");
+    $('.tip').before("&lt;p class='admonition-title tip'&gt;Tip&lt;/p&gt;");
+    $('.important').before("&lt;p class='admonition-title important'&gt;Important&lt;/p&gt;");
+    $('.hint').before("&lt;p class='admonition-title hint'&gt;Hint&lt;/p&gt;");
+    $('.error').before("&lt;p class='admonition-title error'&gt;Error&lt;/p&gt;");
+    $('.danger').before("&lt;p class='admonition-title danger'&gt;Danger&lt;/p&gt;");
+});
+
+$( document ).ready(function() {
+
+    // Shift nav in mobile when clicking the menu.
+    $(document).on('click', "[data-toggle='wy-nav-top']", function() {
+      $("[data-toggle='wy-nav-shift']").toggleClass("shift");
+      $("[data-toggle='rst-versions']").toggleClass("shift");
+    });
+    // Close menu when you click a link.
+    $(document).on('click', ".wy-menu-vertical .current ul li a", function() {
+      $("[data-toggle='wy-nav-shift']").removeClass("shift");
+      $("[data-toggle='rst-versions']").toggleClass("shift");
+    });
+    $(document).on('click', "[data-toggle='rst-current-version']", function() {
+      $("[data-toggle='rst-versions']").toggleClass("shift-up");
+    });
+    // Make tables responsive
+    $("table.docutils:not(.field-list)").wrap("&lt;div class='wy-table-responsive'&gt;&lt;/div&gt;");
+});
+
+$( document ).ready(function() {
+    $('#text-table-of-contents ul').first().addClass('nav');
+                                        // ScrollSpy also requires that we use
+                                        // a Bootstrap nav component.
+    $('body').scrollspy({target: '#text-table-of-contents'});
+
+    // DON'T add sticky table headers (Fix issue #69?)
+    // $('table').stickyTableHeaders();
+
+    // set the height of tableOfContents
+    var $postamble = $('#postamble');
+    var $tableOfContents = $('#table-of-contents');
+    $tableOfContents.css({paddingBottom: $postamble.outerHeight()});
+
+    // add TOC button
+    var toggleSidebar = $('&lt;div id="toggle-sidebar"&gt;&lt;a href="#table-of-contents"&gt;&lt;h2&gt;Table of Contents&lt;/h2&gt;&lt;/a&gt;&lt;/div&gt;');
+    $('#content').prepend(toggleSidebar);
+
+    // add close button when sidebar showed in mobile screen
+    var closeBtn = $('&lt;a class="close-sidebar" href="#"&gt;Close&lt;/a&gt;');
+    var tocTitle = $('#table-of-contents').find('h2');
+    tocTitle.append(closeBtn);
+});
+
+window.SphinxRtdTheme = (function (jquery) {
+    var stickyNav = (function () {
+        var navBar,
+            win,
+            stickyNavCssClass = 'stickynav',
+            applyStickNav = function () {
+                if (navBar.height() &lt;= win.height()) {
+                    navBar.addClass(stickyNavCssClass);
+                } else {
+                    navBar.removeClass(stickyNavCssClass);
+                }
+            },
+            enable = function () {
+                applyStickNav();
+                win.on('resize', applyStickNav);
+            },
+            init = function () {
+                navBar = jquery('nav.wy-nav-side:first');
+                win    = jquery(window);
+            };
+        jquery(init);
+        return {
+            enable : enable
+        };
+    }());
+    return {
+        StickyNav : stickyNav
+    };
+}($));
+</code></pre>
+  </div>
+</details>
+</article>
+<button class="to-top" aria-label="回到顶部">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
+<script>
+
+(function() {
+  'use strict';
+
+  /* ---------- 阅读进度条 ---------- */
+  const bar = document.querySelector('.progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    bar.style.width = (total > 0 ? h.scrollTop / total * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ---------- 回到顶部 ---------- */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  /* ---------- 全局折叠/展开(单 toggle 按钮) ---------- */
+  const foldBtn = document.querySelector('[data-action="toggle-fold"]');
+  function syncFoldBtnState() {
+    if (!foldBtn) return;
+    const all = document.querySelectorAll('details');
+    if (!all.length) return;
+    const open = Array.from(all).filter(d => d.open).length;
+    const expanded = open >= all.length / 2;
+    foldBtn.dataset.state = expanded ? 'expanded' : 'folded';
+    foldBtn.innerHTML = expanded
+      ? '<span class="chev">▾</span>折叠'
+      : '<span class="chev">▾</span>展开';
+    foldBtn.setAttribute('aria-label', expanded ? '折叠全部' : '展开全部');
+  }
+  if (foldBtn) {
+    foldBtn.addEventListener('click', () => {
+      const all = document.querySelectorAll('details');
+      const open = Array.from(all).filter(d => d.open).length;
+      const expanded = open >= all.length / 2;
+      all.forEach(d => { d.open = !expanded; });
+      syncFoldBtnState();
+    });
+    // 用户手动折叠/展开后,标签也跟着更新
+    document.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', syncFoldBtnState);
+    });
+    syncFoldBtnState();
+  }
+
+  /* ---------- 代码块:包成 .code-block + header(语言徽章 + 复制按钮) ---------- */
+  async function copyCode(text, btn) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '复制'; }, 1500);
+    }
+  }
+
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.closest('.code-block')) return;  // 已包装
+    const code = pre.querySelector('code');
+    let lang = '';
+    if (code) {
+      const m = (code.className || '').match(/language-([\w+-]+)/);
+      if (m) lang = m[1];
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
+
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    header.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>'
+                     + '<span class="code-lang">' + (lang || 'text') + '</span>';
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制代码');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = (code ? code.textContent : pre.textContent) || '';
+      copyCode(text, btn);
+    });
+    header.appendChild(btn);
+
+    pre.parentElement.insertBefore(wrap, pre);
+    wrap.appendChild(header);
+    wrap.appendChild(pre);
+  });
+
+  /* ---------- 锚点自展开(从主页章节链接跳进来时,目标 + 祖先链全展开) ---------- */
+  if (location.hash) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+      let el = target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+      }
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
+      });
+    }
+  }
+
+  /* ---------- org-mode 键盘:Tab / Shift+Tab ---------- */
+  const isHeading = (el) => el && el.matches && el.matches('summary');
+  const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea')) return;
+    const meta = e.metaKey || e.ctrlKey;
+
+    // / 聚焦搜索
+    if (e.key === '/' && !meta) {
+      const s = document.querySelector('input.search');
+      if (s) { e.preventDefault(); s.focus(); return; }
+    }
+
+    // Tab / Shift+Tab 折叠当前聚焦的 summary
+    if (e.key === 'Tab') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        e.preventDefault();
+        const d = f.parentElement;
+        if (e.shiftKey) {
+          // Shift+Tab: 全局折叠/展开所有
+          const all = document.querySelectorAll('details');
+          const allOpen = Array.from(all).every(x => x.open);
+          all.forEach(x => { x.open = !allOpen; });
+        } else {
+          // Tab: 折叠/展开当前节点
+          d.open = !d.open;
+        }
+        return;
+      }
+    }
+
+    // J/K 或 ↓/↑ 跳转标题 — 已移除(行为不一致,容易让用户迷惑)
+
+    // Enter: 在 note-node 上是跟随标题链接;在 section 上是 toggle
+    if (e.key === 'Enter') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        const titleLink = f.querySelector('.title, .heading-text');
+        if (titleLink && titleLink.tagName === 'A') {
+          e.preventDefault();
+          titleLink.click();
+        }
+      }
+    }
+  });
+
+  /* ---------- 点击 caret 只 toggle,不让 summary 的默认 toggle 干扰; 点击 title 跟随链接 ---------- */
+  // 默认浏览器:点 summary 任意位置都会 toggle,点 <a> 会先 toggle 再 navigate。
+  // 我们让 title 链接的 click 阻止冒泡,避免 toggle 副作用(navigate 后虽然看不到,但保证一致性)。
+  document.querySelectorAll('details.note-node > summary > .title').forEach(link => {
+    if (link.tagName !== 'A') return;
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 让浏览器默认行为(navigate)发生
+    });
+  });
+  // caret 点击:默认也会 toggle,不用特殊处理
+
+  /* ---------- 搜索 ---------- */
+  const search = document.querySelector('input.search');
+  if (search && document.body.classList.contains('page-index')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const nodes = document.querySelectorAll('.note-node');
+      nodes.forEach(node => {
+        if (!q) {
+          node.classList.remove('hidden-by-search');
+          node.querySelectorAll('li').forEach(li => li.classList.remove('hidden-by-search'));
+          return;
+        }
+        const nodeText = node.textContent.toLowerCase();
+        if (!nodeText.includes(q)) {
+          node.classList.add('hidden-by-search');
+          return;
+        }
+        node.classList.remove('hidden-by-search');
+        let anyMatch = false;
+        node.querySelectorAll('li').forEach(li => {
+          const t = li.textContent.toLowerCase();
+          if (t.includes(q)) {
+            li.classList.remove('hidden-by-search');
+            anyMatch = true;
+          } else {
+            li.classList.add('hidden-by-search');
+          }
+        });
+        if (anyMatch) node.open = true;
+      });
+    });
+  }
+  if (search && document.body.classList.contains('page-note')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('details.section').forEach(s => {
+        if (!q) { s.style.opacity = ''; return; }
+        const t = s.querySelector('summary').textContent.toLowerCase();
+        s.style.opacity = t.includes(q) ? '1' : '0.3';
+      });
+    });
+  }
+
+  /* ---------- 主页 sidebar 切换 + tag 过滤(Feature 6) ---------- */
+  if (document.body.classList.contains('page-index')) {
+    const sidebarBtn = document.querySelector('[data-action="toggle-sidebar"]');
+    // 默认收起,localStorage 记忆用户选择
+    const KEY = 'md2html:sidebar-open';
+    const initialOpen = (() => {
+      try { return localStorage.getItem(KEY) === '1'; } catch { return false; }
+    })();
+    if (initialOpen) document.body.classList.add('sidebar-open');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {}
+      });
+    }
+    // 点 sidebar 外面关闭(移动端友好)
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      if (window.innerWidth >= 721) return;  // 桌面端不自动关
+      const t = e.target;
+      if (t.closest('.sidebar') || t.closest('.sidebar-btn')) return;
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem(KEY, '0'); } catch {}
+    });
+
+    const tagBtns = document.querySelectorAll('.sidebar .tag-btn');
+    const nodes = document.querySelectorAll('.note-node');
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        tagBtns.forEach(b => b.classList.toggle('active', b === btn));
+        nodes.forEach(n => {
+          const tag = n.getAttribute('data-tag');
+          const show = filter === 'all'
+                    || (filter === '__none__' && !tag)
+                    || tag === filter;
+          n.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  /* ---------- KaTeX 数学公式渲染 ----------
+     用 DOMContentLoaded 触发,确保 defer 加载的 katex.js 和 auto-render.js
+     都已执行完毕。 $$ 块级、$ 行内、\(...\)、\[...\] 全支持。 */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMathInElement !== 'function') return;
+    const target = document.body.classList.contains('page-index')
+      ? (document.querySelector('.outline-tree') || document.body)
+      : document.body;
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoredClasses: ['code-block', 'code-header', 'katex']
+      });
+    } catch (e) {
+      console.warn('KaTeX render failed:', e);
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

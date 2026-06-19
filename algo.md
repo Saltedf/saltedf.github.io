@@ -559,16 +559,16 @@ impl Ord for BigInt {
     // r表示返回的余数.
     vector<int> div(vector<int>& A, int b, int &remainder) {
       vector<int> res;
-
+    
       int r = 0; // 高位除法的余数
       for(int i = A.size()-1; i>=0; i--){
         int a = r*10 + A[i]; // 高位的余数*10 加上 低一位 == 新的被除数
         int c = a / b; // 结果res的某一位
         res.push_back(c);// 稍后需要反转res.
-
+    
         r = (a % b); //将当前一位的除法余数记录下来.
       }
-
+    
       remainder = r;// 将个位除法的余数记录下来.
       std::reverse(res.begin(),res.end());// 反转res
       //去掉前导零:
@@ -676,7 +676,7 @@ S_{i,j} = S_{i-1,j} + S_{i,j-1} - S_{i-1,j-1} + a_{i,j}
         Self::dfs(&mut res,&mut s, 0,0,n);
         res
         }
-
+    
         fn dfs(res: &mut Vec<String>,prefix: &mut String,left:i32,right:i32,n:i32){
         if prefix.len() == 2*(n as usize) { // 能到达的最深位置
             res.push(prefix.clone());
@@ -692,7 +692,7 @@ S_{i,j} = S_{i-1,j} + S_{i,j-1} - S_{i-1,j-1} + a_{i,j}
             prefix.pop();
             }
         }
-
+    
         }
     }
     ```
@@ -728,12 +728,12 @@ dp[i][j] = max( dp[i-1][j], dp[i-1][j-v_i]+w_i )
 
 ## 完全背包
 
-被本质上就是 $`A^{k}_n`$ 的推导.
+被本质上就是 $A^{k}_n$ 的推导.
 
-$`i`$ 个物品, 选择后放回(相当于每个物品的数量无限), 总体积限制是 $`j`$ .
-每个物品的价值是 $`w_i`$, 期望选择物品的总价值最大.
+$i$ 个物品, 选择后放回(相当于每个物品的数量无限), 总体积限制是 $j$ .
+每个物品的价值是 $w_i$, 期望选择物品的总价值最大.
 
-$`dp[i][j]`$: 在前 $`i`$ 个物品中选择且总体积不超过 $`j`$ 时的最大价值
+$dp[i][j]$: 在前 $`i`$ 个物品中选择且总体积不超过 $`j`$ 时的最大价值
 
 以是否选择第i个物品作为划分集合的条件:
 

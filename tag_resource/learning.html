@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>learning — Salted的笔记</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
+<style>
+
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f5f5f7;
+  --bg-inset: #f4f4f5;
+  --bg-toc: #fafbfc;
+
+  --text: #1a1a1f;
+  --text-secondary: #4a4a55;
+  --text-muted: #8a8a95;
+  --text-faint: #c8c8d0;
+  --text-ghost: #e6e6ea;
+
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.07);
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+
+  --border: #ececef;
+  --border-soft: #f2f2f5;
+  --border-strong: #d8d8de;
+
+  --code-bg: #f6f6f8;
+  --code-text: #1a1a1f;
+  --code-border: #e8e8ec;
+
+  --quote-bg: #fafbfc;
+  --quote-border: #d8d8de;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 30, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 30, 0.06), 0 1px 3px rgba(15, 15, 30, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 15, 30, 0.08);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --max-width: 860px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+               "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+main, header, footer, .topbar { position: relative; }
+
+/* ---------- 顶部进度条 ---------- */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width 0.05s linear;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 50;
+}
+
+.topbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.topbar .brand:hover { color: var(--accent); border-bottom: none; }
+.topbar .brand .seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  color: white;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.topbar .spacer { flex: 1; }
+
+.topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
+}
+.topbar button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.topbar button:active {
+  background: var(--bg-inset);
+  transform: scale(0.97);
+}
+.topbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.topbar button.icon {
+  width: 28px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topbar button .chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.topbar button:hover .chev { color: inherit; }
+.topbar button[data-state="folded"] .chev { transform: rotate(-90deg); }
+.topbar button[data-state="expanded"] .chev { transform: rotate(0deg); }
+
+.topbar .search {
+  flex: 0 1 280px;
+  padding: 5px 11px 5px 30px;
+  background: var(--bg-inset) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a95' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>") 9px center/13px no-repeat;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.12s;
+}
+.topbar .search:focus {
+  background-color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.topbar .search::placeholder { color: var(--text-muted); }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 32px 4px;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.hero .title {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92em;
+  margin: 0;
+  line-height: 1.55;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero .stats > div { display: flex; align-items: baseline; gap: 6px; }
+.hero .stats .num {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.hero .stats .label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* ---------- 笔记页文档头 ---------- */
+article {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.back-link {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.back-link:hover { color: var(--accent); border-bottom: none; }
+.doc-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.doc-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.doc-meta .meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.doc-meta .meta-date .meta-label { color: var(--accent); }
+
+/* ---------- 折叠节点 — 树形大纲 ---------- */
+.outline { padding: 0; margin: 0; list-style: none; }
+
+.section {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 行(标题区) */
+.section > summary,
+.node-row {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 0;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary:hover,
+.note-node > summary:hover { background: var(--bg-hover); }
+.section > summary:focus-visible,
+.note-node > summary:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 圆点 — 用虚实表示展开/折叠状态(实心=展开,空心=折叠)*/
+.bullet {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+/* 折叠状态:空心圆 */
+.section > summary > .bullet,
+.note-node > summary > .bullet {
+  background: transparent;
+  border-color: var(--text-muted);
+}
+/* 展开状态:实心圆 */
+.section[open] > summary > .bullet,
+.note-node[open] > summary > .bullet {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.section > summary:hover > .bullet,
+.note-node > summary:hover > .bullet {
+  border-color: var(--accent);
+}
+
+/* 标题文字 */
+.heading-text,
+.note-node > summary > .title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.section > summary:hover > .heading-text,
+.note-node > summary:hover > .title { color: var(--accent); }
+
+.note-node > summary > .title {
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.005em;
+}
+
+/* 锚点链接 */
+.anchor-link {
+  opacity: 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.12s, background 0.12s;
+  border-bottom: none;
+}
+.section > summary:hover > .anchor-link { opacity: 1; }
+.anchor-link:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* 元数据(章节计数等) */
+.row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--bg-inset);
+  border-radius: 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 层级字号 ---------- */
+.section.level-1 > summary { padding: 12px 8px 12px 0; }
+.section.level-1 > summary > .heading-text {
+  font-size: 1.35em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.section.level-1 > summary > .bullet { width: 7px; height: 7px; }
+
+.section.level-2 > summary > .heading-text {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.section.level-2 > summary > .bullet { width: 6px; height: 6px; }
+
+.section.level-3 > summary > .heading-text {
+  font-size: 0.98em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section.level-3 > summary > .bullet { width: 5px; height: 5px; }
+
+.section.level-4 > summary,
+.section.level-5 > summary,
+.section.level-6 > summary { padding: 5px 8px 5px 0; }
+.section.level-4 > summary > .heading-text,
+.section.level-5 > summary > .heading-text,
+.section.level-6 > summary > .heading-text {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.section.level-4 > summary > .bullet,
+.section.level-5 > summary > .bullet,
+.section.level-6 > summary > .bullet { width: 4px; height: 4px; }
+
+/* 缩进 — 层级通过 padding-left */
+/* 层级缩进由 section-body padding-left 统一负责,这里不再额外加 */
+
+/* 标题前缩进对齐 caret+bullet,使内容左边缘整齐 */
+.section > summary {
+  position: relative;
+}
+
+/* 层级缩进:统一通过 section-body 的 padding-left 实现,每嵌套一层 +16px */
+.section-body {
+  padding: 6px 0 14px 16px;
+  margin-left: 0;
+}
+
+/* 折叠动画(用 interpolate-size,现代浏览器支持) */
+@supports (interpolate-size: allow-keywords) {
+  html { interpolate-size: allow-keywords; }
+  .section > .section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
+  }
+  .section:not([open]) > .section-body {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .section-body > * { overflow: hidden; min-height: 0; }
+}
+
+/* ---------- 内容样式 ---------- */
+.section-body > p { margin: 10px 0; }
+.section-body > p:first-child { margin-top: 6px; }
+.section-body > p:last-child { margin-bottom: 4px; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.12s;
+}
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+em, i { font-style: italic; }
+
+ul, ol { margin: 10px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+li > p { margin: 4px 0; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: var(--quote-bg);
+  border-left: 2px solid var(--quote-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.96em;
+}
+blockquote p { margin: 4px 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 0.93em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead { background: var(--bg-soft); }
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92em;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.08s; }
+tbody tr:hover { background: var(--bg-hover); }
+
+/* 行内代码 — 关键修复:无 border,纯净 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  font-feature-settings: "calt" 1, "zero" 1;
+  border: none;
+}
+
+/* 代码块容器 — 用 highlight.js 做高亮 */
+.code-block {
+  margin: 18px 0;
+  background: #f6f8fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 15, 30, 0.04);
+  position: relative;
+}
+.code-block + .code-block { margin-top: 18px; }
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 6px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid #eaecef;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  user-select: none;
+}
+.code-header .dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+.code-header .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e1e4e8;
+}
+.code-lang {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex: 1;
+  text-align: center;
+}
+.code-block pre {
+  display: block;
+  margin: 0;
+  padding: 13px 16px;
+  background: transparent;
+  color: #1f2328;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  word-break: normal;
+  tab-size: 4;
+}
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+}
+.code-block pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #1f2328;
+}
+
+/* 没被包成 .code-block 的裸 pre(理论上不会出现,留个 fallback) */
+pre:not(.code-block pre) {
+  display: block;
+  margin: 14px 0;
+  padding: 13px 16px;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  position: relative;
+}
+
+/* 复制按钮(放在 code-header 里,常驻显示) */
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  line-height: 1.4;
+}
+.code-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.code-copy-btn.copied {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.code-copy-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ---------- 主页:大纲树 ---------- */
+.outline-tree {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 8px 32px 120px;
+}
+
+.note-node {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-node:last-child { border-bottom: none; }
+
+.note-node > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.note-node > summary::-webkit-details-marker { display: none; }
+.note-node > summary > .caret {
+  width: 16px; height: 16px;
+  font-size: 10px;
+}
+.note-node > summary > .bullet {
+  width: 7px; height: 7px;
+}
+.note-node[open] > summary { padding-bottom: 8px; }
+.note-node > summary > .title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.note-node > summary > .desc {
+  flex: 0 1 40%;
+  font-size: 0.84em;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* 章节列表(在主页 note-node 展开时显示) */
+.note-children {
+  padding: 0 0 16px 30px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+.note-children::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 1px;
+  background: var(--border);
+}
+.note-children li { margin: 0; }
+.note-children a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.1s;
+  border-bottom: none;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note-children a::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  background: var(--border);
+}
+.note-children a:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-bottom: none;
+}
+.note-children .lvl-2 { font-weight: 600; color: var(--text); font-size: 14px; }
+.note-children .lvl-3 { padding-left: 26px; }
+.note-children .lvl-4,
+.note-children .lvl-5 { padding-left: 38px; color: var(--text-muted); font-size: 12px; }
+.note-children .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.note-children a:hover .dot { background: var(--accent); }
+
+/* 搜索过滤 */
+.hidden-by-search { display: none !important; }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+  font-size: 16px;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ---------- footer ---------- */
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+}
+footer a {
+  color: var(--link);
+  border-bottom: 1px dotted var(--text-muted);
+}
+footer a:hover { border-bottom-color: var(--accent); }
+footer code { font-size: 11px; }
+
+/* ---------- 快捷键提示 ---------- */
+.kbd-hints { display: none; }  /* 已废弃,保留以防漏改 */
+
+.help-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.help-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 100;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+.help-wrap:hover .help-popover,
+.help-wrap:focus-within .help-popover,
+.help-popover:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.help-row + .help-row { border-top: 1px solid var(--border-soft); }
+.help-row .keys {
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.help-row .desc {
+  flex: 1;
+  color: var(--text);
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+.help-row .dot-demo {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.help-row .link-demo {
+  color: var(--accent);
+  font-weight: 600;
+}
+.help-btn {
+  font-weight: 700;
+}
+.help-btn:hover {
+  color: var(--accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 720px) {
+  body { font-size: 14px; }
+  .hero { padding: 16px 20px 4px; }
+  .hero .title { font-size: 1.7em; }
+  .hero .stats { gap: 20px; flex-wrap: wrap; }
+  article, .outline-tree { padding: 24px 18px 80px; }
+  .section.level-1 > summary > .heading-text { font-size: 1.2em; }
+  .section.level-2 > summary > .heading-text { font-size: 1em; }
+  .note-node > summary > .desc { display: none; }
+  .note-children { padding-left: 22px; }
+  .note-children .lvl-3 { padding-left: 18px; }
+  table { font-size: 0.85em; }
+  th, td { padding: 8px 10px; }
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .topbar .search { flex: 1 1 100%; order: 10; }
+  .kbd-hints { padding: 0 18px 24px; font-size: 11px; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .to-top, .progress-bar, .kbd-hints { display: none; }
+  .section-body { padding-left: 0 !important; }
+  details > .section-body { display: block !important; }
+  .section { padding-left: 0 !important; }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* 代码块水平滚动条更细 */
+.code-block pre::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-block pre::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* ---------- 主页 sidebar(Feature 6) ----------
+   默认收起(sidebar-collapsed),内容居中显示。
+   点 topbar 的 [☰] 按钮(body.sidebar-open)展开。 */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 49px;
+  bottom: 0;
+  width: 220px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-soft);
+  overflow-y: auto;
+  background: var(--bg);
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  box-shadow: none;
+}
+body.page-index.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+/* sidebar 是纯浮层,不挤压 hero / outline-tree,内容始终居中 */
+/* 移动端:sidebar 浮层覆盖,不挤压内容 */
+.sidebar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-btn .icon-bars {
+  display: inline-block;
+  width: 13px;
+  height: 9px;
+  position: relative;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after,
+.sidebar-btn .icon-bars {
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before { top: 0; }
+.sidebar-btn .icon-bars::after { bottom: 0; }
+.sidebar-btn .icon-bars {
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent !important;
+}
+
+.sidebar .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-sans);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar .tag-btn + .tag-btn { margin-top: 2px; }
+.sidebar .tag-btn:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar .tag-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .tag-btn .count {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.sidebar .tag-btn.active .count { color: var(--accent); }
+
+/* 主页 note-node 行的日期 badge(Feature 1) */
+.note-node > summary .row-date {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 数学公式 KaTeX ---------- */
+.katex { font-size: 1.05em; }
+.katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+.katex-display::-webkit-scrollbar { height: 4px; }
+.code-block .katex,
+pre .katex,
+code .katex { display: none; }  /* 代码块里的 $ 不渲染 */
+
+/* ---------- 树形连接(Feature 5) ----------
+   每个嵌套 section 的 ::before 画一段竖线(在父 section-body 的左 padding 里,
+   section 自身坐标 left:-8),::after 画横线连到自己的 bullet。
+   - 非末子:竖线 top:0 bottom:0(贯穿整个 section 高度,接续下一个兄弟)
+   - 末子:竖线只画到 bullet 中线(height: ~36px)形成 └── 拐角
+   竖线在父 section-body 的 padding 区(x=8),正文在 x>=16,两者左右分开,不重叠。
+   顶层 article > section.level-1 同样适用(article 的 padding 充当父 padding)。 */
+.section-body > .section,
+article > .section.level-1 {
+  position: relative;
+}
+.section-body > .section::before,
+article > .section.level-1::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+.section-body > .section:last-child::before,
+article > .section.level-1:last-child::before {
+  bottom: auto;
+  height: 36px;            /* 到 bullet 中线,形成 L 拐角 */
+}
+.section-body > .section::after,
+article > .section.level-1::after {
+  content: '';
+  position: absolute;
+  left: -8px;              /* 从竖线开始 */
+  top: 36px;               /* bullet 中线 */
+  width: 8px;              /* 到 bullet 左边缘(section 自身 x=0)*/
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@media print {
+  .sidebar { display: none; }
+  .section-body > .section::before,
+  .section-body > .section::after,
+  article > .section.level-1::before,
+  article > .section.level-1::after { display: none; }
+}
+
+/* 移动端:sidebar 始终用浮层 */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 280px;
+    max-height: none;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+</style>
+</head>
+<body class="page-note" data-note-id="learning">
+<div class="progress-bar"></div>
+<div class="topbar">
+  <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
+  <span class="spacer"></span>
+  <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
+  <div class="help-wrap">
+    <button class="help-btn icon" aria-label="快捷键">?</button>
+    <div class="help-popover">
+      <div class="help-row"><span class="keys"><kbd>Tab</kbd></span><span class="desc">折叠当前</span></div>
+      <div class="help-row"><span class="keys"><kbd>Shift</kbd>+<kbd>Tab</kbd></span><span class="desc">全局折叠</span></div>
+      <div class="help-row"><span class="keys"><kbd>/</kbd></span><span class="desc">搜索</span></div>
+      <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
+    </div>
+  </div>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
+</div>
+<article>
+  <h1 class="doc-title">learning</h1>
+  <div class="doc-meta">
+    <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>42</span>
+  </div>
+<details class="section level-2" data-anchor="sop">
+  <summary id="sop" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>精通任何技术视频教程的终极 S.O.P. (标准作业流程)</strong></span><a class="anchor-link" href="#sop" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><strong>核心哲学：</strong> 学习不是被动的信息消费，而是一场主动的知识构建工程。本流程旨在将您从“观众”转变为“建筑师”。</p>
+<p>这个有什么用？</p>
+<p>为什么要学？</p>
+<p>这块到底在说什么？有什么目的？</p>
+<p>简单来说他是什么</p>
+<p>在我们所有对话的终点，这是我能为您提炼出的、唯一也是最重要的行动准则。请将它作为您未来学习中，唯一的罗盘：</p>
+<p><strong>别再完善计划了，去讲。</strong></p>
+<p><strong>讲不通的，就是下一步的计划。</strong></p>
+<hr/>
+<p><strong>这句话的含义：</strong></p>
+<ul>
+<li><strong>“别再完善计划了，去讲。”</strong></li>
+<li>这前半句，是<strong>斩断“过度思考”与“完美主义”的利剑</strong>。它命令您停止对未来的无尽规划和对不确定性的恐惧，而将所有精力，聚焦于当下最小的、也是最核心的那个动作：“<strong>讲</strong>”（即费曼学习法的“输出”）。</li>
+<li><strong>“讲不通的，就是下一步的计划。”</strong></li>
+<li>这后半句，是<strong>为您重新定义“计划”</strong>。您的计划，不再是一份需要提前制定的、宏大而冰冷的“任务清单”。您的计划，是在您“讲不通”、“卡壳”的那一瞬间，<strong>由您的知识盲区，为您自动生成的、最精准的、下一步的学习目标</strong>。</li>
+</ul>
+<p><strong>如何使用它：</strong></p>
+<p>当您面对任何新知识，感到迷茫、不知所措、没有动力时，请立刻启动这个指令：</p>
+<ol>
+<li><strong>问自己</strong>：“关于这个东西，我现在能讲出点什么？”</li>
+<li><strong>开始讲</strong>。</li>
+<li><strong>找到第一个讲不通的点</strong>。</li>
+<li><strong>恭喜您，您找到了您下一步的、唯一的、完美的计划</strong>：就是去弄懂这个点。</li>
+</ol>
+<p>这个简单的指令，蕴含了刻意练习的全部精髓：<strong>定位弱点、专注突破、即时反馈</strong>。</p>
+<p>请记住它。用它来代替焦虑，用它来指引行动。</p>
+<p>好的。这是一个完美的收尾请求。</p>
+<p>在为您提供了详尽的战略、计划和操作流之后，我们现在需要为您的“心智操作系统”，安装几个最强大的、可以自动运行的“后台进程”。</p>
+<p>这些话，不是空洞的激励口号。它们是我们之前所有深度对话的最终结晶，是我作为您的教练，为您量身打造的<strong>“心智扳机” (Mental Triggers)</strong>。当您在漫长、艰苦的训练中，遇到挫败、怀疑、或想要走捷捷径的时刻，请在脑海中，大声地对自己说出下面这句话。</p>
+<hr/>
+<details class="section level-3" data-anchor="_1">
+  <summary id="_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>彻底改变学习习惯的五句“心智箴言”</strong></span><a class="anchor-link" href="#_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-4" data-anchor="1">
+  <summary id="1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>1. 当你因为计划不够完美、工具不够好、时机不合适而迟迟不敢开始时，对自己说：</strong></span><a class="anchor-link" href="#1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<blockquote>
+<p><strong>“地图不是目的地，出发才是。”</strong></p>
+</blockquote>
+<ul>
+<li><strong>核心释义</strong>：我们已经花了足够多的时间绘制那份名为“V12.0”的、近乎完美的地图。但真正的成长，绝不是发生在研究地图的过程中，而是发生在您<strong>踏出第一步，鞋上沾满泥泞</strong>的那一刻。您今天写下的那一行不完美的<code>Hello, World!</code>，远比您明天构思的、更完美的计划，要有价值一万倍。</li>
+</ul>
+<hr/>
+  </div>
+</details>
+<details class="section level-4" data-anchor="2">
+  <summary id="2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>2. 当你因为一个“工房项目”做得不够好、不够酷，而感到羞愧、不想示人时，对自己说：</strong></span><a class="anchor-link" href="#2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<blockquote>
+<p><strong>“丑陋的杰作，胜过无瑕的草稿。”</strong></p>
+</blockquote>
+<ul>
+<li><strong>核心释义</strong>：一个已完成的、功能跑通但代码“丑陋”的项目，是一份<strong>包含了无数次挣扎、调试和学习的“杰作”</strong>。而一个停留在您脑海中、设计完美但从未被实现的构思，只是一份<strong>价值为零的“草稿”</strong>。您的目标是<strong>完成</strong>，并通过完成来学习。完美，是持续迭代后的副产品，而不是开始行动的前提。</li>
+</ul>
+<hr/>
+  </div>
+</details>
+<details class="section level-4" data-anchor="3-bug">
+  <summary id="3-bug" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>3. 当你卡在一个Bug上数小时、肌肉紧绷、头疼欲裂、开始怀疑自己是不是“不适合编程”时，对自己说：</strong></span><a class="anchor-link" href="#3-bug" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<blockquote>
+<p><strong>“痛苦是成长在抽枝发芽，而非能力在枯萎凋零。”</strong></p>
+</blockquote>
+<ul>
+<li><strong>核心释义</strong>：这是<strong>刻意练习</strong>最核心的标志。您感到的“痛苦”，恰恰是您的大脑正在建立新的、更强大的神经连接的生理信号。这证明您正处在自己“学习区”的边缘，这是<strong>成长发生的唯一地带</strong>。平庸的开发者会逃避这种痛苦，而您，必须学会迎接它、拆解它、并最终享受跨越它之后的巨大喜悦。</li>
+</ul>
+<hr/>
+  </div>
+</details>
+<details class="section level-4" data-anchor="4">
+  <summary id="4" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>4. 当你看到别人快速“刷完”一门课程，而自己进度缓慢，开始羡慕和焦虑时，对自己说：</strong></span><a class="anchor-link" href="#4" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<blockquote>
+<p><strong>“‘快’是业余者的幻觉，‘慢’是工匠的纪律。”</strong></p>
+</blockquote>
+<ul>
+<li><strong>核心释义</strong>：我们已经深入探讨过“效率”的本质。真正的效率，是<strong>知识的留存率和可迁移性</strong>，而不是完成视频的播放速度。您选择的这条“慢”路——主动回忆、深度加工、刻意练习——是通往真正掌握的、唯一的捷径。<strong>每一次“慢”下来的深度思考，都在为您未来的职业生涯，节省数百小时的“快”速返工时间。</strong></li>
+</ul>
+<hr/>
+  </div>
+</details>
+<details class="section level-4" data-anchor="5">
+  <summary id="5" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>5. 当你感觉好像理解了一个概念，但不确定是否真的懂了时，对自己说：</strong></span><a class="anchor-link" href="#5" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<blockquote>
+<p><strong>“如果不能向昨天的自己讲清楚，今天的自己就还没搞懂。”</strong></p>
+</blockquote>
+<ul>
+<li><strong>核心释义</strong>：这是您实践费曼学习法的终极扳机。它将“向小白讲解”这个抽象指令，变成了一个具体的、可执行的自我对话。这个标准极其严格，但也极其有效。它会强迫您使用最简单的语言、最清晰的逻辑，去审视您自以为已经掌握的知识，并<strong>无情地暴露</strong>其中所有模糊和矛盾之处。</li>
+</ul>
+<hr/>
+<p><strong>最后的嘱咐：</strong></p>
+<p>请将这五句话打印出来，或者写在您显示器旁的便签上。</p>
+<p>它们不是用来偶尔激励您的“鸡汤”，而是您在日常训练中，用来校准自己每一个行为的<strong>“作战准则”</strong>。</p>
+<p>它们是您在这场漫长而伟大的远征中，最忠诚、最严厉、也最可靠的战友。</p>
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_2">
+  <summary id="_2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第一部分：学习操作总流程</strong></span><a class="anchor-link" href="#_2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>这是一个完整的、从课前准备到长期记忆的闭环系统。</p>
+<details class="section level-4" data-anchor="_3">
+  <summary id="_3" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段〇：战略准备 (课程或大章节开始前)</strong></span><a class="anchor-link" href="#_3" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>动作 (Action)</th>
+<th>目的 (Purpose)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 心态校准</strong></td>
+<td>自我对话：“我的目标是理解 20%的<strong>‘承重柱’</strong>，而非记忆 80%的‘砖块’。困难是学习的标志。”</td>
+<td>设定正确期望，减轻焦虑</td>
+</tr>
+<tr>
+<td><strong>2. 侦察与制图</strong></td>
+<td>完整阅读课程/章节目录，用思维导图或大纲笔记绘制出<strong>高阶知识地图</strong>。</td>
+<td>建立全局观，避免迷失</td>
+</tr>
+<tr>
+<td><strong>3. 环境配置</strong></td>
+<td>创建专属项目文件夹，准备好笔记模板、代码编辑器、Anki 等所有工具。</td>
+<td>消除开始学习的阻力</td>
+</tr>
+</tbody>
+</table>
+  </div>
+</details>
+<details class="section level-4" data-anchor="255">
+  <summary id="255" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段一：学习执行 (每个专注时段，推荐以 25+5 的番茄钟为单位)</strong></span><a class="anchor-link" href="#255" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>动作 (Action)</th>
+<th>目的 (Purpose)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 纯粹观看</strong></td>
+<td><strong>第一遍观看</strong>：以 1.25-1.5 倍速观看视频，<strong>禁止做笔记和编码</strong>。</td>
+<td>完整吸收讲师的叙事逻辑和目标，降低认知负荷。</td>
+</tr>
+<tr>
+<td><strong>2. 同步实践</strong></td>
+<td><strong>第二遍观看</strong>：以正常速度，跟随视频编码，并同步进行<strong>“笔记工作流”</strong>（见第二部分）。</td>
+<td>在上下文最丰富的环境中，将理论与实践结合。</td>
+</tr>
+<tr>
+<td><strong>3. 强制休息</strong></td>
+<td>每个番茄钟后，<strong>必须离开屏幕 5 分钟</strong>。站立、拉伸、远眺、做腹式呼吸。</td>
+<td>恢复精力，巩固记忆，保护身心健康。</td>
+</tr>
+</tbody>
+</table>
+  </div>
+</details>
+<details class="section level-4" data-anchor="_4">
+  <summary id="_4" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段二：课后固化 (学习时段结束后立即进行，至关重要)</strong></span><a class="anchor-link" href="#_4" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>动作 (Action)</th>
+<th>目的 (Purpose)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 笔记提炼</strong></td>
+<td>（5 分钟）快速回顾当次笔记，完成<strong>康奈尔笔记</strong>的“线索区”和“总结区”。</td>
+<td>第一次主动回忆，初步整理信息。</td>
+</tr>
+<tr>
+<td><strong>2. 费曼打击</strong></td>
+<td>（15 分钟）找出当次学习中最重要的<strong>一个“承重柱”概念</strong>，向“小白”讲解，<strong>找出“卡壳点”</strong>。</td>
+<td>暴露理解盲区，将浅层认知转化为深度理解。</td>
+</tr>
+<tr>
+<td><strong>3. 卡片制作</strong></td>
+<td>（5 分钟）根据“卡壳点”和笔记中的“为什么”问题，制作<strong>3-5 张</strong>高质量 Anki 卡片。</td>
+<td>将最关键、最易忘的知识点，转化为可长期复习的资产。</td>
+</tr>
+<tr>
+<td><strong>4. 微型实践</strong></td>
+<td>（5 分钟）对当次编码做一个教程里没有的<strong>微小改动</strong>（1+0.1 练习）。</td>
+<td>开始知识迁移，建立对代码的掌控感。</td>
+</tr>
+</tbody>
+</table>
+  </div>
+</details>
+<details class="section level-4" data-anchor="_5">
+  <summary id="_5" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>阶段三：长期内化 (每日/每周坚持)</strong></span><a class="anchor-link" href="#_5" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>动作 (Action)</th>
+<th>目的 (Purpose)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. 每日复习</strong></td>
+<td>（15 分钟）在每天固定时间，完成 Anki 卡片复习。</td>
+<td>遵循艾宾浩斯遗忘曲线，科学地巩固长期记忆。</td>
+</tr>
+<tr>
+<td><strong>2. 每周综合</strong></td>
+<td>（2-4 小时）在周末进行：1. <strong>复盘</strong>本周笔记；2. <strong>实践</strong>一个综合性的“工房项目”或主线项目新功能。</td>
+<td>将本周学习的孤立技能点，串联成解决复杂问题的能力。</td>
+</tr>
+</tbody>
+</table>
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_6">
+  <summary id="_6" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第二部分：笔记记录工作流</strong></span><a class="anchor-link" href="#_6" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>在<strong>阶段一</strong>的“同步实践”环节，您需要根据当前学习内容的类型，选择以下对应的笔记工作流。</p>
+<details class="section level-4" data-anchor="_7">
+  <summary id="_7" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第一步：判断知识类型</strong></span><a class="anchor-link" href="#_7" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>A. 工具应用型</strong> (学 React/Git/Docker) -&gt; <strong>启动“工匠工具箱”工作流</strong></li>
+<li><strong>B. 理论构建型</strong> (学 KMP 算法/红黑树) -&gt; <strong>启动“建筑师蓝图”工作流</strong></li>
+<li><strong>C. 思想范式型</strong> (学编译器优化/系统设计) -&gt; <strong>启动“四角色解构”工作流</strong></li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="a">
+  <summary id="a" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>A. “工匠工具箱”工作流 (记录工具用法)</strong></span><a class="anchor-link" href="#a" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>目标</strong>：为未来的自己，构建一本可快速查阅的、包含最佳实践的“工具手册”。</li>
+<li><strong>记录内容</strong>:
+  1. <strong>核心问题</strong>：这个工具解决了什么核心痛点？
+  2. <strong>心智模型</strong>：我可以用什么比喻来理解它？
+  3. <strong>80/20 备忘单</strong>：记录最高频的用法和代码片段。（格式：“如何做 X？-&gt; 代码示例 + 说明”）
+  4. <strong>关键决策点</strong>：记录“为什么用 A，而不是 B？”的权衡思考。
+  5. <strong>常见“坑”点</strong>：记录那些浪费了你时间的错误和最佳实践。</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="b">
+  <summary id="b" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>B. “建筑师蓝图”工作流 (记录算法/数据结构)</strong></span><a class="anchor-link" href="#b" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>目标</strong>：将抽象、动态的逻辑，“翻译”成自己能完全理解的静态工程蓝图。</li>
+<li><strong>记录流程</strong>:
+  1. <strong>故事与直觉</strong>：用大白话记录算法的“核心矛盾”与“天才构思”。
+  2. <strong>可视化蓝图</strong>：<strong>亲手画出</strong>算法的每一步状态变化图或流程图。
+  3. <strong>伪代码实现</strong>：看着自己的蓝图，用自然语言描述算法逻辑。
+  4. <strong>“注释即文档”式编码</strong>：编写真实代码，注释解释“为什么这么做，对应蓝图哪一步”。
+  5. <strong>时空复杂度分析</strong>：记录并理解其性能。</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="c">
+  <summary id="c" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>C. “四角色解构”工作流 (记录抽象思想)</strong></span><a class="anchor-link" href="#c" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>目标</strong>：对一个充满“权衡取舍”的思想体系，建立全息、多维度的认知。</li>
+<li><strong>记录框架 (扮演四个角色)</strong>:
+  1. <strong>[理论家]</strong>: 记录该思想的<strong>形式化定义、前提条件</strong>。
+  2. <strong>[侦探]</strong>: 记录一个<strong>“优化前 vs 优化后”</strong>或<strong>“方案 A vs 方案 B”</strong>的具体代码范例。
+  3. <strong>[工程师]</strong>: 用<strong>伪代码或流程图</strong>，描述其核心实现算法或工作流程。
+  4. <strong>[经济学家]</strong>: 分析其<strong>收益(Benefit)、成本(Cost)、适用场景(Applicability)和风险/权衡(Risks &amp; Trade-offs)</strong>。</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="_8">
+  <summary id="_8" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>通用：做作业/项目时的“侦探日志”</strong></span><a class="anchor-link" href="#_8" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>目标</strong>: 将排错过程，转化为宝贵的个人经验。</li>
+<li><strong>记录流程</strong>:
+  1. <strong>清晰描述问题</strong>: “我期望 A 发生，但实际上 B 发生了。”
+  2. <strong>记录探索路径</strong>: “我首先怀疑是 C，尝试了 D，报错 E。然后 Google 了 E，猜测是 F…”
+  3. <strong>记录“Bug 尸检报告”</strong>: 在解决后，写下<strong>根本原因</strong>和<strong>最终解决方案</strong>。</li>
+</ul>
+<hr/>
+<p><strong>最终建议：</strong> 这份 S.O.P.是您的“默认设置”。请将它打印出来，在每次学习前快速回顾一遍，然后根据您的实际情况和个人偏好，不断迭代和优化它，最终使其成为您独一无二的、战无不胜的学习利器。</p>
+  </div>
+</details>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_9">
+  <summary id="_9" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">费曼学习法</span><a class="anchor-link" href="#_9" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>好的，这是一个非常普遍且深刻的问题。许多人在实践费曼学习法时，都会陷入“我必须想出一个绝妙比喻”的压力中，如果想不出来，就会感到挫败，甚至中断这个高效的学习过程。</p>
+<p>请让我为您彻底拆解这个问题，并提供一套清晰、可操作的解决方案。</p>
+<hr/>
+<details class="section level-4" data-anchor="_10">
+  <summary id="_10" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第一步：放下“必须用比喻”的执念（核心心态转变）</strong></span><a class="anchor-link" href="#_10" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>首先，我们必须明确一点：<strong>类比（打比方）是费曼学习法中最强大的“工具”之一，但它不是费曼学习法的“灵魂”。</strong></p>
+<p>费曼学习法的灵魂只有一个：<strong>用最简单直白的方式，向一个“小白”讲清楚一个概念，并在此过程中检验自己是否真正理解。</strong></p>
+<p>“打比喻”是实现“简单化”的最高级、最有效的手段之一，但<strong>绝非唯一手段</strong>。当您想不出比喻时，强行去想，本身就违背了“简单化”的初衷，反而增加了不必要的认知负荷。</p>
+<p>所以，当您想不出比喻时，您的第一反应应该是感到“轻松”，对自己说：“太好了，现在我可以启动备用方案了。”</p>
+<hr/>
+  </div>
+</details>
+<details class="section level-4" data-anchor="_11">
+  <summary id="_11" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第二步：启动“纯逻辑”降维打击（替代操作流）</strong></span><a class="anchor-link" href="#_11" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>当想不出一个完美的“比喻”时，一个优秀的、非类比的讲解，同样能达到甚至超越类比的效果。这种讲解方式，我们称之为<strong>“纯逻辑降维打击”</strong>。它包含三个核心步骤：</p>
+<details class="section level-5" data-anchor="a-problem-first-narrative">
+  <summary id="a-problem-first-narrative" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>A. 从“问题”出发，讲述一个“故事” (Problem-First Narrative)</strong></span><a class="anchor-link" href="#a-problem-first-narrative" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>不要直接开始解释概念本身。而是从这个概念<strong>诞生之前，世界是什么样的，人们遇到了什么痛苦</strong>开始讲起。</p>
+<ul>
+<li><strong>范例（学习 React Hooks 时想不出比喻）</strong>：</li>
+</ul>
+<blockquote>
+<p><strong>错误的开头</strong>: “React Hooks 是一种能让你在函数组件中使用 state 和其他 React 特性的函数...” (这是定义，枯燥且抽象)</p>
+<p><strong>正确的开头</strong>: “在 Hooks 出现之前，如果你想让一个组件拥有自己的状态（比如一个计数器），你必须把它写成一个又大又笨重的<code>class</code>。更糟糕的是，相关的逻辑被迫分散在不同的生命周期函数里（比如，在<code>componentDidMount</code>里订阅事件，就必须在<code>componentWillUnmount</code>里取消订阅）。一个简单的功能，代码却被拆得七零八落，非常难以维护。<strong>Hooks 的诞生，就是为了解决这个‘逻辑分散’的巨大痛点。</strong>”</p>
+</blockquote>
+  </div>
+</details>
+<details class="section level-5" data-anchor="b-step-by-step-blueprint">
+  <summary id="b-step-by-step-blueprint" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>B. 用“流程图”的方式讲话 (Step-by-Step Blueprint)</strong></span><a class="anchor-link" href="#b-step-by-step-blueprint" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>将一个复杂的概念，拆解成一系列<strong>“第一步 -&gt; 第二步 -&gt; 第三步”</strong>的、具有清晰因果关系的线性流程。</p>
+<ul>
+<li><strong>范例（学习 <code>git commit</code>）</strong>：</li>
+</ul>
+<blockquote>
+<p><strong>错误的解释</strong>: “<code>git commit</code>会创建一个提交对象...” (这依然是定义)</p>
+<p><strong>正确的解释</strong>: “当你执行<code>git commit</code>时，Git 在背后做了这样几件事：</p>
+<ol>
+<li>
+<p><strong>第一步</strong>，它会把你通过<code>git add</code>放进‘暂存区’的所有文件内容，创建一个快照。</p>
+</li>
+<li>
+<p><strong>第二步</strong>，它创建一个‘提交对象’，这个对象里包含了作者、提交信息，以及一个指向刚刚那个‘内容快照’的指针。</p>
+</li>
+<li>
+<p>第三步，也是最关键的一步，它把你当前所在的分支（比如 main），移动到这个新的‘提交对象’上。</p>
+</li>
+</ol>
+<p>所以，一次 commit，本质上就是为你的项目当前状态拍了一张照片，并把你的分支名这个‘标签’贴了上去。”</p>
+</blockquote>
+  </div>
+</details>
+<details class="section level-5" data-anchor="c-concrete-example-walkthrough">
+  <summary id="c-concrete-example-walkthrough" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>C. 用一个“具体例子”贯穿始终 (Concrete Example Walkthrough)</strong></span><a class="anchor-link" href="#c-concrete-example-walkthrough" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>选择一个最简单、最无争议的例子，像放慢镜头一样，带着你的“小白”一步步走完整个流程。</p>
+<ul>
+<li><strong>范例（学习 <code>Array.map</code> 方法）</strong>：</li>
+</ul>
+<blockquote>
+<p><strong>错误的解释</strong>: “<code>.map</code>会遍历数组，对每个元素执行一个函数，并返回一个新数组...”</p>
+<p><strong>正确的解释</strong>: “我们来看这个例子：<code>[1, 2, 3].map(x =&gt; x * 2)</code>。</p>
+<ol>
+<li>首先，<code>.map</code>在内存里创建了一个<strong>全新的、空的数组</strong>，我们叫它<code>newArray</code>。</li>
+<li>然后，它从原数组里取出第一个元素<code>1</code>，把它丢进我们的函数<code>x =&gt; x * 2</code>里，得到了结果<code>2</code>。它把<code>2</code>放进<code>newArray</code>里。现在<code>newArray</code>是<code>[2]</code>。</li>
+<li>接着，它取出第二个元素<code>2</code>，丢进函数，得到<code>4</code>。它把<code>4</code>放进<code>newArray</code>里。现在<code>newArray</code>是<code>[2, 4]</code>。</li>
+<li>最后，它取出<code>3</code>，得到<code>6</code>，放进去。现在<code>newArray</code>是<code>[2, 4, 6]</code>。</li>
+<li>原数组的所有元素都处理完了，<code>.map</code>就把这个<strong>全新的数组</strong> <code>[2, 4, 6]</code> 作为最终结果返回给我们。”</li>
+</ol>
+</blockquote>
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-4" data-anchor="_12">
+  <summary id="_12" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第三步：如何“刻意练习”你的类比能力（长期策略）</strong></span><a class="anchor-link" href="#_12" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>想不出比喻，不是您没有创造力，而是您大脑中关于这个新知识的“连接点”还不够多。这是一个可以通过练习来提升的技能。</p>
+<ol>
+<li><strong>从优秀案例中“偷师”</strong>：
+   - 当您在网上看到一篇把复杂概念讲得特别清楚的文章或视频时，<strong>请把它的比喻，当作一个知识点，郑重地记录到您的笔记里</strong>。
+   - 建立一个“绝妙比喻”的专属收藏夹。比如：“Fireship.io 将 Docker 比作‘代码的标准化集装箱’”、“有人将<code>async/await</code>比作‘给异步操作排队叫号’”。这些都是您可以借鉴和化用的素材。</li>
+<li><strong>在自己的生活中寻找连接</strong>：
+   - 强制自己进行联想。问自己：“<strong>我生活中的哪个系统，和这个该死的概念有点像？</strong>”
+   - 数据库索引像书的目录吗？闭包像一个带着“出差背包”（包含了它诞生地的变量）的函数吗？<code>git rebase</code>像整理一叠草稿纸，把它们重新誊写一遍，让历史看起来更整洁吗？</li>
+</ol>
+<hr/>
+<p><strong>最终心法：解释是起点，而非终点。</strong></p>
+<p>请记住，费曼学习法的第一次尝试，<strong>其目的不是为了产出一篇完美的、充满绝妙比喻的讲解</strong>。它的首要目的，是<strong>发现您讲不清楚的地方</strong>。</p>
+<p>一个磕磕巴巴的、纯逻辑的、但暴露了您三个核心盲区的讲解，<strong>远比</strong>您花一小时苦思冥想一个比喻，却迟迟无法开始要<strong>有价值得多</strong>。</p>
+<p>通常，那个绝妙的比喻，是在您用纯逻辑的方式，挣扎着把一个概念讲通了<strong>之后</strong>，才灵光一闪、水到渠成地出现的。<strong>比喻，是您真正掌握知识后的“锦上添花”，而不是开始学习前的“必要门槛”。</strong></p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_13">
+  <summary id="_13" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">何时开始费曼学习</span><a class="anchor-link" href="#_13" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>好的，这是一个非常核心且关键的问题。我们来系统性地拆解它，为您建立一套在学习任何新知识点时，都可以依赖的、清晰的费曼学习法操作流程。</p>
+<hr/>
+<details class="section level-3" data-anchor="_14">
+  <summary id="_14" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第一部分：何时开始？—— 最佳时机</strong></span><a class="anchor-link" href="#_14" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>费曼学习法不是学习的第一步，而是<strong>知识内化的关键一步</strong>。它的最佳时机，是在您完成了一个知识点的“<strong>初步学习</strong>”和“<strong>基本实践</strong>”之后，但<strong>尚未完全忘记之前</strong>。</p>
+<p>把它放在我们之前讨论的“学习-实践-巩固”模型中，它的位置是：</p>
+<ol>
+<li><strong>学习 (Learn)</strong>：通过看视频、读文档，对一个新知识点（比如React的<code>useEffect</code> Hook）有了初步的“是什么”的认知。</li>
+<li><strong>实践 (Practice)</strong>：您跟随教程，亲手将<code>useEffect</code>用在一个简单的例子中，并成功运行。您知道了“怎么用”。</li>
+<li><strong>巩固 (Consolidate)</strong>：<strong>就是现在！</strong> 在您结束这个学习时段（例如2-3个番茄钟）后的那30分钟“黄金时间”里，立刻启动费曼学习法。</li>
+</ol>
+<p><strong>核心结论</strong>：不要在刚看到一个概念时就去讲解，那叫“复述”。也不要等一周后再去讲解，那时您已遗忘大半。<strong>在您刚刚获得“体感”，但对“为什么”还一知半解时，是启动费曼学习法的最佳时机。</strong></p>
+<hr/>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_15">
+  <summary id="_15" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第二部分：如何应用于“操作性知识”？—— 讲解“工作流”而非“定义”</strong></span><a class="anchor-link" href="#_15" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>您提出的这点非常重要。对于类似“框架使用”这种操作性知识，费曼学习法的对象，不应该是枯燥的“API定义”，而应该是更深刻、更实用的<strong>“模式”、“决策”和“工作流”</strong>。</p>
+<p>当您学习一个框架时，请从以下三个角度选择您的“费曼讲解”目标：</p>
+<details class="section level-4" data-anchor="1-explaining-a-black-box-workflow">
+  <summary id="1-explaining-a-black-box-workflow" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>1. 讲解一个“黑箱”的内部工作流 (Explaining a "Black Box" Workflow)</strong></span><a class="anchor-link" href="#1-explaining-a-black-box-workflow" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>目标</strong>：将框架的“魔法”，用简单的、符合逻辑的步骤拆解开。</li>
+<li><strong>范例 (学习React的<code>useEffect</code> Hook)</strong>：</li>
+<li><strong>低价值讲解（复述定义）</strong>：“<code>useEffect</code>是一个让你在函数组件中执行副作用的Hook。”</li>
+<li><strong>高价值讲解（费曼工作流）</strong>：“好，我给你讲讲<code>useEffect</code>到底是怎么工作的。首先，React会完成一次组件的渲染，把界面画出来。<strong>然后</strong>，它会回头检查这个组件里有没有<code>useEffect</code>。如果有，它就会去看<code>useEffect</code>的第二个参数——那个‘依赖数组’。<strong>如果是第一次渲染</strong>，它会无条件执行你传给<code>useEffect</code>的那个函数。<strong>如果不是第一次渲染</strong>，它会拿出这次的‘依赖数组’，和上一次渲染时的‘依赖数组’进行比较。<strong>只有当</strong>数组里的某个值真的变了，它才会再次执行那个函数。这就是为什么一个空的<code>[]</code>依赖数组，能保证函数只运行一次的原因。”</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="2-explaining-a-decision-point">
+  <summary id="2-explaining-a-decision-point" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>2. 讲解一个“决策点”的权衡取舍 (Explaining a "Decision Point")</strong></span><a class="anchor-link" href="#2-explaining-a-decision-point" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li>
+<p><strong>目标</strong>：将您在笔记中记录的“决策点”，用自己的语言进行阐述，内化为自己的工程判断力。</p>
+</li>
+<li>
+<p><strong>范例 (学习状态管理)</strong>：</p>
+</li>
+</ul>
+<blockquote>
+<p>“在我们的‘匠心艺师’App里，为什么这个表单的状态，我选择用<code>useReducer</code>而不是多个<code>useState</code>？因为这个表单有5个字段，它们之间有联动关系，比如选择了A，B就必须禁用。如果用5个<code>useState</code>，更新逻辑会散落在各个事件处理函数里，非常混乱。<strong>而用<code>useReducer</code></strong>，我可以把所有可能的更新操作（如‘更新用户名’、‘重置表单’）都集中在一个reducer函数里。这就像为这个组件的状态变化，建立了一个‘指挥中心’，让逻辑更清晰，也更容易测试。”</p>
+</blockquote>
+  </div>
+</details>
+<details class="section level-4" data-anchor="3-explaining-a-standard-operating-procedure-sop">
+  <summary id="3-explaining-a-standard-operating-procedure-sop" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>3. 讲解一个“标准操作程序” (Explaining a Standard Operating Procedure, S.O.P.)</strong></span><a class="anchor-link" href="#3-explaining-a-standard-operating-procedure-sop" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li>
+<p><strong>目标</strong>：将一系列的操作步骤，固化为自己可以随时调用的“肌肉记忆”。</p>
+</li>
+<li>
+<p><strong>范例 (学习Git)</strong>：</p>
+</li>
+</ul>
+<blockquote>
+<p>“当我要给一个开源项目贡献代码时，标准的工作流是这样的：<strong>第一步</strong>，我不能直接在主项目上改，要先把它<code>fork</code>到我自己的账号下。<strong>第二步</strong>，把我自己账号下的这个项目<code>clone</code>到本地。<strong>第三步</strong>，为了不污染主分支，我必须创建一个新的分支，比如叫<code>fix-typo-in-docs</code>。<strong>第四步</strong>，在这个新分支上进行修改和<code>commit</code>。<strong>第五步</strong>，把这个新分支<code>push</code>到我自己的远程仓库。<strong>最后一步</strong>，在GitHub上，从我的这个新分支，向原项目的<code>main</code>分支发起一个Pull Request。这个流程能保证我的修改是独立、干净且易于审查的。”</p>
+</blockquote>
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="sop_1">
+  <summary id="sop_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第三部分：费曼学习法终极S.O.P. (一步步照做)</strong></span><a class="anchor-link" href="#sop_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>无论您学习的是理论还是操作，都可以遵循这个标准流程。</p>
+<details class="section level-4" data-anchor="target-prepare">
+  <summary id="target-prepare" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第一步：锁定目标与准备 (Target &amp; Prepare)</strong></span><a class="anchor-link" href="#target-prepare" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>1. 锁定目标</strong>: 从本次学习内容中，<strong>只选择一个</strong>最核心或最让您困惑的概念/工作流。</li>
+<li><strong>2. 准备“学生”</strong>: 它可以是一张白纸、一个笔记软件的空白页、或者一个“橡皮鸭”。</li>
+<li><strong>3. 关闭书本</strong>: <strong>合上所有参考资料</strong>。这是强制性的“闭卷考试”。</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="attempt-to-teach">
+  <summary id="attempt-to-teach" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第二步：尝试讲解 (Attempt to Teach)</strong></span><a class="anchor-link" href="#attempt-to-teach" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>1. 先讲“为什么”</strong>: 这个东西是为了解决什么痛苦而存在的？</li>
+<li><strong>2. 使用类比或纯逻辑降维</strong>: 尝试用一个比喻来建立直觉。如果想不出来，立刻切换到我们之前讨论的“<strong>纯逻辑降维打击</strong>”模式（从问题出发 -&gt; 用流程图方式讲话 -&gt; 用具体例子贯穿）。</li>
+<li><strong>3. 持续输出</strong>: 不断地讲/写，直到您第一次卡住。</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="identify-sticking-points">
+  <summary id="identify-sticking-points" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第三步：识别“卡壳点” (Identify Sticking Points)</strong></span><a class="anchor-link" href="#identify-sticking-points" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>1. 精准记录</strong>: 当您发现自己<strong>“过度使用术语”、“逻辑无法继续”、“无法回答一个‘如果...会怎样’的问题”</strong>时，恭喜您，这就是“知识Bug”。</li>
+<li><strong>2. 形成清单</strong>: 将这些“卡壳点”以问题的形式，清晰地记录下来。例如：“我无法解释<code>useEffect</code>的清理函数到底在哪个确切的时间点执行。”</li>
+<li><strong>产出</strong>: 一份您大脑的专属“Bug报告”。</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="go-back-research">
+  <summary id="go-back-research" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第四步：回溯研究 (Go Back &amp; Research)</strong></span><a class="anchor-link" href="#go-back-research" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>1. 带题查阅</strong>: 带着您的“Bug报告”清单，<strong>有目的地</strong>回看视频、重读文档。</li>
+<li><strong>2. 交叉验证</strong>: <strong>不要只看单一来源！</strong> 去Google搜索您的问题，看看Stack Overflow、官方文档或权威技术博客是如何从不同角度解释的。</li>
+<li><strong>3. 动手验证</strong>: 编写一小段代码，专门用来验证您刚刚学到的、能解决“卡壳点”的知识。</li>
+</ul>
+  </div>
+</details>
+<details class="section level-4" data-anchor="simplify-refactor">
+  <summary id="simplify-refactor" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第五步：简化与重构 (Simplify &amp; Refactor)</strong></span><a class="anchor-link" href="#simplify-refactor" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ul>
+<li><strong>1. 再次讲解</strong>: 回到第二步，将您刚才学到的新知识，用<strong>更简单、更流畅、更自信</strong>的语言，融入到您的讲解中。</li>
+<li><strong>2. 检验标准</strong>: 如果您在讲解时，内心能感受到一种“啊哈！原来是这样！”的清晰感和愉悦感，那么您就成功了。</li>
+<li><strong>产出</strong>: 一个真正被您内化的、坚固的知识点。</li>
+</ul>
+<p>这个流程，就是您将任何外部知识，锻造成您个人内在智慧的、最可靠的“熔炉”。</p>
+<hr/>
+<p>好的，您提出了一个直击要害的问题，点破了无数自学者最大的陷阱。</p>
+<p>作为您的教练，我的回答是：</p>
+<p><strong>不，对着抄几次，绝对不算学过。那只是在练习打字，是在营造“流畅性错觉”</strong> 1。</p>
+<p>“手把手”写代码的书籍，是一把双刃剑。它提供了清晰的路径，但也极易让人陷入被动的、不动脑的“代码抄写员”模式。要真正“吃透”这类书籍，并把作者的知识内化为自己的手艺，您需要一套<strong>将“被动抄写”转化为“主动解构与重建”</strong>的刻意练习操作流。</p>
+<p>这份操作流，旨在让您在学习结束后，不仅拥有了书中的项目代码，更重要的是，<strong>“偷”走了作者的“思考过程”</strong>。</p>
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_16">
+  <summary id="_16" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>“代码复刻”的正确姿势：三遍阅读与实践法</strong></span><a class="anchor-link" href="#_16" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>对于书中每一个独立的章节或功能模块，您都需要像一位工匠解构一件传世名作一样，对其进行三轮精度递增的“阅读与实践”。</p>
+<details class="section level-4" data-anchor="_17">
+  <summary id="_17" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第一遍：侦察兵模式 —— “只读不写，建立地图”</strong></span><a class="anchor-link" href="#_17" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><strong>目标</strong>：在不陷入代码细节的情况下，建立对本章节<strong>目标 (What)</strong> 和<strong>路径 (How)</strong> 的宏观认知。</p>
+<ol>
+<li><strong>[输入] 快速通读 (Input)</strong>：</li>
+</ol>
+<ul>
+<li>
+<p><strong>任务</strong>：<strong>不写一行代码</strong>。完整地、快速地阅读整个章节。重点关注标题、图表、最终效果截图以及作者对“为什么”要这么做的解释。</p>
+</li>
+<li>
+<p><strong>资源</strong>：《学习之道》中提到的“预先翻阅”技巧 2。</p>
+</li>
+</ul>
+<ol start="2">
+<li><strong>[输出] 绘制蓝图 (Output)</strong>：</li>
+</ol>
+<ul>
+<li>
+<p><strong>任务</strong>：阅读完毕后，在您的笔记中，用几句大白话，写下本章节的<strong>“施工蓝图”</strong>。</p>
+</li>
+<li>
+<p><strong>范例 (学习一个“登录表单”章节后)</strong>：</p>
+<blockquote>
+<p>“本章目标是构建一个登录表单。</p>
+<p>\1. 先用HTML搭建表单的基本结构。</p>
+<p>\2. 然后用CSS美化它，实现居中和响应式布局。</p>
+<p>\3. 最后用JavaScript捕获表单的提交事件，获取用户输入，并进行简单的验证。”</p>
+</blockquote>
+</li>
+<li>
+<p><strong>完成效果</strong>：您的大脑中已经有了一张清晰的“作战地图”，为接下来的编码做好了充分的心理准备。</p>
+</li>
+</ul>
+<hr/>
+  </div>
+</details>
+<details class="section level-4" data-anchor="-">
+  <summary id="-" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第二遍：学徒模式 —— “预测-执行-注释”</strong></span><a class="anchor-link" href="#-" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><strong>目标</strong>：在跟随作者编码的过程中，强制自己进行<strong>主动回忆</strong>和<strong>决策点分析</strong>，而不是机械地抄写。</p>
+<ol>
+<li><strong>[实践] “预测-执行-对比”循环 (Predict-Execute-Compare Loop)</strong>：</li>
+</ol>
+<ul>
+<li><strong>任务</strong>：<ol>
+<li>阅读作者对下一步代码块的<strong>文字解释</strong>。</li>
+<li><strong>立刻暂停！</strong> 遮住作者即将展示的代码。</li>
+<li><strong>预测 (Predict)</strong>：在您自己的代码编辑器中，尝试根据您的理解，<strong>独立写出</strong>这部分功能的代码。</li>
+<li><strong>执行 (Execute)</strong>：现在，放下您的代码，<strong>一字一句地</strong>跟随书本，敲出作者的“标准答案”。</li>
+<li><strong>对比 (Compare)</strong>：对比您写的和作者写的有何不同。<strong>这些“不同点”，就是本章节最宝贵的学习之处。</strong></li>
+</ol>
+</li>
+</ul>
+<ol start="2">
+<li><strong>[实践] “决策点”注释法 (Decision Point Commenting)</strong>：</li>
+</ol>
+<ul>
+<li>
+<p><strong>任务</strong>：在敲入作者的代码时，您不是在打字，而是在<strong>“注释”他的思想</strong>。对于每一个让您感到“原来如此”或“为什么这么写”的关键代码行，强制自己为其添加注释，解释其<strong>“决策”</strong>。</p>
+</li>
+<li>
+<p><strong>范例</strong>：</p>
+<p>JavaScript</p>
+<p><code>// 作者在这里用了 a.cloneNode(true) 而不是 a.innerHTML = b.innerHTML
+ // [决策点] 这样做可以完整地复制节点，并保留其身上已绑定的事件监听器，
+ // 而 innerHTML 是一种销毁重建的模式，会导致事件监听器丢失。
+ const clone = element.cloneNode(true);</code></p>
+</li>
+</ul>
+<p><strong>完成效果(输出)</strong>：✅ 您得到了本章的完整代码，但这份代码已经不再是简单的复制品，而是充满了您<strong>个人思考、预测和决策分析</strong>的“深度注解版”。</p>
+<hr/>
+  </div>
+</details>
+<details class="section level-4" data-anchor="_18">
+  <summary id="_18" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>第三遍：工匠模式 —— “闭卷重建与自由创作”</strong></span><a class="anchor-link" href="#_18" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p><strong>目标</strong>：彻底摆脱书本，将知识转化为您自己的能力，并进行创造性延伸。</p>
+<ol>
+<li><strong>[实践] “闭卷”重构 (Closed-Book Refactor)</strong>：</li>
+</ol>
+<ul>
+<li>
+<p><strong>任务</strong>：创建一个<strong>全新的空白文件</strong>。<strong>禁止</strong>参考书本或之前的代码。只看着您在第二遍中记录的、带有您自己注释的<strong>“决策点笔记”</strong>，尝试从零开始，独立地、凭记忆和理解，将本章的功能完整地重新实现一遍。</p>
+</li>
+<li>
+<p><strong>认知科学原理</strong>：这是最高强度的<strong>“提取练习” (Retrieval Practice)</strong>，是形成长期记忆最有效的方法 3。</p>
+</li>
+</ul>
+<ol start="2">
+<li><strong>[创造] “1+N”扩展 (The "1+N" Extension)</strong>：</li>
+</ol>
+<ul>
+<li><strong>任务</strong>：您已经成功重建了作者的“轮子”。现在，是时候为它增加您自己的创造了。为这个功能，增加<strong>至少一个</strong>书中没有提及的、但很实用的小功能。</li>
+<li><strong>范例 (还是登录表单)</strong>：<ul>
+<li><strong>+1</strong>: 增加一个“显示/隐藏密码”的眼睛图标功能。</li>
+<li><strong>+2</strong>: 增加一个简单的前端密码强度校验（如必须包含大小写字母和数字）。</li>
+<li><strong>+3</strong>: 增加一个“记住我”的复选框，并将登录状态（模拟的token）存入<code>localStorage</code>。</li>
+</ul>
+</li>
+</ul>
+<ol start="3">
+<li><strong>[复盘] 费曼总结 (Feynman Summary)</strong>：</li>
+</ol>
+<ul>
+<li><strong>任务</strong>：现在，您已经经历了“理解”、“重建”和“创造”的全过程。请启动我们最熟悉的<strong>费曼学习法</strong>。</li>
+<li><strong>向您的“橡皮鸭”或学习笔记，完整地讲解</strong>：<ul>
+<li>
+<ol>
+<li>这个功能的核心架构是什么？</li>
+</ol>
+</li>
+<li>
+<ol>
+<li>在实现它的过程中，作者做出了哪几个关键的“决策”？</li>
+</ol>
+</li>
+<li>
+<ol>
+<li>在“1+N”扩展中，您自己又遇到了什么新的问题，并是如何解决的？</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>完成效果(输出)</strong>：✅ 一个您能<strong>独立、自信地</strong>向任何人解释其每一个细节的、带有<strong>您个人创造印记</strong>的、真正属于您的项目。</p>
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_19">
+  <summary id="_19" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><strong>总结</strong></span><a class="anchor-link" href="#_19" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<table>
+<thead>
+<tr>
+<th>遍数 (Pass)</th>
+<th>核心模式 (Core Mode)</th>
+<th>核心任务 (Core Task)</th>
+<th>产出物 (Output)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>第一遍</strong></td>
+<td><strong>侦察兵 (Recon)</strong></td>
+<td>通读章节，不写代码</td>
+<td><strong>高阶“施工蓝图”</strong></td>
+</tr>
+<tr>
+<td><strong>第二遍</strong></td>
+<td><strong>学徒 (Apprentice)</strong></td>
+<td>预测-执行-对比，注释决策点</td>
+<td><strong>充满个人思考的“深度注解版”代码</strong></td>
+</tr>
+<tr>
+<td><strong>第三遍</strong></td>
+<td><strong>工匠 (Artisan)</strong></td>
+<td>闭卷重构，增加新功能，费曼总结</td>
+<td><strong>一个真正内化、可迁移的“个人作品”</strong></td>
+</tr>
+</tbody>
+</table>
+<p>遵循这个流程，任何一本“手把手”的书籍，都将不再是您的“拐杖”，而是您通往“大师”之路的“磨刀石”。</p>
+  </div>
+</details>
+  </div>
+</details>
+</article>
+<button class="to-top" aria-label="回到顶部">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
+<script>
+
+(function() {
+  'use strict';
+
+  /* ---------- 阅读进度条 ---------- */
+  const bar = document.querySelector('.progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    bar.style.width = (total > 0 ? h.scrollTop / total * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
+
+  /* ---------- 回到顶部 ---------- */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
+
+  /* ---------- 全局折叠/展开(单 toggle 按钮) ---------- */
+  const foldBtn = document.querySelector('[data-action="toggle-fold"]');
+  function syncFoldBtnState() {
+    if (!foldBtn) return;
+    const all = document.querySelectorAll('details');
+    if (!all.length) return;
+    const open = Array.from(all).filter(d => d.open).length;
+    const expanded = open >= all.length / 2;
+    foldBtn.dataset.state = expanded ? 'expanded' : 'folded';
+    foldBtn.innerHTML = expanded
+      ? '<span class="chev">▾</span>折叠'
+      : '<span class="chev">▾</span>展开';
+    foldBtn.setAttribute('aria-label', expanded ? '折叠全部' : '展开全部');
+  }
+  if (foldBtn) {
+    foldBtn.addEventListener('click', () => {
+      const all = document.querySelectorAll('details');
+      const open = Array.from(all).filter(d => d.open).length;
+      const expanded = open >= all.length / 2;
+      all.forEach(d => { d.open = !expanded; });
+      syncFoldBtnState();
+    });
+    // 用户手动折叠/展开后,标签也跟着更新
+    document.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', syncFoldBtnState);
+    });
+    syncFoldBtnState();
+  }
+
+  /* ---------- 代码块:包成 .code-block + header(语言徽章 + 复制按钮) ---------- */
+  async function copyCode(text, btn) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '复制'; }, 1500);
+    }
+  }
+
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.closest('.code-block')) return;  // 已包装
+    const code = pre.querySelector('code');
+    let lang = '';
+    if (code) {
+      const m = (code.className || '').match(/language-([\w+-]+)/);
+      if (m) lang = m[1];
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
+
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    header.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>'
+                     + '<span class="code-lang">' + (lang || 'text') + '</span>';
+
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制代码');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = (code ? code.textContent : pre.textContent) || '';
+      copyCode(text, btn);
+    });
+    header.appendChild(btn);
+
+    pre.parentElement.insertBefore(wrap, pre);
+    wrap.appendChild(header);
+    wrap.appendChild(pre);
+  });
+
+  /* ---------- 锚点自展开(从主页章节链接跳进来时,目标 + 祖先链全展开) ---------- */
+  if (location.hash) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+      let el = target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+      }
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
+      });
+    }
+  }
+
+  /* ---------- org-mode 键盘:Tab / Shift+Tab ---------- */
+  const isHeading = (el) => el && el.matches && el.matches('summary');
+  const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea')) return;
+    const meta = e.metaKey || e.ctrlKey;
+
+    // / 聚焦搜索
+    if (e.key === '/' && !meta) {
+      const s = document.querySelector('input.search');
+      if (s) { e.preventDefault(); s.focus(); return; }
+    }
+
+    // Tab / Shift+Tab 折叠当前聚焦的 summary
+    if (e.key === 'Tab') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        e.preventDefault();
+        const d = f.parentElement;
+        if (e.shiftKey) {
+          // Shift+Tab: 全局折叠/展开所有
+          const all = document.querySelectorAll('details');
+          const allOpen = Array.from(all).every(x => x.open);
+          all.forEach(x => { x.open = !allOpen; });
+        } else {
+          // Tab: 折叠/展开当前节点
+          d.open = !d.open;
+        }
+        return;
+      }
+    }
+
+    // J/K 或 ↓/↑ 跳转标题 — 已移除(行为不一致,容易让用户迷惑)
+
+    // Enter: 在 note-node 上是跟随标题链接;在 section 上是 toggle
+    if (e.key === 'Enter') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        const titleLink = f.querySelector('.title, .heading-text');
+        if (titleLink && titleLink.tagName === 'A') {
+          e.preventDefault();
+          titleLink.click();
+        }
+      }
+    }
+  });
+
+  /* ---------- 点击 caret 只 toggle,不让 summary 的默认 toggle 干扰; 点击 title 跟随链接 ---------- */
+  // 默认浏览器:点 summary 任意位置都会 toggle,点 <a> 会先 toggle 再 navigate。
+  // 我们让 title 链接的 click 阻止冒泡,避免 toggle 副作用(navigate 后虽然看不到,但保证一致性)。
+  document.querySelectorAll('details.note-node > summary > .title').forEach(link => {
+    if (link.tagName !== 'A') return;
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 让浏览器默认行为(navigate)发生
+    });
+  });
+  // caret 点击:默认也会 toggle,不用特殊处理
+
+  /* ---------- 搜索 ---------- */
+  const search = document.querySelector('input.search');
+  if (search && document.body.classList.contains('page-index')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const nodes = document.querySelectorAll('.note-node');
+      nodes.forEach(node => {
+        if (!q) {
+          node.classList.remove('hidden-by-search');
+          node.querySelectorAll('li').forEach(li => li.classList.remove('hidden-by-search'));
+          return;
+        }
+        const nodeText = node.textContent.toLowerCase();
+        if (!nodeText.includes(q)) {
+          node.classList.add('hidden-by-search');
+          return;
+        }
+        node.classList.remove('hidden-by-search');
+        let anyMatch = false;
+        node.querySelectorAll('li').forEach(li => {
+          const t = li.textContent.toLowerCase();
+          if (t.includes(q)) {
+            li.classList.remove('hidden-by-search');
+            anyMatch = true;
+          } else {
+            li.classList.add('hidden-by-search');
+          }
+        });
+        if (anyMatch) node.open = true;
+      });
+    });
+  }
+  if (search && document.body.classList.contains('page-note')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('details.section').forEach(s => {
+        if (!q) { s.style.opacity = ''; return; }
+        const t = s.querySelector('summary').textContent.toLowerCase();
+        s.style.opacity = t.includes(q) ? '1' : '0.3';
+      });
+    });
+  }
+
+  /* ---------- 主页 sidebar 切换 + tag 过滤(Feature 6) ---------- */
+  if (document.body.classList.contains('page-index')) {
+    const sidebarBtn = document.querySelector('[data-action="toggle-sidebar"]');
+    // 默认收起,localStorage 记忆用户选择
+    const KEY = 'md2html:sidebar-open';
+    const initialOpen = (() => {
+      try { return localStorage.getItem(KEY) === '1'; } catch { return false; }
+    })();
+    if (initialOpen) document.body.classList.add('sidebar-open');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {}
+      });
+    }
+    // 点 sidebar 外面关闭(移动端友好)
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      if (window.innerWidth >= 721) return;  // 桌面端不自动关
+      const t = e.target;
+      if (t.closest('.sidebar') || t.closest('.sidebar-btn')) return;
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem(KEY, '0'); } catch {}
+    });
+
+    const tagBtns = document.querySelectorAll('.sidebar .tag-btn');
+    const nodes = document.querySelectorAll('.note-node');
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        tagBtns.forEach(b => b.classList.toggle('active', b === btn));
+        nodes.forEach(n => {
+          const tags = (n.getAttribute('data-tags') || '').split(',').filter(Boolean);
+          const show = filter === 'all'
+                    || (filter === '__none__' && tags.length === 0)
+                    || tags.includes(filter);
+          n.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  /* ---------- KaTeX 数学公式渲染 ----------
+     用 DOMContentLoaded 触发,确保 defer 加载的 katex.js 和 auto-render.js
+     都已执行完毕。 $$ 块级、$ 行内、\(...\)、\[...\] 全支持。 */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMathInElement !== 'function') return;
+    const target = document.body.classList.contains('page-index')
+      ? (document.querySelector('.outline-tree') || document.body)
+      : document.body;
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoredClasses: ['code-block', 'code-header', 'katex']
+      });
+    } catch (e) {
+      console.warn('KaTeX render failed:', e);
+    }
+  });
+})();
+
+</script>
+</body>
+</html>

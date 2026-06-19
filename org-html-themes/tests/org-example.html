@@ -1,556 +1,1850 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-<!-- 2022-05-18 三 17:49 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Example of Tasks</title>
-<meta name="author" content="Fabrice Niessen" />
-<meta name="generator" content="Org Mode" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workwork — Salted的笔记</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
 <style>
-  #content { max-width: 60em; margin: auto; }
-  .title  { text-align: center;
-             margin-bottom: .2em; }
-  .subtitle { text-align: center;
-              font-size: medium;
-              font-weight: bold;
-              margin-top:0; }
-  .todo   { font-family: monospace; color: red; }
-  .done   { font-family: monospace; color: green; }
-  .priority { font-family: monospace; color: orange; }
-  .tag    { background-color: #eee; font-family: monospace;
-            padding: 2px; font-size: 80%; font-weight: normal; }
-  .timestamp { color: #bebebe; }
-  .timestamp-kwd { color: #5f9ea0; }
-  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
-  .underline { text-decoration: underline; }
-  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
-  p.verse { margin-left: 3%; }
-  pre {
-    border: 1px solid #e6e6e6;
-    border-radius: 3px;
-    background-color: #f2f2f2;
-    padding: 8pt;
-    font-family: monospace;
-    overflow: auto;
-    margin: 1.2em;
-  }
-  pre.src {
-    position: relative;
-    overflow: auto;
-  }
-  pre.src:before {
-    display: none;
-    position: absolute;
-    top: -8px;
-    right: 12px;
-    padding: 3px;
-    color: #555;
-    background-color: #f2f2f299;
-  }
-  pre.src:hover:before { display: inline; margin-top: 14px;}
-  /* Languages per Org manual */
-  pre.src-asymptote:before { content: 'Asymptote'; }
-  pre.src-awk:before { content: 'Awk'; }
-  pre.src-authinfo::before { content: 'Authinfo'; }
-  pre.src-C:before { content: 'C'; }
-  /* pre.src-C++ doesn't work in CSS */
-  pre.src-clojure:before { content: 'Clojure'; }
-  pre.src-css:before { content: 'CSS'; }
-  pre.src-D:before { content: 'D'; }
-  pre.src-ditaa:before { content: 'ditaa'; }
-  pre.src-dot:before { content: 'Graphviz'; }
-  pre.src-calc:before { content: 'Emacs Calc'; }
-  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-fortran:before { content: 'Fortran'; }
-  pre.src-gnuplot:before { content: 'gnuplot'; }
-  pre.src-haskell:before { content: 'Haskell'; }
-  pre.src-hledger:before { content: 'hledger'; }
-  pre.src-java:before { content: 'Java'; }
-  pre.src-js:before { content: 'Javascript'; }
-  pre.src-latex:before { content: 'LaTeX'; }
-  pre.src-ledger:before { content: 'Ledger'; }
-  pre.src-lisp:before { content: 'Lisp'; }
-  pre.src-lilypond:before { content: 'Lilypond'; }
-  pre.src-lua:before { content: 'Lua'; }
-  pre.src-matlab:before { content: 'MATLAB'; }
-  pre.src-mscgen:before { content: 'Mscgen'; }
-  pre.src-ocaml:before { content: 'Objective Caml'; }
-  pre.src-octave:before { content: 'Octave'; }
-  pre.src-org:before { content: 'Org mode'; }
-  pre.src-oz:before { content: 'OZ'; }
-  pre.src-plantuml:before { content: 'Plantuml'; }
-  pre.src-processing:before { content: 'Processing.js'; }
-  pre.src-python:before { content: 'Python'; }
-  pre.src-R:before { content: 'R'; }
-  pre.src-ruby:before { content: 'Ruby'; }
-  pre.src-sass:before { content: 'Sass'; }
-  pre.src-scheme:before { content: 'Scheme'; }
-  pre.src-screen:before { content: 'Gnu Screen'; }
-  pre.src-sed:before { content: 'Sed'; }
-  pre.src-sh:before { content: 'shell'; }
-  pre.src-sql:before { content: 'SQL'; }
-  pre.src-sqlite:before { content: 'SQLite'; }
-  /* additional languages in org.el's org-babel-load-languages alist */
-  pre.src-forth:before { content: 'Forth'; }
-  pre.src-io:before { content: 'IO'; }
-  pre.src-J:before { content: 'J'; }
-  pre.src-makefile:before { content: 'Makefile'; }
-  pre.src-maxima:before { content: 'Maxima'; }
-  pre.src-perl:before { content: 'Perl'; }
-  pre.src-picolisp:before { content: 'Pico Lisp'; }
-  pre.src-scala:before { content: 'Scala'; }
-  pre.src-shell:before { content: 'Shell Script'; }
-  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
-  /* additional language identifiers per "defun org-babel-execute"
-       in ob-*.el */
-  pre.src-cpp:before  { content: 'C++'; }
-  pre.src-abc:before  { content: 'ABC'; }
-  pre.src-coq:before  { content: 'Coq'; }
-  pre.src-groovy:before  { content: 'Groovy'; }
-  /* additional language identifiers from org-babel-shell-names in
-     ob-shell.el: ob-shell is the only babel language using a lambda to put
-     the execution function name together. */
-  pre.src-bash:before  { content: 'bash'; }
-  pre.src-csh:before  { content: 'csh'; }
-  pre.src-ash:before  { content: 'ash'; }
-  pre.src-dash:before  { content: 'dash'; }
-  pre.src-ksh:before  { content: 'ksh'; }
-  pre.src-mksh:before  { content: 'mksh'; }
-  pre.src-posh:before  { content: 'posh'; }
-  /* Additional Emacs modes also supported by the LaTeX listings package */
-  pre.src-ada:before { content: 'Ada'; }
-  pre.src-asm:before { content: 'Assembler'; }
-  pre.src-caml:before { content: 'Caml'; }
-  pre.src-delphi:before { content: 'Delphi'; }
-  pre.src-html:before { content: 'HTML'; }
-  pre.src-idl:before { content: 'IDL'; }
-  pre.src-mercury:before { content: 'Mercury'; }
-  pre.src-metapost:before { content: 'MetaPost'; }
-  pre.src-modula-2:before { content: 'Modula-2'; }
-  pre.src-pascal:before { content: 'Pascal'; }
-  pre.src-ps:before { content: 'PostScript'; }
-  pre.src-prolog:before { content: 'Prolog'; }
-  pre.src-simula:before { content: 'Simula'; }
-  pre.src-tcl:before { content: 'tcl'; }
-  pre.src-tex:before { content: 'TeX'; }
-  pre.src-plain-tex:before { content: 'Plain TeX'; }
-  pre.src-verilog:before { content: 'Verilog'; }
-  pre.src-vhdl:before { content: 'VHDL'; }
-  pre.src-xml:before { content: 'XML'; }
-  pre.src-nxml:before { content: 'XML'; }
-  /* add a generic configuration mode; LaTeX export needs an additional
-     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
-  pre.src-conf:before { content: 'Configuration File'; }
 
-  table { border-collapse:collapse; }
-  caption.t-above { caption-side: top; }
-  caption.t-bottom { caption-side: bottom; }
-  td, th { vertical-align:top;  }
-  th.org-right  { text-align: center;  }
-  th.org-left   { text-align: center;   }
-  th.org-center { text-align: center; }
-  td.org-right  { text-align: right;  }
-  td.org-left   { text-align: left;   }
-  td.org-center { text-align: center; }
-  dt { font-weight: bold; }
-  .footpara { display: inline; }
-  .footdef  { margin-bottom: 1em; }
-  .figure { padding: 1em; }
-  .figure p { text-align: center; }
-  .equation-container {
-    display: table;
-    text-align: center;
-    width: 100%;
+:root {
+  --bg: #ffffff;
+  --bg-soft: #fafafa;
+  --bg-hover: #f5f5f7;
+  --bg-inset: #f4f4f5;
+  --bg-toc: #fafbfc;
+
+  --text: #1a1a1f;
+  --text-secondary: #4a4a55;
+  --text-muted: #8a8a95;
+  --text-faint: #c8c8d0;
+  --text-ghost: #e6e6ea;
+
+  --accent: #2563eb;
+  --accent-soft: rgba(37, 99, 235, 0.07);
+  --accent-hover: #1d4ed8;
+  --accent-glow: rgba(37, 99, 235, 0.18);
+
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+
+  --border: #ececef;
+  --border-soft: #f2f2f5;
+  --border-strong: #d8d8de;
+
+  --code-bg: #f6f6f8;
+  --code-text: #1a1a1f;
+  --code-border: #e8e8ec;
+
+  --quote-bg: #fafbfc;
+  --quote-border: #d8d8de;
+
+  --shadow-sm: 0 1px 2px rgba(15, 15, 30, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 15, 30, 0.06), 0 1px 3px rgba(15, 15, 30, 0.04);
+  --shadow-lg: 0 12px 28px rgba(15, 15, 30, 0.08);
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+
+  --max-width: 860px;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI",
+               "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+main, header, footer, .topbar { position: relative; }
+
+/* ---------- 顶部进度条 ---------- */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 100;
+  transition: width 0.05s linear;
+}
+
+/* ---------- 顶栏 ---------- */
+.topbar {
+  position: sticky;
+  top: 0;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border-soft);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  z-index: 50;
+}
+
+.topbar .brand {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: -0.01em;
+  font-size: 14px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.topbar .brand:hover { color: var(--accent); border-bottom: none; }
+.topbar .brand .seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: var(--text);
+  color: white;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: -0.02em;
+}
+
+.topbar .spacer { flex: 1; }
+
+.topbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 11px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font: 500 12px/1 var(--font-sans);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+  font-family: var(--font-sans);
+}
+.topbar button:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.topbar button:active {
+  background: var(--bg-inset);
+  transform: scale(0.97);
+}
+.topbar button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+.topbar button.icon {
+  width: 28px;
+  padding: 0;
+  font-size: 13px;
+  font-weight: 700;
+}
+.topbar button .chev {
+  display: inline-block;
+  transition: transform 0.15s;
+  font-size: 9px;
+  color: var(--text-muted);
+}
+.topbar button:hover .chev { color: inherit; }
+.topbar button[data-state="folded"] .chev { transform: rotate(-90deg); }
+.topbar button[data-state="expanded"] .chev { transform: rotate(0deg); }
+
+.topbar .search {
+  flex: 0 1 280px;
+  padding: 5px 11px 5px 30px;
+  background: var(--bg-inset) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238a8a95' stroke-width='2' stroke-linecap='round'><circle cx='11' cy='11' r='7'/><line x1='21' y1='21' x2='16.5' y2='16.5'/></svg>") 9px center/13px no-repeat;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  transition: all 0.12s;
+}
+.topbar .search:focus {
+  background-color: white;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.topbar .search::placeholder { color: var(--text-muted); }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 20px 32px 4px;
+}
+.hero .eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.hero .title {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.hero .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.92em;
+  margin: 0;
+  line-height: 1.55;
+}
+.hero .stats {
+  display: flex;
+  gap: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border-soft);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.hero .stats > div { display: flex; align-items: baseline; gap: 6px; }
+.hero .stats .num {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.hero .stats .label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+
+/* ---------- 笔记页文档头 ---------- */
+article {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 32px 120px;
+}
+.back-link {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 24px;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.back-link:hover { color: var(--accent); border-bottom: none; }
+.doc-title {
+  font-size: 2.2em;
+  font-weight: 700;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text);
+}
+.doc-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 36px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-soft);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.doc-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.doc-meta .meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.doc-meta .meta-date .meta-label { color: var(--accent); }
+
+/* ---------- 折叠节点 — 树形大纲 ---------- */
+.outline { padding: 0; margin: 0; list-style: none; }
+
+.section {
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 行(标题区) */
+.section > summary,
+.node-row {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 8px 7px 0;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s, color 0.1s;
+}
+.section > summary::-webkit-details-marker { display: none; }
+.section > summary:hover,
+.note-node > summary:hover { background: var(--bg-hover); }
+.section > summary:focus-visible,
+.note-node > summary:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* 圆点 — 用虚实表示展开/折叠状态(实心=展开,空心=折叠)*/
+.bullet {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  box-sizing: border-box;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+/* 折叠状态:空心圆 */
+.section > summary > .bullet,
+.note-node > summary > .bullet {
+  background: transparent;
+  border-color: var(--text-muted);
+}
+/* 展开状态:实心圆 */
+.section[open] > summary > .bullet,
+.note-node[open] > summary > .bullet {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.section > summary:hover > .bullet,
+.note-node > summary:hover > .bullet {
+  border-color: var(--accent);
+}
+
+/* 标题文字 */
+.heading-text,
+.note-node > summary > .title {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: none;
+  transition: color 0.12s;
+}
+.section > summary:hover > .heading-text,
+.note-node > summary:hover > .title { color: var(--accent); }
+
+.note-node > summary > .title {
+  font-weight: 600;
+  font-size: 1.05em;
+  letter-spacing: -0.005em;
+}
+
+/* 锚点链接 */
+.anchor-link {
+  opacity: 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 11px;
+  padding: 2px 6px;
+  margin-left: 4px;
+  border-radius: var(--radius-sm);
+  transition: opacity 0.12s, background 0.12s;
+  border-bottom: none;
+}
+.section > summary:hover > .anchor-link { opacity: 1; }
+.anchor-link:hover { background: var(--accent-soft); color: var(--accent); }
+
+/* 元数据(章节计数等) */
+.row-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 2px 8px;
+  background: var(--bg-inset);
+  border-radius: 10px;
+  flex-shrink: 0;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- 层级字号 ---------- */
+.section.level-1 > summary { padding: 12px 8px 12px 0; }
+.section.level-1 > summary > .heading-text {
+  font-size: 1.35em;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.section.level-1 > summary > .bullet { width: 7px; height: 7px; }
+
+.section.level-2 > summary > .heading-text {
+  font-size: 1.1em;
+  font-weight: 600;
+}
+.section.level-2 > summary > .bullet { width: 6px; height: 6px; }
+
+.section.level-3 > summary > .heading-text {
+  font-size: 0.98em;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+.section.level-3 > summary > .bullet { width: 5px; height: 5px; }
+
+.section.level-4 > summary,
+.section.level-5 > summary,
+.section.level-6 > summary { padding: 5px 8px 5px 0; }
+.section.level-4 > summary > .heading-text,
+.section.level-5 > summary > .heading-text,
+.section.level-6 > summary > .heading-text {
+  font-size: 0.92em;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+.section.level-4 > summary > .bullet,
+.section.level-5 > summary > .bullet,
+.section.level-6 > summary > .bullet { width: 4px; height: 4px; }
+
+/* 缩进 — 层级通过 padding-left */
+/* 层级缩进由 section-body padding-left 统一负责,这里不再额外加 */
+
+/* 标题前缩进对齐 caret+bullet,使内容左边缘整齐 */
+.section > summary {
+  position: relative;
+}
+
+/* 层级缩进:统一通过 section-body 的 padding-left 实现,每嵌套一层 +16px */
+.section-body {
+  padding: 6px 0 14px 16px;
+  margin-left: 0;
+}
+
+/* 折叠动画(用 interpolate-size,现代浏览器支持) */
+@supports (interpolate-size: allow-keywords) {
+  html { interpolate-size: allow-keywords; }
+  .section > .section-body {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.2s ease;
   }
-  .equation {
-    vertical-align: middle;
+  .section:not([open]) > .section-body {
+    grid-template-rows: 0fr;
+    overflow: hidden;
+    padding-top: 0;
+    padding-bottom: 0;
   }
-  .equation-label {
-    display: table-cell;
-    text-align: right;
-    vertical-align: middle;
+  .section-body > * { overflow: hidden; min-height: 0; }
+}
+
+/* ---------- 内容样式 ---------- */
+.section-body > p { margin: 10px 0; }
+.section-body > p:first-child { margin-top: 6px; }
+.section-body > p:last-child { margin-bottom: 4px; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.12s;
+}
+a:hover {
+  color: var(--link-hover);
+  border-bottom-color: var(--link-hover);
+}
+
+strong, b { font-weight: 650; color: var(--text); }
+em, i { font-style: italic; }
+
+ul, ol { margin: 10px 0; padding-left: 24px; }
+li { margin: 3px 0; }
+li > p { margin: 4px 0; }
+
+hr {
+  border: none;
+  height: 1px;
+  background: var(--border);
+  margin: 28px 0;
+}
+
+blockquote {
+  margin: 12px 0;
+  padding: 10px 16px;
+  background: var(--quote-bg);
+  border-left: 2px solid var(--quote-border);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.96em;
+}
+blockquote p { margin: 4px 0; }
+
+/* 表格 */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  font-size: 0.93em;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+thead { background: var(--bg-soft); }
+th, td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+th {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.92em;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--border);
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr { transition: background 0.08s; }
+tbody tr:hover { background: var(--bg-hover); }
+
+/* 行内代码 — 关键修复:无 border,纯净 */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.5px 5px;
+  border-radius: 3px;
+  font-feature-settings: "calt" 1, "zero" 1;
+  border: none;
+}
+
+/* 代码块容器 — 用 highlight.js 做高亮 */
+.code-block {
+  margin: 18px 0;
+  background: #f6f8fa;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 15, 30, 0.04);
+  position: relative;
+}
+.code-block + .code-block { margin-top: 18px; }
+
+.code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px 6px 14px;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid #eaecef;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  user-select: none;
+}
+.code-header .dots {
+  display: inline-flex;
+  gap: 5px;
+  margin-right: 10px;
+}
+.code-header .dots span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e1e4e8;
+}
+.code-lang {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  font-size: 10px;
+  flex: 1;
+  text-align: center;
+}
+.code-block pre {
+  display: block;
+  margin: 0;
+  padding: 13px 16px;
+  background: transparent;
+  color: #1f2328;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  word-break: normal;
+  tab-size: 4;
+}
+.code-block pre code {
+  background: transparent;
+  padding: 0;
+  border: none;
+  color: inherit;
+  font-size: 1em;
+}
+.code-block pre code.hljs {
+  background: transparent !important;
+  padding: 0 !important;
+  color: #1f2328;
+}
+
+/* 没被包成 .code-block 的裸 pre(理论上不会出现,留个 fallback) */
+pre:not(.code-block pre) {
+  display: block;
+  margin: 14px 0;
+  padding: 13px 16px;
+  background: #f6f8fa;
+  color: #1f2328;
+  border: 1px solid #e6e8eb;
+  border-radius: 8px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  line-height: 1.7;
+  white-space: pre;
+  tab-size: 4;
+  position: relative;
+}
+
+/* 复制按钮(放在 code-header 里,常驻显示) */
+.code-copy-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  line-height: 1.4;
+}
+.code-copy-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.code-copy-btn.copied {
+  background: #16a34a;
+  color: white;
+  border-color: #16a34a;
+}
+.code-copy-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--accent-glow);
+}
+
+/* ---------- 主页:大纲树 ---------- */
+.outline-tree {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 8px 32px 120px;
+}
+
+.note-node {
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.note-node:last-child { border-bottom: none; }
+
+.note-node > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 8px;
+  position: relative;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+.note-node > summary::-webkit-details-marker { display: none; }
+.note-node > summary > .caret {
+  width: 16px; height: 16px;
+  font-size: 10px;
+}
+.note-node > summary > .bullet {
+  width: 7px; height: 7px;
+}
+.note-node[open] > summary { padding-bottom: 8px; }
+.note-node > summary > .title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.note-node > summary > .desc {
+  flex: 0 1 40%;
+  font-size: 0.84em;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
+/* 章节列表(在主页 note-node 展开时显示) */
+.note-children {
+  padding: 0 0 16px 30px;
+  margin: 0;
+  list-style: none;
+  position: relative;
+}
+.note-children::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 0;
+  bottom: 14px;
+  width: 1px;
+  background: var(--border);
+}
+.note-children li { margin: 0; }
+.note-children a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px 5px 14px;
+  border-radius: var(--radius-sm);
+  transition: all 0.1s;
+  border-bottom: none;
+  position: relative;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.note-children a::before {
+  content: "";
+  position: absolute;
+  left: -3px;
+  top: 50%;
+  width: 11px;
+  height: 1px;
+  background: var(--border);
+}
+.note-children a:hover {
+  background: var(--bg-hover);
+  color: var(--accent);
+  border-bottom: none;
+}
+.note-children .lvl-2 { font-weight: 600; color: var(--text); font-size: 14px; }
+.note-children .lvl-3 { padding-left: 26px; }
+.note-children .lvl-4,
+.note-children .lvl-5 { padding-left: 38px; color: var(--text-muted); font-size: 12px; }
+.note-children .dot {
+  display: inline-block;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+.note-children a:hover .dot { background: var(--accent); }
+
+/* 搜索过滤 */
+.hidden-by-search { display: none !important; }
+
+/* ---------- 回到顶部 ---------- */
+.to-top {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+  z-index: 40;
+  font-size: 16px;
+}
+.to-top.visible { opacity: 1; pointer-events: auto; }
+.to-top:hover {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ---------- footer ---------- */
+footer {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-soft);
+}
+footer a {
+  color: var(--link);
+  border-bottom: 1px dotted var(--text-muted);
+}
+footer a:hover { border-bottom-color: var(--accent); }
+footer code { font-size: 11px; }
+
+/* ---------- 快捷键提示 ---------- */
+.kbd-hints { display: none; }  /* 已废弃,保留以防漏改 */
+
+.help-wrap {
+  position: relative;
+  display: inline-flex;
+}
+.help-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 220px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  box-shadow: var(--shadow-lg);
+  font-size: 12px;
+  color: var(--text-secondary);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 0.15s, transform 0.15s, visibility 0.15s;
+  z-index: 100;
+  font-family: var(--font-sans);
+  pointer-events: none;
+}
+.help-wrap:hover .help-popover,
+.help-wrap:focus-within .help-popover,
+.help-popover:hover {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.help-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  line-height: 1.5;
+}
+.help-row + .help-row { border-top: 1px solid var(--border-soft); }
+.help-row .keys {
+  flex: 0 0 64px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.help-row .desc {
+  flex: 1;
+  color: var(--text);
+}
+.help-row kbd {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text);
+}
+.help-row .dot-demo {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+.help-row .link-demo {
+  color: var(--accent);
+  font-weight: 600;
+}
+.help-btn {
+  font-weight: 700;
+}
+.help-btn:hover {
+  color: var(--accent);
+}
+
+/* ---------- 响应式 ---------- */
+@media (max-width: 720px) {
+  body { font-size: 14px; }
+  .hero { padding: 16px 20px 4px; }
+  .hero .title { font-size: 1.7em; }
+  .hero .stats { gap: 20px; flex-wrap: wrap; }
+  article, .outline-tree { padding: 24px 18px 80px; }
+  .section.level-1 > summary > .heading-text { font-size: 1.2em; }
+  .section.level-2 > summary > .heading-text { font-size: 1em; }
+  .note-node > summary > .desc { display: none; }
+  .note-children { padding-left: 22px; }
+  .note-children .lvl-3 { padding-left: 18px; }
+  table { font-size: 0.85em; }
+  th, td { padding: 8px 10px; }
+  .topbar { padding: 10px 16px; flex-wrap: wrap; gap: 8px; }
+  .topbar .search { flex: 1 1 100%; order: 10; }
+  .kbd-hints { padding: 0 18px 24px; font-size: 11px; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .to-top, .progress-bar, .kbd-hints { display: none; }
+  .section-body { padding-left: 0 !important; }
+  details > .section-body { display: block !important; }
+  .section { padding-left: 0 !important; }
+}
+
+::selection { background: var(--accent-glow); color: var(--text); }
+
+/* ---------- 滚动条 ---------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+/* 代码块水平滚动条更细 */
+.code-block pre::-webkit-scrollbar,
+pre::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.code-block pre::-webkit-scrollbar-thumb,
+pre::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* ---------- 主页 sidebar(Feature 6) ----------
+   默认收起(sidebar-collapsed),内容居中显示。
+   点 topbar 的 [☰] 按钮(body.sidebar-open)展开。 */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 49px;
+  bottom: 0;
+  width: 220px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-soft);
+  overflow-y: auto;
+  background: var(--bg);
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  box-shadow: none;
+}
+body.page-index.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+/* sidebar 是纯浮层,不挤压 hero / outline-tree,内容始终居中 */
+/* 移动端:sidebar 浮层覆盖,不挤压内容 */
+.sidebar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-btn .icon-bars {
+  display: inline-block;
+  width: 13px;
+  height: 9px;
+  position: relative;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after,
+.sidebar-btn .icon-bars {
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before { top: 0; }
+.sidebar-btn .icon-bars::after { bottom: 0; }
+.sidebar-btn .icon-bars {
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent !important;
+}
+
+.sidebar .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-sans);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar .tag-btn + .tag-btn { margin-top: 2px; }
+.sidebar .tag-btn:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar .tag-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .tag-btn .count {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.sidebar .tag-btn.active .count { color: var(--accent); }
+
+/* 主页 note-node 行的日期 badge(Feature 1) */
+.note-node > summary .row-date {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 数学公式 KaTeX ---------- */
+.katex { font-size: 1.05em; }
+.katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+.katex-display::-webkit-scrollbar { height: 4px; }
+.code-block .katex,
+pre .katex,
+code .katex { display: none; }  /* 代码块里的 $ 不渲染 */
+
+/* ---------- 树形连接(Feature 5) ----------
+   每个嵌套 section 的 ::before 画一段竖线(在父 section-body 的左 padding 里,
+   section 自身坐标 left:-8),::after 画横线连到自己的 bullet。
+   - 非末子:竖线 top:0 bottom:0(贯穿整个 section 高度,接续下一个兄弟)
+   - 末子:竖线只画到 bullet 中线(height: ~36px)形成 └── 拐角
+   竖线在父 section-body 的 padding 区(x=8),正文在 x>=16,两者左右分开,不重叠。
+   顶层 article > section.level-1 同样适用(article 的 padding 充当父 padding)。 */
+.section-body > .section,
+article > .section.level-1 {
+  position: relative;
+}
+.section-body > .section::before,
+article > .section.level-1::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+.section-body > .section:last-child::before,
+article > .section.level-1:last-child::before {
+  bottom: auto;
+  height: 36px;            /* 到 bullet 中线,形成 L 拐角 */
+}
+.section-body > .section::after,
+article > .section.level-1::after {
+  content: '';
+  position: absolute;
+  left: -8px;              /* 从竖线开始 */
+  top: 36px;               /* bullet 中线 */
+  width: 8px;              /* 到 bullet 左边缘(section 自身 x=0)*/
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@media print {
+  .sidebar { display: none; }
+  .section-body > .section::before,
+  .section-body > .section::after,
+  article > .section.level-1::before,
+  article > .section.level-1::after { display: none; }
+}
+
+/* 移动端:sidebar 始终用浮层 */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 280px;
+    max-height: none;
+    box-shadow: var(--shadow-lg);
   }
-  .inlinetask {
-    padding: 10px;
-    border: 2px solid gray;
-    margin: 10px;
-    background: #ffffcc;
-  }
-  #org-div-home-and-up
-   { text-align: right; font-size: 70%; white-space: nowrap; }
-  textarea { overflow-x: auto; }
-  .linenr { font-size: smaller }
-  .code-highlighted { background-color: #ffff00; }
-  .org-info-js_info-navigation { border-style: none; }
-  #org-info-js_console-label
-    { font-size: 10px; font-weight: bold; white-space: nowrap; }
-  .org-info-js_search-highlight
-    { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
+}
+
 </style>
 </head>
-<body>
-<div id="content" class="content">
-<h1 class="title">Example of Tasks</h1>
-<div id="table-of-contents" role="doc-toc">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents" role="doc-toc">
-<ul>
-<li><a href="#orgbd60562">1. Work&#xa0;&#xa0;&#xa0;<span class="tag"><span class="work">work</span></span></a>
-<ul>
-<li><a href="#org7d49ef8">1.1. Marketing</a>
-<ul>
-<li><a href="#org466e50c">Background and research</a>
-<ul>
-<li><a href="#org55733d0"><span class="todo TODO">TODO</span> Who are the competitors?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="FLAGGED">FLAGGED</span></span></a></li>
-<li><a href="#orgb035f6d"><span class="todo TODO">TODO</span> Elevator pitch</a></li>
-</ul>
-</li>
-<li><a href="#org3ab9660">PR firm</a>
-<ul>
-<li><a href="#orgd8252cd"><span class="todo TODO">TODO</span> Call Laura about PR firm&#xa0;&#xa0;&#xa0;<span class="tag"><span class="phone">phone</span></span></a></li>
-<li><a href="#org82bc368">STRT Interview PR firm candidates</a></li>
-</ul>
-</li>
-<li><a href="#org36a1d97">Advertising campaign</a>
-<ul>
-<li><a href="#org75fd8cc"><span class="todo TODO">TODO</span> Call Joe</a></li>
-</ul>
-</li>
-<li><a href="#org669954b">Plan conference</a>
-<ul>
-<li><a href="#org3143246"><span class="todo TODO">TODO</span> Recruit volunteers</a></li>
-<li><a href="#org27420c4"><span class="todo TODO">TODO</span> Make sure responses are coming back</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#org43b5a9f">1.2. Operations</a>
-<ul>
-<li><a href="#org5f47b7c"><span class="todo TODO">TODO</span> Update database to latest version</a></li>
-<li><a href="#org5cdd9be"><span class="todo TODO">TODO</span> Update Website</a></li>
-</ul>
-</li>
-<li><a href="#orge2ade93">1.3. Travel</a>
-<ul>
-<li><a href="#org5b06288">Boston</a>
-<ul>
-<li><a href="#org2067094"><span class="todo TODO">TODO</span> Find a flight</a></li>
-<li><a href="#org7503bed"><span class="todo TODO">TODO</span> Book hotel room</a></li>
-<li><a href="#org5c0c442"><span class="todo TODO">TODO</span> Schedule meetings</a></li>
-<li><a href="#org85ec9a2"><span class="todo TODO">TODO</span> Submit expense report</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#org9f81568">2. Personal&#xa0;&#xa0;&#xa0;<span class="tag"><span class="personal">personal</span></span></a>
-<ul>
-<li><a href="#org97fbd69">2.1. Reading</a>
-<ul>
-<li><a href="#org467b8f2"><span class="done DONE">DONE</span> Read "Getting Things Done"</a></li>
-</ul>
-</li>
-<li><a href="#orga5f731d">2.2. Health</a>
-<ul>
-<li><a href="#org43d8545"><span class="todo TODO">TODO</span> Make dentist appointment&#xa0;&#xa0;&#xa0;<span class="tag"><span class="phone">phone</span></span></a></li>
-<li><a href="#org57306a8"><span class="todo TODO">TODO</span> Go to the gym</a></li>
-<li><a href="#orgf0a1192"><span class="todo TODO">TODO</span> Do jogging</a></li>
-</ul>
-</li>
-<li><a href="#org56c3db0">2.3. Finance</a>
-<ul>
-<li><a href="#org83aa7d2"><span class="todo TODO">TODO</span> Pay electricity bill&#xa0;&#xa0;&#xa0;<span class="tag"><span class="FLAGGED">FLAGGED</span></span></a></li>
-<li><a href="#org8755701"><span class="todo TODO">TODO</span> Renew newspaper subscription</a></li>
-<li><a href="#org0848086"><span class="todo TODO">TODO</span> Cancel insurance&#xa0;&#xa0;&#xa0;<span class="tag"><span class="mail">mail</span></span></a></li>
-</ul>
-</li>
-<li><a href="#org616cfdb">2.4. Chores</a>
-<ul>
-<li><a href="#orgf28c716"><span class="todo TODO">TODO</span> Buy milk</a></li>
-<li><a href="#org75e9750"><span class="todo TODO">TODO</span> Buy dog food</a></li>
-<li><a href="#orgfd3e198">WAIT Mail package to Susan</a></li>
-<li><a href="#org7969736"><span class="todo TODO">TODO</span> Buy groceries</a></li>
-<li><a href="#orgf3fc6a1"><span class="todo TODO">TODO</span> Mow the lawn</a></li>
-<li><a href="#orgbd6278c"><span class="todo TODO">TODO</span> Get a haircut</a></li>
-<li><a href="#orgc48b060"><span class="todo TODO">TODO</span> Buy anniversary present</a></li>
-<li><a href="#org661bc81"><span class="todo TODO">TODO</span> Take out trash</a></li>
-<li><a href="#org40d16a6"><span class="todo TODO">TODO</span> Get the car fixed</a></li>
-</ul>
-</li>
-<li><a href="#orgd76ee92">2.5. Recreation</a>
-<ul>
-<li><a href="#org3536129"><span class="todo TODO">TODO</span> Go to concert</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<body class="page-note" data-note-id="org-example">
+<div class="progress-bar"></div>
+<div class="topbar">
+  <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
+  <span class="spacer"></span>
+  <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
+  <div class="help-wrap">
+    <button class="help-btn icon" aria-label="快捷键">?</button>
+    <div class="help-popover">
+      <div class="help-row"><span class="keys"><kbd>Tab</kbd></span><span class="desc">折叠当前</span></div>
+      <div class="help-row"><span class="keys"><kbd>Shift</kbd>+<kbd>Tab</kbd></span><span class="desc">全局折叠</span></div>
+      <div class="help-row"><span class="keys"><kbd>/</kbd></span><span class="desc">搜索</span></div>
+      <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
+    </div>
+  </div>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
 </div>
-</div>
+<article>
+  <h1 class="doc-title">Workwork</h1>
+  <div class="doc-meta">
+    <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>44</span>
+  </div>
 <div class="right">
-  <a href="https://github.com/fniessen/org-html-themes/blob/master/demo/example.org" class="fa fa-github"> Edit on GitHub</a>
+<a class="fa fa-github" href="https://github.com/fniessen/org-html-themes/blob/master/demo/example.org"> Edit on GitHub</a>
 </div>
+<hr/>
+<p>Only work tasks in this list.</p>
+<details class="section level-2" data-anchor="marketing">
+  <summary id="marketing" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Marketing</span><a class="anchor-link" href="#marketing" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>Project "Corporate Marketing".</p>
+<details class="section level-3" data-anchor="background-and-research">
+  <summary id="background-and-research" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Background and research</span><a class="anchor-link" href="#background-and-research" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-4" data-anchor="todo-who-are-the-competitors-flagged">
+  <summary id="todo-who-are-the-competitors-flagged" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Who are the competitors? <span class="tag" tag-name="FLAGGED"><span class="smallcaps">FLAGGED</span></span></span><a class="anchor-link" href="#todo-who-are-the-competitors-flagged" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<ol>
+<li>
+<p><span class="todo TODO">TODO</span> What are our product's
+    advantages?</p>
+</li>
+<li>
+<p><span class="todo TODO">TODO</span> Target market</p>
+</li>
+</ol>
+  </div>
+</details>
+<details class="section level-4" data-anchor="todo-elevator-pitch">
+  <summary id="todo-elevator-pitch" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Elevator pitch</span><a class="anchor-link" href="#todo-elevator-pitch" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<hr />
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="pr-firm">
+  <summary id="pr-firm" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">PR firm</span><a class="anchor-link" href="#pr-firm" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-4" data-anchor="todo-call-laura-about-pr-firm-phone">
+  <summary id="todo-call-laura-about-pr-firm-phone" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Call Laura about PR firm <span class="tag" tag-name="phone"><span class="smallcaps">phone</span></span></span><a class="anchor-link" href="#todo-call-laura-about-pr-firm-phone" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-orgbd60562" class="outline-2">
-<h2 id="orgbd60562"><span class="section-number-2">1.</span> Work&#xa0;&#xa0;&#xa0;<span class="tag"><span class="work">work</span></span></h2>
-<div class="outline-text-2" id="text-1">
-<p>
-Only work tasks in this list.
-</p>
-</div>
+  </div>
+</details>
+<details class="section level-4" data-anchor="strt-interview-pr-firm-candidates">
+  <summary id="strt-interview-pr-firm-candidates" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">STRT Interview PR firm candidates</span><a class="anchor-link" href="#strt-interview-pr-firm-candidates" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org7d49ef8" class="outline-3">
-<h3 id="org7d49ef8"><span class="section-number-3">1.1.</span> Marketing</h3>
-<div class="outline-text-3" id="text-1-1">
-<p>
-Project "Corporate Marketing".
-</p>
-</div>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="advertising-campaign">
+  <summary id="advertising-campaign" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Advertising campaign</span><a class="anchor-link" href="#advertising-campaign" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-4" data-anchor="todo-call-joe">
+  <summary id="todo-call-joe" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Call Joe</span><a class="anchor-link" href="#todo-call-joe" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org466e50c" class="outline-4">
-<h4 id="org466e50c">Background and research</h4>
-<div class="outline-text-4" id="text-org466e50c">
-</div>
-<div id="outline-container-org55733d0" class="outline-5">
-<h5 id="org55733d0"><span class="todo TODO">TODO</span> Who are the competitors?&#xa0;&#xa0;&#xa0;<span class="tag"><span class="FLAGGED">FLAGGED</span></span></h5>
-<div class="outline-text-5" id="text-org55733d0">
-</div>
-<ul class="org-ul">
-<li><a id="org140f109"></a><span class="todo TODO">TODO</span> What are our product's advantages?<br /></li>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-3" data-anchor="plan-conference">
+  <summary id="plan-conference" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Plan conference</span><a class="anchor-link" href="#plan-conference" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>Calendar events/invitations.</p>
+<details class="section level-4" data-anchor="todo-recruit-volunteers">
+  <summary id="todo-recruit-volunteers" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Recruit volunteers</span><a class="anchor-link" href="#todo-recruit-volunteers" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<li><a id="org0de4391"></a><span class="todo TODO">TODO</span> Target market<br /></li>
-</ul>
-</div>
+  </div>
+</details>
+<details class="section level-4" data-anchor="todo-make-sure-responses-are-coming-back">
+  <summary id="todo-make-sure-responses-are-coming-back" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Make sure responses are coming back</span><a class="anchor-link" href="#todo-make-sure-responses-are-coming-back" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-orgb035f6d" class="outline-5">
-<h5 id="orgb035f6d"><span class="todo TODO">TODO</span> Elevator pitch</h5>
-</div>
-</div>
+  </div>
+</details>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="operations">
+  <summary id="operations" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Operations</span><a class="anchor-link" href="#operations" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="todo-update-database-to-latest-version">
+  <summary id="todo-update-database-to-latest-version" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Update database to latest version</span><a class="anchor-link" href="#todo-update-database-to-latest-version" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org3ab9660" class="outline-4">
-<h4 id="org3ab9660">PR firm</h4>
-<div class="outline-text-4" id="text-org3ab9660">
-</div>
-<div id="outline-container-orgd8252cd" class="outline-5">
-<h5 id="orgd8252cd"><span class="todo TODO">TODO</span> Call Laura about PR firm&#xa0;&#xa0;&#xa0;<span class="tag"><span class="phone">phone</span></span></h5>
-<div class="outline-text-5" id="text-orgd8252cd">
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-update-website">
+  <summary id="todo-update-website" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Update Website</span><a class="anchor-link" href="#todo-update-website" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>Update blog.</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="travel">
+  <summary id="travel" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Travel</span><a class="anchor-link" href="#travel" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="boston">
+  <summary id="boston" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Boston</span><a class="anchor-link" href="#boston" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-4" data-anchor="todo-find-a-flight">
+  <summary id="todo-find-a-flight" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Find a flight</span><a class="anchor-link" href="#todo-find-a-flight" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org82bc368" class="outline-5">
-<h5 id="org82bc368">STRT Interview PR firm candidates</h5>
-<div class="outline-text-5" id="text-org82bc368">
-</div>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-4" data-anchor="todo-book-hotel-room">
+  <summary id="todo-book-hotel-room" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Book hotel room</span><a class="anchor-link" href="#todo-book-hotel-room" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org36a1d97" class="outline-4">
-<h4 id="org36a1d97">Advertising campaign</h4>
-<div class="outline-text-4" id="text-org36a1d97">
-</div>
-<div id="outline-container-org75fd8cc" class="outline-5">
-<h5 id="org75fd8cc"><span class="todo TODO">TODO</span> Call Joe</h5>
-<div class="outline-text-5" id="text-org75fd8cc">
-</div>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-4" data-anchor="todo-schedule-meetings">
+  <summary id="todo-schedule-meetings" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Schedule meetings</span><a class="anchor-link" href="#todo-schedule-meetings" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org669954b" class="outline-4">
-<h4 id="org669954b">Plan conference</h4>
-<div class="outline-text-4" id="text-org669954b">
-<p>
-Calendar events/invitations.
-</p>
-</div>
+  </div>
+</details>
+<details class="section level-4" data-anchor="todo-submit-expense-report">
+  <summary id="todo-submit-expense-report" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Submit expense report</span><a class="anchor-link" href="#todo-submit-expense-report" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<hr/>
+  </div>
+</details>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="personal-personal">
+  <summary id="personal-personal" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Personal <span class="tag" tag-name="personal"><span class="smallcaps">personal</span></span></span><a class="anchor-link" href="#personal-personal" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="reading">
+  <summary id="reading" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Reading</span><a class="anchor-link" href="#reading" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="done-read-getting-things-done">
+  <summary id="done-read-getting-things-done" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="done DONE">DONE</span> Read "Getting Things Done"</span><a class="anchor-link" href="#done-read-getting-things-done" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org3143246" class="outline-5">
-<h5 id="org3143246"><span class="todo TODO">TODO</span> Recruit volunteers</h5>
-<div class="outline-text-5" id="text-org3143246">
-</div>
-</div>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="health">
+  <summary id="health" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Health</span><a class="anchor-link" href="#health" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="todo-make-dentist-appointment-phone">
+  <summary id="todo-make-dentist-appointment-phone" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Make dentist appointment <span class="tag" tag-name="phone"><span class="smallcaps">phone</span></span></span><a class="anchor-link" href="#todo-make-dentist-appointment-phone" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org27420c4" class="outline-5">
-<h5 id="org27420c4"><span class="todo TODO">TODO</span> Make sure responses are coming back</h5>
-</div>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-go-to-the-gym">
+  <summary id="todo-go-to-the-gym" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Go to the gym</span><a class="anchor-link" href="#todo-go-to-the-gym" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>It should be as natural to some as showering or eating.</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-do-jogging">
+  <summary id="todo-do-jogging" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Do jogging</span><a class="anchor-link" href="#todo-do-jogging" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>Marathon = 42,195 km.</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="finance">
+  <summary id="finance" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Finance</span><a class="anchor-link" href="#finance" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="todo-pay-electricity-bill-flagged">
+  <summary id="todo-pay-electricity-bill-flagged" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Pay electricity bill <span class="tag" tag-name="FLAGGED"><span class="smallcaps">FLAGGED</span></span></span><a class="anchor-link" href="#todo-pay-electricity-bill-flagged" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org43b5a9f" class="outline-3">
-<h3 id="org43b5a9f"><span class="section-number-3">1.2.</span> Operations</h3>
-<div class="outline-text-3" id="text-1-2">
-</div>
-<div id="outline-container-org5f47b7c" class="outline-4">
-<h4 id="org5f47b7c"><span class="todo TODO">TODO</span> Update database to latest version</h4>
-<div class="outline-text-4" id="text-org5f47b7c">
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-renew-newspaper-subscription">
+  <summary id="todo-renew-newspaper-subscription" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Renew newspaper subscription</span><a class="anchor-link" href="#todo-renew-newspaper-subscription" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org5cdd9be" class="outline-4">
-<h4 id="org5cdd9be"><span class="todo TODO">TODO</span> Update Website</h4>
-<div class="outline-text-4" id="text-org5cdd9be">
-<p>
-Update blog.
-</p>
-</div>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-cancel-insurance-mail">
+  <summary id="todo-cancel-insurance-mail" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Cancel insurance <span class="tag" tag-name="mail"><span class="smallcaps">mail</span></span></span><a class="anchor-link" href="#todo-cancel-insurance-mail" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-orge2ade93" class="outline-3">
-<h3 id="orge2ade93"><span class="section-number-3">1.3.</span> Travel</h3>
-<div class="outline-text-3" id="text-1-3">
-</div>
-<div id="outline-container-org5b06288" class="outline-4">
-<h4 id="org5b06288">Boston</h4>
-<div class="outline-text-4" id="text-org5b06288">
-</div>
-<div id="outline-container-org2067094" class="outline-5">
-<h5 id="org2067094"><span class="todo TODO">TODO</span> Find a flight</h5>
-</div>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="chores">
+  <summary id="chores" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Chores</span><a class="anchor-link" href="#chores" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="todo-buy-milk">
+  <summary id="todo-buy-milk" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Buy milk</span><a class="anchor-link" href="#todo-buy-milk" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org7503bed" class="outline-5">
-<h5 id="org7503bed"><span class="todo TODO">TODO</span> Book hotel room</h5>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-buy-dog-food">
+  <summary id="todo-buy-dog-food" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Buy dog food</span><a class="anchor-link" href="#todo-buy-dog-food" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org5c0c442" class="outline-5">
-<h5 id="org5c0c442"><span class="todo TODO">TODO</span> Schedule meetings</h5>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="wait-mail-package-to-susan">
+  <summary id="wait-mail-package-to-susan" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">WAIT Mail package to Susan</span><a class="anchor-link" href="#wait-mail-package-to-susan" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org85ec9a2" class="outline-5">
-<h5 id="org85ec9a2"><span class="todo TODO">TODO</span> Submit expense report</h5>
-<div class="outline-text-5" id="text-org85ec9a2">
-<hr />
-</div>
-</div>
-</div>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-buy-groceries">
+  <summary id="todo-buy-groceries" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Buy groceries</span><a class="anchor-link" href="#todo-buy-groceries" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org9f81568" class="outline-2">
-<h2 id="org9f81568"><span class="section-number-2">2.</span> Personal&#xa0;&#xa0;&#xa0;<span class="tag"><span class="personal">personal</span></span></h2>
-<div class="outline-text-2" id="text-2">
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-mow-the-lawn">
+  <summary id="todo-mow-the-lawn" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Mow the lawn</span><a class="anchor-link" href="#todo-mow-the-lawn" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org97fbd69" class="outline-3">
-<h3 id="org97fbd69"><span class="section-number-3">2.1.</span> Reading</h3>
-<div class="outline-text-3" id="text-2-1">
-</div>
-<div id="outline-container-org467b8f2" class="outline-4">
-<h4 id="org467b8f2"><span class="done DONE">DONE</span> Read "Getting Things Done"</h4>
-<div class="outline-text-4" id="text-org467b8f2">
-</div>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-get-a-haircut">
+  <summary id="todo-get-a-haircut" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Get a haircut</span><a class="anchor-link" href="#todo-get-a-haircut" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-orga5f731d" class="outline-3">
-<h3 id="orga5f731d"><span class="section-number-3">2.2.</span> Health</h3>
-<div class="outline-text-3" id="text-2-2">
-</div>
-<div id="outline-container-org43d8545" class="outline-4">
-<h4 id="org43d8545"><span class="todo TODO">TODO</span> Make dentist appointment&#xa0;&#xa0;&#xa0;<span class="tag"><span class="phone">phone</span></span></h4>
-<div class="outline-text-4" id="text-org43d8545">
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-buy-anniversary-present">
+  <summary id="todo-buy-anniversary-present" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Buy anniversary present</span><a class="anchor-link" href="#todo-buy-anniversary-present" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org57306a8" class="outline-4">
-<h4 id="org57306a8"><span class="todo TODO">TODO</span> Go to the gym</h4>
-<div class="outline-text-4" id="text-org57306a8">
-<p>
-It should be as natural to some as showering or eating.
-</p>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-take-out-trash">
+  <summary id="todo-take-out-trash" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Take out trash</span><a class="anchor-link" href="#todo-take-out-trash" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-orgf0a1192" class="outline-4">
-<h4 id="orgf0a1192"><span class="todo TODO">TODO</span> Do jogging</h4>
-<div class="outline-text-4" id="text-orgf0a1192">
-<p>
-Marathon = 42,195 km.
-</p>
-</div>
-</div>
-</div>
+  </div>
+</details>
+<details class="section level-3" data-anchor="todo-get-the-car-fixed">
+  <summary id="todo-get-the-car-fixed" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Get the car fixed</span><a class="anchor-link" href="#todo-get-the-car-fixed" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org56c3db0" class="outline-3">
-<h3 id="org56c3db0"><span class="section-number-3">2.3.</span> Finance</h3>
-<div class="outline-text-3" id="text-2-3">
-</div>
-<div id="outline-container-org83aa7d2" class="outline-4">
-<h4 id="org83aa7d2"><span class="todo TODO">TODO</span> Pay electricity bill&#xa0;&#xa0;&#xa0;<span class="tag"><span class="FLAGGED">FLAGGED</span></span></h4>
-</div>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="recreation">
+  <summary id="recreation" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Recreation</span><a class="anchor-link" href="#recreation" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-3" data-anchor="todo-go-to-concert">
+  <summary id="todo-go-to-concert" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><span class="todo TODO">TODO</span> Go to concert</span><a class="anchor-link" href="#todo-go-to-concert" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
 
-<div id="outline-container-org8755701" class="outline-4">
-<h4 id="org8755701"><span class="todo TODO">TODO</span> Renew newspaper subscription</h4>
-</div>
+  </div>
+</details>
+  </div>
+</details>
+  </div>
+</details>
+</article>
+<button class="to-top" aria-label="回到顶部">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
+<script>
 
-<div id="outline-container-org0848086" class="outline-4">
-<h4 id="org0848086"><span class="todo TODO">TODO</span> Cancel insurance&#xa0;&#xa0;&#xa0;<span class="tag"><span class="mail">mail</span></span></h4>
-</div>
-</div>
+(function() {
+  'use strict';
 
-<div id="outline-container-org616cfdb" class="outline-3">
-<h3 id="org616cfdb"><span class="section-number-3">2.4.</span> Chores</h3>
-<div class="outline-text-3" id="text-2-4">
-</div>
-<div id="outline-container-orgf28c716" class="outline-4">
-<h4 id="orgf28c716"><span class="todo TODO">TODO</span> Buy milk</h4>
-</div>
+  /* ---------- 阅读进度条 ---------- */
+  const bar = document.querySelector('.progress-bar');
+  function updateProgress() {
+    if (!bar) return;
+    const h = document.documentElement;
+    const total = h.scrollHeight - h.clientHeight;
+    bar.style.width = (total > 0 ? h.scrollTop / total * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive: true });
+  updateProgress();
 
-<div id="outline-container-org75e9750" class="outline-4">
-<h4 id="org75e9750"><span class="todo TODO">TODO</span> Buy dog food</h4>
-</div>
+  /* ---------- 回到顶部 ---------- */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    window.addEventListener('scroll', () => {
+      toTop.classList.toggle('visible', window.scrollY > 400);
+    }, { passive: true });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  }
 
-<div id="outline-container-orgfd3e198" class="outline-4">
-<h4 id="orgfd3e198">WAIT Mail package to Susan</h4>
-</div>
+  /* ---------- 全局折叠/展开(单 toggle 按钮) ---------- */
+  const foldBtn = document.querySelector('[data-action="toggle-fold"]');
+  function syncFoldBtnState() {
+    if (!foldBtn) return;
+    const all = document.querySelectorAll('details');
+    if (!all.length) return;
+    const open = Array.from(all).filter(d => d.open).length;
+    const expanded = open >= all.length / 2;
+    foldBtn.dataset.state = expanded ? 'expanded' : 'folded';
+    foldBtn.innerHTML = expanded
+      ? '<span class="chev">▾</span>折叠'
+      : '<span class="chev">▾</span>展开';
+    foldBtn.setAttribute('aria-label', expanded ? '折叠全部' : '展开全部');
+  }
+  if (foldBtn) {
+    foldBtn.addEventListener('click', () => {
+      const all = document.querySelectorAll('details');
+      const open = Array.from(all).filter(d => d.open).length;
+      const expanded = open >= all.length / 2;
+      all.forEach(d => { d.open = !expanded; });
+      syncFoldBtnState();
+    });
+    // 用户手动折叠/展开后,标签也跟着更新
+    document.querySelectorAll('details').forEach(d => {
+      d.addEventListener('toggle', syncFoldBtnState);
+    });
+    syncFoldBtnState();
+  }
 
-<div id="outline-container-org7969736" class="outline-4">
-<h4 id="org7969736"><span class="todo TODO">TODO</span> Buy groceries</h4>
-</div>
+  /* ---------- 代码块:包成 .code-block + header(语言徽章 + 复制按钮) ---------- */
+  async function copyCode(text, btn) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const old = btn.textContent;
+      btn.textContent = '已复制';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.classList.remove('copied');
+      }, 1500);
+    } catch (err) {
+      btn.textContent = '失败';
+      setTimeout(() => { btn.textContent = '复制'; }, 1500);
+    }
+  }
 
-<div id="outline-container-orgf3fc6a1" class="outline-4">
-<h4 id="orgf3fc6a1"><span class="todo TODO">TODO</span> Mow the lawn</h4>
-</div>
+  document.querySelectorAll('pre').forEach(pre => {
+    if (pre.closest('.code-block')) return;  // 已包装
+    const code = pre.querySelector('code');
+    let lang = '';
+    if (code) {
+      const m = (code.className || '').match(/language-([\w+-]+)/);
+      if (m) lang = m[1];
+    }
 
-<div id="outline-container-orgbd6278c" class="outline-4">
-<h4 id="orgbd6278c"><span class="todo TODO">TODO</span> Get a haircut</h4>
-</div>
+    const wrap = document.createElement('div');
+    wrap.className = 'code-block';
 
-<div id="outline-container-orgc48b060" class="outline-4">
-<h4 id="orgc48b060"><span class="todo TODO">TODO</span> Buy anniversary present</h4>
-</div>
+    const header = document.createElement('div');
+    header.className = 'code-header';
+    header.innerHTML = '<span class="dots"><span></span><span></span><span></span></span>'
+                     + '<span class="code-lang">' + (lang || 'text') + '</span>';
 
-<div id="outline-container-org661bc81" class="outline-4">
-<h4 id="org661bc81"><span class="todo TODO">TODO</span> Take out trash</h4>
-</div>
+    const btn = document.createElement('button');
+    btn.className = 'code-copy-btn';
+    btn.type = 'button';
+    btn.textContent = '复制';
+    btn.setAttribute('aria-label', '复制代码');
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = (code ? code.textContent : pre.textContent) || '';
+      copyCode(text, btn);
+    });
+    header.appendChild(btn);
 
-<div id="outline-container-org40d16a6" class="outline-4">
-<h4 id="org40d16a6"><span class="todo TODO">TODO</span> Get the car fixed</h4>
-</div>
-</div>
+    pre.parentElement.insertBefore(wrap, pre);
+    wrap.appendChild(header);
+    wrap.appendChild(pre);
+  });
 
-<div id="outline-container-orgd76ee92" class="outline-3">
-<h3 id="orgd76ee92"><span class="section-number-3">2.5.</span> Recreation</h3>
-<div class="outline-text-3" id="text-2-5">
-</div>
-<div id="outline-container-org3536129" class="outline-4">
-<h4 id="org3536129"><span class="todo TODO">TODO</span> Go to concert</h4>
-</div>
-</div>
-</div>
-</div>
-<div id="postamble" class="status">
-<p class="author">Author: Fabrice Niessen</p>
-<p class="date">Created: 2022-05-18 三 17:49</p>
-<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
-</div>
+  /* ---------- 锚点自展开(从主页章节链接跳进来时,目标 + 祖先链全展开) ---------- */
+  if (location.hash) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+      let el = target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+      }
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
+      });
+    }
+  }
+
+  /* ---------- org-mode 键盘:Tab / Shift+Tab ---------- */
+  const isHeading = (el) => el && el.matches && el.matches('summary');
+  const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.target.matches('input, textarea')) return;
+    const meta = e.metaKey || e.ctrlKey;
+
+    // / 聚焦搜索
+    if (e.key === '/' && !meta) {
+      const s = document.querySelector('input.search');
+      if (s) { e.preventDefault(); s.focus(); return; }
+    }
+
+    // Tab / Shift+Tab 折叠当前聚焦的 summary
+    if (e.key === 'Tab') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        e.preventDefault();
+        const d = f.parentElement;
+        if (e.shiftKey) {
+          // Shift+Tab: 全局折叠/展开所有
+          const all = document.querySelectorAll('details');
+          const allOpen = Array.from(all).every(x => x.open);
+          all.forEach(x => { x.open = !allOpen; });
+        } else {
+          // Tab: 折叠/展开当前节点
+          d.open = !d.open;
+        }
+        return;
+      }
+    }
+
+    // J/K 或 ↓/↑ 跳转标题 — 已移除(行为不一致,容易让用户迷惑)
+
+    // Enter: 在 note-node 上是跟随标题链接;在 section 上是 toggle
+    if (e.key === 'Enter') {
+      const f = document.activeElement;
+      if (isHeading(f)) {
+        const titleLink = f.querySelector('.title, .heading-text');
+        if (titleLink && titleLink.tagName === 'A') {
+          e.preventDefault();
+          titleLink.click();
+        }
+      }
+    }
+  });
+
+  /* ---------- 点击 caret 只 toggle,不让 summary 的默认 toggle 干扰; 点击 title 跟随链接 ---------- */
+  // 默认浏览器:点 summary 任意位置都会 toggle,点 <a> 会先 toggle 再 navigate。
+  // 我们让 title 链接的 click 阻止冒泡,避免 toggle 副作用(navigate 后虽然看不到,但保证一致性)。
+  document.querySelectorAll('details.note-node > summary > .title').forEach(link => {
+    if (link.tagName !== 'A') return;
+    link.addEventListener('click', (e) => {
+      e.stopPropagation();
+      // 让浏览器默认行为(navigate)发生
+    });
+  });
+  // caret 点击:默认也会 toggle,不用特殊处理
+
+  /* ---------- 搜索 ---------- */
+  const search = document.querySelector('input.search');
+  if (search && document.body.classList.contains('page-index')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      const nodes = document.querySelectorAll('.note-node');
+      nodes.forEach(node => {
+        if (!q) {
+          node.classList.remove('hidden-by-search');
+          node.querySelectorAll('li').forEach(li => li.classList.remove('hidden-by-search'));
+          return;
+        }
+        const nodeText = node.textContent.toLowerCase();
+        if (!nodeText.includes(q)) {
+          node.classList.add('hidden-by-search');
+          return;
+        }
+        node.classList.remove('hidden-by-search');
+        let anyMatch = false;
+        node.querySelectorAll('li').forEach(li => {
+          const t = li.textContent.toLowerCase();
+          if (t.includes(q)) {
+            li.classList.remove('hidden-by-search');
+            anyMatch = true;
+          } else {
+            li.classList.add('hidden-by-search');
+          }
+        });
+        if (anyMatch) node.open = true;
+      });
+    });
+  }
+  if (search && document.body.classList.contains('page-note')) {
+    search.addEventListener('input', (e) => {
+      const q = e.target.value.trim().toLowerCase();
+      document.querySelectorAll('details.section').forEach(s => {
+        if (!q) { s.style.opacity = ''; return; }
+        const t = s.querySelector('summary').textContent.toLowerCase();
+        s.style.opacity = t.includes(q) ? '1' : '0.3';
+      });
+    });
+  }
+
+  /* ---------- 主页 sidebar 切换 + tag 过滤(Feature 6) ---------- */
+  if (document.body.classList.contains('page-index')) {
+    const sidebarBtn = document.querySelector('[data-action="toggle-sidebar"]');
+    // 默认收起,localStorage 记忆用户选择
+    const KEY = 'md2html:sidebar-open';
+    const initialOpen = (() => {
+      try { return localStorage.getItem(KEY) === '1'; } catch { return false; }
+    })();
+    if (initialOpen) document.body.classList.add('sidebar-open');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {}
+      });
+    }
+    // 点 sidebar 外面关闭(移动端友好)
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      if (window.innerWidth >= 721) return;  // 桌面端不自动关
+      const t = e.target;
+      if (t.closest('.sidebar') || t.closest('.sidebar-btn')) return;
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem(KEY, '0'); } catch {}
+    });
+
+    const tagBtns = document.querySelectorAll('.sidebar .tag-btn');
+    const nodes = document.querySelectorAll('.note-node');
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        tagBtns.forEach(b => b.classList.toggle('active', b === btn));
+        nodes.forEach(n => {
+          const tag = n.getAttribute('data-tag');
+          const show = filter === 'all'
+                    || (filter === '__none__' && !tag)
+                    || tag === filter;
+          n.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  /* ---------- KaTeX 数学公式渲染 ----------
+     用 DOMContentLoaded 触发,确保 defer 加载的 katex.js 和 auto-render.js
+     都已执行完毕。 $$ 块级、$ 行内、\(...\)、\[...\] 全支持。 */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMathInElement !== 'function') return;
+    const target = document.body.classList.contains('page-index')
+      ? (document.querySelector('.outline-tree') || document.body)
+      : document.body;
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoredClasses: ['code-block', 'code-header', 'katex']
+      });
+    } catch (e) {
+      console.warn('KaTeX render failed:', e);
+    }
+  });
+})();
+
+</script>
 </body>
 </html>

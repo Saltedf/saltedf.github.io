@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
-"""md2html.py — Markdown → 幕布风折叠大纲 HTML 笔记生成器
+r"""md2html.py — Markdown → 幕布风折叠大纲 HTML 笔记生成器
 
 把 Markdown 笔记转换成统一视觉风格(白底幕布风)的折叠大纲 HTML,
-自带主页索引、键盘导航、代码高亮、一键复制、折叠状态记忆等能力。
+自带主页索引、tag 侧边栏、键盘导航、代码高亮、KaTeX 数学公式、
+一键复制、CSS 树形连接等能力。
 
 ══════════════════════════════════════════════════════════════════════
 依赖
 ══════════════════════════════════════════════════════════════════════
 
-    pip install markdown beautifulsoup4
+    pip install markdown beautifulsoup4 pymdown-extensions pathspec
 
 (Arch Linux 需要 --break-system-packages)
 
@@ -16,7 +17,7 @@
 命令总览
 ══════════════════════════════════════════════════════════════════════
 
-  python3 md2html.py list                 # 列出所有笔记
+  python3 md2html.py list                 # 列出所有笔记(按 mtime 倒序)
   python3 md2html.py list --sections      # 详细列出含每篇的章节
   python3 md2html.py search "redis"       # 按关键词搜索笔记/章节
   python3 md2html.py show  "Rust 资源"    # 查看单篇详情(含锚点链接)
@@ -32,14 +33,75 @@
 所有命令均可用 --dir <path> 指定其他目录(默认当前目录)。
 
 ══════════════════════════════════════════════════════════════════════
+笔记组织:Tag 归类 + .blogignore
+══════════════════════════════════════════════════════════════════════
+
+扫描规则:**只扫描根目录直系文件 + 顶层 tag_X/ 文件夹**。
+其他子目录(非 tag_ 开头)**完全跳过**,草稿/临时目录无需配置 .blogignore。
+
+目录下放 tag_X/ 子文件夹,该文件夹下递归所有 .md / .html 自动归到 "X" tag:
+
+    notes/
+    ├── Rust-造轮子资源.md         ← 未归类(根目录直系)
+    ├── tag_rust/
+    │   ├── Rust-Book.md            ← 归到 "rust"
+    │   └── subdir/
+    │       └── Rust-Atomics.md     ← 也是 "rust"(只看第一层 tag_X/)
+    ├── tag_go/
+    │   └── Go-Tour.md              ← 归到 "go"
+    ├── drafts/                     ← **不扫描**(非 tag_ 前缀)
+    │   └── WIP.md
+    └── archive/                    ← **不扫描**
+        └── old.md
+
+主页左侧 sidebar 显示所有 tag + 文章数,点击切换可见性。"全部" 显示所有,
+"未归类" 只显示根目录直系文件。
+想强制把某子目录纳入扫描,改名为 tag_X/ 即可。
+
+.blogignore 用 gitignore 语法排除文件(相对 notes 目录):
+
+    # .blogignore 示例
+    drafts/              # 整个目录
+    *.tmp.md             # 临时文件
+    secret/              # 敏感目录
+    README.md            # 特定文件
+    **/_*                # 下划线开头的文件
+    !important.md        # 取反(强制保留)
+
+排除后这些文件不会被 scan / list / add / batch 处理。
+无 pathspec 库时会打 warning 但不报错(全部文件都参与)。
+
+══════════════════════════════════════════════════════════════════════
+主页排序与时间显示
+══════════════════════════════════════════════════════════════════════
+
+  - 主页按修改时间 mtime 倒序(最新在最上)
+  - 每条笔记行显示 YYYY-MM-DD(改 DATE_FORMAT 自定义)
+  - 增删笔记后 sidebar 计数自动同步
+  - 文章页打开后所有 section 默认折叠(不再记忆上次展开状态)
+  - 从主页章节链接点进文章 → 目标 section + 祖先链自动展开 + 滚动到位
+
+══════════════════════════════════════════════════════════════════════
+数学公式(KaTeX)
+══════════════════════════════════════════════════════════════════════
+
+正文 / 标题 / 主页都可写 LaTeX:
+
+    行内:$E = mc^2$ 会公式化
+    块级:$$\int_0^1 f(x)\,dx$$ 单独成段居中
+    转义:\$ 输出字面 $
+
+依赖:pymdown-extensions(arithmatex 扩展)+ KaTeX CDN(自动加载)。
+
+══════════════════════════════════════════════════════════════════════
 典型工作流
 ══════════════════════════════════════════════════════════════════════
 
-1. 初始化一个笔记目录,丢几个 .md 进去
+1. 初始化一个笔记目录,丢几个 .md 进去(可选:tag_X/ 子目录归类)
 2. python3 md2html.py batch              # 一次性转换 + 生成主页
 3. 浏览器打开 index.html 看效果
 4. 之后每次新增/修改 .md 后,挑一种方式更新:
-     python3 md2html.py add 新笔记.md    # 增量(快)
+     python3 md2html.py add 新笔记.md    # 增量(快,只动这一篇 + 主页)
      python3 md2html.py batch            # 全量重建(稳)
 5. 不要的笔记:
      python3 md2html.py delete 笔记名     # 移除 HTML
@@ -62,21 +124,25 @@
 ══════════════════════════════════════════════════════════════════════
 
 按以下顺序尝试匹配,任意一级命中即返回:
+  0. 完整路径(绝对或相对 notes 目录)
   1. 文件 stem 完全相等(如 "Rust-造轮子资源")
   2. 文件名相等(如 "Rust-造轮子资源.md" / ".html")
   3. 标题完全相等(如 "Rust 造轮子 / 动手实践资源")
   4. 标题或 stem 子串包含(大小写不敏感)
 
-匹配不到会列出所有候选,方便复制粘贴。
+匹配到多个会拒绝操作并列出完整路径候选(避免误删)。
 
 ══════════════════════════════════════════════════════════════════════
 自定义
 ══════════════════════════════════════════════════════════════════════
 
 直接编辑本脚本顶部的常量:
-  SITE_TITLE     主页和顶栏的站点标题
-  SITE_SUBTITLE  主页副标题
-  SITE_AUTHOR    footer 署名
+  SITE_TITLE       主页和顶栏的站点标题
+  SITE_SUBTITLE    主页副标题
+  SITE_AUTHOR      footer 署名
+  TAG_PREFIX       tag 文件夹前缀(默认 "tag_")
+  SIDEBAR_WIDTH    桌面 sidebar 宽度(默认 220)
+  DATE_FORMAT      主页日期格式(strftime,默认 "%Y-%m-%d")
 
 颜色、字号、间距在 THEME_CSS 字符串里,改 CSS 变量即可:
   --bg / --text / --accent / --code-bg / --indent ...
@@ -90,12 +156,14 @@
   /              聚焦搜索框
   点击 ●         折叠当前
   点击标题       进入文章页 / 跳转章节
+  点击 sidebar 中 tag 切换可见性(主页)
 """
 from __future__ import annotations
 
 import argparse
 import re
 import sys
+import time
 from datetime import date
 from html import escape
 from pathlib import Path
@@ -107,8 +175,11 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 # 配置
 # ============================================================================
 SITE_TITLE = "Salted的笔记"
-SITE_SUBTITLE = ""
+SITE_SUBTITLE = "从零实现,理解每一行 — Rust · 系统 · 底层"
 SITE_AUTHOR = "Salted"
+TAG_PREFIX = "tag_"          # tag 文件夹前缀,该前缀下的子目录自动归到对应 tag
+SIDEBAR_WIDTH = 220          # 桌面 sidebar 宽度(px)
+DATE_FORMAT = "%Y-%m-%d"     # 主页日期格式(strftime)
 
 # ============================================================================
 # 主题 CSS — 幕布视觉 + org 操作
@@ -382,12 +453,31 @@ article {
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border-soft);
   display: flex;
-  gap: 16px;
+  gap: 8px;
   align-items: center;
   flex-wrap: wrap;
 }
-.doc-meta code { font-size: 12px; }
-.doc-meta .sep { color: var(--text-ghost); }
+.doc-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.doc-meta .meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.doc-meta .meta-date .meta-label { color: var(--accent); }
 
 /* ---------- 折叠节点 — 树形大纲 ---------- */
 .outline { padding: 0; margin: 0; list-style: none; }
@@ -422,42 +512,35 @@ article {
   box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
-/* 折叠图标 */
-.caret {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  color: var(--text-faint);
-  transition: transform 0.15s ease, color 0.1s;
-  font-size: 9px;
-  line-height: 1;
-}
-details[open] > summary > .caret,
-.section[open] > summary > .caret {
-  transform: rotate(90deg);
-  color: var(--text-muted);
-}
-.section > summary:hover > .caret,
-.note-node > summary:hover > .caret { color: var(--text-secondary); }
-
-/* 圆点 — org-mode bullet */
+/* 圆点 — 用虚实表示展开/折叠状态(实心=展开,空心=折叠)*/
 .bullet {
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--text-ghost);
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  box-sizing: border-box;
   flex-shrink: 0;
-  transition: background 0.12s, transform 0.12s;
+  transition: background 0.15s, border-color 0.15s;
   position: relative;
 }
+/* 折叠状态:空心圆 */
+.section > summary > .bullet,
+.note-node > summary > .bullet {
+  background: transparent;
+  border-color: var(--text-muted);
+}
+/* 展开状态:实心圆 */
+.section[open] > summary > .bullet,
+.note-node[open] > summary > .bullet {
+  background: var(--accent);
+  border-color: var(--accent);
+}
 .section > summary:hover > .bullet,
-.note-node > summary:hover > .bullet { background: var(--accent); }
-.section[open] > summary > .bullet { background: var(--text-secondary); }
-.note-node[open] > summary > .bullet { background: var(--text-secondary); }
+.note-node > summary:hover > .bullet {
+  border-color: var(--accent);
+}
 
 /* 标题文字 */
 .heading-text,
@@ -1085,6 +1168,174 @@ pre::-webkit-scrollbar-thumb {
   background: var(--border-strong);
   background-clip: content-box;
 }
+
+/* ---------- 主页 sidebar(Feature 6) ----------
+   默认收起(sidebar-collapsed),内容居中显示。
+   点 topbar 的 [☰] 按钮(body.sidebar-open)展开。 */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 49px;
+  bottom: 0;
+  width: 220px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-soft);
+  overflow-y: auto;
+  background: var(--bg);
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  box-shadow: none;
+}
+body.page-index.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+/* sidebar 是纯浮层,不挤压 hero / outline-tree,内容始终居中 */
+/* 移动端:sidebar 浮层覆盖,不挤压内容 */
+.sidebar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-btn .icon-bars {
+  display: inline-block;
+  width: 13px;
+  height: 9px;
+  position: relative;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after,
+.sidebar-btn .icon-bars {
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before { top: 0; }
+.sidebar-btn .icon-bars::after { bottom: 0; }
+.sidebar-btn .icon-bars {
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent !important;
+}
+
+.sidebar .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-sans);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar .tag-btn + .tag-btn { margin-top: 2px; }
+.sidebar .tag-btn:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar .tag-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .tag-btn .count {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.sidebar .tag-btn.active .count { color: var(--accent); }
+
+/* 主页 note-node 行的日期 badge(Feature 1) */
+.note-node > summary .row-date {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 数学公式 KaTeX ---------- */
+.katex { font-size: 1.05em; }
+.katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+.katex-display::-webkit-scrollbar { height: 4px; }
+.code-block .katex,
+pre .katex,
+code .katex { display: none; }  /* 代码块里的 $ 不渲染 */
+
+/* ---------- 树形连接(Feature 5) ----------
+   每个嵌套 section 的 ::before 画一段竖线(在父 section-body 的左 padding 里,
+   section 自身坐标 left:-8),::after 画横线连到自己的 bullet。
+   - 非末子:竖线 top:0 bottom:0(贯穿整个 section 高度,接续下一个兄弟)
+   - 末子:竖线只画到 bullet 中线(height: ~36px)形成 └── 拐角
+   竖线在父 section-body 的 padding 区(x=8),正文在 x>=16,两者左右分开,不重叠。
+   顶层 article > section.level-1 同样适用(article 的 padding 充当父 padding)。 */
+.section-body > .section,
+article > .section.level-1 {
+  position: relative;
+}
+.section-body > .section::before,
+article > .section.level-1::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+.section-body > .section:last-child::before,
+article > .section.level-1:last-child::before {
+  bottom: auto;
+  height: 36px;            /* 到 bullet 中线,形成 L 拐角 */
+}
+.section-body > .section::after,
+article > .section.level-1::after {
+  content: '';
+  position: absolute;
+  left: -8px;              /* 从竖线开始 */
+  top: 36px;               /* bullet 中线 */
+  width: 8px;              /* 到 bullet 左边缘(section 自身 x=0)*/
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@media print {
+  .sidebar { display: none; }
+  .section-body > .section::before,
+  .section-body > .section::after,
+  article > .section.level-1::before,
+  article > .section.level-1::after { display: none; }
+}
+
+/* 移动端:sidebar 始终用浮层 */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 280px;
+    max-height: none;
+    box-shadow: var(--shadow-lg);
+  }
+}
 """
 
 # ============================================================================
@@ -1204,28 +1455,23 @@ NOTE_JS = r"""
     wrap.appendChild(pre);
   });
 
-  /* ---------- localStorage 记忆折叠 ---------- */
-  const noteId = document.body.getAttribute('data-note-id');
-  if (noteId) {
-    const KEY = 'md2html:state:' + noteId;
-    const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } })();
-    document.querySelectorAll('details.section').forEach((d) => {
-      const id = d.getAttribute('data-anchor');
-      if (!id) return;
-      if (saved[id] === false) d.open = false;
-      else if (saved[id] === true) d.open = true;
-    });
-    document.querySelectorAll('details.section').forEach((d) => {
-      const id = d.getAttribute('data-anchor');
-      if (!id) return;
-      d.addEventListener('toggle', () => {
-        saved[id] = d.open;
-        try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch {}
+  /* ---------- 锚点自展开(从主页章节链接跳进来时,目标 + 祖先链全展开) ---------- */
+  if (location.hash) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+      let el = target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+      }
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
       });
-    });
+    }
   }
 
-  /* ---------- org-mode 键盘:Tab / Shift+Tab / J K ---------- */
+  /* ---------- org-mode 键盘:Tab / Shift+Tab ---------- */
   const isHeading = (el) => el && el.matches && el.matches('summary');
   const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
 
@@ -1321,12 +1567,78 @@ NOTE_JS = r"""
     search.addEventListener('input', (e) => {
       const q = e.target.value.trim().toLowerCase();
       document.querySelectorAll('details.section').forEach(s => {
-        if (!q) { s.style.opacity = ''; s.open = s.getAttribute('data-was-open') === '1'; return; }
+        if (!q) { s.style.opacity = ''; return; }
         const t = s.querySelector('summary').textContent.toLowerCase();
         s.style.opacity = t.includes(q) ? '1' : '0.3';
       });
     });
   }
+
+  /* ---------- 主页 sidebar 切换 + tag 过滤(Feature 6) ---------- */
+  if (document.body.classList.contains('page-index')) {
+    const sidebarBtn = document.querySelector('[data-action="toggle-sidebar"]');
+    // 默认收起,localStorage 记忆用户选择
+    const KEY = 'md2html:sidebar-open';
+    const initialOpen = (() => {
+      try { return localStorage.getItem(KEY) === '1'; } catch { return false; }
+    })();
+    if (initialOpen) document.body.classList.add('sidebar-open');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {}
+      });
+    }
+    // 点 sidebar 外面关闭(移动端友好)
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      if (window.innerWidth >= 721) return;  // 桌面端不自动关
+      const t = e.target;
+      if (t.closest('.sidebar') || t.closest('.sidebar-btn')) return;
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem(KEY, '0'); } catch {}
+    });
+
+    const tagBtns = document.querySelectorAll('.sidebar .tag-btn');
+    const nodes = document.querySelectorAll('.note-node');
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        tagBtns.forEach(b => b.classList.toggle('active', b === btn));
+        nodes.forEach(n => {
+          const tags = (n.getAttribute('data-tags') || '').split(',').filter(Boolean);
+          const show = filter === 'all'
+                    || (filter === '__none__' && tags.length === 0)
+                    || tags.includes(filter);
+          n.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  /* ---------- KaTeX 数学公式渲染 ----------
+     用 DOMContentLoaded 触发,确保 defer 加载的 katex.js 和 auto-render.js
+     都已执行完毕。 $$ 块级、$ 行内、\(...\)、\[...\] 全支持。 */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMathInElement !== 'function') return;
+    const target = document.body.classList.contains('page-index')
+      ? (document.querySelector('.outline-tree') || document.body)
+      : document.body;
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoredClasses: ['code-block', 'code-header', 'katex']
+      });
+    } catch (e) {
+      console.warn('KaTeX render failed:', e);
+    }
+  });
 })();
 """
 
@@ -1336,12 +1648,16 @@ NOTE_JS = r"""
 
 def md_to_html_body(md_text: str) -> str:
     md = markdown.Markdown(
-        extensions=['extra', 'toc', 'sane_lists', 'admonition'],
+        extensions=['extra', 'toc', 'sane_lists', 'admonition',
+                    'pymdownx.arithmatex'],
         extension_configs={
             'toc': {
                 'title': '',
                 'baselevel': 1,
                 'permalink': '¶',
+            },
+            'pymdownx.arithmatex': {
+                'generic': True,
             },
         },
     )
@@ -1406,10 +1722,9 @@ def render_section(sec: Section) -> str:
     body_html = '\n'.join(body_parts)
 
     return (
-        f'<details class="section level-{sec.level}" open data-anchor="{escape(anchor)}">\n'
+        f'<details class="section level-{sec.level}" data-anchor="{escape(anchor)}">\n'
         f'  <summary id="{escape(anchor)}" tabindex="0">\n'
-        f'    <span class="caret" aria-hidden="true">▶</span>'
-        f'<span class="bullet" aria-hidden="true"></span>'
+        f'    <span class="bullet" aria-hidden="true"></span>'
         f'<span class="heading-text">{text_html}</span>'
         f'<a class="anchor-link" href="#{escape(anchor)}" title="复制链接">§</a>\n'
         f'  </summary>\n'
@@ -1418,7 +1733,8 @@ def render_section(sec: Section) -> str:
     )
 
 
-def build_note_html(stem: str, md_path: Path) -> tuple[str, dict]:
+def build_note_html(stem: str, md_path: Path,
+                    dir_path: Path | None = None) -> tuple[str, dict]:
     md_text = md_path.read_text(encoding='utf-8')
     body_html = md_to_html_body(md_text)
     soup = BeautifulSoup(body_html, 'html.parser')
@@ -1469,9 +1785,17 @@ def build_note_html(stem: str, md_path: Path) -> tuple[str, dict]:
         section_count=len(sections_meta),
     )
 
+    rel = (str(md_path.relative_to(dir_path)) if dir_path
+           else md_path.name)
     meta = {
-        'filename': stem + '.html',
-        'source': md_path.name,
+        'filename': rel[:-3] + '.html' if rel.endswith('.md') else stem + '.html',
+        'source': rel,
+        'stem': stem,
+        'kind': 'md',
+        'tags': infer_tags(rel),
+        'tag_paths': tags_to_paths(infer_tags(rel)),
+        'tag': infer_tag(rel),
+        'mtime': md_path.stat().st_mtime,
         'title': title,
         'description': description,
         'sections': sections_meta,
@@ -1487,6 +1811,7 @@ NOTE_TEMPLATE = """<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} — {site_title}</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
 <style>
 {css}
 </style>
@@ -1494,7 +1819,7 @@ NOTE_TEMPLATE = """<!DOCTYPE html>
 <body class="page-note" data-note-id="{note_id}">
 <div class="progress-bar"></div>
 <div class="topbar">
-  <a class="brand" href="index.html"><span class="seal">造</span> {site_title}</a>
+  <a class="brand" href="index.html"><span class="seal">S</span> {site_title}</a>
   <span class="spacer"></span>
   <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
   <div class="help-wrap">
@@ -1506,21 +1831,22 @@ NOTE_TEMPLATE = """<!DOCTYPE html>
       <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
     </div>
   </div>
-  <button data-action="toggle-fold" data-state="expanded"><span class="chev">▾</span>折叠</button>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
 </div>
 <article>
   <h1 class="doc-title">{title}</h1>
   <div class="doc-meta">
-    <span>{section_count} 章</span>
-    <span class="sep">·</span>
-    <span>更新 {today}</span>
+    <span class="meta-badge meta-date"><span class="meta-label">更新</span>{today}</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>{section_count}</span>
   </div>
 {body}
 </article>
 <button class="to-top" aria-label="回到顶部">↑</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
 <script>
-hljs.highlightAll();
 {js}
 </script>
 </body>
@@ -1552,6 +1878,8 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{site_title}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
 <style>
 {css}
 </style>
@@ -1559,6 +1887,7 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 <body class="page-index">
 <div class="progress-bar"></div>
 <div class="topbar">
+  <button class="sidebar-btn" data-action="toggle-sidebar" aria-label="切换分类侧栏" title="分类"><span class="icon-bars"></span></button>
   <a class="brand" href="#"><span class="seal">S</span> {site_title}</a>
   <span class="spacer"></span>
   <input type="search" class="search" placeholder="搜索笔记或章节 (按 / 聚焦)" autocomplete="off">
@@ -1572,16 +1901,20 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
       <div class="help-row"><span class="keys"><span class="link-demo">T</span></span><span class="desc">点击标题进入</span></div>
     </div>
   </div>
-  <button data-action="toggle-fold" data-state="expanded"><span class="chev">▾</span>折叠</button>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
 </div>
+{sidebar}
 <header class="hero">
   <h1 class="title">{site_title}</h1>
-  <p class="subtitle">{site_subtitle}</p>
 </header>
 <main class="outline-tree">
 {nodes}
 </main>
 <button class="to-top" aria-label="回到顶部">↑</button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
 <script>
 {js}
 </script>
@@ -1590,31 +1923,103 @@ INDEX_TEMPLATE = """<!DOCTYPE html>
 """
 
 
+def _format_date(mtime: float) -> str:
+    if not mtime:
+        return '—'
+    return time.strftime(DATE_FORMAT, time.localtime(mtime))
+
+
 def build_note_node_html(meta: dict) -> str:
     """生成单个 note-node 的 HTML 片段(供增量更新用)"""
     children_html = render_section_list_for_index(meta)
-    desc = escape(meta.get('description') or '(无描述)')
-    kind_badge = ''
-    if meta.get('kind') == 'html':
-        kind_badge = '<span class="row-meta" style="background:transparent;color:var(--text-muted);" title="关联的现成 HTML">html</span>'
-    return f'''<details class="note-node">
+    date_str = _format_date(meta.get('mtime') or 0)
+    # data-tags 存所有层级的完整路径(逗号分隔),供 sidebar 过滤
+    tag_paths = meta.get('tag_paths') or []
+    tags_attr = (f' data-tags="{escape(",".join(tag_paths))}"'
+                 if tag_paths else '')
+    return f'''<details class="note-node"{tags_attr}>
   <summary tabindex="0">
-    <span class="caret" aria-hidden="true">▶</span>
     <span class="bullet" aria-hidden="true"></span>
     <a class="title" href="{escape(meta["filename"])}">{escape(meta["title"])}</a>
-    <span class="desc">{desc}</span>
-    {kind_badge if kind_badge else ''}
+    <span class="row-date">{date_str}</span>
     <span class="row-meta">{meta["section_count"]} 章</span>
   </summary>
   {children_html}
 </details>'''
 
 
+def _build_tag_tree(notes_meta: list[dict]) -> tuple[dict, int]:
+    """从 notes_meta 构建嵌套 tag 树。
+    返回 (tree, untagged_count)。
+    tree: {name: {'_leaf': 直接归到此层级的文件数,
+                   '_children': {subname: {...}}}}
+    每个节点的累计计数 = _leaf + 所有 children 的累计。
+    """
+    tree = {}
+    untagged = 0
+    for m in notes_meta:
+        paths = m.get('tag_paths') or []
+        if not paths:
+            untagged += 1
+            continue
+        # 最深的路径是此文件的归属(其它路径只是祖先链)
+        deepest = paths[-1]
+        parts = deepest.split('/')
+        node = tree
+        for i, part in enumerate(parts):
+            if part not in node:
+                node[part] = {'_leaf': 0, '_children': {}}
+            if i == len(parts) - 1:
+                node[part]['_leaf'] += 1
+            node = node[part]['_children']
+    return tree, untagged
+
+
+def _cumulative_count(node: dict) -> int:
+    return node['_leaf'] + sum(_cumulative_count(c) for c in node['_children'].values())
+
+
+def _render_tag_tree(tree: dict, parent_path: str = '', depth: int = 0) -> list[str]:
+    """递归渲染 sidebar 里的 tag 按钮(带缩进)。"""
+    buttons = []
+    for name in sorted(tree.keys(), key=lambda s: s.lower()):
+        node = tree[name]
+        path = f'{parent_path}/{name}' if parent_path else name
+        count = _cumulative_count(node)
+        indent_px = 11 + depth * 16
+        buttons.append(
+            f'<button class="tag-btn" data-filter="{escape(path)}" '
+            f'style="padding-left: {indent_px}px;">'
+            f'<span>{escape(name)}</span><span class="count">{count}</span>'
+            f'</button>')
+        buttons.extend(_render_tag_tree(node['_children'], path, depth + 1))
+    return buttons
+
+
+def build_sidebar_html(notes_meta: list[dict]) -> str:
+    """生成 sidebar HTML(全部/未归类/各 tag 按钮,tag 支持嵌套)"""
+    total = len(notes_meta)
+    tree, untagged = _build_tag_tree(notes_meta)
+    buttons = [
+        f'<button class="tag-btn active" data-filter="all">'
+        f'<span>全部</span><span class="count">{total}</span></button>',
+    ]
+    # 未归类按钮(只要有未归类文件就显示)
+    if untagged > 0 or any(not (m.get('tag_paths')) for m in notes_meta):
+        buttons.append(
+            f'<button class="tag-btn" data-filter="__none__">'
+            f'<span>未归类</span><span class="count">{untagged}</span></button>')
+    buttons.extend(_render_tag_tree(tree))
+    return '<aside class="sidebar">\n' + '\n'.join(buttons) + '\n</aside>'
+
+
 def build_index_html(notes_meta: list[dict]) -> str:
     nodes = [build_note_node_html(m) for m in notes_meta]
+    sidebar = build_sidebar_html(notes_meta)
     return INDEX_TEMPLATE.format(
         site_title=escape(SITE_TITLE),
         site_subtitle=escape(SITE_SUBTITLE),
+        sidebar=sidebar,
         nodes='\n'.join(nodes),
         css=THEME_CSS,
         js=NOTE_JS,
@@ -1628,6 +2033,23 @@ def _find_note_node(soup, filename: str):
         if link and link.get('href') == filename:
             return node
     return None
+
+
+def _sync_sidebar_counts(soup) -> None:
+    """重新扫描所有 note-node,重建 sidebar(支持嵌套 tag,简单稳妥)。"""
+    sidebar = soup.find('aside', class_='sidebar')
+    if sidebar is None:
+        return
+    # 从 DOM 重建 metas(只取 sidebar 需要的字段)
+    metas = []
+    for node in soup.find_all('details', class_='note-node'):
+        tags_attr = node.get('data-tags') or ''
+        tag_paths = [t for t in tags_attr.split(',') if t]
+        metas.append({'tag_paths': tag_paths})
+    # 重建 sidebar 内容
+    new_sidebar_html = build_sidebar_html(metas)
+    new_sidebar = BeautifulSoup(new_sidebar_html, 'html.parser').find('aside')
+    sidebar.replace_with(new_sidebar)
 
 
 def update_index_add(meta: dict, index_path: Path) -> str:
@@ -1656,6 +2078,7 @@ def update_index_add(meta: dict, index_path: Path) -> str:
         outline.append(new_node)
         action = 'added'
 
+    _sync_sidebar_counts(soup)
     index_path.write_text(str(soup), encoding='utf-8')
     return action
 
@@ -1674,6 +2097,7 @@ def update_index_delete(filename: str, index_path: Path) -> str:
     if node is None:
         return 'not_found'
     node.decompose()
+    _sync_sidebar_counts(soup)
     index_path.write_text(str(soup), encoding='utf-8')
     return 'deleted'
 
@@ -1682,8 +2106,65 @@ def update_index_delete(filename: str, index_path: Path) -> str:
 # 元数据抽取(轻量,用于 list / search / delete)
 # ============================================================================
 
-def get_metadata(md_path: Path) -> dict:
-    """读取 .md,只返回元数据(不写 HTML)"""
+def load_blogignore(dir_path: Path):
+    """读 dir_path/.blogignore,返回 pathspec.PathSpec 或 None。
+    无 pathspec 库时打 warning,返回 None(不过滤)。"""
+    ignore_file = dir_path / '.blogignore'
+    if not ignore_file.exists():
+        return None
+    try:
+        import pathspec
+    except ImportError:
+        sys.stderr.write('警告: 需要 pathspec 库来解析 .blogignore:'
+                         ' pip install pathspec\n')
+        return None
+    return pathspec.PathSpec.from_lines(
+        'gitwildmatch', ignore_file.read_text(encoding='utf-8').splitlines())
+
+
+def is_ignored(rel_path: str, spec) -> bool:
+    """rel_path 相对 notes 目录的路径(POSIX 风)。"""
+    if spec is None:
+        return False
+    return spec.match_file(rel_path.replace('\\', '/'))
+
+
+def infer_tags(rel_path: str, prefix: str = TAG_PREFIX) -> list[str]:
+    """从相对路径推断 tag 链(支持任意深度嵌套)。
+    例:
+      'tag_sys/tag_rust/foo.md' → ['sys', 'rust']
+      'tag_rust/sub/foo.md'     → ['rust']      (sub 不是 tag_)
+      'foo.md'                  → []
+      'random/foo.md'           → []            (非 tag_ 前缀,本来也不会被扫描)
+    """
+    tags = []
+    parts = rel_path.replace('\\', '/').split('/')[:-1]  # 去掉文件名
+    for part in parts:
+        if part.startswith(prefix):
+            tag = part[len(prefix):]
+            if tag:
+                tags.append(tag)
+    return tags
+
+
+def tags_to_paths(tags: list[str]) -> list[str]:
+    """['sys', 'rust'] → ['sys', 'sys/rust']
+    每一级的完整路径都包含,用于 sidebar 嵌套过滤。"""
+    paths = []
+    for i in range(1, len(tags) + 1):
+        paths.append('/'.join(tags[:i]))
+    return paths
+
+
+def infer_tag(rel_path: str, prefix: str = TAG_PREFIX) -> str | None:
+    """[已废弃,保留向后兼容] 只返回顶层 tag。"""
+    tags = infer_tags(rel_path, prefix)
+    return tags[0] if tags else None
+
+
+def get_metadata(md_path: Path, dir_path: Path | None = None) -> dict:
+    """读取 .md,只返回元数据(不写 HTML)。
+    若提供 dir_path,会计算 tag 和 mtime;否则 mtime 来自文件本身,tag 为 None。"""
     md_text = md_path.read_text(encoding='utf-8')
     body = md_to_html_body(md_text)
     soup = BeautifulSoup(body, 'html.parser')
@@ -1715,11 +2196,17 @@ def get_metadata(md_path: Path) -> dict:
             'anchor': h.get('id', ''),
         })
 
+    rel = (str(md_path.relative_to(dir_path)) if dir_path
+           else md_path.name)
     return {
-        'filename': md_path.stem + '.html',
-        'source': md_path.name,
+        'filename': rel[:-3] + '.html' if rel.endswith('.md') else md_path.stem + '.html',
+        'source': rel,
         'stem': md_path.stem,
         'kind': 'md',
+        'tags': infer_tags(rel),
+        'tag_paths': tags_to_paths(infer_tags(rel)),
+        'tag': infer_tag(rel),
+        'mtime': md_path.stat().st_mtime,
         'title': title,
         'description': desc,
         'sections': sections,
@@ -1727,7 +2214,7 @@ def get_metadata(md_path: Path) -> dict:
     }
 
 
-def get_metadata_from_html(html_path: Path) -> dict:
+def get_metadata_from_html(html_path: Path, dir_path: Path | None = None) -> dict:
     """从已有 HTML 文件提取元数据(关联现成 HTML 时使用)"""
     html = html_path.read_text(encoding='utf-8')
     soup = BeautifulSoup(html, 'html.parser')
@@ -1761,11 +2248,17 @@ def get_metadata_from_html(html_path: Path) -> dict:
             'anchor': h.get('id', ''),
         })
 
+    rel = (str(html_path.relative_to(dir_path)) if dir_path
+           else html_path.name)
     return {
-        'filename': html_path.name,
-        'source': html_path.name,
+        'filename': rel,
+        'source': rel,
         'stem': html_path.stem,
         'kind': 'html',
+        'tags': infer_tags(rel),
+        'tag_paths': tags_to_paths(infer_tags(rel)),
+        'tag': infer_tag(rel),
+        'mtime': html_path.stat().st_mtime,
         'title': title,
         'description': desc,
         'sections': sections,
@@ -1773,30 +2266,59 @@ def get_metadata_from_html(html_path: Path) -> dict:
     }
 
 
+def iter_candidate_files(dir_path: Path):
+    """yield 待扫描的文件:
+    - 根目录直系 .md / .html
+    - 顶层 tag_X/ 文件夹下递归所有 .md / .html
+    其他子目录(非 tag_ 开头)不扫描。"""
+    for p in sorted(dir_path.iterdir()):
+        if p.is_file() and p.suffix.lower() in ('.md', '.html'):
+            yield p
+        elif p.is_dir() and p.name.startswith(TAG_PREFIX):
+            for sub in sorted(p.rglob('*')):
+                if sub.is_file() and sub.suffix.lower() in ('.md', '.html'):
+                    yield sub
+
+
 def scan_notes(dir_path: Path) -> list[dict]:
-    """扫描目录下所有 .md 和孤立 .html,返回 metadata 列表"""
-    md_files = sorted(dir_path.glob('*.md'))
-    html_files = sorted(dir_path.glob('*.html'))
-
+    """扫描根目录直系文件 + tag_X/ 文件夹下的所有 .md 和孤立 .html,
+    应用 .blogignore 过滤,按 mtime DESC 排序。
+    非 tag_ 开头的子目录**不扫描**(用户想忽略的草稿/临时目录无需 .blogignore)。"""
+    spec = load_blogignore(dir_path)
+    candidates = list(iter_candidate_files(dir_path))
     metas = []
-    md_stems = {f.stem for f in md_files}
 
-    for f in md_files:
-        metas.append(get_metadata(f))
-
-    # 关联孤立 HTML(没有对应 .md 的)
-    for f in html_files:
-        if f.name == 'index.html':
+    md_rel_keys = set()  # 相对路径去 stem,用于 .html 与 .md 同名去重
+    for f in candidates:
+        if f.suffix.lower() != '.md':
             continue
-        if f.stem in md_stems:
-            continue  # 已经由 .md 覆盖
-        try:
-            metas.append(get_metadata_from_html(f))
-        except Exception as e:
-            print(f'  ⚠ 跳过 {f.name}: {e}', file=sys.stderr)
+        rel = str(f.relative_to(dir_path)).replace('\\', '/')
+        if is_ignored(rel, spec):
+            continue
+        md_rel_keys.add(rel[:-3])
 
-    # 按标题排序(中文按拼音走系统 locale)
-    metas.sort(key=lambda m: m['title'])
+    for f in candidates:
+        rel = str(f.relative_to(dir_path)).replace('\\', '/')
+        if is_ignored(rel, spec):
+            continue
+        suffix = f.suffix.lower()
+        if suffix == '.md':
+            try:
+                metas.append(get_metadata(f, dir_path))
+            except Exception as e:
+                print(f'  ⚠ 跳过 {rel}: {e}', file=sys.stderr)
+        elif suffix == '.html':
+            if f.name == 'index.html':
+                continue
+            rel_no_ext = rel[:-5]
+            if rel_no_ext in md_rel_keys:
+                continue
+            try:
+                metas.append(get_metadata_from_html(f, dir_path))
+            except Exception as e:
+                print(f'  ⚠ 跳过 {rel}: {e}', file=sys.stderr)
+
+    metas.sort(key=lambda m: m.get('mtime', 0), reverse=True)
     return metas
 
 
@@ -1807,14 +2329,29 @@ def regenerate_index(dir_path: Path) -> int:
     return len(metas)
 
 
-def match_note(query: str, metas: list[dict]) -> tuple[dict | None, list[dict]]:
-    """按 stem / 文件名 / 标题 / 子串 匹配笔记。
+def match_note(query: str, metas: list[dict],
+               dir_path: Path | None = None) -> tuple[dict | None, list[dict]]:
+    """按 完整路径 / stem / 文件名 / 标题 / 子串 匹配笔记。
 
     返回 (definitive_match, candidates):
       - definitive_match: 唯一命中则返回该 dict;多个或无命中返回 None
       - candidates: 该层级所有命中,供调用方在歧义时列出
     """
     q = query.strip()
+
+    # 0) 完整路径匹配(优先级最高)
+    if dir_path is not None and q:
+        try:
+            qpath = (Path(q).resolve() if Path(q).is_absolute()
+                     else (dir_path / q).resolve())
+            if qpath.exists():
+                for m in metas:
+                    if (dir_path / m['source']).resolve() == qpath:
+                        return m, [m]
+                    if (dir_path / m['filename']).resolve() == qpath:
+                        return m, [m]
+        except (OSError, ValueError):
+            pass
 
     # 1) stem 完全匹配(每个 stem 在目录里唯一)
     for m in metas:
@@ -1845,13 +2382,17 @@ def match_note(query: str, metas: list[dict]) -> tuple[dict | None, list[dict]]:
     return None, []
 
 
-def _print_candidates(query: str, candidates: list[dict], file=sys.stderr):
-    """列出候选供用户挑选"""
-    print(f'  ✗ "{query}" 匹配到 {len(candidates)} 篇,请用更精确的名字:',
+def _print_candidates(query: str, candidates: list[dict],
+                      dir_path: Path | None = None, file=sys.stderr):
+    """列出候选的完整路径供用户挑选"""
+    base = dir_path or Path.cwd()
+    print(f'  ✗ "{query}" 匹配到 {len(candidates)} 篇,请用完整路径精确指定:',
           file=file)
     for c in candidates:
+        full = (base / c['source']).resolve()
         kind = c.get('kind', 'md')
-        print(f'      • {c["title"]}  [{kind}]  ({c["source"]})', file=file)
+        print(f'      • [{kind}] {c["title"]}', file=file)
+        print(f'          路径: {full}', file=file)
 
 
 # ============================================================================
@@ -1911,27 +2452,47 @@ def cmd_search(args) -> int:
 
 
 def cmd_add(args) -> int:
-    d = Path(args.dir).resolve() if args.dir else Path('.').resolve()
+    d = Path(args.dir).resolve()
     index_path = d / 'index.html'
+    spec = load_blogignore(d)
     added = []
     for f in args.files:
         fp = Path(f)
         if not fp.exists():
             print(f'  ✗ {f} 不存在', file=sys.stderr)
             continue
-        # 如果不在当前目录,复制过来
-        target = d / fp.name
-        if fp.resolve() != target.resolve():
+        # 判断 fp 是否已经在 d 内
+        try:
+            fp.resolve().relative_to(d)
+            in_d = True
+        except ValueError:
+            in_d = False
+        if not in_d:
+            # 不在 d 内 → 复制到 d 根目录(flat,保留原文件名)
+            target = d / fp.name
+            if is_ignored(fp.name, spec):
+                print(f'  ✗ {fp.name} 被 .blogignore 排除', file=sys.stderr)
+                continue
             target.write_text(fp.read_text(encoding='utf-8'), encoding='utf-8')
             fp = target
+        # 检查 .blogignore
+        try:
+            rel = str(fp.relative_to(d)).replace('\\', '/')
+            if is_ignored(rel, spec):
+                print(f'  ✗ {rel} 被 .blogignore 排除', file=sys.stderr)
+                continue
+        except ValueError:
+            pass
         suffix = fp.suffix.lower()
         if suffix == '.md':
-            meta = convert_one(fp, force=False)
+            meta = convert_one(fp, force=False, dir_path=d)
         elif suffix in ('.html', '.htm'):
             print(f'  ✓ 关联 HTML: {fp.name}')
-            meta = get_metadata_from_html(fp)
+            meta = get_metadata_from_html(fp, dir_path=d)
         else:
             print(f'  ✗ 不支持的文件类型: {fp.name}(只支持 .md / .html)', file=sys.stderr)
+            continue
+        if meta is None:
             continue
         # 增量更新 index.html
         action = update_index_add(meta, index_path)
@@ -1939,7 +2500,7 @@ def cmd_add(args) -> int:
             n = regenerate_index(d)
             print(f'  ✓ index.html 全量重建({n} 篇笔记)')
         else:
-            print(f'  ✓ index.html 增量{action}: {meta["filename"]}')
+            print(f'  ✓ index.html 增量{action}: {meta["source"]}')
         added.append(fp.name)
     return 0 if added else 1
 
@@ -1951,13 +2512,13 @@ def cmd_delete(args) -> int:
     deleted = []
     had_failure = False
     for name in args.names:
-        m, candidates = match_note(name, metas)
+        m, candidates = match_note(name, metas, dir_path=d)
         if not candidates:
             print(f'  ✗ 未找到 "{name}"', file=sys.stderr)
             had_failure = True
             continue
         if m is None:
-            _print_candidates(name, candidates)
+            _print_candidates(name, candidates, dir_path=d)
             had_failure = True
             continue
         html_path = d / m['filename']
@@ -1987,12 +2548,16 @@ def cmd_delete(args) -> int:
 def cmd_show(args) -> int:
     d = Path(args.dir).resolve()
     metas = scan_notes(d)
-    m = match_note(args.name, metas)
-    if not m:
+    m, candidates = match_note(args.name, metas, dir_path=d)
+    if not candidates:
         print(f'未找到 "{args.name}"', file=sys.stderr)
+        return 1
+    if m is None:
+        _print_candidates(args.name, candidates, dir_path=d)
         return 1
     print(f'标题:   {m["title"]}')
     print(f'文件:   {m["source"]} → {m["filename"]}')
+    print(f'路径:   {(d / m["source"]).resolve()}')
     print(f'章节:   {m["section_count"]}')
     print(f'描述:   {m["description"] or "(无)"}')
     print(f'\n章节列表:')
@@ -2008,20 +2573,32 @@ def cmd_show(args) -> int:
 # CLI
 # ============================================================================
 
-def convert_one(md_path: Path, force: bool = False) -> dict:
+def convert_one(md_path: Path, force: bool = False,
+                dir_path: Path | None = None) -> dict:
     """转换单个文件,生成同名 .html,返回 metadata。
     force=False 时按 mtime 跳过未变化的(保护用户对 HTML 的手改)。
-    """
+    dir_path 提供 .blogignore 上下文和相对路径计算。"""
+    # 检查 .blogignore
+    if dir_path is not None:
+        try:
+            rel = str(md_path.relative_to(dir_path)).replace('\\', '/')
+            spec = load_blogignore(dir_path)
+            if is_ignored(rel, spec):
+                print(f'  ✗ {rel} 被 .blogignore 排除,跳过', file=sys.stderr)
+                return None
+        except ValueError:
+            pass  # md_path 不在 dir_path 下,跳过检查
+
     stem = md_path.stem
     html_path = md_path.parent / (stem + '.html')
     if not force and html_path.exists():
         try:
             if md_path.stat().st_mtime <= html_path.stat().st_mtime:
                 print(f'  · {md_path.name} 未变化,跳过(HTML 已是最新)')
-                return get_metadata(md_path)
+                return get_metadata(md_path, dir_path)
         except OSError:
             pass
-    html, meta = build_note_html(stem, md_path)
+    html, meta = build_note_html(stem, md_path, dir_path=dir_path)
     html_path.write_text(html, encoding='utf-8')
     print(f'  ✓ {md_path.name} → {html_path.name}')
     return meta
@@ -2089,13 +2666,16 @@ def main(argv=None) -> int:
             return cmd_show(args)
         if args.cmd == 'batch':
             d = Path(args.dir).resolve()
-            md_files = sorted(d.glob('*.md'))
+            spec = load_blogignore(d)
+            md_files = [f for f in iter_candidate_files(d)
+                        if f.suffix.lower() == '.md'
+                        and not is_ignored(str(f.relative_to(d)).replace('\\', '/'), spec)]
             if not md_files:
-                print(f'未在 {d} 找到 .md 文件', file=sys.stderr)
+                print(f'未在 {d} 找到 .md 文件(只扫描根目录和 tag_X/ 文件夹)', file=sys.stderr)
                 return 1
             print(f'转换 {len(md_files)} 个 markdown 文件...')
             for f in md_files:
-                convert_one(f, force=True)
+                convert_one(f, force=True, dir_path=d)
             n = regenerate_index(d)
             print(f'  ✓ index.html 已生成({n} 篇笔记)')
             return 0
@@ -2123,13 +2703,16 @@ def main(argv=None) -> int:
 
     if args.batch:
         d = Path(args.dir).resolve()
-        md_files = sorted(d.glob('*.md'))
+        spec = load_blogignore(d)
+        md_files = [f for f in iter_candidate_files(d)
+                    if f.suffix.lower() == '.md'
+                    and not is_ignored(str(f.relative_to(d)).replace('\\', '/'), spec)]
         if not md_files:
-            print(f'未在 {d} 找到 .md 文件', file=sys.stderr)
+            print(f'未在 {d} 找到 .md 文件(只扫描根目录和 tag_X/ 文件夹)', file=sys.stderr)
             return 1
         print(f'转换 {len(md_files)} 个 markdown 文件...')
         for f in md_files:
-            convert_one(f, force=True)
+            convert_one(f, force=True, dir_path=d)
         n = regenerate_index(d)
         print(f'  ✓ index.html 已生成({n} 篇笔记)')
         return 0

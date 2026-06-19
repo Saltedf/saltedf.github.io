@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ch5 — Salted的笔记</title>
+<title>manateelazycat 2018 年12 月 11 日 07:10 #16 — Salted的笔记</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
 <style>
@@ -1162,7 +1162,7 @@ article > .section.level-1::after {
 
 </style>
 </head>
-<body class="page-note" data-note-id="ex">
+<body class="page-note" data-note-id="how-to-learn">
 <div class="progress-bar"></div>
 <div class="topbar">
   <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
@@ -1180,1016 +1180,146 @@ article > .section.level-1::after {
   <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
 </div>
 <article>
-  <h1 class="doc-title">Ch5</h1>
+  <h1 class="doc-title">manateelazycat 2018 年12 月 11 日 07:10 #16</h1>
   <div class="doc-meta">
     <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
-    <span class="meta-badge meta-count"><span class="meta-label">章节</span>32</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>3</span>
   </div>
-<details class="section level-2" data-anchor="complex-synonym">
-  <summary id="complex-synonym" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">complex synonym</span><a class="anchor-link" href="#complex-synonym" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">module type ComplexSig = sig
-  val zero : float * float
-  val add : float * float -&gt; float * float -&gt; float * float
-end
-</code></pre>
-<p>这是一个表示复数的module type 为它添加 <code>type t = float * float</code>
-对代码进行改进.</p>
-<pre><code class="language-ocaml">module type ComplexSig = sig
-  type t = float * float
-  val zero : t
-  val add : t -&gt; t -&gt; t
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="complex-encapsulation">
-  <summary id="complex-encapsulation" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">complex encapsulation</span><a class="anchor-link" href="#complex-encapsulation" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">module Complex : ComplexSig = struct
-  type t = float * float
-  let zero = (0., 0.)
-  let add (r1, i1) (r2, i2) = r1 +. r2, i1 +. i2
-end
-</code></pre>
-<p>分别进行如下的修改, 并观察出现的错误:</p>
+<p>学习Emacs有几条曲线:</p>
+<p>1 先会用基本的快捷键, 安装各种简单的插件, 抄各种各样的配置, 先
+体验一下Emacs的强大功能.</p>
+<p>2 安装复杂插件, 被各种配置搞崩溃了, 越改挂的越厉害, 大部分人卡
+在这个阶段, 因为不会Elisp, 导致东拼西凑的方法对于复杂插件行 不通</p>
+<p>3 你搞不懂Emacs复杂的配置的原因是因为你不懂 Elisp 编程, 学习
+Elisp的方法: 老老实实读Emacs内置的 Elisp reference manual,
+这么厚的手册怎么学?</p>
 <ul>
-<li>移除 <code>zero</code></li>
+<li>一页一页的挨着看, 一个API一个API的读, 不要跳过</li>
+<li>每个API, 都在 ielm 里面实践一下</li>
+<li>遇到不知道啥鬼用的API, 去Google或EmacsWiki上搜索一下, 看
+  看别人怎么用这些API的?</li>
 </ul>
-<pre><code>Error: Signature mismatch:
-       Modules do not match:
-         sig
-           type t = float * float
-           val add : float * float -&gt; float * float -&gt; float * float
-         end
-       is not included in
-         ComplexSig
-       The value `zero' is required but not provided
-</code></pre>
+<p>4 如果你花了一个月耐下心读完 Elisp reference manual 以后, Emacs 90%
+以上的代码你都可以看懂了, 继续折腾复杂插件, 知 道 require, autoload,
+set-key, 各种 hook, defadvice 的在不 同环境下的细微差别, 编程上知道
+save-excursion, ignore-errors 这些风骚 macro 的用法.
+这个阶段可以尝试手动 来写一写复杂的配置了, 这个阶段你已经是 Emacs
+高级用户了.</p>
+<p>5 如果还不满足, 可以像我这样造点有趣的轮子: My Emacs Plugins ,
+如果你自己会写Elisp插件, 你会发现Emacs其实是越 用越简单的,
+因为包括正则表达式, 语法高亮, 模式, 异步子进程, hook, overlay, advice
+这些代码你写熟悉以后, 你会发现所有插
+件的唯一差别就是复杂度和想象力的区别, 不存在想得出来写不出 来的东西.</p>
+<p>6 到了这个阶段, 唯一可以让你学习到更多知识的就是去 IRC #emacs
+和那些古老的黑客们交流, 或者去扒Github Emacser,
+我知道很多日本牛逼哄哄的Emacs开发者都把插件放 到 ftp 上 (比如当年的
+color-moccur.el ), 学点 Google 语法就 可以定向搜索.
+这些人都是你会写Emacs插件后, 需要学习和进阶 的榜样,
+这时候你再看Elisp代码, 你的注意力会放在他们Elisp编程 的一些细节上,
+比如代码写的更简洁, 方法用的妙, 架构设计上等 等,
+这是完全不同阶段的探索体验.</p>
+<p>7 如果你还不满足, 好好学习C语言, 然后再找个赚钱的工作, 把自己
+和家人照顾好. 业余时间直接用C或Elisp给Emacs底层做贡献, 把
+你的代码贡献固化到Emacs中, 然后你的名字可以像我一样写到 Emacs AUTHORS
+里面去装逼: Emacs AUTHORS</p>
+<p>如果你已经看到这里, 而且也做到上面的所有7点, 你自己的能力和精
+神境界都会很高了, 再也不会咋咋呼呼的吵着自己的技术要咋样咋 样,
+因为你会发现学的越多, 自己就是傻逼一个, 啥都不懂, 这辈子即
+使终身学习也学习不完, 哈哈哈哈.</p>
+<p>上面就是我学习Emacs十多年的经验分享, 希望可以给同学们一点参 考.</p>
+<details class="section level-1" data-anchor="youmu">
+  <summary id="youmu" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Youmu</span><a class="anchor-link" href="#youmu" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>我来分享我是怎么学习 Linux 服务端开发的吧。</p>
+<p>大学时候初始入门时学习的是 C，学校采用的教材是 The C programming
+language, 比较经典。现在的话，可以选择 Rust 来入手，没有那么多坑。</p>
+<p>起初学习Linux C 一站式编程
+10。虽然这本书是一个培训机构出的，但是它的内容、质量真得非常高。当时看完之后拿它来写了一个局域网聊天
+室 5。看完这本书的最大用处是对 Linux 有 一点熟悉了，了解了一下 posix
+api、syscall，深度不够。</p>
+<p>然后继续看 UNPUnix 网络编程, APUELinux 环境高级编程，这里绕不开的是
+内核。于是自己写了个玩具内核了解了下内核的机制。这里首先参考的是 James 4
+的版本，因为它比较糙，可以
+以最快的速度做出来让人有点成就感。随后可以按照 osdev
+上的教程系统得走一遍。现
+在国内开源的课程也有了，可以直接学习清华的操作系统课程。</p>
+<p>coursera 上有门课程 hardware/software interface 不错，对应的教材是
+csapp深入理解计算机系统，
+可以给系统一个完整的认识。里面编译、链接相关的内容可以阅读「程序员的自我修养」来
+完善一下（当然你也可以挑战自己看 linkers and loaders）。</p>
+<p>纯粹看系统相关的也可能会有点无聊，可以找点乐子，例如写个黑白棋AI之类的、刷刷
+oj。</p>
+<p>然后我是花了比较多的时候学习 C++ 去了（无奈当时根本没听说过
+Rust，不然也就不 会学习这么有历史包袱的系统级别语言了）。看了些 C++
+相关的书，这个书单也比较长：</p>
+<p>c++ primer effective c++ more effective c++ c++ 模板元编程 c++
+程序设计原理与实践 深入探索 c++ 对象模型 effective modern c++ c++ draft
+c++ idioms linux 服务端编程 (muduo 为例)，这本书算是有一点 c++
+内容，也放在这里好了 然后知道了 reactor,
+proactor，找了些资料来看，这里必不可少的是 libevent。
+使用它、学习它基本是知道了一个网络库该是什么样子。然后可以模仿着 muduo
+写个网络
+库（也可以直接用它）来写一个监控系统。这就算是一个比较大型的项目了，会涉及到组件
+之间的消息交互，然后可以试着使用一些开源中间件来玩，当然玩的同时也要看看源码，例
+如 redis 的代码就相对简单，特别是它里面有个比较经典的 ae eventloop 库。</p>
+<p>基本上到了这里能够干后端的活了？</p>
+<p>休闲读物: linux 大学教程 unix 痛恨者</p>
 <ul>
-<li>移除 <code>add</code></li>
+<li>main() Main.cpp:6</li>
+<li>ModuleA::Init() ModuleA.cpp :20<ul>
+<li>foo() Foo.cpp:10 负责xx任务</li>
+<li>bar() Bar.cpp:15 负责yy任务</li>
 </ul>
-<pre><code class="language-ocaml">Error: Signature mismatch:
-       Modules do not match:
-         sig type t = float * float val zero : float * float end
-       is not included in
-         ComplexSig
-       The value `add' is required but not provided 
-</code></pre>
-<ul>
-<li>修改 <code>zero</code> 为 <code>let zero = 0, 0</code></li>
+</li>
+<li>ModuleB::Init() ModuleB.cpp:10</li>
 </ul>
-<pre><code class="language-ocaml">Error: Signature mismatch:
-       ...
-       Values do not match:
-         val zero : int * int
-       is not included in
-         val zero : t
-</code></pre>
   </div>
 </details>
-<details class="section level-2" data-anchor="big-list-queue">
-  <summary id="big-list-queue" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">big list queue</span><a class="anchor-link" href="#big-list-queue" title="复制链接">§</a>
+<details class="section level-1" data-anchor="_1">
+  <summary id="_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">理清思路的方法论之一</span><a class="anchor-link" href="#_1" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<p>使用下列代码创建长度成倍增长的 ListQueue : 10, 100, 1000 …
-在出现明显的延迟之前最大能创建多长的 Queue ?
-在出现10s以上的延迟之前能创建的最长的Queue ?</p>
-<pre><code class="language-ocaml">  module type Queue = sig
-    type 'a t
-    exception EmptyQueue
-    val empty : 'a t
-    val is_empty : 'a t -&gt; bool
-    val size : 'a t -&gt; int
-    val enqueue : 'a -&gt; 'a t -&gt; 'a t
-    val front : 'a t -&gt; 'a
-    val dequeue : 'a t -&gt; 'a t
-    val to_list : 'a t -&gt; 'a list 
-  end
-
-module ListQueue : Queue = struct
-  type 'a t = 'a list
-  exception EmptyQueue
-  let empty = []
-  let is_empty = function
-    | [] -&gt; true
-    | _ -&gt; false
-  let size = List.length
-
-  let enqueue e q = q @ [e]  (* !! *)
-  let front = function
-    | [] -&gt; raise EmptyQueue
-    | h::_ -&gt; h
-  let dequeue = function
-    | [] -&gt; raise EmptyQueue
-    | _::t -&gt; t 
-  let to_list = Fun.id (* 恒等映射 *)
-end
-</code></pre>
-<pre><code class="language-ocaml">(** Creates a ListQueue filled with [n] elements. *)
-let fill_listqueue n =
-  let rec loop n q =
-    if n = 0 then q
-    else loop (n - 1) (ListQueue.enqueue n q) in
-  loop n ListQueue.empty
-;;
-</code></pre>
-<p>A1: fill<sub>listqueue</sub> 10000 ;;</p>
-<p>A2: fill<sub>listqueue</sub> 100000 ;;</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="big-batched-queue">
-  <summary id="big-batched-queue" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">big batched queue</span><a class="anchor-link" href="#big-batched-queue" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>用下面的代码来重复上题的实验</p>
-<pre><code class="language-ocaml">module  BatchedQueue = struct
-
-  type 'a queue = {
-    front: 'a list ;
-    back: 'a list 
-  }
-
-  let empty = {
-    front= [];
-    back = []
-  }
-
-  let peek = function
-    |{front=[] } -&gt; None
-    |{front=x::_ ;} -&gt; Some x
-
-
-  let enqueue x = function
-    |{front=[] } -&gt; {front=[x] ; back=[] }
-    |q -&gt; {q with back=x::q.back}  (* 即：当front不为空list时*)
-
-  let dequeue = function
-    |{front=[]} -&gt; None
-    |{front= _::[] ;back=b} -&gt; Some {front = List.rev b ;back=[] } 
-    |{front=_::t;back=b} -&gt; Some {front = t ;back=b}
-
-end
-</code></pre>
-<pre><code class="language-ocaml">let fill_batchedqueue n =
-  let rec loop n q =
-    if n = 0 then q
-    else loop (n - 1) (BatchedQueue.enqueue n q) in
-  loop n BatchedQueue.empty
-</code></pre>
-<p>此时才会出现10s以上的延迟 fill<sub>batchedqueue</sub> 1000000000 ;;</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="queue-efficiency">
-  <summary id="queue-efficiency" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">queue efficiency</span><a class="anchor-link" href="#queue-efficiency" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>比较两种入队 <code>enqueue</code> 操作的实现.用你自己的话解释为何
-<code>ListQueue.enqueue</code> 是线性时间的.</p>
-<p>考虑 <code>BatchedQueue.enqueue</code> 假设</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="binary-search-tree-map">
-  <summary id="binary-search-tree-map" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">binary search tree map</span><a class="anchor-link" href="#binary-search-tree-map" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写module <code>BstMap</code> , 用二叉搜索树实现 <code>Map</code> 模块, 每个节点应该存储一个
-pair (key,value)</p>
-<pre><code class="language-ocaml">module type Map = sig
-  exception Empty
-  type ('k,'v ) t
-  val empty : ('k,'v) t
-  val insert : 'k -&gt; 'v -&gt; ('k,'v) t -&gt; ('k,'v) t
-  val lookup : 'k -&gt; ('k,'v) t -&gt; 'v 
-  val bindings : ('k,'v) t -&gt; ('k * 'v) list  
-end ;;
-
-
-module BstMapImpl = struct
-  exception Empty
-  type ('k,'v) t = Leaf | Node of ('k * 'v) * ('k,'v) t * ('k,'v) t 
-  let empty = Leaf
-  let rec  insert key value = function
-    | Leaf -&gt; Node ( (key,value) ,Leaf,Leaf)
-    | Node ((k,v),l,r) when key &lt; k -&gt;  Node((k,v),(insert key value l),r) 
-    | Node ((k,v),l,r) when key &gt; k -&gt;   Node((k,v),l,(insert key value r))
-    | Node ((k,v),l,r) -&gt; Node((k,value),l,r)
-
-  let rec lookup key = function
-    | Leaf -&gt; raise  Empty
-    | Node ((k,_),l,_) when key &lt; k -&gt;  lookup key l
-    | Node ((k,_),_,r) when key &gt; k -&gt; lookup key r
-    | Node ((_,v),_,_) -&gt; v
-
-  let bindings m  =
-    let rec bindings_aux acc  = function
-    | Leaf -&gt; acc 
-    | Node((k,v),l,r) -&gt;  (bindings_aux (bindings_aux ((k,v)::acc)  l) r)
-    in
-    bindings_aux [] m 
-end
-
-module BstMap:Map = BstMapImpl ;;
-</code></pre>
-<pre><code class="language-ocaml"># BstMapImpl. (empty |&gt; insert 1 "hello" |&gt; insert 2 "fuck" |&gt; insert 4 "dead" |&gt; lookup 2 ) ;;
-- : string = "fuck"
-
-# BstMapImpl. (empty |&gt; insert 1 "hello" |&gt; insert 2 "fuck" |&gt; insert 4 "dead" |&gt; bindings  ) ;; 
-- : (int * string) list = [(4, "dead"); (2, "fuck"); (1, "hello")]
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="fraction">
-  <summary id="fraction" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">fraction</span><a class="anchor-link" href="#fraction" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>实现下面的分数 <code>Fraction</code> 模块type</p>
-<pre><code class="language-ocaml">module type Fraction = sig
-  (* A fraction is a rational number p/q, where q != 0.*)
-  type t
-
-  (** [make n d] is n/d. Requires d != 0. *)
-  val make : int -&gt; int -&gt; t
-
-  val numerator : t -&gt; int
-  val denominator : t -&gt; int
-  val to_string : t -&gt; string
-  val to_float : t -&gt; float
-
-  val add : t -&gt; t -&gt; t
-  val mul : t -&gt; t -&gt; t
-end
-
-
-module TupleFraction : Fraction = struct
-  type t = int * int
-
-  let make n d =if d=0 then raise Division_by_zero else  (n ,d )
-  let numerator (n,d) = n
-  let denominator (n,d) = d
-  let to_string (n,d) = ( string_of_int n ) ^ "/" ^ (string_of_int d)
-  let to_float (n,d) = (float_of_int n) /. (float_of_int d)
-
-  let add (n,d) (n',d') =  (n*d' + n' *d , d*d' )
-  let mul (n,d) (n',d') = (n*n'  ,d*d') 
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="fraction-reduced">
-  <summary id="fraction-reduced" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">fraction reduced</span><a class="anchor-link" href="#fraction-reduced" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>实现自动约分到最简形式的分数 分母要保持为正数</p>
-<pre><code class="language-ocaml">(** [gcd x y] is the greatest common divisor of [x] and [y].
-    Requires: [x] and [y] are positive. *)
-let rec gcd x y =
-  if x = 0 then y
-  else if (x &lt; y) then gcd (y - x) x
-  else gcd y (x - y)
-</code></pre>
-<pre><code class="language-ocaml">
-
-module ReducedFraction : Fraction = struct
-    type t = int * int
-
-    let rec mygcd x y = 
-  if x mod y = 0 then y 
-  else if x &lt; y then mygcd y x 
-  else  mygcd y (x mod y)
-
-    let reduce (n,d) = let g = mygcd n d in (n/g, d/g ) 
-    let make n d =if d=0 then raise Division_by_zero else reduce (n,d)
-
-
-    let numerator (n,d) = n
-    let denominator (n,d) = d
-    let to_string (n,d) = ( string_of_int n ) ^ "/" ^ (string_of_int d)
-    let to_float (n,d) = (float_of_int n) /. (float_of_int d)
-
-    let add (n,d) (n',d') =  reduce (n*d' + n' *d , d*d' )
-    let mul (n,d) (n',d') = reduce (n*n'  ,d*d') 
-  end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="make-char-map">
-  <summary id="make-char-map" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">make char map</span><a class="anchor-link" href="#make-char-map" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>为了创建标准库中的map, 我们要使用functor <code>Map.Make</code>
-创建一个特化了key的module:</p>
-<pre><code class="language-ocaml">module CharMap = Map.Make(Char) ;; 
-</code></pre>
-<p>这产生了一个signature</p>
-<pre><code class="language-ocaml">module CharMap :
-  sig
-type key = Char.t
-type 'a t = 'a Map.Make(Char).t
-   ...
-val empty : 'a t
-val add : key -&gt; 'a -&gt; 'a t -&gt; 'a t
-val remove : key -&gt; 'a t -&gt; 'a t
-    ...
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="char-ordered">
-  <summary id="char-ordered" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">char ordered</span><a class="anchor-link" href="#char-ordered" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>functor <code>Map.Make</code> 需要一个和 <code>Map.OrderType</code> 相匹配的module. 查看
-<code>Char</code> 和此module的文档, 解释为何 <code>Char</code> 能作为 <code>Map.Make</code> 的参数. 因为
-OrderType 中有两个声明 :</p>
-<pre><code>type t : key的类型
-val compare : t -&gt; t -&gt; int  用来比较key的函数 (k1 - k2)
-</code></pre>
-<p>而 <code>Char</code> 中也有这两个定义:</p>
-<pre><code class="language-ocaml">type t = char 
-(**  An alias for the type of characters. *)
-
-val compare : t -&gt; t -&gt; int
-(**  The comparison function for characters, with the same specification as compare. Along with the type t, this function compare allows the module Char to be passed as argument to the functors Set.Make and Map.Make. *)
-</code></pre>
-<p>因此 Char 满足 signature <code>Map.Ordertype</code></p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="use-char-map">
-  <summary id="use-char-map" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">use char map</span><a class="anchor-link" href="#use-char-map" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>使用 <code>CharMap</code> 创建包含下述内容</p>
 <ul>
 <li>
-<p>'A' maps to "Alpha"</p>
+<p>问题中的那些量可以抽象成变量?</p>
 </li>
 <li>
-<p>'E' maps to "Echo"</p>
+<p>所求依赖于哪些量?</p>
 </li>
 <li>
-<p>'S' maps to "Sierra"</p>
+<p>被依赖的量自身又依赖于哪些量?</p>
 </li>
 <li>
-<p>'V' maps to "Victor"</p>
+<p>答案直接依赖的量可能是递归解法的削减方向.(递归函数的参数必含这些量)</p>
+</li>
+<li>
+<p>将每个直接依赖关系定义为一个函数.</p>
 </li>
 </ul>
-<p>用 <code>CharMap.find</code> 寻找'E'的值. 移除 'A'的绑定. 使用 <code>CharMap.mem</code>
-检查是否 'A' 仍存在绑定. 使用 <code>CharMap.bindings</code> 将 map 转化为
-accociation list.</p>
-<pre><code class="language-ocaml">let m = CharMap. (empty |&gt; add 'A' "Alpha" |&gt; add 'E' "echo" |&gt; add 'S' "Sierra" |&gt; add 'V' "Victor" ) ;;
-
-CharMap.find 'E' m ;;
-(** - : string = "echo" *)
-m |&gt;  CharMap.remove 'A' |&gt;  CharMap.mem 'A';;
-(** - : bool = false *)
-CharMap.bindings m ;;
-(** [(A, "Alpha"); (E, "echo"); (S, "Sierra"); (V, "Victor")] *)
-</code></pre>
+<p>eg: 若有 X –&gt; Y, 即: X依赖于Y 则定义函数solve-x : (define (solve-x Y)
+(…body…) (返回 X ) )</p>
   </div>
 </details>
-<details class="section level-2" data-anchor="bindings">
-  <summary id="bindings" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">bindings</span><a class="anchor-link" href="#bindings" title="复制链接">§</a>
+<details class="section level-1" data-anchor="zhihu">
+  <summary id="zhihu" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">zhihu 卞舒言</span><a class="anchor-link" href="#zhihu" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<p>查看 <code>Map.S</code> 的文档, 找到 bindings 的规范, 下面哪几个表达式会返回相同的
-alist?</p>
-<ul>
-<li>
-<p><code>CharMap.(empty |&gt; add 'x' 0 |&gt; add 'y' 1 |&gt; bindings)</code></p>
-</li>
-<li>
-<p><code>CharMap.(empty |&gt; add 'y' 1 |&gt; add 'x' 0 |&gt; bindings)</code></p>
-</li>
-<li>
-<p><code>CharMap.(empty |&gt; add 'x' 2 |&gt; add 'y' 1 |&gt; remove 'x' |&gt; add 'x' 0 |&gt; bindings)</code></p>
-</li>
-</ul>
-<p>三个表达式返回的 alist 都是相同的. 因为根据规范,
-返回的list是按照key的顺序排序的, 因此和添加的顺序无关.</p>
-<pre><code>val bindings : 'a t -&gt; (key * 'a) list
-
-Return the list of all bindings of the given map. The returned list is sorted in increasing order of keys with respect to the ordering Ord.compare, where Ord is the argument given to Stdlib.Map.Make
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="date-order">
-  <summary id="date-order" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">date order</span><a class="anchor-link" href="#date-order" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">type date = {month : int; day : int}
-</code></pre>
-<p>例如 3月31日被表示为 <code>{month = 3; day = 31}</code> .
-下面将会实现一个key的类型为date的Map. 显然这可能会存在无效的日期: {month
-= 2 ; day = 89} 对无效日期的行为不做特殊规定. 为了用 <code>Map.Make</code> 生成Map,
-我们需要实现 Map.OrderedType signature.</p>
-<pre><code class="language-ocaml">module Date = struct
-  type date = {month :int ; day : int} 
-  type t = date
-  let compare d1 d2 = match (d1.month - d2.month  , d1.day-d2.day) with
-    | (m,d) when m &gt; 0 -&gt; 1
-    | (m,d) when m &lt; 0 -&gt; -1
-    | (0,d) when d &gt; 0 -&gt; 1
-    | (0,d) when d &lt; 0 -&gt; -1
-    | _ -&gt; 0
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="calender">
-  <summary id="calender" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">calender</span><a class="anchor-link" href="#calender" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>用上一问的 <code>Date</code> 和 <code>Map.Make</code> 创建 <code>DateMap</code> module, 并定义一个 日历
-<code>calendar</code> 类型:</p>
-<pre><code class="language-ocaml">type calendar = string DateMap.t ;;
-</code></pre>
-<p>其想法是将日期映射到那天要进行的事件名称. 使用 <code>calender</code> 加入几个日期:</p>
-<pre><code class="language-ocaml">DateMap. (empty |&gt; add {month=10;day=12} "my birthday!" |&gt; bindings) ;; 
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-calendar">
-  <summary id="print-calendar" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">print calendar</span><a class="anchor-link" href="#print-calendar" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写函数 <code>print_calendar: calendar -&gt; unit</code> 它打印日历中所有元素</p>
-<pre><code class="language-ocaml">let print_calendar (cal:calender) =
-  DateMap.iter (fun d e -&gt; Printf.printf "%i月%i日: %s \n" d.month d.day e ) cal 
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="is-for">
-  <summary id="is-for" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">is for</span><a class="anchor-link" href="#is-for" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写函数 <code>is_for: string CharMap.t -&gt; string CharMap.t</code> 使得将一个绑定为
-<code>ki -&gt; vi</code> 的Map,映射为绑定为 <code>ki -&gt; "ki is for vi"</code> . 提示:
-用Map.S中的函数可以得到一个只有一行的解答. 为了将字符转换为string,
-可以用 <code>String.make</code> , 更高级的做法是用 <code>Printf.sprintf</code></p>
-<pre><code class="language-ocaml">let is_for m =
-  CharMap.mapi (fun k v -&gt; Printf.sprintf "%c is for %s" k v ) m
-;;
-</code></pre>
-<pre><code class="language-ocaml"># CharMap. (empty |&gt; add 'a' "apple" |&gt; is_for |&gt; bindings) ;;
-- : (CharMap.key * string) list = [(a, "a is for apple")]
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="first-after">
-  <summary id="first-after" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">first after</span><a class="anchor-link" href="#first-after" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写函数 <code>first_after : calendar -&gt; Date.t -&gt; string</code> ,
-它返回在给定日期之后(不包含该日期)的首个事项的名称. 若没有这样的事件,
-函数应抛出 <code>Not_found</code> 异常.(它是标准库中定义的异常) 提示: 可用 <code>Map.S</code>
-中的函数来完成仅有一行的解答.</p>
-<pre><code class="language-ocaml">let first_after (cal:calendar) (d:Date.t) =
- let (d,e) = DateMap.find_first (fun k -&gt; (Date.compare k d) &gt; 0) cal
- in e
-;;
-</code></pre>
-<pre><code class="language-ocaml">#  first_after (DateMap. (empty |&gt; add {month=10;day=12} "my birthday!" )) {month=10;day=1} ;; 
-- : string = "my birthday!"
-
-#  first_after (DateMap. (empty |&gt; add {month=10;day=12} "my birthday!" )) {month=11;day=1} ;; 
-Exception: Not_found
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="sets">
-  <summary id="sets" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">sets</span><a class="anchor-link" href="#sets" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>标准库中的 <code>Set</code> 模块十分类似于 <code>Map</code> ,
-使用它创建一个代表了大小写不敏感字符串的集合.
-仅仅是大小写不同的两个字符串集合应视作相同.</p>
-<pre><code class="language-ocaml">module InsStr= struct 
-  type t = string
-  let compare a b =String. (compare (lowercase_ascii a) (lowercase_ascii b))
-end
-
-
-module InsStrSet = Set.Make(InsStr );; 
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="tostring">
-  <summary id="tostring" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">tostring</span><a class="anchor-link" href="#tostring" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写module type <code>ToString</code> 指定一个signature, 它包含了抽象类型t,
-和一个函数 <code>to_string : t -&gt; string</code></p>
-<pre><code class="language-ocaml">module type ToString = sig
-  type t
-  val to_string : t -&gt; string
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print">
-  <summary id="print" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print</span><a class="anchor-link" href="#print" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写functor <code>Print</code> ,它接收一个名为 <code>M</code> 的 <code>ToString</code> 模块,
-并返回一个只有一个 <code>print: M.t -&gt; unit</code> 定义的模块,
-此函数打印出值的字符串表示.</p>
-<pre><code class="language-ocaml">module Print (M:ToString) = struct
-  let print (m:M.t) =
-    Printf.printf "%s\n" (M.to_string m)
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-int">
-  <summary id="print-int" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print Int</span><a class="anchor-link" href="#print-int" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>创建模块 <code>PrintInt</code> 作为应用functor <code>Print</code> 到 <code>Int</code> 上的结果. 编写
-<code>Int</code> 模块, 其 <code>Int.t</code> 应为 int.</p>
-<pre><code class="language-ocaml">module Int = struct
-  type t = int
-  let to_string = string_of_int
-end
-
-module PrintInt = Print(Int) ;; 
-</code></pre>
-<pre><code class="language-ocaml"># PrintInt.print 234 ;;
-234
-- : unit = ()
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-string">
-  <summary id="print-string" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print String</span><a class="anchor-link" href="#print-string" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>创建名为 <code>PrintString</code> 的模块, 它是应用 <code>Print</code> 到 <code>MyString</code> 上的结果.</p>
-<pre><code class="language-ocaml">module MyString = struct
-  type t = string
-  let to_string = Fun.id
-end
-
-module PrintString = Print(MyString) ;; 
-</code></pre>
-<pre><code class="language-ocaml"># PrintString.print "hello"  ;;
-hello
-- : unit = ()
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-reuse">
-  <summary id="print-reuse" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print Reuse</span><a class="anchor-link" href="#print-reuse" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>解释 <code>Print</code> 是如何实现代码复用的?</p>
-<p>打印值这一函数需要值的类型, 和如何将此类型的值转化为字符串.
-除此之外的逻辑都是相同的. 因此将这两个不同点打包成一个module type:
-<code>ToString</code> ,并针对输入为 <code>ToString</code> 这样的模块产生相应的打印函数.</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-string-reuse-revisited">
-  <summary id="print-string-reuse-revisited" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print String reuse revisited</span><a class="anchor-link" href="#print-string-reuse-revisited" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p><code>PrintString</code> 模块仅支持一个操作: <code>to_string</code> ,
-现在希望不用copy的方式创建一个包含了 <code>String</code> 模块中所有函数并且含有
-<code>print</code>. 定义模块 <code>StringWithPrint</code> 提示: 使用两个include语句</p>
-<pre><code class="language-ocaml">module StringWithPrint = struct
-  include String
-  include Print(MyString) 
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="implementation-without-interface">
-  <summary id="implementation-without-interface" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">implementation without interface</span><a class="anchor-link" href="#implementation-without-interface" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>创建 <code>date.ml</code> 并包含下面的代码:</p>
-<pre><code class="language-ocaml">type date = {month : int; day : int}
-let make_date month day = {month; day}
-let get_month d = d.month
-let get_day d = d.day
-let to_string d = (string_of_int d.month) ^ "/" ^ (string_of_int d.day)
-</code></pre>
-<p>创建 <code>dune</code> 文件</p>
-<pre><code class="language-elisp">(library
- (name date)) 
-</code></pre>
-<p>加载此库文件到utop:</p>
-<pre><code class="language-ocaml">dune utop 
-</code></pre>
-<p>在utop中, open <code>Date</code>, 创建一个日期,并访问它的day字段,
-并将日期转换为string</p>
-<pre><code class="language-ocaml"># open Date ;;
-
-# (make_date 3 5 ) |&gt; get_day ;;
-- : int = 5
-
-# (make_date 3 5 ) |&gt; to_string ;;
-- : string = "3/5"
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="implementation-with-interface">
-  <summary id="implementation-with-interface" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">implementation with interface</span><a class="anchor-link" href="#implementation-with-interface" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>继续上一个问题, 创建文件 <code>date.mli</code></p>
-<pre><code class="language-ocaml">type date = {month : int; day : int}
-val make_date : int -&gt; int -&gt; date
-val get_month : date -&gt; int
-val get_day : date -&gt; int
-val to_string : date -&gt; string
-</code></pre>
-<p>并在utop中重复上一问中的操作</p>
-<pre><code class="language-ocaml"># open Date ;;
-
-# (make_date 3 6) |&gt; get_day ;;
-- : int = 6
-
-# (make_date 3 6) |&gt; to_string ;;
-- : string = "3/6"
-
-# let d = make_date 3 6 ;;
-val d : date = {month = 3; day = 6}
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="implementation-with-abstracted-interface">
-  <summary id="implementation-with-abstracted-interface" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">implementation with abstracted interface</span><a class="anchor-link" href="#implementation-with-abstracted-interface" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>在上两个问题的基础上, 修改 <code>date.mli</code> 中的第一行 为:</p>
-<pre><code class="language-ocaml">type date 
-</code></pre>
-<p>现在类型date变为抽象的. 重复之前的操作.观察不同之处.</p>
-<pre><code class="language-ocaml"># open Date;;
-
-# let d = make_date 3 6 ;;
-val d : date = &lt;abstr&gt;
-
-# d |&gt; get_day ;;
-- : int = 6
-
-# d |&gt; to_string ;;
-- : string = "3/6"
-
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="printer-for-date">
-  <summary id="printer-for-date" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">printer for date</span><a class="anchor-link" href="#printer-for-date" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>为 <code>date.mli</code> 添加声明</p>
-<pre><code class="language-ocaml">val format : Format.formatter -&gt; date -&gt; unit 
-</code></pre>
-<p>并且添加一个 <code>format</code> 的定义到 <code>date.ml</code> 提示: 使用 <code>Format.fprintf</code> 和
-<code>Date.to_string</code></p>
-<p>重新编译,并加载到utop, load "date.cmo" ,并安装 date的格式化器</p>
-<pre><code class="language-ocaml">#install_printer Date.format;;
-</code></pre>
-<p><strong>解答:</strong></p>
-<pre><code class="language-ocaml">let format f d =
-  Format.fprintf f "%s" (to_string d)
-</code></pre>
-<pre><code>ocamlc date.mli
-ocamlc date.ml
-</code></pre>
-<pre><code class="language-ocaml">utop # #load "date.cmo" ;;
-
-utop # #install_printer  Date.format ;;
-
-utop # open Date ;;
-
-utop # let d = make_date 3 4 ;;
-val d : date = 3/4
-
-utop # d |&gt; get_day ;;
-- : int = 4
-
-utop # d |&gt; to_string ;;
-- : string = "3/4"
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="refactor-arith">
-  <summary id="refactor-arith" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">refactor arith(算术)</span><a class="anchor-link" href="#refactor-arith" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>下载文件 <a href="./algebra.ml"> <code>algebra.ml</code> </a>
-,它包含了两个signatures和四个structures</p>
-<ol>
-<li>
-<p>环是描述称为环的代数结构的签名，环是加法和乘法运算符的抽象。</p>
-</li>
-<li>
-<p>域是描述代数结构的签名，称为域，它就像一个环，但也有一个除法运算的抽象。</p>
-</li>
-<li>
-<p>IntRing 和 FloatRing 是根据 int 和 float 实现环的结构。</p>
-</li>
-<li>
-<p>IntField 和 FloatField 是根据 int 和 float 实现字段的结构。</p>
-</li>
-<li>
-<p>IntRational 和 FloatRational
-    是根据比例（也称为分数）实现字段的结构，即 int pair 和 float pair</p>
-</li>
-</ol>
-<p>使用 <code>include</code>, functor,
-引入额外的structure/signature来提高代码复用的数量. 这有一些关于重构建议:</p>
-<ul>
-<li>
-<p>不要在一个以上的sig中 <strong>直接声明</strong> name,
-  而是要用include的方式引入已有的名字 .</p>
-</li>
-<li>
-<p>只需要分别为 <code>int</code>, <code>float</code> , 分数 <strong>直接定义</strong> 三次代数操作和数字(即:
-  plus,minus,times,divide,zero,one) .例如 <code>IntField.( + )</code>
-  不应该被直接定义为 <code>Stdlib.( + )</code>, 而是要用 <code>include</code> /
-  functor的方式复用已有的定义.</p>
-</li>
-<li>
-<p>有理数的strutures可以用一个简单的functor分别应用到 <code>IntField</code> /
-  <code>FloatField</code> 来生成.</p>
-</li>
-<li>
-<p>消除所有多余的 <code>of_int</code> 是可能的, 例如, 他被直接定义一次,
-  其余的struct可以复用该定义.并且只在一个sig中直接声明它.
-  这需要使用functor.
-  还需要发明一种算法，可以将整数转换为任意环表示，而不管该环的表示类型是什么。</p>
-</li>
-</ul>
-<p>完成后，所有模块的类型应保持不变。可以通过运行 <code>ocamlc -i algebra.ml</code>
-查看这些类型。</p>
-<details class="section level-3" data-anchor="algebraml">
-  <summary id="algebraml" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">原始 <code>algebra.ml</code> 的类型:</span><a class="anchor-link" href="#algebraml" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">module type Ring =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-  end
-module type Field =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val ( / ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-  end
-module IntRing : Ring
-module IntField : Field
-module FloatRing : Ring
-module FloatField : Field
-module IntRational : Field
-module FloatRational : Field
-</code></pre>
-  </div>
-</details>
-<details class="section level-3" data-anchor="algebraml_1">
-  <summary id="algebraml_1" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">重构后的 <code>algebra.ml</code></span><a class="anchor-link" href="#algebraml_1" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">module type RingWithoutOfInt = sig
-  type t
-
-  val zero : t
-
-  val one : t
-
-  val ( + ) : t -&gt; t -&gt; t
-
-  val ( ~- ) : t -&gt; t
-
-  val ( * ) : t -&gt; t -&gt; t
-
-  val to_string : t -&gt; string
-
-end
-
-module AddOfInt (W: RingWithoutOfInt ) = struct
-  include W 
-  let of_int n =
-    let rec loop acc = function
-      |0 -&gt; acc
-      |num -&gt; loop W. (one + acc ) (num-1)
-    in loop W.zero n
-end
-
-
-module type Ring = sig
-  include RingWithoutOfInt
-
-   val of_int : int -&gt; t    
-end
-
-module type Field = sig
-  include Ring
-
-  val ( / ) : t -&gt; t -&gt; t
-end
-
-module IntRingImpl  = AddOfInt( struct
-  type t = int
-
-  let zero = 0
-
-  let one = 1
-
-  let ( + ) = ( + )
-
-  let ( ~- ) = ( ~- )
-
-  let ( * ) = ( * )
-
-  let to_string = string_of_int
-
-end )
-
-
-module IntRing : Ring = IntRingImpl 
-
-module IntField : Field = struct
-  include IntRingImpl
-  let ( / )  =   ( / )
-end
-
-module FloatRingImpl  = AddOfInt (struct
-  type t = float
-
-  let zero = 0.
-
-  let one = 1.
-
-  let ( + ) = ( +. )
-
-  let ( ~- ) = ( ~-. )
-
-  let ( * ) = ( *. )
-
-  let to_string = string_of_float
-
-end) 
-
-module FloatRing : Ring = FloatRingImpl 
-
-module FloatField : Field = struct
-  include FloatRingImpl
-  let ( / ) = ( /. )
-end
-
-module ToRational (F:Field) : Field  =struct
-
-  include AddOfInt(struct 
-  type t = F.t * F.t
-  let zero = (F.zero,F.zero)
-  let one = (F.one ,F.one)
-  let ( + ) ((a,b):t) ((c,d):t) =  F. ((a * d) + (c * b), b * d)
-  let ( ~- ) ((a, b):t) = F. (-a, b)
-  let ( * ) (a, b) (c, d) = F. (a * c, b * d)
-  let to_string (a, b) = F.to_string a ^ "/" ^ F.to_string b 
-end )
-
-  let ( / ) ((a, b):t) ((c, d):t)  =F. (a * d, b * c)
-end
-
-module IntRational : Field  = ToRational(IntField)
-
-module FloatRational : Field = ToRational(FloatField)
-
-</code></pre>
-  </div>
-</details>
-<details class="section level-3" data-anchor="ocamlc-i-algebraml">
-  <summary id="ocamlc-i-algebraml" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><code>ocamlc -i algebra.ml</code> 的输出</span><a class="anchor-link" href="#ocamlc-i-algebraml" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">module type RingWithoutOfInt =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-  end
-module AddOfInt :
-  functor (W : RingWithoutOfInt) -&gt;
-    sig
-      type t = W.t
-      val zero : t
-      val one : t
-      val ( + ) : t -&gt; t -&gt; t
-      val ( ~- ) : t -&gt; t
-      val ( * ) : t -&gt; t -&gt; t
-      val to_string : t -&gt; string
-      val of_int : int -&gt; W.t
-    end
-module type Ring =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-  end
-module type Field =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-    val ( / ) : t -&gt; t -&gt; t
-  end
-module IntRingImpl :
-  sig
-    type t = int
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; int
-  end
-module IntRing : Ring
-module IntField : Field
-module FloatRingImpl :
-  sig
-    type t = float
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; float
-  end
-module FloatRing : Ring
-module FloatField : Field
-module ToRational : functor (F : Field) -&gt; Field
-module IntRational : Field
-module FloatRational : Field
-</code></pre>
-  </div>
-</details>
+<p>我是野路子出身,编程入门用的就是SICP,只是看书,花了三个月把第一章看完了,第一章习题也写完了,第二章最后的习题太困难,我现在看来相当于要你设计一个面向对象系统,然后又把这种系统的一般难点抛了出来,第三章跳过了并发,结果流也没有看完,因为当时完全不懂电子学和微分方程(当时我数学分析也不会),第四章开始因为抽象太多,然后就放弃了,花了两个星期读完了The
+Little
+Schemer,然后又开始读EoPL,读了两章,写完了两章习题,然后花了三天读完了The
+Seasoned Schemer,然后又花了六个月在The Reasoned
+Schemer和逻辑式语言上,然后又开始把EoPL第3,4章读完了,第5章多线程之前结束,然后又读了一部分SICP第4章和第5章,又开始做IU
+C311习题,接着把EoPL第6,7,5章看完了,然后就开始写IU
+P423编译器作业,15次作业写了8-15,1-3还差4-7.这是我一年半的自学情况.
+htdp我也翻看过,写的不好,我最反感的就是废话夹杂,太拖沓,像菲赫金哥尔茨的微积分教程,1800多页,没一句是废话,很引人入胜,SICP页数虽然不算太少,但也很引人入胜.
+我没学过算法,我的算法水平远不如科班的,PL用函数式语言入门当然是有益的,像Utah曾经的PL讲义就是拿ISWIM说事(但说实话,ISWIM也没什么特点,当作奇怪语法的Scheme变种也未尝不可,关键还是怎么阐释语义),编译器领域,Scheme写编译器写的爽啊,虽然当然这么写很不符合工程规范啊,就直接拿一个模式匹配的宏对AST变换来变换去,也没什么自动的检查机制,全靠眼力脑力检查.(RABBIT编译器也是这么干的)结论就是算法方面没什么裨益,但是PL和compiler还是很有好处的.
+SICP确实课时过少,但也没有多少学校上这个课,说实话,一个学期的课就是用来开开眼界的.SICP也不难,还很有趣.
+我就把Racket当Scheme用用,滑铁卢估计是按照HTDP式的讲法来的,而且,估计以后可能都不会用Racket了,像PLAI主页上说第三版应该也不会用Racket了,还展示了一个htdp风格但没有用Racket的讲义.
+SICP本身是面向初学者的,但是非初学者也可以欣赏它而不会感觉无聊.</p>
   </div>
 </details>
 </article>
@@ -2464,10 +1594,10 @@ module FloatRational : Field
         const filter = btn.dataset.filter;
         tagBtns.forEach(b => b.classList.toggle('active', b === btn));
         nodes.forEach(n => {
-          const tag = n.getAttribute('data-tag');
+          const tags = (n.getAttribute('data-tags') || '').split(',').filter(Boolean);
           const show = filter === 'all'
-                    || (filter === '__none__' && !tag)
-                    || tag === filter;
+                    || (filter === '__none__' && tags.length === 0)
+                    || tags.includes(filter);
           n.style.display = show ? '' : 'none';
         });
       });

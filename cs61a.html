@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CS61A — Salted的笔记</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
 <style>
 
 :root {
@@ -275,12 +276,31 @@ article {
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border-soft);
   display: flex;
-  gap: 16px;
+  gap: 8px;
   align-items: center;
   flex-wrap: wrap;
 }
-.doc-meta code { font-size: 12px; }
-.doc-meta .sep { color: var(--text-ghost); }
+.doc-meta .meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 8px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.doc-meta .meta-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.doc-meta .meta-date .meta-label { color: var(--accent); }
 
 /* ---------- 折叠节点 — 树形大纲 ---------- */
 .outline { padding: 0; margin: 0; list-style: none; }
@@ -315,42 +335,35 @@ article {
   box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
-/* 折叠图标 */
-.caret {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
-  color: var(--text-faint);
-  transition: transform 0.15s ease, color 0.1s;
-  font-size: 9px;
-  line-height: 1;
-}
-details[open] > summary > .caret,
-.section[open] > summary > .caret {
-  transform: rotate(90deg);
-  color: var(--text-muted);
-}
-.section > summary:hover > .caret,
-.note-node > summary:hover > .caret { color: var(--text-secondary); }
-
-/* 圆点 — org-mode bullet */
+/* 圆点 — 用虚实表示展开/折叠状态(实心=展开,空心=折叠)*/
 .bullet {
   display: inline-block;
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: var(--text-ghost);
+  background: transparent;
+  border: 1.5px solid var(--text-muted);
+  box-sizing: border-box;
   flex-shrink: 0;
-  transition: background 0.12s, transform 0.12s;
+  transition: background 0.15s, border-color 0.15s;
   position: relative;
 }
+/* 折叠状态:空心圆 */
+.section > summary > .bullet,
+.note-node > summary > .bullet {
+  background: transparent;
+  border-color: var(--text-muted);
+}
+/* 展开状态:实心圆 */
+.section[open] > summary > .bullet,
+.note-node[open] > summary > .bullet {
+  background: var(--accent);
+  border-color: var(--accent);
+}
 .section > summary:hover > .bullet,
-.note-node > summary:hover > .bullet { background: var(--accent); }
-.section[open] > summary > .bullet { background: var(--text-secondary); }
-.note-node[open] > summary > .bullet { background: var(--text-secondary); }
+.note-node > summary:hover > .bullet {
+  border-color: var(--accent);
+}
 
 /* 标题文字 */
 .heading-text,
@@ -979,12 +992,180 @@ pre::-webkit-scrollbar-thumb {
   background-clip: content-box;
 }
 
+/* ---------- 主页 sidebar(Feature 6) ----------
+   默认收起(sidebar-collapsed),内容居中显示。
+   点 topbar 的 [☰] 按钮(body.sidebar-open)展开。 */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 49px;
+  bottom: 0;
+  width: 220px;
+  padding: 16px 12px;
+  border-right: 1px solid var(--border-soft);
+  overflow-y: auto;
+  background: var(--bg);
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+  box-shadow: none;
+}
+body.page-index.sidebar-open .sidebar {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+/* sidebar 是纯浮层,不挤压 hero / outline-tree,内容始终居中 */
+/* 移动端:sidebar 浮层覆盖,不挤压内容 */
+.sidebar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-btn .icon-bars {
+  display: inline-block;
+  width: 13px;
+  height: 9px;
+  position: relative;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after,
+.sidebar-btn .icon-bars {
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before,
+.sidebar-btn .icon-bars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 13px;
+  height: 1.5px;
+  background: currentColor;
+}
+.sidebar-btn .icon-bars::before { top: 0; }
+.sidebar-btn .icon-bars::after { bottom: 0; }
+.sidebar-btn .icon-bars {
+  border-top: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  background: transparent !important;
+}
+
+.sidebar .tag-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 11px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font: 500 13px/1 var(--font-sans);
+  transition: background 0.12s, color 0.12s;
+}
+.sidebar .tag-btn + .tag-btn { margin-top: 2px; }
+.sidebar .tag-btn:hover { background: var(--bg-hover); color: var(--text); }
+.sidebar .tag-btn.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 600;
+}
+.sidebar .tag-btn .count {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+.sidebar .tag-btn.active .count { color: var(--accent); }
+
+/* 主页 note-node 行的日期 badge(Feature 1) */
+.note-node > summary .row-date {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 数学公式 KaTeX ---------- */
+.katex { font-size: 1.05em; }
+.katex-display {
+  margin: 16px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 4px 0;
+}
+.katex-display::-webkit-scrollbar { height: 4px; }
+.code-block .katex,
+pre .katex,
+code .katex { display: none; }  /* 代码块里的 $ 不渲染 */
+
+/* ---------- 树形连接(Feature 5) ----------
+   每个嵌套 section 的 ::before 画一段竖线(在父 section-body 的左 padding 里,
+   section 自身坐标 left:-8),::after 画横线连到自己的 bullet。
+   - 非末子:竖线 top:0 bottom:0(贯穿整个 section 高度,接续下一个兄弟)
+   - 末子:竖线只画到 bullet 中线(height: ~36px)形成 └── 拐角
+   竖线在父 section-body 的 padding 区(x=8),正文在 x>=16,两者左右分开,不重叠。
+   顶层 article > section.level-1 同样适用(article 的 padding 充当父 padding)。 */
+.section-body > .section,
+article > .section.level-1 {
+  position: relative;
+}
+.section-body > .section::before,
+article > .section.level-1::before {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+.section-body > .section:last-child::before,
+article > .section.level-1:last-child::before {
+  bottom: auto;
+  height: 36px;            /* 到 bullet 中线,形成 L 拐角 */
+}
+.section-body > .section::after,
+article > .section.level-1::after {
+  content: '';
+  position: absolute;
+  left: -8px;              /* 从竖线开始 */
+  top: 36px;               /* bullet 中线 */
+  width: 8px;              /* 到 bullet 左边缘(section 自身 x=0)*/
+  height: 1px;
+  background: var(--border);
+  pointer-events: none;
+}
+
+@media print {
+  .sidebar { display: none; }
+  .section-body > .section::before,
+  .section-body > .section::after,
+  article > .section.level-1::before,
+  article > .section.level-1::after { display: none; }
+}
+
+/* 移动端:sidebar 始终用浮层 */
+@media (max-width: 720px) {
+  .sidebar {
+    width: 280px;
+    max-height: none;
+    box-shadow: var(--shadow-lg);
+  }
+}
+
 </style>
 </head>
 <body class="page-note" data-note-id="cs61a">
 <div class="progress-bar"></div>
 <div class="topbar">
-  <a class="brand" href="index.html"><span class="seal">造</span> Salted的笔记</a>
+  <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
   <span class="spacer"></span>
   <input type="search" class="search" placeholder="搜索章节 (按 / 聚焦)" autocomplete="off">
   <div class="help-wrap">
@@ -996,14 +1177,13 @@ pre::-webkit-scrollbar-thumb {
       <div class="help-row"><span class="keys"><span class="dot-demo"></span></span><span class="desc">点击圆点折叠</span></div>
     </div>
   </div>
-  <button data-action="toggle-fold" data-state="expanded"><span class="chev">▾</span>折叠</button>
+  <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
 </div>
 <article>
   <h1 class="doc-title">CS61A</h1>
   <div class="doc-meta">
-    <span>0 章</span>
-    <span class="sep">·</span>
-    <span>更新 2026-06-17</span>
+    <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>0</span>
   </div>
 <p>python解释器是你指下魔法咒语背后，默默付出的苦力。</p>
 <p>代码 中存在无处不在的数字，字符串等一切常见的值</p>
@@ -1020,8 +1200,10 @@ pre::-webkit-scrollbar-thumb {
 </article>
 <button class="to-top" aria-label="回到顶部">↑</button>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" referrerpolicy="no-referrer"></script>
+<script>hljs.highlightAll();</script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" referrerpolicy="no-referrer"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" referrerpolicy="no-referrer"></script>
 <script>
-hljs.highlightAll();
 
 (function() {
   'use strict';
@@ -1136,28 +1318,23 @@ hljs.highlightAll();
     wrap.appendChild(pre);
   });
 
-  /* ---------- localStorage 记忆折叠 ---------- */
-  const noteId = document.body.getAttribute('data-note-id');
-  if (noteId) {
-    const KEY = 'md2html:state:' + noteId;
-    const saved = (() => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; } })();
-    document.querySelectorAll('details.section').forEach((d) => {
-      const id = d.getAttribute('data-anchor');
-      if (!id) return;
-      if (saved[id] === false) d.open = false;
-      else if (saved[id] === true) d.open = true;
-    });
-    document.querySelectorAll('details.section').forEach((d) => {
-      const id = d.getAttribute('data-anchor');
-      if (!id) return;
-      d.addEventListener('toggle', () => {
-        saved[id] = d.open;
-        try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch {}
+  /* ---------- 锚点自展开(从主页章节链接跳进来时,目标 + 祖先链全展开) ---------- */
+  if (location.hash) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = document.getElementById(id);
+    if (target) {
+      let el = target;
+      while (el && el !== document.body) {
+        if (el.tagName === 'DETAILS') el.open = true;
+        el = el.parentElement;
+      }
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ block: 'start', behavior: 'instant' });
       });
-    });
+    }
   }
 
-  /* ---------- org-mode 键盘:Tab / Shift+Tab / J K ---------- */
+  /* ---------- org-mode 键盘:Tab / Shift+Tab ---------- */
   const isHeading = (el) => el && el.matches && el.matches('summary');
   const allHeadings = () => Array.from(document.querySelectorAll('details.section > summary, details.note-node > summary'));
 
@@ -1253,12 +1430,78 @@ hljs.highlightAll();
     search.addEventListener('input', (e) => {
       const q = e.target.value.trim().toLowerCase();
       document.querySelectorAll('details.section').forEach(s => {
-        if (!q) { s.style.opacity = ''; s.open = s.getAttribute('data-was-open') === '1'; return; }
+        if (!q) { s.style.opacity = ''; return; }
         const t = s.querySelector('summary').textContent.toLowerCase();
         s.style.opacity = t.includes(q) ? '1' : '0.3';
       });
     });
   }
+
+  /* ---------- 主页 sidebar 切换 + tag 过滤(Feature 6) ---------- */
+  if (document.body.classList.contains('page-index')) {
+    const sidebarBtn = document.querySelector('[data-action="toggle-sidebar"]');
+    // 默认收起,localStorage 记忆用户选择
+    const KEY = 'md2html:sidebar-open';
+    const initialOpen = (() => {
+      try { return localStorage.getItem(KEY) === '1'; } catch { return false; }
+    })();
+    if (initialOpen) document.body.classList.add('sidebar-open');
+    if (sidebarBtn) {
+      sidebarBtn.addEventListener('click', () => {
+        const open = document.body.classList.toggle('sidebar-open');
+        try { localStorage.setItem(KEY, open ? '1' : '0'); } catch {}
+      });
+    }
+    // 点 sidebar 外面关闭(移动端友好)
+    document.addEventListener('click', (e) => {
+      if (!document.body.classList.contains('sidebar-open')) return;
+      if (window.innerWidth >= 721) return;  // 桌面端不自动关
+      const t = e.target;
+      if (t.closest('.sidebar') || t.closest('.sidebar-btn')) return;
+      document.body.classList.remove('sidebar-open');
+      try { localStorage.setItem(KEY, '0'); } catch {}
+    });
+
+    const tagBtns = document.querySelectorAll('.sidebar .tag-btn');
+    const nodes = document.querySelectorAll('.note-node');
+    tagBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.dataset.filter;
+        tagBtns.forEach(b => b.classList.toggle('active', b === btn));
+        nodes.forEach(n => {
+          const tags = (n.getAttribute('data-tags') || '').split(',').filter(Boolean);
+          const show = filter === 'all'
+                    || (filter === '__none__' && tags.length === 0)
+                    || tags.includes(filter);
+          n.style.display = show ? '' : 'none';
+        });
+      });
+    });
+  }
+
+  /* ---------- KaTeX 数学公式渲染 ----------
+     用 DOMContentLoaded 触发,确保 defer 加载的 katex.js 和 auto-render.js
+     都已执行完毕。 $$ 块级、$ 行内、\(...\)、\[...\] 全支持。 */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof renderMathInElement !== 'function') return;
+    const target = document.body.classList.contains('page-index')
+      ? (document.querySelector('.outline-tree') || document.body)
+      : document.body;
+    try {
+      renderMathInElement(target, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '\\[', right: '\\]', display: true},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '$', right: '$', display: false}
+        ],
+        ignoredTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+        ignoredClasses: ['code-block', 'code-header', 'katex']
+      });
+    } catch (e) {
+      console.warn('KaTeX render failed:', e);
+    }
+  });
 })();
 
 </script>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ch5 — Salted的笔记</title>
+<title>语义分析 sematic analysis — Salted的笔记</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" referrerpolicy="no-referrer">
 <style>
@@ -1162,7 +1162,7 @@ article > .section.level-1::after {
 
 </style>
 </head>
-<body class="page-note" data-note-id="ex">
+<body class="page-note" data-note-id="compiler">
 <div class="progress-bar"></div>
 <div class="topbar">
   <a class="brand" href="index.html"><span class="seal">S</span> Salted的笔记</a>
@@ -1180,1016 +1180,782 @@ article > .section.level-1::after {
   <button data-action="toggle-fold" data-state="folded"><span class="chev">▾</span>展开</button>
 </div>
 <article>
-  <h1 class="doc-title">Ch5</h1>
+  <h1 class="doc-title">语义分析 sematic analysis</h1>
   <div class="doc-meta">
     <span class="meta-badge meta-date"><span class="meta-label">更新</span>2026-06-19</span>
-    <span class="meta-badge meta-count"><span class="meta-label">章节</span>32</span>
+    <span class="meta-badge meta-count"><span class="meta-label">章节</span>15</span>
   </div>
-<details class="section level-2" data-anchor="complex-synonym">
-  <summary id="complex-synonym" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">complex synonym</span><a class="anchor-link" href="#complex-synonym" title="复制链接">§</a>
+<p>在语义分析阶段我们要进行一些上下文相关的分析. 例:</p>
+<ol>
+<li>检查是否所有标识符在使用之前都有声明.</li>
+<li>类型检查</li>
+</ol>
+<details class="section level-2" data-anchor="scope">
+  <summary id="scope" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Scope定义</span><a class="anchor-link" href="#scope" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<pre><code class="language-ocaml">module type ComplexSig = sig
-  val zero : float * float
-  val add : float * float -&gt; float * float -&gt; float * float
-end
-</code></pre>
-<p>这是一个表示复数的module type 为它添加 <code>type t = float * float</code>
-对代码进行改进.</p>
-<pre><code class="language-ocaml">module type ComplexSig = sig
-  type t = float * float
-  val zero : t
-  val add : t -&gt; t -&gt; t
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="complex-encapsulation">
-  <summary id="complex-encapsulation" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">complex encapsulation</span><a class="anchor-link" href="#complex-encapsulation" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">module Complex : ComplexSig = struct
-  type t = float * float
-  let zero = (0., 0.)
-  let add (r1, i1) (r2, i2) = r1 +. r2, i1 +. i2
-end
-</code></pre>
-<p>分别进行如下的修改, 并观察出现的错误:</p>
-<ul>
-<li>移除 <code>zero</code></li>
-</ul>
-<pre><code>Error: Signature mismatch:
-       Modules do not match:
-         sig
-           type t = float * float
-           val add : float * float -&gt; float * float -&gt; float * float
-         end
-       is not included in
-         ComplexSig
-       The value `zero' is required but not provided
-</code></pre>
-<ul>
-<li>移除 <code>add</code></li>
-</ul>
-<pre><code class="language-ocaml">Error: Signature mismatch:
-       Modules do not match:
-         sig type t = float * float val zero : float * float end
-       is not included in
-         ComplexSig
-       The value `add' is required but not provided 
-</code></pre>
-<ul>
-<li>修改 <code>zero</code> 为 <code>let zero = 0, 0</code></li>
-</ul>
-<pre><code class="language-ocaml">Error: Signature mismatch:
-       ...
-       Values do not match:
-         val zero : int * int
-       is not included in
-         val zero : t
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="big-list-queue">
-  <summary id="big-list-queue" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">big list queue</span><a class="anchor-link" href="#big-list-queue" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>使用下列代码创建长度成倍增长的 ListQueue : 10, 100, 1000 …
-在出现明显的延迟之前最大能创建多长的 Queue ?
-在出现10s以上的延迟之前能创建的最长的Queue ?</p>
-<pre><code class="language-ocaml">  module type Queue = sig
-    type 'a t
-    exception EmptyQueue
-    val empty : 'a t
-    val is_empty : 'a t -&gt; bool
-    val size : 'a t -&gt; int
-    val enqueue : 'a -&gt; 'a t -&gt; 'a t
-    val front : 'a t -&gt; 'a
-    val dequeue : 'a t -&gt; 'a t
-    val to_list : 'a t -&gt; 'a list 
-  end
+<p>scope 是规定了标识符在程序中可访问的范围. 多个scope之间是互不相交的.</p>
+<p>例如, 下面有两个作用域, 一个是for
+loop之内的.另外一个是除了for循环体之外的函数体.</p>
+<pre><code>void fun(int n) {
+  int a;              // scope 1
 
-module ListQueue : Queue = struct
-  type 'a t = 'a list
-  exception EmptyQueue
-  let empty = []
-  let is_empty = function
-    | [] -&gt; true
-    | _ -&gt; false
-  let size = List.length
-
-  let enqueue e q = q @ [e]  (* !! *)
-  let front = function
-    | [] -&gt; raise EmptyQueue
-    | h::_ -&gt; h
-  let dequeue = function
-    | [] -&gt; raise EmptyQueue
-    | _::t -&gt; t 
-  let to_list = Fun.id (* 恒等映射 *)
-end
-</code></pre>
-<pre><code class="language-ocaml">(** Creates a ListQueue filled with [n] elements. *)
-let fill_listqueue n =
-  let rec loop n q =
-    if n = 0 then q
-    else loop (n - 1) (ListQueue.enqueue n q) in
-  loop n ListQueue.empty
-;;
-</code></pre>
-<p>A1: fill<sub>listqueue</sub> 10000 ;;</p>
-<p>A2: fill<sub>listqueue</sub> 100000 ;;</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="big-batched-queue">
-  <summary id="big-batched-queue" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">big batched queue</span><a class="anchor-link" href="#big-batched-queue" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>用下面的代码来重复上题的实验</p>
-<pre><code class="language-ocaml">module  BatchedQueue = struct
-
-  type 'a queue = {
-    front: 'a list ;
-    back: 'a list 
+  for(n = 0;n&lt;10;n++){//===
+    int a = n*n;      //  |===&gt;  scope 2 
+    printf("%d\n",a); //===
   }
-
-  let empty = {
-    front= [];
-    back = []
-  }
-
-  let peek = function
-    |{front=[] } -&gt; None
-    |{front=x::_ ;} -&gt; Some x
-
-
-  let enqueue x = function
-    |{front=[] } -&gt; {front=[x] ; back=[] }
-    |q -&gt; {q with back=x::q.back}  (* 即：当front不为空list时*)
-
-  let dequeue = function
-    |{front=[]} -&gt; None
-    |{front= _::[] ;back=b} -&gt; Some {front = List.rev b ;back=[] } 
-    |{front=_::t;back=b} -&gt; Some {front = t ;back=b}
-
-end
-</code></pre>
-<pre><code class="language-ocaml">let fill_batchedqueue n =
-  let rec loop n q =
-    if n = 0 then q
-    else loop (n - 1) (BatchedQueue.enqueue n q) in
-  loop n BatchedQueue.empty
-</code></pre>
-<p>此时才会出现10s以上的延迟 fill<sub>batchedqueue</sub> 1000000000 ;;</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="queue-efficiency">
-  <summary id="queue-efficiency" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">queue efficiency</span><a class="anchor-link" href="#queue-efficiency" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>比较两种入队 <code>enqueue</code> 操作的实现.用你自己的话解释为何
-<code>ListQueue.enqueue</code> 是线性时间的.</p>
-<p>考虑 <code>BatchedQueue.enqueue</code> 假设</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="binary-search-tree-map">
-  <summary id="binary-search-tree-map" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">binary search tree map</span><a class="anchor-link" href="#binary-search-tree-map" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写module <code>BstMap</code> , 用二叉搜索树实现 <code>Map</code> 模块, 每个节点应该存储一个
-pair (key,value)</p>
-<pre><code class="language-ocaml">module type Map = sig
-  exception Empty
-  type ('k,'v ) t
-  val empty : ('k,'v) t
-  val insert : 'k -&gt; 'v -&gt; ('k,'v) t -&gt; ('k,'v) t
-  val lookup : 'k -&gt; ('k,'v) t -&gt; 'v 
-  val bindings : ('k,'v) t -&gt; ('k * 'v) list  
-end ;;
-
-
-module BstMapImpl = struct
-  exception Empty
-  type ('k,'v) t = Leaf | Node of ('k * 'v) * ('k,'v) t * ('k,'v) t 
-  let empty = Leaf
-  let rec  insert key value = function
-    | Leaf -&gt; Node ( (key,value) ,Leaf,Leaf)
-    | Node ((k,v),l,r) when key &lt; k -&gt;  Node((k,v),(insert key value l),r) 
-    | Node ((k,v),l,r) when key &gt; k -&gt;   Node((k,v),l,(insert key value r))
-    | Node ((k,v),l,r) -&gt; Node((k,value),l,r)
-
-  let rec lookup key = function
-    | Leaf -&gt; raise  Empty
-    | Node ((k,_),l,_) when key &lt; k -&gt;  lookup key l
-    | Node ((k,_),_,r) when key &gt; k -&gt; lookup key r
-    | Node ((_,v),_,_) -&gt; v
-
-  let bindings m  =
-    let rec bindings_aux acc  = function
-    | Leaf -&gt; acc 
-    | Node((k,v),l,r) -&gt;  (bindings_aux (bindings_aux ((k,v)::acc)  l) r)
-    in
-    bindings_aux [] m 
-end
-
-module BstMap:Map = BstMapImpl ;;
-</code></pre>
-<pre><code class="language-ocaml"># BstMapImpl. (empty |&gt; insert 1 "hello" |&gt; insert 2 "fuck" |&gt; insert 4 "dead" |&gt; lookup 2 ) ;;
-- : string = "fuck"
-
-# BstMapImpl. (empty |&gt; insert 1 "hello" |&gt; insert 2 "fuck" |&gt; insert 4 "dead" |&gt; bindings  ) ;; 
-- : (int * string) list = [(4, "dead"); (2, "fuck"); (1, "hello")]
+          // scope 1
+}
 </code></pre>
   </div>
 </details>
-<details class="section level-2" data-anchor="fraction">
-  <summary id="fraction" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">fraction</span><a class="anchor-link" href="#fraction" title="复制链接">§</a>
+<details class="section level-2" data-anchor="static-scope-vs-dynamic-scope">
+  <summary id="static-scope-vs-dynamic-scope" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Static Scope VS Dynamic Scope</span><a class="anchor-link" href="#static-scope-vs-dynamic-scope" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<p>实现下面的分数 <code>Fraction</code> 模块type</p>
-<pre><code class="language-ocaml">module type Fraction = sig
-  (* A fraction is a rational number p/q, where q != 0.*)
-  type t
+<p>大多数语言采用静态作用域, 即作用域只依赖程序的文本, 而不是运行时的行为.
+动态作用域则相反, 作用域依赖于程序运行时的行为.</p>
+<pre><code>void foo(int x) {
+  int a = 3;
+  bar(3);  // 对于动态语言, eg:早期的lisp, 此处将成功打印出3. 
+}
 
-  (** [make n d] is n/d. Requires d != 0. *)
-  val make : int -&gt; int -&gt; t
-
-  val numerator : t -&gt; int
-  val denominator : t -&gt; int
-  val to_string : t -&gt; string
-  val to_float : t -&gt; float
-
-  val add : t -&gt; t -&gt; t
-  val mul : t -&gt; t -&gt; t
-end
-
-
-module TupleFraction : Fraction = struct
-  type t = int * int
-
-  let make n d =if d=0 then raise Division_by_zero else  (n ,d )
-  let numerator (n,d) = n
-  let denominator (n,d) = d
-  let to_string (n,d) = ( string_of_int n ) ^ "/" ^ (string_of_int d)
-  let to_float (n,d) = (float_of_int n) /. (float_of_int d)
-
-  let add (n,d) (n',d') =  (n*d' + n' *d , d*d' )
-  let mul (n,d) (n',d') = (n*n'  ,d*d') 
-end
+void bar(int y){
+  printf("%d", a); // 而对于像C这样的static scope语言, 这里显然无法通过编译. 
+}
 </code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="fraction-reduced">
-  <summary id="fraction-reduced" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">fraction reduced</span><a class="anchor-link" href="#fraction-reduced" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>实现自动约分到最简形式的分数 分母要保持为正数</p>
-<pre><code class="language-ocaml">(** [gcd x y] is the greatest common divisor of [x] and [y].
-    Requires: [x] and [y] are positive. *)
-let rec gcd x y =
-  if x = 0 then y
-  else if (x &lt; y) then gcd (y - x) x
-  else gcd y (x - y)
-</code></pre>
-<pre><code class="language-ocaml">
-
-module ReducedFraction : Fraction = struct
-    type t = int * int
-
-    let rec mygcd x y = 
-  if x mod y = 0 then y 
-  else if x &lt; y then mygcd y x 
-  else  mygcd y (x mod y)
-
-    let reduce (n,d) = let g = mygcd n d in (n/g, d/g ) 
-    let make n d =if d=0 then raise Division_by_zero else reduce (n,d)
-
-
-    let numerator (n,d) = n
-    let denominator (n,d) = d
-    let to_string (n,d) = ( string_of_int n ) ^ "/" ^ (string_of_int d)
-    let to_float (n,d) = (float_of_int n) /. (float_of_int d)
-
-    let add (n,d) (n',d') =  reduce (n*d' + n' *d , d*d' )
-    let mul (n,d) (n',d') = reduce (n*n'  ,d*d') 
-  end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="make-char-map">
-  <summary id="make-char-map" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">make char map</span><a class="anchor-link" href="#make-char-map" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>为了创建标准库中的map, 我们要使用functor <code>Map.Make</code>
-创建一个特化了key的module:</p>
-<pre><code class="language-ocaml">module CharMap = Map.Make(Char) ;; 
-</code></pre>
-<p>这产生了一个signature</p>
-<pre><code class="language-ocaml">module CharMap :
-  sig
-type key = Char.t
-type 'a t = 'a Map.Make(Char).t
-   ...
-val empty : 'a t
-val add : key -&gt; 'a -&gt; 'a t -&gt; 'a t
-val remove : key -&gt; 'a t -&gt; 'a t
-    ...
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="char-ordered">
-  <summary id="char-ordered" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">char ordered</span><a class="anchor-link" href="#char-ordered" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>functor <code>Map.Make</code> 需要一个和 <code>Map.OrderType</code> 相匹配的module. 查看
-<code>Char</code> 和此module的文档, 解释为何 <code>Char</code> 能作为 <code>Map.Make</code> 的参数. 因为
-OrderType 中有两个声明 :</p>
-<pre><code>type t : key的类型
-val compare : t -&gt; t -&gt; int  用来比较key的函数 (k1 - k2)
-</code></pre>
-<p>而 <code>Char</code> 中也有这两个定义:</p>
-<pre><code class="language-ocaml">type t = char 
-(**  An alias for the type of characters. *)
-
-val compare : t -&gt; t -&gt; int
-(**  The comparison function for characters, with the same specification as compare. Along with the type t, this function compare allows the module Char to be passed as argument to the functors Set.Make and Map.Make. *)
-</code></pre>
-<p>因此 Char 满足 signature <code>Map.Ordertype</code></p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="use-char-map">
-  <summary id="use-char-map" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">use char map</span><a class="anchor-link" href="#use-char-map" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>使用 <code>CharMap</code> 创建包含下述内容</p>
+<p>例, C语言中的标识符绑定被下面的东西引入:</p>
 <ul>
-<li>
-<p>'A' maps to "Alpha"</p>
-</li>
-<li>
-<p>'E' maps to "Echo"</p>
-</li>
-<li>
-<p>'S' maps to "Sierra"</p>
-</li>
-<li>
-<p>'V' maps to "Victor"</p>
-</li>
+<li>函数定义 function definitons</li>
+<li>struct definitions</li>
+<li>variable definitions</li>
+<li>struct中字段的定义.</li>
+<li>函数参数的声明</li>
 </ul>
-<p>用 <code>CharMap.find</code> 寻找'E'的值. 移除 'A'的绑定. 使用 <code>CharMap.mem</code>
-检查是否 'A' 仍存在绑定. 使用 <code>CharMap.bindings</code> 将 map 转化为
-accociation list.</p>
-<pre><code class="language-ocaml">let m = CharMap. (empty |&gt; add 'A' "Alpha" |&gt; add 'E' "echo" |&gt; add 'S' "Sierra" |&gt; add 'V' "Victor" ) ;;
-
-CharMap.find 'E' m ;;
-(** - : string = "echo" *)
-m |&gt;  CharMap.remove 'A' |&gt;  CharMap.mem 'A';;
-(** - : bool = false *)
-CharMap.bindings m ;;
-(** [(A, "Alpha"); (E, "echo"); (S, "Sierra"); (V, "Victor")] *)
-</code></pre>
+<p>虽然大多数标识符满足最近嵌套作用域原则. 但仍有例外:</p>
+<ol>
+<li>C++ 中的成员函数可以在class之外定义.
+    但在这些函数的定义中仍然能访问class成员.</li>
+<li>C++ 中的向前forward声明, 使得 前面定义的类可以引用定义在后面的类.</li>
+</ol>
   </div>
 </details>
-<details class="section level-2" data-anchor="bindings">
-  <summary id="bindings" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">bindings</span><a class="anchor-link" href="#bindings" title="复制链接">§</a>
+<details class="section level-2" data-anchor="ast">
+  <summary id="ast" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">通过在AST上进行递归下降进行语义分析</span><a class="anchor-link" href="#ast" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<p>查看 <code>Map.S</code> 的文档, 找到 bindings 的规范, 下面哪几个表达式会返回相同的
-alist?</p>
-<ul>
-<li>
-<p><code>CharMap.(empty |&gt; add 'x' 0 |&gt; add 'y' 1 |&gt; bindings)</code></p>
-</li>
-<li>
-<p><code>CharMap.(empty |&gt; add 'y' 1 |&gt; add 'x' 0 |&gt; bindings)</code></p>
-</li>
-<li>
-<p><code>CharMap.(empty |&gt; add 'x' 2 |&gt; add 'y' 1 |&gt; remove 'x' |&gt; add 'x' 0 |&gt; bindings)</code></p>
-</li>
-</ul>
-<p>三个表达式返回的 alist 都是相同的. 因为根据规范,
-返回的list是按照key的顺序排序的, 因此和添加的顺序无关.</p>
-<pre><code>val bindings : 'a t -&gt; (key * 'a) list
-
-Return the list of all bindings of the given map. The returned list is sorted in increasing order of keys with respect to the ordering Ord.compare, where Ord is the argument given to Stdlib.Map.Make
+<p>在C中,block就是最常见的作用域scope. 在早期的C中,
+一个scope中的变量声明必须全都放在开头,之后才能使用变量. AST结构如下:</p>
+<pre><code>          代码块
+       /         \
+ 声明list       语句list
+ /  |  \       /   |   \
+d1  d2  d3    s1   s2  s3
 </code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="date-order">
-  <summary id="date-order" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">date order</span><a class="anchor-link" href="#date-order" title="复制链接">§</a>
+<p>而现在的C语言允许声明和普通语句混合:</p>
+<pre><code>      代码块
+       /       
+  代码块项目list 
+  /    |     \     \ 
+语句1 声明1  语句2  声明2 ..
+</code></pre>
+<p>每当进入一个scope / 代码块
+,就会创建一个用来保存变量声明/定义的上下文context.
+而每当离开一个scope时, 相应的上下文就会被销毁.</p>
+<p>这种context是什么?</p>
+<details class="section level-3" data-anchor="symbol-table">
+  <summary id="symbol-table" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">符号表 symbol table</span><a class="anchor-link" href="#symbol-table" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<pre><code class="language-ocaml">type date = {month : int; day : int}
-</code></pre>
-<p>例如 3月31日被表示为 <code>{month = 3; day = 31}</code> .
-下面将会实现一个key的类型为date的Map. 显然这可能会存在无效的日期: {month
-= 2 ; day = 89} 对无效日期的行为不做特殊规定. 为了用 <code>Map.Make</code> 生成Map,
-我们需要实现 Map.OrderedType signature.</p>
-<pre><code class="language-ocaml">module Date = struct
-  type date = {month :int ; day : int} 
-  type t = date
-  let compare d1 d2 = match (d1.month - d2.month  , d1.day-d2.day) with
-    | (m,d) when m &gt; 0 -&gt; 1
-    | (m,d) when m &lt; 0 -&gt; -1
-    | (0,d) when d &gt; 0 -&gt; 1
-    | (0,d) when d &lt; 0 -&gt; -1
-    | _ -&gt; 0
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="calender">
-  <summary id="calender" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">calender</span><a class="anchor-link" href="#calender" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>用上一问的 <code>Date</code> 和 <code>Map.Make</code> 创建 <code>DateMap</code> module, 并定义一个 日历
-<code>calendar</code> 类型:</p>
-<pre><code class="language-ocaml">type calendar = string DateMap.t ;;
-</code></pre>
-<p>其想法是将日期映射到那天要进行的事件名称. 使用 <code>calender</code> 加入几个日期:</p>
-<pre><code class="language-ocaml">DateMap. (empty |&gt; add {month=10;day=12} "my birthday!" |&gt; bindings) ;; 
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-calendar">
-  <summary id="print-calendar" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">print calendar</span><a class="anchor-link" href="#print-calendar" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写函数 <code>print_calendar: calendar -&gt; unit</code> 它打印日历中所有元素</p>
-<pre><code class="language-ocaml">let print_calendar (cal:calender) =
-  DateMap.iter (fun d e -&gt; Printf.printf "%i月%i日: %s \n" d.month d.day e ) cal 
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="is-for">
-  <summary id="is-for" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">is for</span><a class="anchor-link" href="#is-for" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写函数 <code>is_for: string CharMap.t -&gt; string CharMap.t</code> 使得将一个绑定为
-<code>ki -&gt; vi</code> 的Map,映射为绑定为 <code>ki -&gt; "ki is for vi"</code> . 提示:
-用Map.S中的函数可以得到一个只有一行的解答. 为了将字符转换为string,
-可以用 <code>String.make</code> , 更高级的做法是用 <code>Printf.sprintf</code></p>
-<pre><code class="language-ocaml">let is_for m =
-  CharMap.mapi (fun k v -&gt; Printf.sprintf "%c is for %s" k v ) m
-;;
-</code></pre>
-<pre><code class="language-ocaml"># CharMap. (empty |&gt; add 'a' "apple" |&gt; is_for |&gt; bindings) ;;
-- : (CharMap.key * string) list = [(a, "a is for apple")]
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="first-after">
-  <summary id="first-after" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">first after</span><a class="anchor-link" href="#first-after" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写函数 <code>first_after : calendar -&gt; Date.t -&gt; string</code> ,
-它返回在给定日期之后(不包含该日期)的首个事项的名称. 若没有这样的事件,
-函数应抛出 <code>Not_found</code> 异常.(它是标准库中定义的异常) 提示: 可用 <code>Map.S</code>
-中的函数来完成仅有一行的解答.</p>
-<pre><code class="language-ocaml">let first_after (cal:calendar) (d:Date.t) =
- let (d,e) = DateMap.find_first (fun k -&gt; (Date.compare k d) &gt; 0) cal
- in e
-;;
-</code></pre>
-<pre><code class="language-ocaml">#  first_after (DateMap. (empty |&gt; add {month=10;day=12} "my birthday!" )) {month=10;day=1} ;; 
-- : string = "my birthday!"
-
-#  first_after (DateMap. (empty |&gt; add {month=10;day=12} "my birthday!" )) {month=11;day=1} ;; 
-Exception: Not_found
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="sets">
-  <summary id="sets" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">sets</span><a class="anchor-link" href="#sets" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>标准库中的 <code>Set</code> 模块十分类似于 <code>Map</code> ,
-使用它创建一个代表了大小写不敏感字符串的集合.
-仅仅是大小写不同的两个字符串集合应视作相同.</p>
-<pre><code class="language-ocaml">module InsStr= struct 
-  type t = string
-  let compare a b =String. (compare (lowercase_ascii a) (lowercase_ascii b))
-end
-
-
-module InsStrSet = Set.Make(InsStr );; 
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="tostring">
-  <summary id="tostring" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">tostring</span><a class="anchor-link" href="#tostring" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写module type <code>ToString</code> 指定一个signature, 它包含了抽象类型t,
-和一个函数 <code>to_string : t -&gt; string</code></p>
-<pre><code class="language-ocaml">module type ToString = sig
-  type t
-  val to_string : t -&gt; string
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print">
-  <summary id="print" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print</span><a class="anchor-link" href="#print" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>编写functor <code>Print</code> ,它接收一个名为 <code>M</code> 的 <code>ToString</code> 模块,
-并返回一个只有一个 <code>print: M.t -&gt; unit</code> 定义的模块,
-此函数打印出值的字符串表示.</p>
-<pre><code class="language-ocaml">module Print (M:ToString) = struct
-  let print (m:M.t) =
-    Printf.printf "%s\n" (M.to_string m)
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-int">
-  <summary id="print-int" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print Int</span><a class="anchor-link" href="#print-int" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>创建模块 <code>PrintInt</code> 作为应用functor <code>Print</code> 到 <code>Int</code> 上的结果. 编写
-<code>Int</code> 模块, 其 <code>Int.t</code> 应为 int.</p>
-<pre><code class="language-ocaml">module Int = struct
-  type t = int
-  let to_string = string_of_int
-end
-
-module PrintInt = Print(Int) ;; 
-</code></pre>
-<pre><code class="language-ocaml"># PrintInt.print 234 ;;
-234
-- : unit = ()
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-string">
-  <summary id="print-string" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print String</span><a class="anchor-link" href="#print-string" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>创建名为 <code>PrintString</code> 的模块, 它是应用 <code>Print</code> 到 <code>MyString</code> 上的结果.</p>
-<pre><code class="language-ocaml">module MyString = struct
-  type t = string
-  let to_string = Fun.id
-end
-
-module PrintString = Print(MyString) ;; 
-</code></pre>
-<pre><code class="language-ocaml"># PrintString.print "hello"  ;;
-hello
-- : unit = ()
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-reuse">
-  <summary id="print-reuse" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print Reuse</span><a class="anchor-link" href="#print-reuse" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>解释 <code>Print</code> 是如何实现代码复用的?</p>
-<p>打印值这一函数需要值的类型, 和如何将此类型的值转化为字符串.
-除此之外的逻辑都是相同的. 因此将这两个不同点打包成一个module type:
-<code>ToString</code> ,并针对输入为 <code>ToString</code> 这样的模块产生相应的打印函数.</p>
-  </div>
-</details>
-<details class="section level-2" data-anchor="print-string-reuse-revisited">
-  <summary id="print-string-reuse-revisited" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">Print String reuse revisited</span><a class="anchor-link" href="#print-string-reuse-revisited" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p><code>PrintString</code> 模块仅支持一个操作: <code>to_string</code> ,
-现在希望不用copy的方式创建一个包含了 <code>String</code> 模块中所有函数并且含有
-<code>print</code>. 定义模块 <code>StringWithPrint</code> 提示: 使用两个include语句</p>
-<pre><code class="language-ocaml">module StringWithPrint = struct
-  include String
-  include Print(MyString) 
-end
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="implementation-without-interface">
-  <summary id="implementation-without-interface" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">implementation without interface</span><a class="anchor-link" href="#implementation-without-interface" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>创建 <code>date.ml</code> 并包含下面的代码:</p>
-<pre><code class="language-ocaml">type date = {month : int; day : int}
-let make_date month day = {month; day}
-let get_month d = d.month
-let get_day d = d.day
-let to_string d = (string_of_int d.month) ^ "/" ^ (string_of_int d.day)
-</code></pre>
-<p>创建 <code>dune</code> 文件</p>
-<pre><code class="language-elisp">(library
- (name date)) 
-</code></pre>
-<p>加载此库文件到utop:</p>
-<pre><code class="language-ocaml">dune utop 
-</code></pre>
-<p>在utop中, open <code>Date</code>, 创建一个日期,并访问它的day字段,
-并将日期转换为string</p>
-<pre><code class="language-ocaml"># open Date ;;
-
-# (make_date 3 5 ) |&gt; get_day ;;
-- : int = 5
-
-# (make_date 3 5 ) |&gt; to_string ;;
-- : string = "3/5"
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="implementation-with-interface">
-  <summary id="implementation-with-interface" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">implementation with interface</span><a class="anchor-link" href="#implementation-with-interface" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>继续上一个问题, 创建文件 <code>date.mli</code></p>
-<pre><code class="language-ocaml">type date = {month : int; day : int}
-val make_date : int -&gt; int -&gt; date
-val get_month : date -&gt; int
-val get_day : date -&gt; int
-val to_string : date -&gt; string
-</code></pre>
-<p>并在utop中重复上一问中的操作</p>
-<pre><code class="language-ocaml"># open Date ;;
-
-# (make_date 3 6) |&gt; get_day ;;
-- : int = 6
-
-# (make_date 3 6) |&gt; to_string ;;
-- : string = "3/6"
-
-# let d = make_date 3 6 ;;
-val d : date = {month = 3; day = 6}
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="implementation-with-abstracted-interface">
-  <summary id="implementation-with-abstracted-interface" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">implementation with abstracted interface</span><a class="anchor-link" href="#implementation-with-abstracted-interface" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>在上两个问题的基础上, 修改 <code>date.mli</code> 中的第一行 为:</p>
-<pre><code class="language-ocaml">type date 
-</code></pre>
-<p>现在类型date变为抽象的. 重复之前的操作.观察不同之处.</p>
-<pre><code class="language-ocaml"># open Date;;
-
-# let d = make_date 3 6 ;;
-val d : date = &lt;abstr&gt;
-
-# d |&gt; get_day ;;
-- : int = 6
-
-# d |&gt; to_string ;;
-- : string = "3/6"
-
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="printer-for-date">
-  <summary id="printer-for-date" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">printer for date</span><a class="anchor-link" href="#printer-for-date" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>为 <code>date.mli</code> 添加声明</p>
-<pre><code class="language-ocaml">val format : Format.formatter -&gt; date -&gt; unit 
-</code></pre>
-<p>并且添加一个 <code>format</code> 的定义到 <code>date.ml</code> 提示: 使用 <code>Format.fprintf</code> 和
-<code>Date.to_string</code></p>
-<p>重新编译,并加载到utop, load "date.cmo" ,并安装 date的格式化器</p>
-<pre><code class="language-ocaml">#install_printer Date.format;;
-</code></pre>
-<p><strong>解答:</strong></p>
-<pre><code class="language-ocaml">let format f d =
-  Format.fprintf f "%s" (to_string d)
-</code></pre>
-<pre><code>ocamlc date.mli
-ocamlc date.ml
-</code></pre>
-<pre><code class="language-ocaml">utop # #load "date.cmo" ;;
-
-utop # #install_printer  Date.format ;;
-
-utop # open Date ;;
-
-utop # let d = make_date 3 4 ;;
-val d : date = 3/4
-
-utop # d |&gt; get_day ;;
-- : int = 4
-
-utop # d |&gt; to_string ;;
-- : string = "3/4"
-</code></pre>
-  </div>
-</details>
-<details class="section level-2" data-anchor="refactor-arith">
-  <summary id="refactor-arith" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">refactor arith(算术)</span><a class="anchor-link" href="#refactor-arith" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<p>下载文件 <a href="./algebra.ml"> <code>algebra.ml</code> </a>
-,它包含了两个signatures和四个structures</p>
+<p>之所以叫做符号表,而不是"字符串"表, 是因为这个表的key不单单是一个字符串.
+字符串在计算hash值, 测试相等性,
+比较两个字符串的大小上是低效的.(线性时间,因为要遍历每个字符)</p>
+<p>因此要创建一个符号类型, 并用它作为key.这样的表叫做符号表.</p>
+<p>每当进入一个新的作用域时,
+将当前的符号表复制一份作为当前scope的符号表.并将旧的保存下来.
+每当下面遇到一个声明, 将其添加到符号表.</p>
+<p>当离开一个scope后, 将保存的符号表恢复为当前符号表.</p>
 <ol>
 <li>
-<p>环是描述称为环的代数结构的签名，环是加法和乘法运算符的抽象。</p>
-</li>
-<li>
-<p>域是描述代数结构的签名，称为域，它就像一个环，但也有一个除法运算的抽象。</p>
-</li>
-<li>
-<p>IntRing 和 FloatRing 是根据 int 和 float 实现环的结构。</p>
-</li>
-<li>
-<p>IntField 和 FloatField 是根据 int 和 float 实现字段的结构。</p>
-</li>
-<li>
-<p>IntRational 和 FloatRational
-    是根据比例（也称为分数）实现字段的结构，即 int pair 和 float pair</p>
+<p>用符号表实现"环境"</p>
+<p>使用存放scope(符号表)的 <strong>Stack</strong></p>
+<pre><code>enter_scope(): 创建并push一个新的scope 
+exit_scope(): 离开pop当前scope
+
+find_symbol(x): 从栈顶的scope中开始寻找符号x
+add_symbol(x): 将符号x加入当前的(栈顶)scope
+check_scope(x): 检查x是否在当前(栈顶)scope中存在定义, 用于防止在同一scope发生重定义
+</code></pre>
+<p>例如在C++这样的语言中,
+可以先使用一个未定义但已经声明的标识符.(class的forward声明),
+将其具体定义写在使用处的后面.
+因此这样的语法无法通过遍历一次AST就能解析完所有的符号使用.因此至少需要两次遍历:
+第一遍, 收集所有scope中的 <strong>声明</strong> 第二遍, 用符号表来解析使用.</p>
 </li>
 </ol>
-<p>使用 <code>include</code>, functor,
-引入额外的structure/signature来提高代码复用的数量. 这有一些关于重构建议:</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="ar">
+  <summary id="ar" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">活动记录 AR</span><a class="anchor-link" href="#ar" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<details class="section level-2" data-anchor="_1">
+  <summary id="_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">理论动机</span><a class="anchor-link" href="#_1" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>所谓函数是一段代码, 位于代码段, 是只读的.
+但是每个函数被调用时都包含着对应当前实例的特有数据: 入参, 局部变量,
+中间结果 … 这些数据是运行时动态创建的, 不能放在代码段中.
+因此需要有某种数据结构来管理每个函数调用对应的特有数据.这种结构就是栈stack.</p>
+<p>一门语言中的函数的语法决定了如何实现函数调用.
+比较复杂的函数实现就是所谓的高阶函数: 入参和返回值都可以是函数.
+并且为了支持能够返回一个函数对象, 语法也必须支持嵌套的函数定义.
+这些函数的特性增加了实现的难度:</p>
+<pre><code class="language-ocaml">let myfunc x = 
+  let
+    bar y = x + y 
+  in 
+  bar 
+;;
+</code></pre>
+<pre><code class="language-ocaml"># let bar =myfunc 2 ;;
+val bar : int -&gt; int = &lt;fun&gt;
+</code></pre>
+<p>为了实现上的简单, 暂时不考虑返回一个函数对象的情况. 仅允许嵌套函数定义.</p>
+<p>这里的栈不是标准的栈 – 仅支持push/pop/peek. 因为要访问变量,
+因此要实现为数组.并用一个指针来标记栈顶, 即栈指针sp.
+这个数组是从高地址向低地址方向生长的.就像山洞中的钟乳石.</p>
+<p>存放于栈的每个函数调用对应的特有数据被称为一个frame.
+一个栈帧中通常包含这些部分:
+入参,函数内声明的局部变量,返回地址,计算的中间结果,保存的寄存器.</p>
+<p>某些局部变量不放在寄存器中, 而是存放于stack中,
+这些被占用的寄存器可能会与该函数调用的其他函数相冲突.
+因此需要将其保存栈中.</p>
+<pre><code class="language-c">int foo(int x , int y)
+{
+  int temp = x + 1;
+  int temp2 = x - y ;
+  return temp * temp2 ;
+}
+</code></pre>
+<pre><code class="language-asm">foo:                                    # -O0
+        pushq   %rbp            # 保存帧指针 
+        movq    %rsp, %rbp      # 
+        movl    %edi, -4(%rbp)  # x
+        movl    %esi, -8(%rbp)  # y
+        movl    -4(%rbp), %eax  # x
+        addl    $1, %eax        # x+1 
+        movl    %eax, -12(%rbp) # x+1 -&gt; temp 
+        movl    -4(%rbp), %eax  # x
+        subl    -8(%rbp), %eax  # x - y 
+        movl    %eax, -16(%rbp) # x - y -&gt; temp2  
+        movl    -12(%rbp), %eax # temp
+        imull   -16(%rbp), %eax # temp * temp2 -&gt; return value 
+        popq    %rbp            # 恢复 帧指针 
+        retq
+</code></pre>
+<pre><code class="language-c">
+int foo(int x , int y){
+  //char a = 0;
+  int temp = x + 1;
+  int temp2 = x - y ;
+  return temp * temp2 ;
+}
+
+/* Type your code here, or load an example. */
+int  __attribute__((noinline)) square() {
+  char aa = 'a' ;
+  long long le = 0;
+  long long hi = 12;
+  long long le1 = 0;
+  long long hi1 = 12;
+  long long le2 = 0;
+  long long hi2 = 12;
+  //foo(3,7); 使得 square()  是否为叶子过程 
+  return le + hi;
+}
+struct foo { // &gt; 16 字节, 在栈中要为其分配 32 字节. rsp -= 32  
+  int i;
+  long long l;
+  long long ll;
+};
+
+int main() {
+  struct foo myfoo;
+  myfoo.i = 100;
+  //square(); 使得 square()  是否为叶子过程 
+  return 0;
+}
+
+// rsp 增长 按16字节对齐.
+
+// 叶子过程可以不为其分配栈帧, 可直接使用 rbp - N 处的内存. 栈顶之外的128 字节都可以使用. 
+</code></pre>
+<pre><code class="language-asm">  foo:                                    # @foo
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movl    %edi, -4(%rbp)
+        movl    %esi, -8(%rbp)
+        movl    -4(%rbp), %eax
+        addl    $1, %eax
+        movl    %eax, -12(%rbp)
+        movl    -4(%rbp), %eax
+        subl    -8(%rbp), %eax
+        movl    %eax, -16(%rbp)
+        movl    -12(%rbp), %eax
+        imull   -16(%rbp), %eax
+        popq    %rbp
+        retq
+square:                                 # @square
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movb    $97, -1(%rbp)
+        movq    $0, -16(%rbp)
+        movq    $12, -24(%rbp)
+        movq    $0, -32(%rbp)
+        movq    $12, -40(%rbp)
+        movq    $0, -48(%rbp)
+        movq    $12, -56(%rbp)
+        movq    -16(%rbp), %rax
+        addq    -24(%rbp), %rax
+        popq    %rbp
+        retq
+main:                                   # @main
+        pushq   %rbp
+        movq    %rsp, %rbp
+        movl    $0, -4(%rbp)
+        movl    $100, -32(%rbp)
+        xorl    %eax, %eax
+        popq    %rbp
+        retq
+</code></pre>
+<details class="section level-3" data-anchor="frame">
+  <summary id="frame" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">frame指针</span><a class="anchor-link" href="#frame" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>frame指针的存在通常是为了变长的函数frame.
+因为函数的返回需要退回栈顶指针sp,但是要退回到何处呢?
+这就需要使用frame指针fp来标记一个frame的开始位置.</p>
+<pre><code class="language-ocaml">let f x =
+  g x
+;;
+</code></pre>
+<p>例如 f 调用了 g. 调用前首先要保存f的fp, 然后将其fp修改为当前的sp.</p>
+<p>当g返回时, 将sp置为当前的fp, 并取出保存的fp将其设置为当前fp.</p>
+<pre><code>   高
+ ______
+| f的  |
+| 栈帧 |
+|______|
+| g的  |
+| 栈帧 |
+|______|
+
+   低
+</code></pre>
+<p>当函数的栈帧大小固定时, 为了方便也仍然需要fp.
+因为临时变量(中间结果)和保存的寄存器这些信息要到整个编译阶段的末尾才被计算出来.
+这就意味着sp尚未确定, 因此不能只靠sp来索引入参/局部变量.
+而入参/局部参数就在fp周围, 因此使用fp进行索引是很方便的.</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_2">
+  <summary id="_2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">保存寄存器</span><a class="anchor-link" href="#_2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>同一寄存器可能会被不同函数使用, 例如
+f调用g,而它们都使用了1号寄存器来存放入参.</p>
+<p>因此这个寄存器在调用的前或后需要被保存起来.防止f的参数被覆盖.</p>
+<p>到底是调用者还是被调者进行保存是根据约定来的, 寄存器被分成两类,
+<code>caller-save</code> , <code>callee-save</code> .
+冲突的寄存器由谁进行保存要查阅寄存器的约定使用方式.</p>
+<p>因为保存&amp;恢复寄存器涉及到两次内存的访问, 因此要避免不必要的寄存器保存.
+若冲突的寄存器在被调用函数返回后不再被使用,那么就没有必要保存它.</p>
+<p>寄存器分配将负责决定局部变量&amp;临时变量该位于哪种保存类型的寄存器.</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_3">
+  <summary id="_3" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">优化参数传递</span><a class="anchor-link" href="#_3" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>就像上节中举的例子, f(x)调用g(x)会发生寄存器的冲突,
+因此最简单的方案是保存&amp;恢复冲突的寄存器.</p>
+<p>但是这种方案会增加内存的存取次数, 对性能不利.
+有没有方案可以避开寄存器冲突呢?</p>
 <ul>
-<li>
-<p>不要在一个以上的sig中 <strong>直接声明</strong> name,
-  而是要用include的方式引入已有的名字 .</p>
-</li>
-<li>
-<p>只需要分别为 <code>int</code>, <code>float</code> , 分数 <strong>直接定义</strong> 三次代数操作和数字(即:
-  plus,minus,times,divide,zero,one) .例如 <code>IntField.( + )</code>
-  不应该被直接定义为 <code>Stdlib.( + )</code>, 而是要用 <code>include</code> /
-  functor的方式复用已有的定义.</p>
-</li>
-<li>
-<p>有理数的strutures可以用一个简单的functor分别应用到 <code>IntField</code> /
-  <code>FloatField</code> 来生成.</p>
-</li>
-<li>
-<p>消除所有多余的 <code>of_int</code> 是可能的, 例如, 他被直接定义一次,
-  其余的struct可以复用该定义.并且只在一个sig中直接声明它.
-  这需要使用functor.
-  还需要发明一种算法，可以将整数转换为任意环表示，而不管该环的表示类型是什么。</p>
-</li>
+<li>内联叶子过程:</li>
 </ul>
-<p>完成后，所有模块的类型应保持不变。可以通过运行 <code>ocamlc -i algebra.ml</code>
-查看这些类型。</p>
-<details class="section level-3" data-anchor="algebraml">
-  <summary id="algebraml" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">原始 <code>algebra.ml</code> 的类型:</span><a class="anchor-link" href="#algebraml" title="复制链接">§</a>
-  </summary>
-  <div class="section-body">
-<pre><code class="language-ocaml">module type Ring =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-  end
-module type Field =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val ( / ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-  end
-module IntRing : Ring
-module IntField : Field
-module FloatRing : Ring
-module FloatField : Field
-module IntRational : Field
-module FloatRational : Field
-</code></pre>
+<p>不为叶子过程分配栈帧, 自然也就没有入参冲突.</p>
+<ul>
+<li>识别dead参数</li>
+</ul>
+<p>不去保存那些在被调函数返回后无用的参数</p>
+<ul>
+<li>过程间寄存器分配:</li>
+</ul>
+<p>全局分析所有函数, 用不同的寄存器来避开冲突的入参传递.</p>
+<ul>
+<li>机器体系结构支持多组寄存器</li>
+</ul>
+<p>入参一部分存放在寄存器中, 另一部分存放在栈中. 对寄存器参数来说,
+需要很多额外的处理:</p>
+<p>如何获取入参的地址?</p>
+<p>对于后者,取地址是容易. 如何取寄存器参数中的地址呢?
+可以识别这些被取了地址的变量, 然后将其紧挨着栈中参数存放.
+亦或是为所有寄存器参数都保留栈中的空间.但不写入内容.</p>
   </div>
 </details>
-<details class="section level-3" data-anchor="algebraml_1">
-  <summary id="algebraml_1" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text">重构后的 <code>algebra.ml</code></span><a class="anchor-link" href="#algebraml_1" title="复制链接">§</a>
+<details class="section level-3" data-anchor="_4">
+  <summary id="_4" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">返回地址</span><a class="anchor-link" href="#_4" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<pre><code class="language-ocaml">module type RingWithoutOfInt = sig
-  type t
-
-  val zero : t
-
-  val one : t
-
-  val ( + ) : t -&gt; t -&gt; t
-
-  val ( ~- ) : t -&gt; t
-
-  val ( * ) : t -&gt; t -&gt; t
-
-  val to_string : t -&gt; string
-
-end
-
-module AddOfInt (W: RingWithoutOfInt ) = struct
-  include W 
-  let of_int n =
-    let rec loop acc = function
-      |0 -&gt; acc
-      |num -&gt; loop W. (one + acc ) (num-1)
-    in loop W.zero n
-end
-
-
-module type Ring = sig
-  include RingWithoutOfInt
-
-   val of_int : int -&gt; t    
-end
-
-module type Field = sig
-  include Ring
-
-  val ( / ) : t -&gt; t -&gt; t
-end
-
-module IntRingImpl  = AddOfInt( struct
-  type t = int
-
-  let zero = 0
-
-  let one = 1
-
-  let ( + ) = ( + )
-
-  let ( ~- ) = ( ~- )
-
-  let ( * ) = ( * )
-
-  let to_string = string_of_int
-
-end )
-
-
-module IntRing : Ring = IntRingImpl 
-
-module IntField : Field = struct
-  include IntRingImpl
-  let ( / )  =   ( / )
-end
-
-module FloatRingImpl  = AddOfInt (struct
-  type t = float
-
-  let zero = 0.
-
-  let one = 1.
-
-  let ( + ) = ( +. )
-
-  let ( ~- ) = ( ~-. )
-
-  let ( * ) = ( *. )
-
-  let to_string = string_of_float
-
-end) 
-
-module FloatRing : Ring = FloatRingImpl 
-
-module FloatField : Field = struct
-  include FloatRingImpl
-  let ( / ) = ( /. )
-end
-
-module ToRational (F:Field) : Field  =struct
-
-  include AddOfInt(struct 
-  type t = F.t * F.t
-  let zero = (F.zero,F.zero)
-  let one = (F.one ,F.one)
-  let ( + ) ((a,b):t) ((c,d):t) =  F. ((a * d) + (c * b), b * d)
-  let ( ~- ) ((a, b):t) = F. (-a, b)
-  let ( * ) (a, b) (c, d) = F. (a * c, b * d)
-  let to_string (a, b) = F.to_string a ^ "/" ^ F.to_string b 
-end )
-
-  let ( / ) ((a, b):t) ((c, d):t)  =F. (a * d, b * c)
-end
-
-module IntRational : Field  = ToRational(IntField)
-
-module FloatRational : Field = ToRational(FloatField)
-
-</code></pre>
+<p>返回地址由call保存到指定寄存器中,</p>
+<p>对于非叶子过程, 因为它仍要调用其他函数, 会覆盖掉寄存器中的返回地址,
+因此它需要额外将返回地址存入stack中.
+对于叶子节点,则无需额外将返回地址stack中,
+因为寄存器中的返回地址不会被覆盖.</p>
   </div>
 </details>
-<details class="section level-3" data-anchor="ocamlc-i-algebraml">
-  <summary id="ocamlc-i-algebraml" tabindex="0">
-    <span class="bullet" aria-hidden="true"></span><span class="heading-text"><code>ocamlc -i algebra.ml</code> 的输出</span><a class="anchor-link" href="#ocamlc-i-algebraml" title="复制链接">§</a>
+<details class="section level-3" data-anchor="frame_1">
+  <summary id="frame_1" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">驻留frame中的变量</span><a class="anchor-link" href="#frame_1" title="复制链接">§</a>
   </summary>
   <div class="section-body">
-<pre><code class="language-ocaml">module type RingWithoutOfInt =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-  end
-module AddOfInt :
-  functor (W : RingWithoutOfInt) -&gt;
-    sig
-      type t = W.t
-      val zero : t
-      val one : t
-      val ( + ) : t -&gt; t -&gt; t
-      val ( ~- ) : t -&gt; t
-      val ( * ) : t -&gt; t -&gt; t
-      val to_string : t -&gt; string
-      val of_int : int -&gt; W.t
+<p>对于局部变量和中间结果, 应该优先将他们存入寄存器.
+只有迫不得已时才存入栈中.</p>
+<ul>
+<li>该变量被取过地址.</li>
+<li>该变量是一个数组, 本质上也要取其地址.</li>
+<li>该变量的值过大, 无法存入寄存器.</li>
+<li>溢出: 局部变量&amp;临时变量太多, 无法全都存入寄存器</li>
+<li>此变量被嵌套定义的内层函数使用.</li>
+<li>此变量要让出占用的寄存器时, 可能会被临时保存到stack中.</li>
+</ul>
+<p>为这种变量取个名字:</p>
+<p><strong>逃逸变量</strong>: 该变量为传地址实参/ 被取了地址 / 被内层函数访问.</p>
+<p>逃逸变量必须分配在stack中!(逃脱了寄存器)
+在首次遇到变量声明时无法确定是否是逃逸变量.
+因此很多编译器先将所有变量分配到栈中, 之后的pass再决定是否能放入寄存器.</p>
+  </div>
+</details>
+<details class="section level-3" data-anchor="_5">
+  <summary id="_5" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">静态链</span><a class="anchor-link" href="#_5" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>静态链主要是为了支持嵌套的函数定义.
+内层函数有可能会直接使用外层函数中的局部变量.
+因此需要一个方法能在内层函数中访问外层函数的栈帧.</p>
+<p>可以为每个函数传入一个额外的参数, 此参数指向外层定义的函数(栈帧)</p>
+<pre><code class="language-ocaml">let myfunc x = 
+   let
+     bar y = x + y 
+   in 
+   (bar 100)
+;;
+</code></pre>
+<p>调用 bar 时要额外传入一个参数, 它指向myfunc的栈帧.</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-2" data-anchor="frame_2">
+  <summary id="frame_2" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">frame概览</span><a class="anchor-link" href="#frame_2" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>高阶函数 -&gt; 嵌套定义的函数 -&gt; 逃逸变量(内存中) -&gt; 静态链访问</p>
+<pre><code class="language-ocaml">    Semant 
+  TRANSLATE    接口 
+  Translate    实现
+FRAME    TEMP  接口
+Frame    Temp  实现
+</code></pre>
+<p>在语义分析阶段之前, 先对AST调用 <code>FindEscape</code> 将是否为逃逸变量标记好.</p>
+<p>函数声明:</p>
+<p><code>Semant.transDec</code> -&gt; <code>Translate.newlevel</code> -&gt; <code>Frame.newFrame</code></p>
+<p><code>Frame</code> 层不知道静态链的存在, 而上层的 <code>Translate</code> 负责静态链的分配.</p>
+<p>局部变量声明:</p>
+<p><code>Frame.access</code> 代表了变量存放的位置: 内存/寄存器?</p>
+<p><code>Translate.access</code> 比它多了level信息</p>
+<p><code>Semant + lev</code> -&gt; <code>Translate.allocLocal lev esc</code> -&gt; <code>Frame.allocLocal</code>
+==&gt; 返回 access</p>
+  </div>
+</details>
+<details class="section level-2" data-anchor="_6">
+  <summary id="_6" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">实现思路</span><a class="anchor-link" href="#_6" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<p>函数中可以有局部变量. 每次函数调用都会创建一份其局部变量的实例.</p>
+<p>Tiger编译器的栈帧</p>
+<p>栈帧的接口:</p>
+<pre><code class="language-ocaml">module type FRAME = sig
+  type frame
+  type access
+
+  val newFrame: {name:Temp.label,formals:bool list} -&gt; frame
+  val allocLocal: frame -&gt; bool -&gt; access
+
+  val name: frame -&gt; Temp.label
+  val formals: frame -&gt; access list
+  ...
+end
+</code></pre>
+<pre><code class="language-ocaml">module type FRAME =  sig
+  type register = string
+  val RV: Temp.temp (*p. 168*)
+  val FP: Temp.temp (*p. 155*)
+  val registers: register list
+  val tempMap: register Temp.Table.table
+  val wordSize: int (*p. 155*)
+  val externalCall: string * Tree.exp list -&gt; Tree.exp (*p. 165*)
+
+  type frame (*p. 134*)
+  val newFrame: {name: Temp, label, formals: int} -&gt; frame * int list  (*p. 135*)
+  val formals: frame -&gt; access list (*p. 135*)
+  val name: frame -&gt; Temp.label (*p. 134*)
+  val allocLocal: frame -&gt; int (*p. 137*)
+  val string: Tree.label * string -&gt; string (*p. 262*)
+  (* (L3,"hello") ==&gt; "L3: .ascii "hello" \n" *)
+  val procEntryExitl: frame * Tree.stm -&gt; Tree.stm (*p. 261*)
+  val procEntryExit2: frame * Assem.instr list -&gt; Assem.instr list  (*p. 208*)
+  val procEntryExit3 : frame * Assem.instr list -&gt; (*p. 261*)
+{prolog: string, body: Assem.instr list, epilog: string}
+
+  type frag = PROC of { body: Tree.stm, frame: frame}  (*p. 169*)
+    | STRING of Temp.label * string
+end
+</code></pre>
+<p>特定的目标机器:</p>
+<pre><code class="language-ocaml">module MipsFrame : FRAME = struct
+  ...
+end
+</code></pre>
+<p>实现:</p>
+<pre><code class="language-ocaml">module Frame : FRAME = MipsFrame ;; 
+</code></pre>
+<p>创建一个新的栈帧对象:</p>
+<pre><code class="language-ocaml">Frame.newFrame { name=g; formals= [true;false;false] };;
+</code></pre>
+<pre><code class="language-ocaml">module MipsFrame: FRAME = struct
+  ...
+  type access = InFrame of int
+      | InReg of Temp.temp 
+  ...
+end
+</code></pre>
+<pre><code class="language-ocaml">Frame.allocLocal f true ;;
+(* 返回一个 Frame.access of InFrame 类型的值 *)
+</code></pre>
+<pre><code class="language-ocaml">module FIND_ESCAPE = sig
+  val findEscape: Absyn.exp -&gt; unit
+end
+
+module FindEscape : FIND_ESCAPE = struct
+  type depth = int
+  type escEnv = (depth * bool ref) Symbol.table (* symbol --&gt; (嵌套层级深度, 是否为逃逸变量) *)
+
+  let traverseVar (env:escEnv) (d:depth) (s:Absyn.var) : unit = (* ... *) ;;
+  and traverseExp (env:exvEnv) (d:depth) (s:Absyn.exp) : unit = (* ... *) ;;
+  and traverseDecs (env:exvEnv) (d:depth) (s:Absyn.dec list) : escEnv =  (* ... *) ;;
+
+  let findEscape (prog: Absyn.exp) : unit = (* ... *) ;;
+end
+</code></pre>
+<p>当在静态函数嵌套深度为 <code>d</code> 处发现了一个 <strong>变量声明</strong> / <strong>形参声明</strong>,
+例如:</p>
+<pre><code class="language-ocaml">VarDec {name=symbol("a"); escape=r; (* ... *)} 
+</code></pre>
+<p>则将类型为 <code>bool ref</code> 的值设为 <code>false</code>. 将绑定 <code>"a" -&gt; (d,r)</code>
+加入到环境(<code>escEnv</code>)中.</p>
+<p>这个新环境被用在和这个变量处于同一作用域中的表达式中. 每当发现了符号 <code>a</code>
+在深度大于 <code>d</code> 的地方被使用, 就将其绑定中的 <code>r</code> 设为 <code>true</code>.</p>
+<p><code>temp</code> 是局部变量的抽象名字. <code>label</code> 是静态内存地址的抽象名字.</p>
+<p>模块 <code>Temp</code> 管理着两个不同名字的集合.</p>
+<pre><code class="language-ocaml">module type Temp = sig
+
+  type temp
+  module Table = Map.Make(temp)  (* 其中Table的key是temp类型的 *)
+  val newtemp : unit -&gt; temp
+  val makestring : temp -&gt; string
+
+  type label = Symbol.symbol
+  val newlabel: unit -&gt; label
+  val nemedlabel : string -&gt; label
+
+end
+</code></pre>
+<pre><code class="language-ocaml">module type TRANSLATE = sig 
+  type level  
+  type access (** 和Frame.access不同,多了level这一信息. *)
+  val outermost : level
+
+  val newLevel: {parent: level; name:Temp.label; formals: bool list} -&gt; level
+  val allocLocal: level -&gt; bool -&gt; access
+end
+
+
+module Translate : TRANSLATE = struct
+  ...
+  type access = level * Frame.access  (* &lt;&lt;=!! *)
+  ...
+end
+  ;;
+</code></pre>
+<p>语义分析阶段中的 <code>transDec</code> 通过调用 <code>Translate.newLevel</code>
+为每个函数声明创建一个新的嵌套层级. 这个函数又调用 <code>Frame.newFrame</code>
+创建了一个新的栈帧. <code>Semant</code> 将 <code>level</code> 保存在此函数的 <code>FunEntry</code>
+数据结构中, 使得每遇到一个函数调用时, 可以将被调用函数( <code>FunEntry</code> )的
+<code>level</code> 字段传回 <code>Translate</code> 模块. <code>FunEntry</code>
+也需要函数的机器代码的入口处作为 <code>label</code> 字段.</p>
+<pre><code class="language-ocaml">module type Env = sig
+  (** 新版本的VarEntry和FunEntry : *)
+  type enventry =
+  VarEntry of { access:Translate.access; ty:ty }
+    | FunEntry of {
+    level: Translate.level;
+    label: Temp.label;
+    formals: ty list;
+    result: ty
+  }
+
+  ...
+end
+</code></pre>
+<p>当 <code>Semant</code> 处理一个位于层级为 <code>lev</code> 的局部变量时, 它会调用
+<code>Translate.allocLocal lev esc</code> 在本层级中创建一个变量. 参数 <code>esc</code>
+表示是否是逃逸变量. 其返回结果为 <code>Translate.access</code>,
+这是一个抽象数据类型(但不同于 <code>Frame.access</code>,
+因为它必须包含关于静态链的信息). 之后, 当变量在一个表达式中被使用时,
+<code>Semant</code> 可以将其 <code>access</code> 传回 <code>Translate</code> ,
+以便于生成访问此变量的机器代码. 与此同时, Semant在值环境中记录着每个
+<code>VarEntry</code> 中 <code>access</code> .</p>
+<p>抽象数据类型 <code>Translate.access</code> 可以被实现为变量的level和其
+<code>Frame.access</code> 的偶对:</p>
+<pre><code class="language-ocaml">type access = level * Frame.access
+</code></pre>
+<p>使得 <code>Translate.allocLocal</code> 能调用 <code>Frame.allocLocal</code>,
+并且还可以记住变量是位于哪个层级的. 层级信息稍后在计算静态链时要用到,
+变量可能从一个不同的层级中被访问.</p>
+<p><code>Frame</code>
+应该独立于被编译的特定语言.许多语言没有嵌套的函数声明.因此Frame不应包含关于静态链的信息,
+这是 <code>Translate</code> 的责任. <code>Translate</code> 知道每个栈帧包含着一个静态链.
+静态链用寄存器被传给一个函数,
+并将其存储到栈帧中.因为静态链表现得如此接近于一个形式参数,
+我们将它看成是一个形参. 对于一个有着k个正常参数的函数,令 <code>l</code>
+是标识其参数是否为逃逸变量的bool列表.则: <code>l' = true::l</code> 是一个新的list.
+额外的true标识着静态链这个额外参数是逃逸的. 于是 <code>newFrame(label,l')</code>
+创建了一个包含额外参数和其形参的栈帧.</p>
+<p>例: 函数 <code>f(x,y)</code> 被嵌套在函数 <code>g</code> 中.并且g的level被记为 <code>lev_g</code>. 于是
+<code>Semant.transDec</code> 可以调用:</p>
+<pre><code class="language-ocaml">Translate.newLevel {parent=lev_g;name=f;formals= [false;false] }
+</code></pre>
+<p>并假设 <code>x,y</code> 都不是逃逸变量.于是 <code>Translate.newLevel</code> 为形参的 <code>bool</code>
+列表又加了一个元素:</p>
+<pre><code class="language-ocaml">Frame.newFrame { label, [true;false;false] } 
+</code></pre>
+<p>它会返回一个 <code>frame</code> . 在这个 <code>frame</code> 中,有三个栈帧偏移类型的值,
+可以通过 <code>Frame.formals(frame)</code> 来访问.
+返回值的首个元素是静态链在栈帧中的偏移量, 其它两个是参数 <code>x, y</code>
+的偏移量.当 <code>Semant</code> 调用 <code>Translate.formals(level)</code> 时 ,
+它会得到这两个偏移量,并将其转换为 <code>access</code> 类型的值.</p>
+<p>对层级保持追踪</p>
+<p>每次对 <code>Translate.newLevel</code> 进行调用, <code>Semant</code> 必须传递外面这层的
+<code>level</code> 值. 当为Tiger程序的main创建level时, Semant应当传递一个特殊的
+<code>level</code> 值: <code>Transale.outermost</code> . 它不是Tiger的main函数的level,
+而是包含了main的过程的level.所有库函数位于这个 <code>outermost</code> 层级.</p>
+<p>函数 transDec 会为每个函数声明创建一个新的level,
+但必须将外围函数的level传给newLevel. 这意味着 transDec
+中必须包含了当前level的信息.</p>
+<p>实现这点是很容易的, 为transDec增加额外的参数, 代表了当前的level.
+并且也为transExp增加一个level参数,
+这样当遇到一个函数声明时便可将level传递给 transDec.</p>
+<p>transVar 也需要添加一个表示当前level的参数,
+因为要通过计算level的差来决定访问几次静态链.</p>
+  </div>
+</details>
+  </div>
+</details>
+<details class="section level-1" data-anchor="_7">
+  <summary id="_7" tabindex="0">
+    <span class="bullet" aria-hidden="true"></span><span class="heading-text">中间表示</span><a class="anchor-link" href="#_7" title="复制链接">§</a>
+  </summary>
+  <div class="section-body">
+<pre><code class="language-ocaml">module type TREE = sig
+  type exp = Const of int       (* 整数常量 *)
+       | Name of Temp.label (* 符号常量,对应于汇编中的标签 *)
+       | Temp of Temp.temp  (* 在抽象机器中的临时量,类似于真正机器中的寄存器 *)
+       | Binop of binop * exp * exp (* 二元运算 *)
+       | Mem of exp    (*在地址处长度为Frame.wordSize的内容,在左侧和右侧的用法不同*)
+       | Call of exp * exp list (*过程调用*)
+       | Eseq of stm * exp (*stm用于副作用,exp作为结果*)
+
+  and stm = Move of exp * exp 
+      | Exp of exp
+      | Jump of exp * Temp.label list (* 类似于 switch *)
+      | Cjump of relop * exp * exp * Temp.label * Temp.label (* 类似于if-else *)
+      | Seq of stm * stm
+      | Label of Temp.label
+
+  and binop = Plus | Minus | Mul | Div | And | Or | Xor | Lshift | Rshift | Arshift
+
+  and relop = Eq | Ne | Lt | Gt | Le | Ge | Ult | Ule | Ugt | Uge
+end
+</code></pre>
+<p>语句stm主要负责副作用和控制流</p>
+<ul>
+<li><code>Move(Temp t, e)</code> : 对e进行求值, 并将它移动到t中.</li>
+<li><code>Move(Mem(e1),e2)</code> : 对e1求值,得到地址a. 然后对e2进行求值,
+  将结果存储到以a为开始长度为wordSize的内存中.</li>
+<li><code>Exp(e)</code> 对e求值,并忽略结果.</li>
+<li><code>Jump(e,labs)</code> 将控制流转移至地址e处. 目标e必须是形式为 <code>Name(lab)</code>
+  的文本标签,或是可以被计算为一个地址的表达式. 例如 类C语言中的
+  <code>switch(i)</code> 语句可能通过在 <code>i</code> 上做算术来实现. 标签列表 <code>labs</code>
+  指定了所有e的可能的求值结果; 这对于之后的数据流分析是必要的.
+  跳往一个已知的标签可以用 <code>Jump(Name l, [l])</code> .</li>
+<li><code>Cjump(o,e1,e2,t,f)</code> 对e1,e2分别求值, 得到值 a, b. 然后使用关系运算符
+  <code>o</code> 对a,b进行比较. 若结果为true, 则跳到t; 否则跳到f. 使用 Eq, Ne
+  测试整数的相等性和不等性.
+  用Lt,Gt,Le,Ge比较有符号整数的大小关系.用Ult,Ugt,Ule,Uge比较无符号整数的大小关系.</li>
+<li><code>Seq(s1,s2)</code> 语句s1 s2组成的序列</li>
+<li><code>Label(n)</code> 定义一个名字常值n为当前机器码的地址. 这类似于汇编中的标签.
+  <code>Name(n)</code> 的值可以作为jump,call等的目标.</li>
+</ul>
+<p>翻译为树</p>
+<p>将抽象语法转换为中间表示树是十分直接的, 但仍有许多要处理的情况.</p>
+<p>表达式的种类:</p>
+<p>返回一个值的表达式. 不返回(有意义)值的表示式(while/返回值为空的过程调用)
+bool表达式:</p>
+<p>抽象语法树中的exp类型用Tree语言该如何表示呢? 乍一看似乎要用
+Tree.exp进行表示. 然而这只对某些种类的表达式是可行的,
+即能被计算为一个值的那些表达式.
+而对于那些不返回值的表达式(例如某些过程调用或是while表达式)
+用Tree.stm来表示它们是更加自然的. 并且对于那些有bool类型值的表达式,
+例如a&gt;b, 可能最好的表示方式是作为一个有条件跳转:
+Tree.stm和用Temp.label表示的目的地的组合成的pair.</p>
+<p>因此,我们在 <code>Translate</code> 增加 <code>exp</code> 类型, 分别表示这三类表达式:</p>
+<pre><code class="language-ocaml">type exp = Ex of Tree.exp
+     | Nx of Tree.stm
+     | Cx of (Temp.label * Temp.label -&gt; Tree.stm)
+</code></pre>
+<ul>
+<li><code>Ex</code> : 代表一个有值的表达式, 用Tree.exp进行表示.</li>
+<li><code>Nx</code> : 代表无值的表达式, 表示为 Tree.stm</li>
+<li><code>Cx</code> : 代表有条件跳转, 被表示为一个函数, 将一对标签映射为一个语句.
+  若给这个函数传入一个true目的地和一个false目的地, 则它会创建一个语句,
+  此语句会对某个条件进行求值, 并据此跳转到其中的一个目的地.
+  (此表达式绝不会因为不满足条件而直接向下执行.)</li>
+</ul>
+<p>例如 Tiger表达式 <code>a&gt;b | c&lt;d</code> 可能被翻译为:</p>
+<pre><code class="language-ocaml">Cx (
+  fun (t,f) -&gt; Seq (Cjump Gt a b t z, Seq (Label z, Cjump Lt c d t f) )
+)
+</code></pre>
+<pre><code class="language-rust"> if a&gt;b  {     --+
+     goto t;     |
+ } else {        |--&gt; Cjump Gt a b t z
+     goto z;     |
+ }             --+
+
+ label z :     |---&gt;  Label z 
+
+ if c&lt;d {      --+
+     goto t;     |
+ } else {        |--&gt; Cjump Lt c d t f
+     goto f;     |
+ }             --+
+
+
+//??  label t:
+
+//??  label f: 
+</code></pre>
+<pre><code class="language-ocaml">unEx : exp -&gt; Tree.exp
+
+unNx : exp -&gt; Tree.stm
+
+unCx : exp -&gt; (Temp.Label -&gt; Temp.Label -&gt; Tree.stm) 
+</code></pre>
+<p>这三种逆转构造函数中的每个能作用在Translate.exp的三种类型上,
+就像下面实现的unEx.</p>
+<pre><code class="language-ocaml">module T = Tree
+
+let unEx ex = match ex with
+  | Ex e -&gt; e 
+  | Cx genstm -&gt; 
+    let r = Temp.newtemp () in
+    let t = Temp.newlabel () in
+    let f = Temp.newlabel () in
+    begin 
+  T.Eseq (
+    T.Seq(T.Move (T.Temp r,T.Const 1) ,
+      T.Seq (genstm t f,
+             T.Seq(T.label f,
+               T.Seq(T.Move(T.Temp r,T.Const 0) ,
+                 T.Label t
+                )))) ,
+    T.Temp r)
     end
-module type Ring =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-  end
-module type Field =
-  sig
-    type t
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; t
-    val ( / ) : t -&gt; t -&gt; t
-  end
-module IntRingImpl :
-  sig
-    type t = int
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; int
-  end
-module IntRing : Ring
-module IntField : Field
-module FloatRingImpl :
-  sig
-    type t = float
-    val zero : t
-    val one : t
-    val ( + ) : t -&gt; t -&gt; t
-    val ( ~- ) : t -&gt; t
-    val ( * ) : t -&gt; t -&gt; t
-    val to_string : t -&gt; string
-    val of_int : int -&gt; float
-  end
-module FloatRing : Ring
-module FloatField : Field
-module ToRational : functor (F : Field) -&gt; Field
-module IntRational : Field
-module FloatRational : Field
+  | Nx s -&gt; T.Eseq s (T.Const 0)
 </code></pre>
-  </div>
-</details>
+<p><code>unEx</code> 为bool表达式生成的 <code>Tree.exp</code> 类似于:</p>
+<pre><code class="language-rust">  r &lt;- 1
+  genstm t f  // 何时跳转到t和f的语句
+label f :
+  r &lt;- 0
+label t :
+  r
+</code></pre>
+<pre><code class="language-ocaml">  module type FRAME =  sig
+
+    type register = string
+
+    val RV: Temp.temp (*p.168*)
+    val FP: Temp.temp (*p.155*)
+    val registers: register list
+    val tempMap: register Temp.Table.table
+    val wordSize: int (*p.155*)
+    val externalCall: string * Tree.exp list -&gt; Tree.exp (*p.165*)
+
+    type frame (*p.134*)
+(** val newFrame: {name: Temp.label, formals: int} -&gt; frame * int list  (*p.135*)  *)
+    val newFrame: {name: Temp.label, formals: bool list} -&gt; frame
+    val formals: frame -&gt; access list (*p.135*)
+    val name: frame -&gt; Temp.label (*p.134*)
+(** val allocLocal: frame -&gt; int (*p.137*) *)
+    val allocLocal: frame -&gt; bool -&gt; access
+    val string: Tree.label * string -&gt; string (*p.262*)
+    (* (L3,"hello") ==&gt; "L3: .ascii "hello" \n" *)
+
+    val procEntryExitl: frame * Tree.stm -&gt; Tree.stm (*p.261*)
+    val procEntryExit2: frame * Assem.instr list -&gt; Assem.instr list  (*p.208*)
+    val procEntryExit3: frame * Assem.instr list -&gt; {prolog: string, body: Assem.instr list, epilog: string} (*p.261*)
+
+    type frag = PROC of { body: Tree.stm, frame: frame}  (*p.169*)
+      | STRING of Temp.label * string
+
+  end
+</code></pre>
+<pre><code class="language-ocaml">module type TRANSLATE = sig
+  (* ... *)
+  val procEntryExit  : {level: level, body: exp} -&gt; unit
+  module Frame: FRAME
+  val getResult  : unit -&gt; Frame.frag list
+end
+</code></pre>
   </div>
 </details>
 </article>
@@ -2464,10 +2230,10 @@ module FloatRational : Field
         const filter = btn.dataset.filter;
         tagBtns.forEach(b => b.classList.toggle('active', b === btn));
         nodes.forEach(n => {
-          const tag = n.getAttribute('data-tag');
+          const tags = (n.getAttribute('data-tags') || '').split(',').filter(Boolean);
           const show = filter === 'all'
-                    || (filter === '__none__' && !tag)
-                    || tag === filter;
+                    || (filter === '__none__' && tags.length === 0)
+                    || tags.includes(filter);
           n.style.display = show ? '' : 'none';
         });
       });
